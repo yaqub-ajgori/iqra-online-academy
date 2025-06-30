@@ -1,0 +1,322 @@
+<template>
+  <FrontendLayout title="আমাদের সম্পর্কে - ইকরা অনলাইন একাডেমি">
+    <!-- Page Header -->
+    <section class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-20 relative overflow-hidden">
+      <!-- Background Pattern -->
+      <div class="absolute inset-0 pattern-dots opacity-10"></div>
+      
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div class="text-center">
+          <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6">
+            <HeartIcon class="w-4 h-4 text-white mr-2" />
+            <span class="text-white text-sm font-medium">আমাদের পরিচয়</span>
+          </div>
+          
+          <h1 class="text-4xl lg:text-6xl font-bold text-white mb-6">
+            ইকরা অনলাইন <span class="text-gradient-islamic bg-gradient-to-r from-[#d4a574] to-[#5f5fcd] bg-clip-text text-transparent">একাডেমি</span>
+          </h1>
+          
+          <p class="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            ইসলামিক শিক্ষায় আধুনিক প্রযুক্তির সমন্বয়ে গড়ে উঠেছে ইকরা অনলাইন একাডেমি। 
+            আমরা বিশ্বাস করি জ্ঞানার্জনই প্রকৃত ইবাদত।
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <!-- Content -->
+          <div>
+            <div class="inline-flex items-center px-4 py-2 rounded-full bg-[#5f5fcd]/10 border border-[#5f5fcd]/20 mb-6">
+              <BookOpenIcon class="w-4 h-4 text-[#5f5fcd] mr-2" />
+              <span class="text-[#5f5fcd] text-sm font-medium">আমাদের লক্ষ্য</span>
+            </div>
+            
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+              ইসলামিক জ্ঞানে আলোকিত হোক প্রতিটি মুসলমান
+            </h2>
+            
+            <p class="text-lg text-gray-600 mb-6 leading-relaxed">
+              আমাদের মূল লক্ষ্য হলো সহজ ও আধুনিক পদ্ধতিতে ইসলামিক শিক্ষা প্রদান করা। 
+              কুরআন-হাদিসের আলোকে একটি আদর্শ ইসলামিক সমাজ গঠনে অবদান রাখা।
+            </p>
+            
+            <div class="space-y-4">
+              <div class="flex items-start space-x-3">
+                <div class="w-6 h-6 bg-[#2d5a27] rounded-full flex items-center justify-center mt-1">
+                  <CheckIcon class="w-3 h-3 text-white" />
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">মানসম্মত শিক্ষা</h4>
+                  <p class="text-gray-600">অভিজ্ঞ আলেম ও স্কলারদের তত্ত্বাবধানে প্রস্তুত কোর্স</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start space-x-3">
+                <div class="w-6 h-6 bg-[#2d5a27] rounded-full flex items-center justify-center mt-1">
+                  <CheckIcon class="w-3 h-3 text-white" />
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">সহজ পদ্ধতি</h4>
+                  <p class="text-gray-600">আধুনিক প্রযুক্তি ও ইন্টারঅ্যাক্টিভ মিডিয়ার ব্যবহার</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start space-x-3">
+                <div class="w-6 h-6 bg-[#2d5a27] rounded-full flex items-center justify-center mt-1">
+                  <CheckIcon class="w-3 h-3 text-white" />
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">সার্টিফিকেশন</h4>
+                  <p class="text-gray-600">আন্তর্জাতিক মানের সার্টিফিকেট প্রদান</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image -->
+          <div class="relative">
+            <img 
+              src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&h=400&fit=crop&crop=center" 
+              alt="ইসলামিক শিক্ষা"
+              class="w-full h-auto rounded-2xl shadow-islamic-lg"
+            />
+            
+            <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-br from-[#5f5fcd]/20 to-[#2d5a27]/20 rounded-2xl"></div>
+            <div class="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-[#d4a574]/30 to-transparent rounded-full"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="py-20 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <div class="inline-flex items-center px-4 py-2 rounded-full bg-white border border-gray-200 mb-6">
+            <StarIcon class="w-4 h-4 text-[#5f5fcd] mr-2" />
+            <span class="text-[#5f5fcd] text-sm font-medium">আমাদের মূল্যবোধ</span>
+          </div>
+          
+          <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+            যে নীতিমালার উপর ভিত্তি করে আমরা কাজ করি
+          </h2>
+          
+          <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+            ইসলামিক মূল্যবোধ ও আধুনিক শিক্ষা পদ্ধতির সমন্বয়ে আমরা গড়ে তুলেছি একটি অনন্য শিক্ষা প্রতিষ্ঠান।
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Value 1 -->
+          <div class="bg-white p-8 rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 group">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <BookOpenIcon class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">নির্ভুল জ্ঞান</h3>
+            <p class="text-gray-600 leading-relaxed">
+              কুরআন ও সুন্নাহর আলোকে সঠিক ইসলামিক জ্ঞান প্রদান করা আমাদের প্রথম অগ্রাধিকার।
+            </p>
+          </div>
+
+          <!-- Value 2 -->
+          <div class="bg-white p-8 rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 group">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#2d5a27] to-[#d4a574] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <UsersIcon class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">সহযোগিতা</h3>
+            <p class="text-gray-600 leading-relaxed">
+              শিক্ষার্থীদের সাথে ব্যক্তিগত যোগাযোগ রেখে তাদের শিক্ষার যাত্রায় সহযোগিতা করা।
+            </p>
+          </div>
+
+          <!-- Value 3 -->
+          <div class="bg-white p-8 rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 group">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#d4a574] to-[#5f5fcd] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <AwardIcon class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">উৎকর্ষতা</h3>
+            <p class="text-gray-600 leading-relaxed">
+              প্রতিটি কোর্স ও সেবায় সর্বোচ্চ মান বজায় রাখা এবং ক্রমাগত উন্নতির চেষ্টা।
+            </p>
+          </div>
+
+          <!-- Value 4 -->
+          <div class="bg-white p-8 rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 group">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#5f5fcd]/80 to-[#2d5a27]/80 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <HeartIcon class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">ভালোবাসা</h3>
+            <p class="text-gray-600 leading-relaxed">
+              ইসলামিক শিক্ষার প্রতি ভালোবাসা ও আন্তরিকতার সাথে জ্ঞান বিতরণ।
+            </p>
+          </div>
+
+          <!-- Value 5 -->
+          <div class="bg-white p-8 rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 group">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#2d5a27]/80 to-[#d4a574]/80 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <GlobeIcon class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">সর্বজনীনতা</h3>
+            <p class="text-gray-600 leading-relaxed">
+              বিশ্বের যেকোনো প্রান্ত থেকে সবার জন্য ইসলামিক শিক্ষার সুযোগ সৃষ্টি।
+            </p>
+          </div>
+
+          <!-- Value 6 -->
+          <div class="bg-white p-8 rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 group">
+            <div class="w-16 h-16 bg-gradient-to-br from-[#d4a574]/80 to-[#5f5fcd]/80 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <ShieldIcon class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">বিশ্বস্ততা</h3>
+            <p class="text-gray-600 leading-relaxed">
+              শিক্ষার্থীদের সাথে স্বচ্ছতা ও বিশ্বস্ততার সাথে সকল কার্যক্রম পরিচালনা।
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <div class="inline-flex items-center px-4 py-2 rounded-full bg-[#5f5fcd]/10 border border-[#5f5fcd]/20 mb-6">
+            <UsersIcon class="w-4 h-4 text-[#5f5fcd] mr-2" />
+            <span class="text-[#5f5fcd] text-sm font-medium">আমাদের টিম</span>
+          </div>
+          
+          <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+            অভিজ্ঞ শিক্ষকমণ্ডলী ও বিশেষজ্ঞগণ
+          </h2>
+          
+          <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+            আমাদের টিমে রয়েছেন দেশের সেরা আলেম, ইসলামিক স্কলার এবং প্রযুক্তিবিদরা।
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Team Member 1 -->
+          <div class="bg-white p-6 rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 text-center group">
+            <img 
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" 
+              alt="উস্তাদ মোহাম্মদ রহমান"
+              class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-[#d4a574] group-hover:scale-105 transition-transform duration-300"
+            />
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">উস্তাদ মোহাম্মদ রহমান</h3>
+            <p class="text-[#5f5fcd] font-medium mb-2">প্রধান শিক্ষক (কুরআন ও তাজবীদ)</p>
+            <p class="text-gray-600 text-sm">২০+ বছরের অভিজ্ঞতা</p>
+          </div>
+
+          <!-- Team Member 2 -->
+          <div class="bg-white p-6 rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 text-center group">
+            <img 
+              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face" 
+              alt="উস্তাদ আবদুল কারিম"
+              class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-[#d4a574] group-hover:scale-105 transition-transform duration-300"
+            />
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">উস্তাদ আবদুল কারিম</h3>
+            <p class="text-[#5f5fcd] font-medium mb-2">হাদিস ও সীরাত বিশেষজ্ঞ</p>
+            <p class="text-gray-600 text-sm">১৫+ বছরের অভিজ্ঞতা</p>
+          </div>
+
+          <!-- Team Member 3 -->
+          <div class="bg-white p-6 rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 text-center group">
+            <img 
+              src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face" 
+              alt="উস্তাদ মোহাম্মদ হাসান"
+              class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-[#d4a574] group-hover:scale-105 transition-transform duration-300"
+            />
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">উস্তাদ মোহাম্মদ হাসান</h3>
+            <p class="text-[#5f5fcd] font-medium mb-2">ফিকহ ও আইন বিশেষজ্ঞ</p>
+            <p class="text-gray-600 text-sm">১২+ বছরের অভিজ্ঞতা</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section class="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+      <!-- Background Pattern -->
+      <div class="absolute inset-0 pattern-grid opacity-10"></div>
+      
+      <div class="relative max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl lg:text-5xl font-bold text-white mb-6">
+          আমাদের সাথে <span class="text-gradient-islamic bg-gradient-to-r from-[#d4a574] to-[#5f5fcd] bg-clip-text text-transparent">যুক্ত হন</span>
+        </h2>
+
+        <p class="text-xl text-gray-300 mb-8 leading-relaxed max-w-2xl mx-auto">
+          ইসলামিক শিক্ষার এই মহান যাত্রায় আমাদের সাথে যুক্ত হন। 
+          আপনার জ্ঞানের পিপাসা মিটান আমাদের সাথে।
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <PrimaryButton 
+            :href="route('frontend.courses.index')" 
+            tag="a"
+            size="xl"
+            variant="primary"
+            :icon="BookOpenIcon"
+          >
+            কোর্স দেখুন
+          </PrimaryButton>
+          <PrimaryButton 
+            :href="route('frontend.contact')" 
+            tag="a"
+            size="xl"
+            variant="outline"
+            class="border-white/20 text-white hover:bg-white/10 hover:border-white/40"
+            :icon="MailIcon"
+          >
+            যোগাযোগ করুন
+          </PrimaryButton>
+        </div>
+      </div>
+    </section>
+  </FrontendLayout>
+</template>
+
+<script setup lang="ts">
+import FrontendLayout from '@/layouts/FrontendLayout.vue'
+import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
+import {
+  BookOpenIcon,
+  HeartIcon,
+  CheckIcon,
+  StarIcon,
+  UsersIcon,
+  AwardIcon,
+  GlobeIcon,
+  ShieldIcon,
+  MailIcon
+} from 'lucide-vue-next'
+</script>
+
+<style scoped>
+/* Custom styles for the about page */
+.text-gradient-islamic {
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Hover animations for cards */
+.group:hover .group-hover\:scale-105 {
+  transform: scale(1.05);
+}
+
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1);
+}
+</style> 

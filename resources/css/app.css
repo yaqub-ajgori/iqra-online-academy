@@ -1,6 +1,7 @@
-@import 'tailwindcss';
+/* Import Islamic-inspired Google Fonts - Must be first */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
 
-@import 'tw-animate-css';
+@import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -8,160 +9,403 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-sans: Instrument Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Islamic-inspired font system */
+    --font-sans: 'Noto Sans Bengali', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-bangla: 'Noto Sans Bengali', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
 
-    --radius-lg: var(--radius);
-    --radius-md: calc(var(--radius) - 2px);
-    --radius-sm: calc(var(--radius) - 4px);
+    /* Islamic design system - Border radius */
+    --radius-lg: 0.75rem;
+    --radius-md: 0.5rem;
+    --radius-sm: 0.375rem;
+    --radius-full: 9999px;
 
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
+    /* Iqra Online Academy Color System */
 
-    --color-card: var(--card);
-    --color-card-foreground: var(--card-foreground);
+    /* Primary: Iqra brand violet */
+    --color-iqra-primary: #5f5fcd;
+    --color-iqra-primary-light: #7c7cd6;
+    --color-iqra-primary-dark: #4a4aa6;
+    --color-iqra-primary-foreground: #ffffff;
 
-    --color-popover: var(--popover);
-    --color-popover-foreground: var(--popover-foreground);
+    /* Secondary: Islamic green */
+    --color-iqra-secondary: #2d5a27;
+    --color-iqra-secondary-light: #3d7436;
+    --color-iqra-secondary-dark: #1f3e1b;
+    --color-iqra-secondary-foreground: #ffffff;
 
-    --color-primary: var(--primary);
-    --color-primary-foreground: var(--primary-foreground);
+    /* Accent: Warm beige for spiritual warmth */
+    --color-iqra-accent: #d4a574;
+    --color-iqra-accent-light: #deb688;
+    --color-iqra-accent-dark: #c49760;
+    --color-iqra-accent-foreground: #1f1f1f;
 
-    --color-secondary: var(--secondary);
-    --color-secondary-foreground: var(--secondary-foreground);
+    /* Neutral system */
+    --color-iqra-neutral-50: #f8f9fa;
+    --color-iqra-neutral-100: #f1f3f4;
+    --color-iqra-neutral-200: #e8eaed;
+    --color-iqra-neutral-300: #dadce0;
+    --color-iqra-neutral-400: #bdc1c6;
+    --color-iqra-neutral-500: #9aa0a6;
+    --color-iqra-neutral-600: #80868b;
+    --color-iqra-neutral-700: #5f6368;
+    --color-iqra-neutral-800: #3c4043;
+    --color-iqra-neutral-900: #202124;
 
-    --color-muted: var(--muted);
-    --color-muted-foreground: var(--muted-foreground);
+    /* Text colors */
+    --color-iqra-text-primary: #212529;
+    --color-iqra-text-secondary: #6c757d;
+    --color-iqra-text-muted: #9aa0a6;
 
-    --color-accent: var(--accent);
-    --color-accent-foreground: var(--accent-foreground);
+    /* Background colors - Light brand tints */
+    --color-iqra-bg-primary: #fdfcff;
+    /* Very light tint of primary violet */
+    --color-iqra-bg-secondary: #fafbf9;
+    /* Very light tint of secondary green */
+    --color-iqra-bg-accent: #fefdf9;
+    /* Very light tint of accent beige */
 
-    --color-destructive: var(--destructive);
-    --color-destructive-foreground: var(--destructive-foreground);
+    /* Applying to standard theme variables */
+    --color-background: var(--color-iqra-bg-primary);
+    --color-foreground: var(--color-iqra-text-primary);
 
-    --color-border: var(--border);
-    --color-input: var(--input);
-    --color-ring: var(--ring);
+    --color-card: var(--color-iqra-bg-primary);
+    --color-card-foreground: var(--color-iqra-text-primary);
 
-    --color-chart-1: var(--chart-1);
-    --color-chart-2: var(--chart-2);
-    --color-chart-3: var(--chart-3);
-    --color-chart-4: var(--chart-4);
-    --color-chart-5: var(--chart-5);
+    --color-popover: var(--color-iqra-bg-primary);
+    --color-popover-foreground: var(--color-iqra-text-primary);
 
-    --color-sidebar: var(--sidebar-background);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-ring: var(--sidebar-ring);
+    --color-primary: var(--color-iqra-primary);
+    --color-primary-foreground: var(--color-iqra-primary-foreground);
+
+    --color-secondary: var(--color-iqra-secondary);
+    --color-secondary-foreground: var(--color-iqra-secondary-foreground);
+
+    --color-muted: var(--color-iqra-neutral-100);
+    --color-muted-foreground: var(--color-iqra-text-secondary);
+
+    --color-accent: var(--color-iqra-accent);
+    --color-accent-foreground: var(--color-iqra-accent-foreground);
+
+    --color-destructive: #dc3545;
+    --color-destructive-foreground: #ffffff;
+
+    --color-border: var(--color-iqra-neutral-200);
+    --color-input: var(--color-iqra-neutral-100);
+    --color-ring: var(--color-iqra-primary);
+
+    /* Success and warning colors for LMS feedback */
+    --color-success: #198754;
+    --color-success-foreground: #ffffff;
+    --color-warning: #ffc107;
+    --color-warning-foreground: #000000;
+    --color-info: #0dcaf0;
+    --color-info-foreground: #000000;
+
+    /* Islamic geometric pattern colors */
+    --color-pattern-light: #f8f9fa;
+    --color-pattern-medium: #e9ecef;
+    --color-pattern-accent: var(--color-iqra-accent);
 }
 
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
   looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
 */
 @layer base {
+
     *,
     ::after,
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-gray-200, currentColor);
+        border-color: var(--color-border, currentColor);
     }
 }
 
 @layer utilities {
+
     body,
     html {
-        --font-sans:
-            'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+        --font-sans: 'Noto Sans Bengali', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    /* Islamic geometric pattern utilities */
+    .pattern-dots {
+        background-image: radial-gradient(circle, var(--color-pattern-medium) 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+
+    .pattern-grid {
+        background-image:
+            linear-gradient(var(--color-pattern-medium) 1px, transparent 1px),
+            linear-gradient(90deg, var(--color-pattern-medium) 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+
+    /* Islamic divider styles */
+    .divider-islamic {
+        background: linear-gradient(90deg, transparent 0%, var(--color-iqra-accent) 20%, var(--color-iqra-primary) 50%, var(--color-iqra-accent) 80%, transparent 100%);
+        height: 2px;
+        border-radius: 1px;
+    }
+
+    /* Text gradient for headings */
+    .text-gradient-islamic {
+        background: linear-gradient(135deg, var(--color-iqra-primary) 0%, var(--color-iqra-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    /* Custom shadows for cards */
+    .shadow-islamic {
+        box-shadow: 0 4px 12px rgba(95, 95, 205, 0.1), 0 2px 4px rgba(45, 90, 39, 0.05);
+    }
+
+    .shadow-islamic-lg {
+        box-shadow: 0 8px 25px rgba(95, 95, 205, 0.15), 0 4px 8px rgba(45, 90, 39, 0.1);
     }
 }
 
+/* Root variables for light theme */
 :root {
-    --background: hsl(0 0% 100%);
-    --foreground: hsl(0 0% 3.9%);
-    --card: hsl(0 0% 100%);
-    --card-foreground: hsl(0 0% 3.9%);
-    --popover: hsl(0 0% 100%);
-    --popover-foreground: hsl(0 0% 3.9%);
-    --primary: hsl(0 0% 9%);
-    --primary-foreground: hsl(0 0% 98%);
-    --secondary: hsl(0 0% 92.1%);
-    --secondary-foreground: hsl(0 0% 9%);
-    --muted: hsl(0 0% 96.1%);
-    --muted-foreground: hsl(0 0% 45.1%);
-    --accent: hsl(0 0% 96.1%);
-    --accent-foreground: hsl(0 0% 9%);
-    --destructive: hsl(0 84.2% 60.2%);
-    --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(0 0% 92.8%);
-    --input: hsl(0 0% 89.8%);
-    --ring: hsl(0 0% 3.9%);
-    --chart-1: hsl(12 76% 61%);
-    --chart-2: hsl(173 58% 39%);
-    --chart-3: hsl(197 37% 24%);
-    --chart-4: hsl(43 74% 66%);
-    --chart-5: hsl(27 87% 67%);
+    --background: var(--color-iqra-bg-primary);
+    --foreground: var(--color-iqra-text-primary);
+    --card: var(--color-iqra-bg-primary);
+    --card-foreground: var(--color-iqra-text-primary);
+    --popover: var(--color-iqra-bg-primary);
+    --popover-foreground: var(--color-iqra-text-primary);
+    --primary: var(--color-iqra-primary);
+    --primary-foreground: var(--color-iqra-primary-foreground);
+    --secondary: var(--color-iqra-secondary);
+    --secondary-foreground: var(--color-iqra-secondary-foreground);
+    --muted: var(--color-iqra-neutral-100);
+    --muted-foreground: var(--color-iqra-text-secondary);
+    --accent: var(--color-iqra-accent);
+    --accent-foreground: var(--color-iqra-accent-foreground);
+    --destructive: #dc3545;
+    --destructive-foreground: #ffffff;
+    --border: var(--color-iqra-neutral-200);
+    --input: var(--color-iqra-neutral-100);
+    --ring: var(--color-iqra-primary);
     --radius: 0.5rem;
-    --sidebar-background: hsl(0 0% 98%);
-    --sidebar-foreground: hsl(240 5.3% 26.1%);
-    --sidebar-primary: hsl(0 0% 10%);
-    --sidebar-primary-foreground: hsl(0 0% 98%);
-    --sidebar-accent: hsl(0 0% 94%);
-    --sidebar-accent-foreground: hsl(0 0% 30%);
-    --sidebar-border: hsl(0 0% 91%);
-    --sidebar-ring: hsl(217.2 91.2% 59.8%);
-    --sidebar: hsl(0 0% 98%);
+
+    /* LMS specific colors */
+    --success: var(--color-success);
+    --success-foreground: var(--color-success-foreground);
+    --warning: var(--color-warning);
+    --warning-foreground: var(--color-warning-foreground);
+    --info: var(--color-info);
+    --info-foreground: var(--color-info-foreground);
 }
 
+/* Dark theme support for Islamic design */
 .dark {
-    --background: hsl(0 0% 3.9%);
-    --foreground: hsl(0 0% 98%);
-    --card: hsl(0 0% 3.9%);
-    --card-foreground: hsl(0 0% 98%);
-    --popover: hsl(0 0% 3.9%);
-    --popover-foreground: 0 0% 98%;
-    --primary: hsl(0 0% 98%);
-    --primary-foreground: hsl(0 0% 9%);
-    --secondary: hsl(0 0% 14.9%);
-    --secondary-foreground: hsl(0 0% 98%);
-    --muted: hsl(0 0% 16.08%);
-    --muted-foreground: hsl(0 0% 63.9%);
-    --accent: hsl(0 0% 14.9%);
-    --accent-foreground: hsl(0 0% 98%);
-    --destructive: hsl(0 84% 60%);
-    --destructive-foreground: hsl(0 0% 98%);
-    --border: hsl(0 0% 14.9%);
-    --input: hsl(0 0% 14.9%);
-    --ring: hsl(0 0% 83.1%);
-    --chart-1: hsl(220 70% 50%);
-    --chart-2: hsl(160 60% 45%);
-    --chart-3: hsl(30 80% 55%);
-    --chart-4: hsl(280 65% 60%);
-    --chart-5: hsl(340 75% 55%);
-    --sidebar-background: hsl(0 0% 7%);
-    --sidebar-foreground: hsl(0 0% 95.9%);
-    --sidebar-primary: hsl(360, 100%, 100%);
-    --sidebar-primary-foreground: hsl(0 0% 100%);
-    --sidebar-accent: hsl(0 0% 15.9%);
-    --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-    --sidebar-border: hsl(0 0% 15.9%);
-    --sidebar-ring: hsl(217.2 91.2% 59.8%);
-    --sidebar: hsl(240 5.9% 10%);
+    --background: #1a1a2e;
+    --foreground: #eee;
+    --card: #16213e;
+    --card-foreground: #eee;
+    --popover: #16213e;
+    --popover-foreground: #eee;
+    --primary: #7c7cd6;
+    --primary-foreground: #1a1a2e;
+    --secondary: #3d7436;
+    --secondary-foreground: #eee;
+    --muted: #0f172a;
+    --muted-foreground: #94a3b8;
+    --accent: #deb688;
+    --accent-foreground: #1a1a2e;
+    --destructive: #ef4444;
+    --destructive-foreground: #fef2f2;
+    --border: #334155;
+    --input: #1e293b;
+    --ring: #7c7cd6;
 }
 
 @layer base {
     * {
         @apply border-border outline-ring/50;
     }
+
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-foreground font-sans;
     }
+
+    /* Islamic typography hierarchy */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-semibold leading-tight;
+    }
+
+    h1 {
+        @apply text-3xl lg:text-4xl;
+    }
+
+    h2 {
+        @apply text-2xl lg:text-3xl;
+    }
+
+    h3 {
+        @apply text-xl lg:text-2xl;
+    }
+
+    h4 {
+        @apply text-lg lg:text-xl;
+    }
+
+    /* Smooth transitions for better UX */
+    button,
+    a,
+    input,
+    textarea,
+    select {
+        @apply transition-all duration-200 ease-in-out;
+    }
+}
+
+/* Islamic animations */
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.6s ease-out;
+}
+
+/* Modern Gradient Animation for Hero Section */
+.animate-gradient-shift {
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gradientShift {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    25% {
+        background-position: 100% 50%;
+    }
+
+    50% {
+        background-position: 100% 100%;
+    }
+
+    75% {
+        background-position: 0% 100%;
+    }
+}
+
+/* Float animation for decorative elements */
+.float-animation {
+    animation: floatUp 3s ease-in-out infinite alternate;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(-10px) rotate(2deg);
+    }
+}
+
+/* Responsive typography for Bangla */
+@media (max-width: 640px) {
+    h1 {
+        font-size: 1.875rem;
+        line-height: 2.25rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+        line-height: 2rem;
+    }
+
+    .text-lg {
+        font-size: 1rem;
+        line-height: 1.5rem;
+    }
+}
+
+/* Islamic decorative elements */
+.decoration-islamic {
+    position: relative;
+}
+
+.decoration-islamic::before {
+    content: '';
+    position: absolute;
+    top: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3rem;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-iqra-primary), var(--color-iqra-secondary));
+    border-radius: 1px;
+}
+
+/* Islamic focus styles */
+.focus-islamic {
+    outline: none;
+    ring: 2px;
+    ring-color: var(--color-iqra-primary);
+    ring-opacity: 0.5;
+}
+
+/* Modern glassmorphism effects */
+.glass-islamic {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Gradient text with better animation */
+.text-gradient-islamic {
+    background: linear-gradient(135deg, var(--color-iqra-primary), var(--color-iqra-secondary), var(--color-iqra-accent));
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 6s ease-in-out infinite;
+}
+
+/* Enhanced hover effects for modern UI */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: var(--shadow-islamic-lg);
 }
