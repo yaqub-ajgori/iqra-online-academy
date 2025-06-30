@@ -200,27 +200,13 @@
     --info-foreground: var(--color-info-foreground);
 }
 
-/* Dark theme support for Islamic design */
-.dark {
-    --background: #1a1a2e;
-    --foreground: #eee;
-    --card: #16213e;
-    --card-foreground: #eee;
-    --popover: #16213e;
-    --popover-foreground: #eee;
-    --primary: #7c7cd6;
-    --primary-foreground: #1a1a2e;
-    --secondary: #3d7436;
-    --secondary-foreground: #eee;
-    --muted: #0f172a;
-    --muted-foreground: #94a3b8;
-    --accent: #deb688;
-    --accent-foreground: #1a1a2e;
-    --destructive: #ef4444;
-    --destructive-foreground: #fef2f2;
-    --border: #334155;
-    --input: #1e293b;
-    --ring: #7c7cd6;
+/* Admin panel specific enhancements */
+.admin-gradient-bg {
+    background: linear-gradient(135deg, #dc2626 0%, #5f5fcd 100%);
+}
+
+.admin-card {
+    @apply bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200;
 }
 
 @layer base {

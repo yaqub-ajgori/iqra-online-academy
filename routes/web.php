@@ -17,11 +17,8 @@ use Inertia\Inertia;
 // Include Frontend Routes (Public facing Islamic LMS)
 require __DIR__.'/frontend.php';
 
-// Admin Dashboard (for authenticated users)
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Include Admin Routes (Admin Panel)
+require __DIR__.'/admin.php';
 
-// Settings and Auth Routes
-require __DIR__.'/settings.php';
+// Auth Routes
 require __DIR__.'/auth.php';

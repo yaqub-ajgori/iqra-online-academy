@@ -319,6 +319,7 @@
 <script setup lang="ts">
 // HomePage component - Islamic LMS frontend
 import { ref } from 'vue'
+import { Head } from '@inertiajs/vue3'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import SectionHeader from '@/components/Frontend/SectionHeader.vue'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'

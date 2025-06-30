@@ -124,7 +124,7 @@
                   <p class="text-sm text-gray-500">স্বাগতম, {{ $page.props.auth.user.name }}</p>
                 </div>
                 <Link 
-                  :href="route('dashboard')" 
+                  :href="route('frontend.student.dashboard')" 
                   class="block px-3 py-2 text-gray-700 hover:text-[#5f5fcd] hover:bg-gray-50 rounded-md transition-colors"
                 >
                   ড্যাশবোর্ড

@@ -45,4 +45,60 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the user's roles.
+     */
+    public function roles()
+    {
+        return $this->hasMany(UserRole::class);
+    }
+
+    /**
+     * Get the user's student profile.
+     */
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    /**
+     * Get the user's teacher profile.
+     */
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class);
+    }
+
+    /**
+     * Check if user has a specific role.
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->roles()->where('role_type', $role)->where('is_active', true)->exists();
+    }
+
+    /**
+     * Check if user is a student.
+     */
+    public function isStudent(): bool
+    {
+        return $this->hasRole('student');
+    }
+
+    /**
+     * Check if user is a teacher.
+     */
+    public function isTeacher(): bool
+    {
+        return $this->hasRole('teacher');
+    }
+
+    /**
+     * Check if user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
 }
