@@ -15,7 +15,7 @@
                             </div>
                             
                             <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                                <span class="text-gradient-islamic bg-gradient-to-r from-red-600 to-[#5f5fcd] bg-clip-text text-transparent">ইকরা একাডেমি</span> পরিচালনা করুন
+                                <span class="text-gradient-islamic bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] bg-clip-text text-transparent">ইকরা একাডেমি</span> পরিচালনা করুন
                             </h1>
                             
                             <p class="text-lg text-gray-600 mb-8 leading-relaxed">
@@ -48,7 +48,7 @@
 
                         <!-- Islamic Pattern Decoration -->
                         <div class="relative">
-                            <div class="absolute -inset-4 bg-gradient-to-r from-red-600/10 to-[#5f5fcd]/10 rounded-2xl transform rotate-1"></div>
+                            <div class="absolute -inset-4 bg-gradient-to-r from-[#2d5a27]/10 to-[#5f5fcd]/10 rounded-2xl transform rotate-1"></div>
                             <div class="relative bg-white p-6 rounded-2xl shadow-islamic">
                                 <p class="text-red-600 font-medium italic text-center">
                                     "আর যে ব্যক্তি জ্ঞান অন্বেষণের পথে বের হয়, আল্লাহ তার জন্য জান্নাতের পথ সহজ করে দেন।"
@@ -62,7 +62,7 @@
                     <div>
                         <div class="bg-white p-8 rounded-2xl shadow-islamic border border-gray-100">
                             <div class="text-center mb-8">
-                                <div class="w-16 h-16 bg-gradient-to-r from-red-600/20 to-[#5f5fcd]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <div class="w-16 h-16 bg-gradient-to-r from-[#2d5a27]/20 to-[#5f5fcd]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <ShieldCheckIcon class="w-8 h-8 text-red-600" />
                                 </div>
                                 <h2 class="text-2xl font-bold text-gray-900 mb-2">অ্যাডমিন প্যানেলে প্রবেশ করুন</h2>
@@ -127,7 +127,7 @@
                                 <!-- Submit Button -->
                                 <Button 
                                     type="submit" 
-                                    class="w-full bg-gradient-to-r from-red-600 to-[#5f5fcd] hover:from-red-700 hover:to-[#4a4aa6] text-white py-3 rounded-lg font-medium shadow-islamic hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-[1.02]" 
+                                    class="w-full bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] hover:from-[#254521] hover:to-[#4a4aa6] text-white py-3 rounded-lg font-medium shadow-islamic hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-[1.02]" 
                                     :disabled="form.processing"
                                 >
                                     <LoaderCircle v-if="form.processing" class="h-5 w-5 animate-spin mr-2" />

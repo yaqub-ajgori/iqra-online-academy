@@ -1,18 +1,9 @@
 <template>
-  <AdminLayout page-title="">
-    <!-- Welcome Section -->
-    <div class="bg-gradient-to-r from-red-600 to-[#5f5fcd] rounded-xl p-6 mb-8">
-      <div class="flex items-center justify-between text-white">
-        <div>
-          <h2 class="text-2xl font-bold mb-2">Welcome back, Admin!</h2>
-          <p class="text-red-100">Here's what's happening with your Islamic academy today.</p>
-        </div>
-        <div class="hidden md:block">
-          <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-            <Icon name="layout-dashboard" class="h-8 w-8 text-white" />
-          </div>
-        </div>
-      </div>
+  <AdminLayout>
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+      <p class="text-sm text-gray-600">Overview of your academy's performance and recent activity</p>
     </div>
 
     <!-- Stats Overview -->
@@ -48,8 +39,8 @@
       <!-- Recent Enrollments -->
       <Card class="border border-gray-200 shadow-sm">
         <CardHeader class="border-b border-gray-100 bg-gray-50">
-          <CardTitle class="flex items-center text-gray-900">
-            <Icon name="user-check" class="mr-3 h-5 w-5 text-[#5f5fcd]" />
+          <CardTitle class="flex items-center text-gray-900 text-lg font-semibold gap-2">
+            <Icon name="user-check" class="h-5 w-5 text-blue-600" />
             Recent Enrollments
           </CardTitle>
         </CardHeader>
@@ -61,7 +52,7 @@
               class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-[#5f5fcd] to-blue-600 rounded-full flex items-center justify-center">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-400 rounded-full flex items-center justify-center">
                   <span class="text-white text-sm font-semibold">
                     {{ enrollment.student?.user?.name?.charAt(0) || 'U' }}
                   </span>
@@ -79,7 +70,7 @@
           <div class="mt-6 text-center">
             <Link 
               :href="route('admin.enrollments.index')"
-              class="text-sm text-[#5f5fcd] hover:text-red-600 font-medium transition-colors"
+              class="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
             >
               View all enrollments →
             </Link>
@@ -90,8 +81,8 @@
       <!-- Recent Payments -->
       <Card class="border border-gray-200 shadow-sm">
         <CardHeader class="border-b border-gray-100 bg-gray-50">
-          <CardTitle class="flex items-center text-gray-900">
-            <Icon name="credit-card" class="mr-3 h-5 w-5 text-[#2d5a27]" />
+          <CardTitle class="flex items-center text-gray-900 text-lg font-semibold gap-2">
+            <Icon name="credit-card" class="h-5 w-5 text-green-600" />
             Recent Payments
           </CardTitle>
         </CardHeader>
@@ -103,7 +94,7 @@
               class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-[#2d5a27] to-green-600 rounded-full flex items-center justify-center">
+                <div class="w-10 h-10 bg-gradient-to-br from-green-600 to-green-400 rounded-full flex items-center justify-center">
                   <Icon name="credit-card" class="h-5 w-5 text-white" />
                 </div>
                 <div>
@@ -124,7 +115,7 @@
           <div class="mt-6 text-center">
             <Link 
               :href="route('admin.payments.index')"
-              class="text-sm text-[#5f5fcd] hover:text-red-600 font-medium transition-colors"
+              class="text-sm text-green-600 hover:text-green-800 font-medium transition-colors"
             >
               View all payments →
             </Link>
@@ -136,12 +127,12 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
 import AdminLayout from '@/layouts/admin/AdminLayout.vue'
 import StatsCard from '@/components/Admin/StatsCard.vue'
 import Icon from '@/components/Icon.vue'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Link } from '@inertiajs/vue3'
+import { formatNumber, formatDate } from '@/lib/utils'
 
 const props = defineProps({
   stats: Object,
@@ -149,24 +140,18 @@ const props = defineProps({
   recentPayments: Array
 })
 
-const formatNumber = (number) => {
-  return new Intl.NumberFormat('bn-BD').format(number)
-}
-
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString('bn-BD')
-}
-
 const getPaymentStatusClass = (status) => {
   switch (status) {
     case 'completed':
-      return 'bg-green-100 text-green-700'
+    case 'paid':
+      return 'bg-green-100 text-green-800';
     case 'pending':
-      return 'bg-yellow-100 text-yellow-700'
+      return 'bg-yellow-100 text-yellow-800';
     case 'failed':
-      return 'bg-red-100 text-red-700'
+    case 'cancelled':
+      return 'bg-red-100 text-red-800';
     default:
-      return 'bg-gray-100 text-gray-700'
+      return 'bg-gray-100 text-gray-800';
   }
 }
 </script> 

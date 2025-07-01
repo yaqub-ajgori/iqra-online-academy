@@ -14,19 +14,12 @@ class Course extends Model
     protected $fillable = [
         'title',
         'slug',
-        'description',
         'full_description',
         'category_id',
-        'subcategory_id',
         'level',
-        'language',
         'instructor_id',
-        'co_instructors',
         'thumbnail_image',
         'preview_video_url',
-        'course_outline',
-        'learning_outcomes',
-        'requirements',
         'price',
         'currency',
         'discount_price',
@@ -44,17 +37,10 @@ class Course extends Model
         'is_free',
         'average_rating',
         'total_reviews',
-        'meta_title',
-        'meta_description',
-        'meta_keywords',
         'published_at',
     ];
 
     protected $casts = [
-        'co_instructors' => 'array',
-        'course_outline' => 'array',
-        'learning_outcomes' => 'array',
-        'requirements' => 'array',
         'price' => 'decimal:2',
         'discount_price' => 'decimal:2',
         'discount_expires_at' => 'datetime',
@@ -72,14 +58,6 @@ class Course extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(CourseCategory::class, 'category_id');
-    }
-
-    /**
-     * Get the course's subcategory.
-     */
-    public function subcategory(): BelongsTo
-    {
-        return $this->belongsTo(CourseCategory::class, 'subcategory_id');
     }
 
     /**

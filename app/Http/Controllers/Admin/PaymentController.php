@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
-use App\Models\Course;
 use App\Models\Student;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\Rule;
 
 class PaymentController extends Controller
 {
@@ -17,47 +19,21 @@ class PaymentController extends Controller
      */
     public function index(Request $request): Response
     {
-        $query = Payment::with(['student.user', 'course'])
-            ->latest();
+        $payments = Payment::with(['student.user', 'course'])
+            ->latest()
+            ->paginate(15);
 
-        // Filter by status
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        // Filter by payment method
-        if ($request->filled('payment_method')) {
-            $query->where('payment_method', $request->payment_method);
-        }
-
-        // Search
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereHas('student.user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        $payments = $query->paginate(15);
-
-        // Get summary stats
         $stats = [
             'total' => Payment::count(),
-            'pending' => Payment::pending()->count(),
-            'completed' => Payment::completed()->count(),
-            'failed' => Payment::failed()->count(),
-            'total_amount' => Payment::completed()->sum('amount'),
+            'completed' => Payment::where('status', 'completed')->count(),
+            'pending' => Payment::where('status', 'pending')->count(),
+            // Note: This is a simple sum and does not convert currencies.
+            'total_revenue' => Payment::where('status', 'completed')->sum('amount'),
         ];
 
         return Inertia::render('Admin/Payments/Index', [
             'payments' => $payments,
             'stats' => $stats,
-            'filters' => [
-                'status' => $request->status,
-                'payment_method' => $request->payment_method,
-                'search' => $request->search,
-            ],
         ]);
     }
 
@@ -66,61 +42,171 @@ class PaymentController extends Controller
      */
     public function create(): Response
     {
-        $courses = Course::published()->get();
-        $students = Student::with('user')->get();
+        $students = Student::with('user')->get()->map(function ($student) {
+            return [
+                'id' => $student->id,
+                'name' => $student->full_name,
+                'email' => $student->user->email ?? null,
+            ];
+        });
+
+        $courses = Course::where('status', 'published')->get()->map(function ($course) {
+            return [
+                'id' => $course->id,
+                'title' => $course->title,
+                'price' => $course->price,
+                'is_free' => $course->is_free,
+            ];
+        });
 
         return Inertia::render('Admin/Payments/Create', [
-            'courses' => $courses,
             'students' => $students,
+            'courses' => $courses,
         ]);
     }
 
     /**
      * Store a newly created payment.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'course_id' => 'required|exists:courses,id',
-            'amount' => 'required|numeric|min:0',
-            'payment_method' => 'required|in:bkash,nagad,rocket,bank_transfer,cash',
-            'transaction_id' => 'nullable|string|max:255',
-            'notes' => 'nullable|string|max:1000',
+            'student_id' => ['required', 'exists:students,id'],
+            'course_id' => ['required', 'exists:courses,id'],
+            'amount' => ['required', 'numeric', 'min:0'],
+            'currency' => ['required', 'string', 'max:3'],
+            'payment_method' => ['required', Rule::in(['bkash', 'nagad', 'rocket', 'bank_transfer'])],
+            'transaction_id' => ['nullable', 'string', 'unique:payments,transaction_id'],
+            'status' => ['required', Rule::in(['pending', 'processing', 'completed', 'failed', 'cancelled', 'refunded'])],
+            'sender_number' => ['nullable', 'string', 'max:20'],
+            'receiver_number' => ['nullable', 'string', 'max:20'],
+            'bank_name' => ['nullable', 'string'],
+            'account_number' => ['nullable', 'string'],
+            'branch_name' => ['nullable', 'string'],
         ]);
 
-        $validated['status'] = 'completed'; // Manual entry, mark as completed
-        $validated['paid_at'] = now();
-        $validated['currency'] = 'BDT';
+        Payment::create($validated);
 
-        $payment = Payment::create($validated);
-
-        return redirect()->route('admin.payments.index')->with('success', 'Payment recorded successfully.');
+        return redirect()->route('admin.payments.index')
+            ->with('success', 'Payment created successfully.');
     }
 
     /**
-     * Confirm a pending payment.
+     * Display the specified payment.
      */
-    public function confirmPayment(Payment $payment)
+    public function show(Payment $payment): Response
     {
-        $payment->update([
-            'status' => 'completed',
-            'paid_at' => now(),
-        ]);
+        $payment->load(['student.user', 'course']);
 
-        return back()->with('success', 'Payment confirmed successfully.');
+        return Inertia::render('Admin/Payments/Show', [
+            'payment' => $payment,
+        ]);
     }
 
     /**
-     * Reject a pending payment.
+     * Show the form for editing the specified payment.
      */
-    public function rejectPayment(Payment $payment)
+    public function edit(Payment $payment): Response
     {
-        $payment->update([
-            'status' => 'failed',
-            'failed_at' => now(),
+        $payment->load(['student.user', 'course']);
+
+        $students = Student::with('user')->get()->map(function ($student) {
+            return [
+                'id' => $student->id,
+                'name' => $student->full_name,
+                'email' => $student->user->email ?? null,
+            ];
+        });
+
+        $courses = Course::where('status', 'published')->get()->map(function ($course) {
+            return [
+                'id' => $course->id,
+                'title' => $course->title,
+                'price' => $course->price,
+                'is_free' => $course->is_free,
+            ];
+        });
+
+        return Inertia::render('Admin/Payments/Edit', [
+            'payment' => $payment,
+            'students' => $students,
+            'courses' => $courses,
+        ]);
+    }
+
+    /**
+     * Update the specified payment.
+     */
+    public function update(Request $request, Payment $payment): RedirectResponse
+    {
+        $validated = $request->validate([
+            'student_id' => ['required', 'exists:students,id'],
+            'course_id' => ['required', 'exists:courses,id'],
+            'amount' => ['required', 'numeric', 'min:0'],
+            'currency' => ['required', 'string', 'max:3'],
+            'payment_method' => ['required', Rule::in(['bkash', 'nagad', 'rocket', 'bank_transfer'])],
+            'transaction_id' => ['nullable', 'string', Rule::unique('payments', 'transaction_id')->ignore($payment->id)],
+            'status' => ['required', Rule::in(['pending', 'processing', 'completed', 'failed', 'cancelled', 'refunded'])],
+            'sender_number' => ['nullable', 'string', 'max:20'],
+            'receiver_number' => ['nullable', 'string', 'max:20'],
+            'bank_name' => ['nullable', 'string'],
+            'account_number' => ['nullable', 'string'],
+            'branch_name' => ['nullable', 'string'],
         ]);
 
-        return back()->with('success', 'Payment rejected.');
+        $payment->update($validated);
+
+        return redirect()->route('admin.payments.index')
+            ->with('success', 'Payment updated successfully.');
+    }
+
+    /**
+     * Remove the specified payment.
+     */
+    public function destroy(Payment $payment): RedirectResponse
+    {
+        // Check if payment is used in any enrollment
+        if ($payment->enrollments()->exists()) {
+            return back()->withErrors(['payment' => 'Cannot delete payment that is linked to enrollments.']);
+        }
+
+        $payment->delete();
+
+        return redirect()->route('admin.payments.index')
+            ->with('success', 'Payment deleted successfully.');
+    }
+
+    /**
+     * Update payment status.
+     */
+    public function updateStatus(Request $request, Payment $payment): RedirectResponse
+    {
+        $validated = $request->validate([
+            'status' => ['required', Rule::in(['pending', 'processing', 'completed', 'failed', 'cancelled', 'refunded'])],
+        ]);
+
+        $payment->update($validated);
+
+        return back()->with('success', 'Payment status updated successfully.');
+    }
+
+    /**
+     * Approve payment.
+     */
+    public function approve(Payment $payment): RedirectResponse
+    {
+        $payment->update(['status' => 'completed']);
+
+        return back()->with('success', 'Payment approved successfully.');
+    }
+
+    /**
+     * Reject payment.
+     */
+    public function reject(Payment $payment): RedirectResponse
+    {
+        $payment->update(['status' => 'failed']);
+
+        return back()->with('success', 'Payment rejected successfully.');
     }
 }

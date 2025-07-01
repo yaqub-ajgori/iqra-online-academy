@@ -53,15 +53,44 @@
           <div class="hidden md:flex items-center space-x-4">
             <template v-if="$page.props.auth.user">
               <!-- User is logged in -->
-              <div class="relative group">
-                <button class="flex items-center space-x-2 text-gray-700 hover:text-[#5f5fcd] transition-colors">
+              <div class="relative">
+                <button 
+                  @click="userDropdownOpen = !userDropdownOpen"
+                  class="flex items-center space-x-2 text-gray-700 hover:text-[#5f5fcd] transition-colors"
+                >
                   <div class="w-8 h-8 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-full flex items-center justify-center">
                     <span class="text-white text-sm font-semibold">{{ $page.props.auth.user.name.charAt(0) }}</span>
                   </div>
                   <span class="text-sm font-medium">{{ $page.props.auth.user.name }}</span>
-                  <ChevronDownIcon class="w-4 h-4" />
+                  <ChevronDownIcon class="w-4 h-4 transition-transform" :class="{ 'rotate-180': userDropdownOpen }" />
                 </button>
-                <!-- Dropdown menu would go here -->
+                
+                <!-- Dropdown Menu -->
+                <div 
+                  v-show="userDropdownOpen" 
+                  class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-islamic-lg border border-gray-200 py-2 z-50"
+                >
+                  <!-- User Type Indicator -->
+                  <div class="px-4 py-2 text-xs text-gray-500 bg-gray-50 border-b border-gray-100">
+                    {{ isAdmin() ? '🔧 অ্যাডমিন অ্যাকাউন্ট' : '👨‍🎓 ছাত্র অ্যাকাউন্ট' }}
+                  </div>
+                  
+                  <Link 
+                    :href="getDashboardRoute()" 
+                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
+                  >
+                    <UserIcon class="w-4 h-4 mr-3" />
+                    {{ isAdmin() ? 'অ্যাডমিন ড্যাশবোর্ড' : 'ছাত্র ড্যাশবোর্ড' }}
+                  </Link>
+                  <div class="border-t border-gray-200 my-2"></div>
+                  <button 
+                    @click="logout"
+                    class="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  >
+                    <LogOutIcon class="w-4 h-4 mr-3" />
+                    লগআউট
+                  </button>
+                </div>
               </div>
             </template>
             <template v-else>
@@ -122,13 +151,20 @@
               <template v-if="$page.props.auth.user">
                 <div class="px-3 py-2">
                   <p class="text-sm text-gray-500">স্বাগতম, {{ $page.props.auth.user.name }}</p>
+                  <p class="text-xs text-gray-400 mt-1">{{ isAdmin() ? '🔧 অ্যাডমিন অ্যাকাউন্ট' : '👨‍🎓 ছাত্র অ্যাকাউন্ট' }}</p>
                 </div>
                 <Link 
-                  :href="route('frontend.student.dashboard')" 
+                  :href="getDashboardRoute()" 
                   class="block px-3 py-2 text-gray-700 hover:text-[#5f5fcd] hover:bg-gray-50 rounded-md transition-colors"
                 >
-                  ড্যাশবোর্ড
+                  {{ isAdmin() ? 'অ্যাডমিন ড্যাশবোর্ড' : 'ছাত্র ড্যাশবোর্ড' }}
                 </Link>
+                <button 
+                  @click="logout"
+                  class="block w-full text-left px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors"
+                >
+                  লগআউট
+                </button>
               </template>
               <template v-else>
                 <Link 
@@ -244,8 +280,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Link } from '@inertiajs/vue3'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { Link, router, usePage } from '@inertiajs/vue3'
 import {
   MenuIcon,
   XIcon,
@@ -255,7 +291,9 @@ import {
   MapPinIcon,
   FacebookIcon,
   YoutubeIcon,
-  TwitterIcon
+  TwitterIcon,
+  UserIcon,
+  LogOutIcon
 } from 'lucide-vue-next'
 import { ToastContainer, useToast } from '@/components/ui/toast'
 
@@ -267,8 +305,64 @@ defineProps<{
 // Mobile menu state
 const mobileMenuOpen = ref(false)
 
+// User dropdown state
+const userDropdownOpen = ref(false)
+
 // Toast system
 const { toasts, removeToast } = useToast()
+
+// Page composable for accessing auth data
+const page = usePage()
+
+// Check if user is admin (based on current route or user data)
+const isAdmin = () => {
+  // Check if we're on an admin route
+  const currentUrl = window.location.pathname
+  if (currentUrl.startsWith('/admin')) {
+    return true
+  }
+  
+  // Check if user has admin role (using any type to avoid TypeScript issues)
+  const user = page.props.auth.user as any
+  return user?.roles?.some((role: any) => role.role_type === 'admin' && role.is_active) || false
+}
+
+// Get appropriate dashboard route based on user type
+const getDashboardRoute = () => {
+  if (isAdmin()) {
+    return route('admin.dashboard')
+  }
+  return route('frontend.student.dashboard')
+}
+
+// Get appropriate logout route based on user type
+const getLogoutRoute = () => {
+  if (isAdmin()) {
+    return route('admin.logout')
+  }
+  return route('logout')
+}
+
+// Logout function
+const logout = () => {
+  router.post(getLogoutRoute())
+}
+
+// Close dropdown when clicking outside
+const handleClickOutside = (event: Event) => {
+  const target = event.target as Element
+  if (!target.closest('.relative')) {
+    userDropdownOpen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>
 
 <style scoped>

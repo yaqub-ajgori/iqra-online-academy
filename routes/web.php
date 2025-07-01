@@ -22,3 +22,8 @@ require __DIR__.'/admin.php';
 
 // Auth Routes
 require __DIR__.'/auth.php';
+
+// Student Dashboard - redirect to student dashboard after login
+Route::middleware(['auth'])->get('/dashboard', function () {
+    return redirect()->route('frontend.student.dashboard');
+})->name('dashboard');

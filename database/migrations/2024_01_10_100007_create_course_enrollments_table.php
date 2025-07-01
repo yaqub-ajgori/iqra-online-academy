@@ -29,23 +29,12 @@ return new class extends Migration
             // Course Progress
             $table->decimal('progress_percentage', 5, 2)->default(0.00);
             $table->integer('lessons_completed')->default(0);
-            $table->integer('quizzes_completed')->default(0);
-            $table->integer('assignments_completed')->default(0);
             
             // Completion
             $table->boolean('is_completed')->default(false);
-            $table->timestamp('completed_at')->nullable();
-            $table->string('completion_certificate_url', 500)->nullable();
-            $table->timestamp('certificate_issued_at')->nullable();
             
             // Access Control
             $table->boolean('is_active')->default(true);
-            $table->timestamp('access_expires_at')->nullable(); // For time-limited access
-            $table->timestamp('last_accessed_at')->nullable();
-            
-            // Performance
-            $table->decimal('final_score', 5, 2)->nullable(); // Overall course score
-            $table->enum('final_grade', ['A+', 'A', 'B+', 'B', 'C+', 'C', 'F'])->nullable();
             
             $table->timestamps();
             
@@ -55,7 +44,6 @@ return new class extends Migration
             $table->index('course_id', 'idx_enrollments_course');
             $table->index('payment_status', 'idx_enrollments_status');
             $table->index('progress_percentage', 'idx_enrollments_progress');
-            $table->index('is_completed', 'idx_enrollments_completed');
             $table->index('enrolled_at', 'idx_enrollments_enrolled_at');
         });
     }

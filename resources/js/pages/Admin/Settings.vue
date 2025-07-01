@@ -1,12 +1,10 @@
 <template>
   <AdminLayout page-title="">
     <div class="max-w-4xl mx-auto space-y-8">
-      <!-- Success Message -->
-      <div v-if="$page.props.flash?.success" class="bg-green-50 border border-green-200 rounded-lg p-4">
-        <div class="flex items-center">
-          <Icon name="check-circle" class="h-5 w-5 text-green-600 mr-3" />
-          <p class="text-green-800 font-medium">{{ $page.props.flash.success }}</p>
-        </div>
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="text-2xl font-bold text-gray-900">Admin Settings</h1>
+        <p class="text-sm text-gray-600">Manage your account profile and password settings.</p>
       </div>
 
       <!-- Profile Information -->
@@ -56,7 +54,7 @@
               <Button
                 type="submit"
                 :disabled="profileForm.processing"
-                class="bg-gradient-to-r from-[#5f5fcd] to-red-600 hover:from-[#4f4fb3] hover:to-red-700 text-white px-6 py-2.5"
+                variant="primary"
               >
                 <Icon v-if="profileForm.processing" name="loader-2" class="mr-2 h-4 w-4 animate-spin" />
                 {{ profileForm.processing ? 'Saving...' : 'Save Changes' }}
@@ -124,7 +122,7 @@
               <Button
                 type="submit"
                 :disabled="passwordForm.processing"
-                class="bg-gradient-to-r from-[#2d5a27] to-green-600 hover:from-[#1f3e1b] hover:to-green-700 text-white px-6 py-2.5"
+                variant="primary"
               >
                 <Icon v-if="passwordForm.processing" name="loader-2" class="mr-2 h-4 w-4 animate-spin" />
                 {{ passwordForm.processing ? 'Updating...' : 'Update Password' }}
@@ -146,6 +144,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import InputError from '@/components/InputError.vue'
 import Icon from '@/components/Icon.vue'
+import { useToast } from '@/composables/useToast'
+
+const { success, error } = useToast()
 
 const props = defineProps({
   user: Object,
@@ -168,7 +169,10 @@ const updateProfile = () => {
   profileForm.patch(route('admin.settings.update'), {
     preserveScroll: true,
     onSuccess: () => {
-      // Form will automatically show success message
+      success('Profile updated successfully.')
+    },
+    onError: () => {
+      error('Failed to update profile.')
     },
   })
 }
@@ -178,6 +182,10 @@ const updatePassword = () => {
     preserveScroll: true,
     onSuccess: () => {
       passwordForm.reset()
+      success('Password updated successfully.')
+    },
+    onError: () => {
+      error('Failed to update password.')
     },
   })
 }

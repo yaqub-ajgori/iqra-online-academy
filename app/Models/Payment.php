@@ -16,25 +16,17 @@ class Payment extends Model
         'amount',
         'currency',
         'payment_method',
-        'payment_gateway',
         'transaction_id',
-        'gateway_transaction_id',
-        'gateway_payment_id',
         'status',
-        'paid_at',
-        'gateway_response',
-        'failure_reason',
-        'refund_amount',
-        'refunded_at',
-        'refund_transaction_id',
+        'sender_number',
+        'receiver_number',
+        'bank_name',
+        'account_number',
+        'branch_name',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
-        'paid_at' => 'datetime',
-        'gateway_response' => 'array',
-        'refund_amount' => 'decimal:2',
-        'refunded_at' => 'datetime',
     ];
 
     /**
@@ -51,6 +43,14 @@ class Payment extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
+    }
+
+    /**
+     * Get the enrollments that use this payment.
+     */
+    public function enrollments()
+    {
+        return $this->hasMany(CourseEnrollment::class);
     }
 
     /**

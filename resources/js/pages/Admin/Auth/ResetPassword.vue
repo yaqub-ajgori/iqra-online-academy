@@ -15,7 +15,7 @@
                             </div>
                             
                             <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                                <span class="text-gradient-islamic bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent">নিরাপদ</span> অ্যাডমিন অ্যাকাউন্ট
+                                <span class="text-gradient-islamic bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] bg-clip-text text-transparent">নিরাপদ</span> অ্যাডমিন অ্যাকাউন্ট
                             </h1>
                             
                             <p class="text-lg text-gray-600 mb-8 leading-relaxed">
@@ -62,7 +62,7 @@
                         </div>
 
                         <!-- Security Warning -->
-                        <div class="bg-gradient-to-r from-amber-50 to-red-50 border border-amber-200 p-6 rounded-2xl">
+                        <div class="bg-gradient-to-r from-amber-50 to-purple-50 border border-amber-200 p-6 rounded-2xl">
                             <h3 class="font-semibold text-amber-800 mb-2 flex items-center">
                                 <ShieldAlertIcon class="w-5 h-5 mr-2" />
                                 গুরুত্বপূর্ণ নিরাপত্তা সতর্কতা
@@ -80,7 +80,7 @@
                     <div>
                         <div class="bg-white p-8 rounded-2xl shadow-islamic border border-gray-100">
                             <div class="text-center mb-8">
-                                <div class="w-16 h-16 bg-gradient-to-r from-green-600/20 to-red-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <div class="w-16 h-16 bg-gradient-to-r from-[#2d5a27]/20 to-[#5f5fcd]/20 rounded-full flex items-center justify-center mx-auto mb-4">
                                     <LockIcon class="w-8 h-8 text-green-600" />
                                 </div>
                                 <h2 class="text-2xl font-bold text-gray-900 mb-2">নতুন অ্যাডমিন পাসওয়ার্ড</h2>
@@ -146,7 +146,7 @@
                                 <!-- Submit Button -->
                                 <Button 
                                     type="submit"
-                                    class="w-full bg-gradient-to-r from-green-600 to-red-600 hover:from-green-700 hover:to-red-700 text-white py-3 rounded-lg font-medium shadow-islamic hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-[1.02]" 
+                                    class="w-full bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] hover:from-[#254521] hover:to-[#4f4fb5] text-white py-3 rounded-lg font-medium shadow-islamic hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-[1.02]" 
                                     :disabled="form.processing"
                                 >
                                     <LoaderCircle v-if="form.processing" class="h-5 w-5 animate-spin mr-2" />

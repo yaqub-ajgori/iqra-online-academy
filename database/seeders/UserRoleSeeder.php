@@ -32,71 +32,33 @@ class UserRoleSeeder extends Seeder
             'assigned_at' => now(),
         ]);
 
-        // Create Teacher Users
+        // Create Teachers (simplified structure)
         $teachers = [
             [
-                'name' => 'উস্তাদ মোহাম্মদ রহমান',
-                'email' => 'rahman@iqra-academy.com',
                 'full_name' => 'উস্তাদ মোহাম্মদ রহমান',
+                'speciality' => 'কুরআন তিলাওয়াত ও তাজবীদ',
+                'experience' => '15+ years',
                 'phone' => '01712345678',
-                'bio' => 'কুরআন তিলাওয়াত ও তাজবীদের বিশেষজ্ঞ। ১৫ বছরের শিক্ষকতার অভিজ্ঞতা।',
-                'specializations' => ['কুরআন', 'তাজবীদ', 'হিফজ'],
-                'teaching_experience_years' => 15,
-                'islamic_teaching_experience_years' => 15,
+                'is_active' => true,
             ],
             [
-                'name' => 'উস্তাদ আবদুল কারিম',
-                'email' => 'karim@iqra-academy.com',
                 'full_name' => 'উস্তাদ আবদুল কারিম',
+                'speciality' => 'হাদিস শরীফ ও সীরাত',
+                'experience' => '12+ years',
                 'phone' => '01812345678',
-                'bio' => 'হাদিস শরীফ ও সীরাতের গবেষক। আল-আজহার বিশ্ববিদ্যালয়ের স্নাতক।',
-                'specializations' => ['হাদিস', 'সীরাত', 'আরবি'],
-                'teaching_experience_years' => 12,
-                'islamic_teaching_experience_years' => 12,
+                'is_active' => true,
             ],
             [
-                'name' => 'উস্তাদ মোহাম্মদ হাসান',
-                'email' => 'hasan@iqra-academy.com',
                 'full_name' => 'উস্তাদ মোহাম্মদ হাসান',
+                'speciality' => 'ইসলামিক ফিকহ ও আইন',
+                'experience' => '18+ years',
                 'phone' => '01912345678',
-                'bio' => 'ইসলামিক ফিকহ ও আইনের বিশেষজ্ঞ। জামিয়া ইসলামিয়া পটিয়ার সাবেক শিক্ষক।',
-                'specializations' => ['ফিকহ', 'আকিদা', 'ইসলামিক আইন'],
-                'teaching_experience_years' => 18,
-                'islamic_teaching_experience_years' => 18,
+                'is_active' => true,
             ],
         ];
 
         foreach ($teachers as $teacherData) {
-            $user = User::create([
-                'name' => $teacherData['name'],
-                'email' => $teacherData['email'],
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-            ]);
-
-            UserRole::create([
-                'user_id' => $user->id,
-                'role_type' => 'teacher',
-                'is_active' => true,
-                'assigned_at' => now(),
-            ]);
-
-            Teacher::create([
-                'user_id' => $user->id,
-                'full_name' => $teacherData['full_name'],
-                'phone' => $teacherData['phone'],
-                'bio' => $teacherData['bio'],
-                'specializations' => $teacherData['specializations'],
-                'teaching_experience_years' => $teacherData['teaching_experience_years'],
-                'islamic_teaching_experience_years' => $teacherData['islamic_teaching_experience_years'],
-                'is_verified' => true,
-                'verification_status' => 'approved',
-                'verified_at' => now(),
-                'verified_by' => $adminUser->id,
-                'is_active' => true,
-                'can_create_courses' => true,
-                'average_rating' => 4.8,
-            ]);
+            Teacher::create($teacherData);
         }
 
         // Create Student Users
@@ -107,7 +69,7 @@ class UserRoleSeeder extends Seeder
                 'full_name' => 'আবদুল্লাহ আহমেদ',
                 'phone' => '01612345678',
                 'city' => 'ঢাকা',
-                'islamic_knowledge_level' => 'beginner',
+                'education_level' => 'university',
             ],
             [
                 'name' => 'ফাতিমা খাতুন',
@@ -115,7 +77,7 @@ class UserRoleSeeder extends Seeder
                 'full_name' => 'ফাতিমা খাতুন',
                 'phone' => '01712345679',
                 'city' => 'চট্টগ্রাম',
-                'islamic_knowledge_level' => 'intermediate',
+                'education_level' => 'college',
             ],
             [
                 'name' => 'মোহাম্মদ ইব্রাহিম',
@@ -123,7 +85,7 @@ class UserRoleSeeder extends Seeder
                 'full_name' => 'মোহাম্মদ ইব্রাহিম',
                 'phone' => '01812345679',
                 'city' => 'সিলেট',
-                'islamic_knowledge_level' => 'beginner',
+                'education_level' => 'high_school',
             ],
         ];
 
@@ -148,8 +110,7 @@ class UserRoleSeeder extends Seeder
                 'phone' => $studentData['phone'],
                 'city' => $studentData['city'],
                 'country' => 'Bangladesh',
-                'islamic_knowledge_level' => $studentData['islamic_knowledge_level'],
-                'preferred_language' => 'bengali',
+                'education_level' => $studentData['education_level'],
                 'is_active' => true,
                 'is_verified' => true,
             ]);

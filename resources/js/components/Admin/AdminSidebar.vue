@@ -20,17 +20,24 @@
           <SidebarSection title="Course Management">
             <SidebarLink 
               :href="route('admin.courses.index')" 
-              :active="$page.component.startsWith('Admin/Courses')"
-              icon="bookOpen"
+              :active="$page.component === 'Admin/Courses/Index' || $page.component === 'Admin/Courses/Show' || $page.component === 'Admin/Courses/Builder'"
+              icon="list"
             >
               All Courses
             </SidebarLink>
             <SidebarLink 
               :href="route('admin.courses.create')" 
               :active="$page.component === 'Admin/Courses/Create'"
-              icon="plusCircle"
+              icon="plus"
             >
-              Add New Course
+              Create Course
+            </SidebarLink>
+            <SidebarLink 
+              :href="route('admin.categories.index')" 
+              :active="$page.component.startsWith('Admin/Categories')"
+              icon="folder"
+            >
+              Course Categories
             </SidebarLink>
           </SidebarSection>
 
@@ -107,7 +114,7 @@
         <!-- Mobile Header -->
         <div class="flex items-center justify-between px-6 py-6 border-b border-gray-200 bg-gray-50">
           <Link href="/admin" class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-gradient-to-br from-red-600 to-[#5f5fcd] rounded-xl flex items-center justify-center shadow-md">
+            <div class="w-10 h-10 bg-gradient-to-br from-[#2d5a27] to-[#5f5fcd] rounded-xl flex items-center justify-center shadow-md">
               <span class="text-white font-bold text-lg">ই</span>
             </div>
             <span class="text-lg font-bold text-gray-900">
@@ -140,8 +147,8 @@
           <SidebarSection title="Course Management">
             <SidebarLink 
               :href="route('admin.courses.index')" 
-              :active="$page.component.startsWith('Admin/Courses')"
-              icon="bookOpen"
+              :active="$page.component === 'Admin/Courses/Index' || $page.component === 'Admin/Courses/Show' || $page.component === 'Admin/Courses/Builder'"
+              icon="list"
               @click="closeSidebar"
             >
               All Courses
@@ -149,10 +156,18 @@
             <SidebarLink 
               :href="route('admin.courses.create')" 
               :active="$page.component === 'Admin/Courses/Create'"
-              icon="plusCircle"
+              icon="plus"
               @click="closeSidebar"
             >
-              Add New Course
+              Create Course
+            </SidebarLink>
+            <SidebarLink 
+              :href="route('admin.categories.index')" 
+              :active="$page.component.startsWith('Admin/Categories')"
+              icon="folder"
+              @click="closeSidebar"
+            >
+              Course Categories
             </SidebarLink>
           </SidebarSection>
 
@@ -222,14 +237,36 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import Icon from '@/components/Icon.vue'
-import SidebarLink from '@/components/Admin/SidebarLink.vue'
-import SidebarSection from '@/components/Admin/SidebarSection.vue'
+import SidebarLink from './SidebarLink.vue'
+import SidebarSection from './SidebarSection.vue'
 
+// Mobile sidebar functionality
 const closeSidebar = () => {
-  document.body.classList.remove('sidebar-open')
+  const overlay = document.querySelector('.sidebar-overlay')
+  const sidebar = document.querySelector('.sidebar-mobile')
+  
+  if (overlay && sidebar) {
+    overlay.classList.add('hidden')
+    sidebar.classList.add('-translate-x-full')
+  }
 }
+
+// Listen for global sidebar events
+onMounted(() => {
+  // Handle mobile sidebar toggle
+  window.addEventListener('toggle-sidebar', () => {
+    const overlay = document.querySelector('.sidebar-overlay')
+    const sidebar = document.querySelector('.sidebar-mobile')
+    
+    if (overlay && sidebar) {
+      overlay.classList.toggle('hidden')
+      sidebar.classList.toggle('-translate-x-full')
+    }
+  })
+})
 </script>
 
 <style>

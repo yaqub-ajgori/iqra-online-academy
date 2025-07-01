@@ -22,30 +22,14 @@ class CourseEnrollment extends Model
         'payment_status',
         'progress_percentage',
         'lessons_completed',
-        'quizzes_completed',
-        'assignments_completed',
-        'is_completed',
-        'completed_at',
-        'completion_certificate_url',
-        'certificate_issued_at',
         'is_active',
-        'access_expires_at',
-        'last_accessed_at',
-        'final_score',
-        'final_grade',
     ];
 
     protected $casts = [
         'enrolled_at' => 'datetime',
         'amount_paid' => 'decimal:2',
         'progress_percentage' => 'decimal:2',
-        'is_completed' => 'boolean',
-        'completed_at' => 'datetime',
-        'certificate_issued_at' => 'datetime',
         'is_active' => 'boolean',
-        'access_expires_at' => 'datetime',
-        'last_accessed_at' => 'datetime',
-        'final_score' => 'decimal:2',
     ];
 
     /**

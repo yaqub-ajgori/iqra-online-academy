@@ -55,6 +55,12 @@
         </div>
       </main>
     </div>
+
+    <!-- Toast Container -->
+    <ToastContainer 
+      :toasts="toasts" 
+      :onRemove="removeToast" 
+    />
   </div>
 </template>
 
@@ -65,6 +71,7 @@ import AdminHeader from '@/components/Admin/AdminHeader.vue'
 import AdminSidebar from '@/components/Admin/AdminSidebar.vue'
 import Icon from '@/components/Icon.vue'
 import { Link } from '@inertiajs/vue3'
+import { ToastContainer, useToast } from '@/components/ui/toast'
 
 const props = defineProps({
   pageTitle: String,
@@ -73,4 +80,7 @@ const props = defineProps({
 
 const page = usePage()
 const user = computed(() => page.props.auth?.user)
+
+// Toast system
+const { toasts, removeToast } = useToast()
 </script> 

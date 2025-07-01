@@ -1,5 +1,5 @@
 /* Import Islamic-inspired Google Fonts - Must be first */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=Hind+Siliguri:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap');
 
 @import 'tailwindcss';
 
@@ -208,6 +208,8 @@
 .admin-card {
     @apply bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200;
 }
+
+/* Button styles have been moved to component-based system */
 
 @layer base {
     * {

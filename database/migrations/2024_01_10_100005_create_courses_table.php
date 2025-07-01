@@ -19,13 +19,13 @@ return new class extends Migration
             $table->longText('full_description')->nullable();
             
             // Course Details
-            $table->foreignId('category_id')->constrained('course_categories')->onDelete('restrict');
+            $table->foreignId('category_id')->nullable()->constrained('course_categories')->onDelete('restrict');
             $table->foreignId('subcategory_id')->nullable()->constrained('course_categories')->onDelete('set null');
             $table->enum('level', ['beginner', 'intermediate', 'advanced']);
             $table->enum('language', ['bengali', 'arabic', 'english'])->default('bengali');
             
             // Instructor
-            $table->foreignId('instructor_id')->constrained('teachers')->onDelete('restrict');
+            $table->foreignId('instructor_id')->nullable()->constrained('teachers')->onDelete('restrict');
             $table->json('co_instructors')->nullable(); // Additional instructors
             
             // Course Content

@@ -15,10 +15,6 @@ class CourseCategory extends Model
         'name',
         'slug',
         'description',
-        'parent_id',
-        'icon',
-        'color',
-        'sort_order',
         'is_active',
     ];
 
@@ -35,22 +31,6 @@ class CourseCategory extends Model
     }
 
     /**
-     * Get the parent category.
-     */
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(CourseCategory::class, 'parent_id');
-    }
-
-    /**
-     * Get the child categories.
-     */
-    public function children(): HasMany
-    {
-        return $this->hasMany(CourseCategory::class, 'parent_id');
-    }
-
-    /**
      * Scope to get only active categories.
      */
     public function scopeActive($query)
@@ -58,11 +38,5 @@ class CourseCategory extends Model
         return $query->where('is_active', true);
     }
 
-    /**
-     * Scope to get only parent categories.
-     */
-    public function scopeParents($query)
-    {
-        return $query->whereNull('parent_id');
-    }
+
 }

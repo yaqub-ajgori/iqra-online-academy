@@ -17,18 +17,25 @@ use Inertia\Response;
 
 class DashboardController extends Controller
 {
+
+
     /**
      * Display the admin dashboard.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        // Get current admin user
+        $admin = $request->user();
+
         // Get overview statistics
         $stats = [
             'total_users' => User::count(),
             'total_students' => Student::count(),
             'total_teachers' => Teacher::count(),
             'active_students' => Student::active()->count(),
-            'verified_teachers' => Teacher::verified()->count(),
+            // 'verified_teachers' => Teacher::verified()->count(), // removed, no such scope
+            // If you want to show active teachers, uncomment below:
+            // 'active_teachers' => Teacher::where('is_active', true)->count(),
             
             'total_courses' => Course::count(),
             'published_courses' => Course::published()->count(),
@@ -63,6 +70,7 @@ class DashboardController extends Controller
             ->get();
 
         return Inertia::render('Admin/Dashboard', [
+            'admin' => $admin,
             'stats' => $stats,
             'recentEnrollments' => $recentEnrollments,
             'recentPayments' => $recentPayments,

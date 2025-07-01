@@ -22,30 +22,18 @@ class Student extends Model
         'district',
         'country',
         'postal_code',
-        'islamic_knowledge_level',
-        'previous_islamic_education',
-        'memorization_status',
-        'arabic_proficiency',
-        'preferred_language',
-        'learning_goals',
-        'study_schedule_preference',
-        'emergency_contact_name',
-        'emergency_contact_phone',
-        'emergency_contact_relation',
         'profile_picture',
         'bio',
         'occupation',
         'education_level',
         'is_active',
         'is_verified',
-        'verification_documents',
     ];
 
     protected $casts = [
         'date_of_birth' => 'date',
         'is_active' => 'boolean',
         'is_verified' => 'boolean',
-        'verification_documents' => 'array',
     ];
 
     /**

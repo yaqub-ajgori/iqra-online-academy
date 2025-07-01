@@ -6,7 +6,7 @@
         <!-- Left section - Logo aligned with sidebar content -->
         <div class="w-64 flex-shrink-0 px-6 border-r border-gray-200">
           <Link href="/admin" class="flex items-center space-x-3">
-            <div class="w-9 h-9 bg-gradient-to-br from-red-600 to-[#5f5fcd] rounded-lg flex items-center justify-center">
+            <div class="w-9 h-9 bg-gradient-to-br from-[#2d5a27] to-[#5f5fcd] rounded-lg flex items-center justify-center">
               <span class="text-white font-bold text-lg">ই</span>
             </div>
             <span class="text-xl font-bold text-gray-900">
@@ -33,33 +33,63 @@
           </div>
 
           <!-- User menu -->
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" class="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg">
-                <Avatar class="h-8 w-8">
-                  <AvatarImage :src="user?.avatar || ''" />
-                  <AvatarFallback class="bg-gradient-to-br from-[#5f5fcd] to-red-600 text-white">{{ userInitials }}</AvatarFallback>
-                </Avatar>
-                <span class="hidden xl:block text-sm font-medium text-gray-700">{{ user?.name }}</span>
-                <Icon name="chevron-down" class="h-4 w-4 text-gray-500" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" class="w-56">
-              <DropdownMenuLabel class="text-gray-600">{{ user?.email }}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild class="text-gray-700 hover:bg-gray-50 cursor-pointer">
-                <Link :href="route('admin.settings')">
-                  <Icon name="settings" class="mr-3 h-4 w-4" />
+          <div class="relative" ref="userDropdownRef">
+            <button 
+              @click.stop="userDropdownOpen = !userDropdownOpen"
+              class="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <div class="w-8 h-8 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-full flex items-center justify-center">
+                <span class="text-white text-sm font-semibold">{{ userInitials }}</span>
+              </div>
+              <span class="hidden xl:block text-sm font-medium text-gray-700">{{ user?.name }}</span>
+              <Icon name="chevronDown" class="h-4 w-4 text-gray-500 transition-transform" :class="{ 'rotate-180': userDropdownOpen }" />
+            </button>
+            
+            <!-- Dropdown Menu -->
+            <Transition
+              enter-active-class="transition ease-out duration-100"
+              enter-from-class="transform opacity-0 scale-95"
+              enter-to-class="transform opacity-100 scale-100"
+              leave-active-class="transition ease-in duration-75"
+              leave-from-class="transform opacity-100 scale-100"
+              leave-to-class="transform opacity-0 scale-95"
+            >
+              <div 
+                v-show="userDropdownOpen" 
+                class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                @click.stop
+              >
+                <!-- User Type Indicator -->
+                <div class="px-4 py-2 text-xs text-gray-500 bg-gray-50 border-b border-gray-100">
+                  🔧 অ্যাডমিন অ্যাকাউন্ট
+                </div>
+                
+                <!-- User Email -->
+                <div class="px-4 py-2 text-sm text-gray-600 border-b border-gray-100">
+                  {{ user?.email }}
+                </div>
+                
+                <Link 
+                  :href="route('admin.settings')" 
+                  class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
+                  @click="userDropdownOpen = false"
+                >
+                  <Icon name="settings" class="w-4 h-4 mr-3" />
                   Settings
                 </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem @click="logout" class="text-red-600 hover:bg-red-50 cursor-pointer">
-                <Icon name="log-out" class="mr-3 h-4 w-4" />
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                
+                <div class="border-t border-gray-200 my-2"></div>
+                
+                <button 
+                  @click="logout"
+                  class="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                >
+                  <Icon name="logOut" class="w-4 h-4 mr-3" />
+                  Logout
+                </button>
+              </div>
+            </Transition>
+          </div>
         </div>
       </div>
     </div>
@@ -80,7 +110,7 @@
 
             <!-- Mobile Logo -->
             <Link href="/admin" class="flex items-center space-x-2">
-              <div class="w-8 h-8 bg-gradient-to-br from-red-600 to-[#5f5fcd] rounded-lg flex items-center justify-center">
+              <div class="w-8 h-8 bg-gradient-to-br from-[#2d5a27] to-[#5f5fcd] rounded-lg flex items-center justify-center">
                 <span class="text-white font-bold text-sm">ই</span>
               </div>
               <span class="text-lg font-bold text-gray-900">
@@ -92,32 +122,62 @@
           <!-- Mobile right side -->
           <div class="flex items-center">
             <!-- Mobile user menu -->
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg">
-                  <Avatar class="h-8 w-8">
-                    <AvatarImage :src="user?.avatar || ''" />
-                    <AvatarFallback class="bg-gradient-to-br from-[#5f5fcd] to-red-600 text-white">{{ userInitials }}</AvatarFallback>
-                  </Avatar>
-                  <Icon name="chevron-down" class="h-4 w-4 text-gray-500" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" class="w-56">
-                <DropdownMenuLabel class="text-gray-600">{{ user?.email }}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild class="text-gray-700 hover:bg-gray-50 cursor-pointer">
-                  <Link :href="route('admin.settings')">
-                    <Icon name="settings" class="mr-3 h-4 w-4" />
+            <div class="relative" ref="mobileDropdownRef">
+              <button 
+                @click.stop="mobileDropdownOpen = !mobileDropdownOpen"
+                class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <div class="w-8 h-8 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-full flex items-center justify-center">
+                  <span class="text-white text-sm font-semibold">{{ userInitials }}</span>
+                </div>
+                <Icon name="chevronDown" class="h-4 w-4 text-gray-500 transition-transform" :class="{ 'rotate-180': mobileDropdownOpen }" />
+              </button>
+              
+              <!-- Mobile Dropdown Menu -->
+              <Transition
+                enter-active-class="transition ease-out duration-100"
+                enter-from-class="transform opacity-0 scale-95"
+                enter-to-class="transform opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="transform opacity-100 scale-100"
+                leave-to-class="transform opacity-0 scale-95"
+              >
+                <div 
+                  v-show="mobileDropdownOpen" 
+                  class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                  @click.stop
+                >
+                  <!-- User Type Indicator -->
+                  <div class="px-4 py-2 text-xs text-gray-500 bg-gray-50 border-b border-gray-100">
+                    🔧 অ্যাডমিন অ্যাকাউন্ট
+                  </div>
+                  
+                  <!-- User Email -->
+                  <div class="px-4 py-2 text-sm text-gray-600 border-b border-gray-100">
+                    {{ user?.email }}
+                  </div>
+                  
+                  <Link 
+                    :href="route('admin.settings')" 
+                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
+                    @click="mobileDropdownOpen = false"
+                  >
+                    <Icon name="settings" class="w-4 h-4 mr-3" />
                     Settings
                   </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem @click="logout" class="text-red-600 hover:bg-red-50 cursor-pointer">
-                  <Icon name="log-out" class="mr-3 h-4 w-4" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  
+                  <div class="border-t border-gray-200 my-2"></div>
+                  
+                  <button 
+                    @click="logout"
+                    class="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                  >
+                    <Icon name="logOut" class="w-4 h-4 mr-3" />
+                    Logout
+                  </button>
+                </div>
+              </Transition>
+            </div>
           </div>
         </div>
       </div>
@@ -126,24 +186,20 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { usePage, Link, router } from '@inertiajs/vue3'
-import { useInitials } from '@/composables/useInitials'
+import { getInitials } from '@/lib/utils'
 import Icon from '@/components/Icon.vue'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 
 const page = usePage()
 const user = computed(() => page.props.auth?.user)
-const userInitials = computed(() => useInitials(user.value?.name || ''))
+const userInitials = computed(() => getInitials(user.value?.name || ''))
+
+// Dropdown states and refs
+const userDropdownOpen = ref(false)
+const mobileDropdownOpen = ref(false)
+const userDropdownRef = ref(null)
+const mobileDropdownRef = ref(null)
 
 const toggleSidebar = () => {
   // Toggle sidebar visibility on mobile
@@ -151,6 +207,39 @@ const toggleSidebar = () => {
 }
 
 const logout = () => {
+  userDropdownOpen.value = false
+  mobileDropdownOpen.value = false
   router.post(route('admin.logout'))
 }
+
+// Close dropdowns when clicking outside
+const handleClickOutside = (event) => {
+  // Check if click is outside user dropdown
+  if (userDropdownRef.value && !userDropdownRef.value.contains(event.target)) {
+    userDropdownOpen.value = false
+  }
+  
+  // Check if click is outside mobile dropdown
+  if (mobileDropdownRef.value && !mobileDropdownRef.value.contains(event.target)) {
+    mobileDropdownOpen.value = false
+  }
+}
+
+// Close dropdowns on escape key
+const handleEscKey = (event) => {
+  if (event.key === 'Escape') {
+    userDropdownOpen.value = false
+    mobileDropdownOpen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+  document.addEventListener('keydown', handleEscKey)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+  document.removeEventListener('keydown', handleEscKey)
+})
 </script> 
