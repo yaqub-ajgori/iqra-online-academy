@@ -142,20 +142,7 @@
               </div>
             </div>
 
-            <!-- Preview Video -->
-            <div>
-              <label for="preview_video_url" class="block text-sm font-medium text-gray-700 mb-2">
-                Preview Video URL
-              </label>
-              <input
-                id="preview_video_url"
-                v-model="form.preview_video_url"
-                type="url"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                placeholder="https://youtube.com/watch?v=..."
-              />
-              <div v-if="errors?.preview_video_url" class="mt-1 text-sm text-red-600">{{ errors.preview_video_url }}</div>
-            </div>
+
           </div>
         </div>
 
@@ -238,7 +225,7 @@
               <div v-if="errors?.discount_expires_at" class="mt-1 text-sm text-red-600">{{ errors.discount_expires_at }}</div>
             </div>
 
-            <!-- Duration -->
+            <!-- Duration Hours -->
             <div>
               <label for="duration_hours" class="block text-sm font-medium text-gray-700 mb-2">
                 Duration (Hours)
@@ -249,25 +236,9 @@
                 type="number"
                 min="1"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                placeholder="e.g., 20"
+                placeholder="e.g., 40"
               />
               <div v-if="errors?.duration_hours" class="mt-1 text-sm text-red-600">{{ errors.duration_hours }}</div>
-            </div>
-
-            <!-- Max Students -->
-            <div>
-              <label for="max_students" class="block text-sm font-medium text-gray-700 mb-2">
-                Max Students
-              </label>
-              <input
-                id="max_students"
-                v-model="form.max_students"
-                type="number"
-                min="1"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                placeholder="e.g., 100"
-              />
-              <div v-if="errors?.max_students" class="mt-1 text-sm text-red-600">{{ errors.max_students }}</div>
             </div>
 
             <!-- Currency -->
@@ -285,41 +256,6 @@
                 <option value="EUR">EUR (€)</option>
               </select>
               <div v-if="errors?.currency" class="mt-1 text-sm text-red-600">{{ errors.currency }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Enrollment Period -->
-        <div class="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-6">Enrollment Period</h2>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Enrollment Starts At -->
-            <div>
-              <label for="enrollment_starts_at" class="block text-sm font-medium text-gray-700 mb-2">
-                Enrollment Starts At
-              </label>
-              <input
-                id="enrollment_starts_at"
-                v-model="form.enrollment_starts_at"
-                type="datetime-local"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              />
-              <div v-if="errors?.enrollment_starts_at" class="mt-1 text-sm text-red-600">{{ errors.enrollment_starts_at }}</div>
-            </div>
-
-            <!-- Enrollment Ends At -->
-            <div>
-              <label for="enrollment_ends_at" class="block text-sm font-medium text-gray-700 mb-2">
-                Enrollment Ends At
-              </label>
-              <input
-                id="enrollment_ends_at"
-                v-model="form.enrollment_ends_at"
-                type="datetime-local"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              />
-              <div v-if="errors?.enrollment_ends_at" class="mt-1 text-sm text-red-600">{{ errors.enrollment_ends_at }}</div>
             </div>
           </div>
         </div>
@@ -432,15 +368,12 @@ const form = useForm({
   level: '',
   instructor_id: '',
   thumbnail_image: null as File | null,
-  preview_video_url: '',
+
   price: 0,
   currency: 'BDT',
   discount_price: null,
   discount_expires_at: '',
   duration_hours: null,
-  max_students: null,
-  enrollment_starts_at: '',
-  enrollment_ends_at: '',
   status: 'draft',
   is_featured: false,
   is_free: false,

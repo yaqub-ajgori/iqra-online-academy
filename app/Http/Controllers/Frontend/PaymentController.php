@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -11,21 +13,18 @@ class PaymentController extends Controller
     /**
      * Display the checkout page for a course
      */
-    public function checkout(string $course): Response
+    public function checkout($course): Response
     {
-        // In a real application, you would fetch the course from database
-        // For now, using mock data based on the course slug
-        $courseData = $this->getCourseBySlug($course);
-        
-        if (!$courseData) {
+        $courseModel = Course::where('slug', $course)->where('status', 'published')->first();
+        if (!$courseModel) {
             abort(404, 'Course not found');
         }
 
         return Inertia::render('Frontend/PaymentPage', [
-            'title' => 'পেমেন্ট - ' . $courseData['title'],
-            'course' => $courseData,
+            'title' => 'পেমেন্ট - ' . $courseModel->title,
+            'course' => $courseModel,
             'meta' => [
-                'description' => 'Complete your enrollment for ' . $courseData['title'],
+                'description' => 'Complete your enrollment for ' . $courseModel->title,
                 'keywords' => 'payment, enrollment, ইসলামিক কোর্স, অনলাইন পেমেন্ট'
             ]
         ]);
@@ -34,7 +33,7 @@ class PaymentController extends Controller
     /**
      * Process course enrollment payment
      */
-    public function processPayment(string $course)
+    public function processPayment($course)
     {
         // This would handle the payment processing logic
         // For now, return a success response

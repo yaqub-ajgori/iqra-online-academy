@@ -1,115 +1,137 @@
 <template>
-  <div class="group relative bg-white rounded-xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 transform hover:-trangray-y-2 overflow-hidden border border-gray-100">
-    <!-- Course Image -->
+  <div class="group relative bg-white rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-gray-100 hover:border-[#5f5fcd]/20">
+    <!-- Course Image with Enhanced Placeholder -->
     <div class="relative overflow-hidden">
       <img 
-        :src="course.image || 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=250&fit=crop'" 
+        v-if="isValidImage(course.image)"
+        :src="course.image" 
         :alt="course.title"
-        class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+        class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
+      />
+      <CoursePlaceholder 
+        v-else
+        class="w-full h-48" 
+        :text="course.category"
       />
       
-      <!-- Image Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <!-- Enhanced Image Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       
-      <!-- Course Level Badge -->
+      <!-- Course Level Badge with Enhanced Design -->
       <div class="absolute top-3 left-3">
-        <span :class="levelBadgeClasses">
+        <span :class="levelBadgeClasses" class="shadow-lg">
           {{ getLevelText(course.level) }}
         </span>
       </div>
 
-      <!-- Price Badge -->
+      <!-- Enhanced Price Badge -->
       <div class="absolute top-3 right-3">
-        <span v-if="course.price === 0" class="bg-[#2d5a27] text-white px-2 py-1 rounded-full text-xs font-medium">
+        <span v-if="course.price === 0" class="bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
           ফ্রি
         </span>
-        <span v-else class="bg-white/90 backdrop-blur-sm text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
+        <span v-else class="bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-xs font-semibold shadow-lg border border-gray-200">
           ৳{{ formatPrice(course.price) }}
         </span>
       </div>
 
-      <!-- Favorite Button -->
+      <!-- Enhanced Favorite Button -->
       <button 
         v-if="showFavorite"
         @click.prevent="toggleFavorite"
-        class="absolute bottom-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors duration-200"
+        class="absolute bottom-3 right-3 w-10 h-10 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-200 shadow-lg"
+        :aria-label="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
       >
         <HeartIcon 
           :class="[
-            'w-4 h-4 transition-colors duration-200',
-            isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-600'
+            'w-5 h-5 transition-all duration-200',
+            isFavorite ? 'text-red-500 fill-red-500 scale-110' : 'text-gray-600 hover:text-red-500'
           ]"
         />
       </button>
+
+      <!-- Course Progress Overlay (if enrolled) -->
+      <div v-if="course.enrolled && course.progress !== undefined" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+        <div class="flex items-center justify-between text-white text-xs mb-1">
+          <span>সম্পন্ন হয়েছে</span>
+          <span class="font-semibold">{{ course.progress }}%</span>
+        </div>
+        <div class="w-full bg-white/20 rounded-full h-1.5">
+          <div 
+            class="bg-gradient-to-r from-[#d4a574] to-[#5f5fcd] h-1.5 rounded-full transition-all duration-500"
+            :style="{ width: `${course.progress}%` }"
+          ></div>
+        </div>
+      </div>
     </div>
 
-    <!-- Course Content -->
+    <!-- Enhanced Course Content -->
     <div class="p-6">
-      <!-- Category & Duration -->
-      <div class="flex items-center justify-between mb-3">
-        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-[#5f5fcd]/10 to-[#2d5a27]/10 text-[#5f5fcd] border border-[#5f5fcd]/20">
+      <!-- Category & Duration with Enhanced Design -->
+      <div class="flex items-center justify-between mb-4">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-[#5f5fcd]/15 to-[#2d5a27]/15 text-[#5f5fcd] border border-[#5f5fcd]/25 hover:from-[#5f5fcd]/20 hover:to-[#2d5a27]/20 transition-all duration-200">
           {{ course.category }}
         </span>
-        <div class="flex items-center text-gray-500 text-xs">
+        <div class="flex items-center text-gray-500 text-xs bg-gray-50 px-2 py-1 rounded-full">
           <ClockIcon class="w-3 h-3 mr-1" />
           {{ course.duration || 'স্ব-নির্ধারিত' }}
         </div>
       </div>
 
-      <!-- Course Title -->
-      <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-[#5f5fcd] transition-colors duration-200 line-clamp-2">
+      <!-- Enhanced Course Title -->
+      <h3 class="text-lg font-bold text-gray-900 mb-3 group-hover:text-[#5f5fcd] transition-colors duration-200 line-clamp-2 leading-tight">
         {{ course.title }}
       </h3>
 
-      <!-- Course Description -->
+      <!-- Enhanced Course Description -->
       <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
         {{ course.description }}
       </p>
 
-      <!-- Progress Bar (if enrolled) -->
-      <div v-if="course.enrolled && course.progress !== undefined" class="mb-4">
-        <div class="flex items-center justify-between mb-1">
-          <span class="text-xs text-gray-600">সম্পন্ন হয়েছে</span>
-          <span class="text-xs font-medium text-[#5f5fcd]">{{ course.progress }}%</span>
+      <!-- Enhanced Course Meta -->
+      <div class="flex items-center justify-between mb-4 text-sm">
+        <!-- Student Count with Enhanced Design -->
+        <div class="flex items-center bg-gray-50 px-3 py-1 rounded-full">
+          <UsersIcon class="w-4 h-4 mr-1 text-[#5f5fcd]" />
+          <span class="text-gray-700 font-medium">{{ formatNumber(course.students_count || 0) }} শিক্ষার্থী</span>
         </div>
-        <div class="w-full bg-gray-200 rounded-full h-2">
+
+        <!-- Enhanced Rating -->
+        <div v-if="course.rating" class="flex items-center bg-yellow-50 px-3 py-1 rounded-full">
+          <StarIcon class="w-4 h-4 mr-1 text-yellow-500 fill-yellow-500" />
+          <span class="text-gray-700 font-medium">{{ Number(course.rating || 0).toFixed(1) }}</span>
+        </div>
+      </div>
+
+      <!-- Enhanced Instructor Section -->
+      <div v-if="course.instructor" class="flex items-center mb-5 p-3 bg-gradient-to-r from-[#5f5fcd]/5 to-[#2d5a27]/5 rounded-xl border border-[#5f5fcd]/10">
+        <div class="relative">
+          <img 
+            v-if="isValidImage(course.instructor.avatar)"
+            :src="course.instructor.avatar" 
+            :alt="course.instructor.name"
+            class="w-10 h-10 rounded-full border-2 border-[#d4a574] shadow-sm"
+          />
           <div 
-            class="bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] h-2 rounded-full transition-all duration-300"
-            :style="{ width: `${course.progress}%` }"
-          ></div>
+            v-else
+            class="w-10 h-10 rounded-full bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] flex items-center justify-center border-2 border-[#d4a574] shadow-sm"
+          >
+            <span class="text-white font-semibold text-sm">
+              {{ getInitials(course.instructor.name) }}
+            </span>
+          </div>
+          <!-- Verified Badge for Instructor -->
+          <div class="absolute -top-1 -right-1 w-4 h-4 bg-[#2d5a27] rounded-full flex items-center justify-center">
+            <CheckIcon class="w-2 h-2 text-white" />
+          </div>
         </div>
-      </div>
-
-      <!-- Course Meta -->
-      <div class="flex items-center justify-between mb-4 text-sm text-gray-500">
-        <!-- Student Count -->
-        <div class="flex items-center">
-          <UsersIcon class="w-4 h-4 mr-1" />
-          <span>{{ formatNumber(course.students_count || 0) }} শিক্ষার্থী</span>
-        </div>
-
-        <!-- Rating -->
-        <div v-if="course.rating" class="flex items-center">
-          <StarIcon class="w-4 h-4 mr-1 text-yellow-400 fill-yellow-400" />
-          <span>{{ course.rating.toFixed(1) }}</span>
-        </div>
-      </div>
-
-      <!-- Instructor -->
-      <div v-if="course.instructor" class="flex items-center mb-4">
-        <img 
-          :src="course.instructor.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'" 
-          :alt="course.instructor.name"
-          class="w-8 h-8 rounded-full mr-2 border-2 border-[#d4a574]"
-        />
-        <div>
-          <p class="text-sm font-medium text-gray-700">{{ course.instructor.name }}</p>
+        <div class="ml-3">
+          <p class="text-sm font-semibold text-gray-800">{{ course.instructor.name }}</p>
           <p class="text-xs text-gray-500">ইন্সট্রাক্টর</p>
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="space-y-2">
+      <!-- Enhanced Action Buttons -->
+      <div class="space-y-3">
         <PrimaryButton 
           v-if="!course.enrolled"
           :href="courseUrl"
@@ -119,6 +141,7 @@
           full-width
           :icon="BookOpenIcon"
           @click="handleEnrollClick"
+          class="hover:scale-105 transition-transform duration-200"
         >
           {{ course.price === 0 ? 'ফ্রি এনরোল' : 'এনরোল করুন' }}
         </PrimaryButton>
@@ -131,17 +154,21 @@
           size="sm"
           full-width
           :icon="PlayIcon"
+          class="hover:scale-105 transition-transform duration-200"
         >
           শেখা চালিয়ে যান
         </PrimaryButton>
-
-
       </div>
     </div>
 
-    <!-- Islamic Decorative Corner -->
-    <div class="absolute top-0 right-0 w-16 h-16 overflow-hidden">
-      <div class="absolute top-2 right-2 w-8 h-8 bg-gradient-to-br from-[#d4a574]/20 to-transparent transform rotate-45 rounded-sm"></div>
+    <!-- Enhanced Islamic Decorative Corner -->
+    <div class="absolute top-0 right-0 w-20 h-20 overflow-hidden">
+      <div class="absolute top-3 right-3 w-10 h-10 bg-gradient-to-br from-[#d4a574]/30 to-[#5f5fcd]/20 transform rotate-45 rounded-lg group-hover:scale-110 transition-transform duration-300"></div>
+    </div>
+
+    <!-- New Course Status Badge -->
+    <div v-if="course.isNew" class="absolute top-0 left-0 bg-gradient-to-r from-[#d4a574] to-[#5f5fcd] text-white px-3 py-1 text-xs font-semibold rounded-br-lg shadow-lg">
+      নতুন
     </div>
   </div>
 </template>
@@ -154,24 +181,27 @@ import {
   UsersIcon, 
   StarIcon, 
   BookOpenIcon,
-  PlayIcon
+  PlayIcon,
+  CheckIcon
 } from 'lucide-vue-next'
 import PrimaryButton from './PrimaryButton.vue'
+import CoursePlaceholder from './CoursePlaceholder.vue'
 
 interface Course {
   id: number
+  slug: string
   title: string
   description: string
   image?: string
   category: string
-  level: 'beginner' | 'intermediate' | 'advanced'
+  level: string
   price: number
   duration?: string
   students_count?: number
   rating?: number
   enrolled?: boolean
   progress?: number
-  has_preview?: boolean
+  isNew?: boolean
   instructor?: {
     name: string
     avatar?: string
@@ -195,27 +225,27 @@ const emit = defineEmits<{
 const isFavorite = ref(false)
 
 const levelBadgeClasses = computed(() => {
-  const baseClasses = 'px-2 py-1 rounded-full text-xs font-medium'
+  const baseClasses = 'px-3 py-1 rounded-full text-xs font-semibold shadow-lg'
   
   const levelClasses = {
-    beginner: 'bg-green-100 text-green-800 border border-green-200',
-    intermediate: 'bg-yellow-100 text-yellow-800 border border-yellow-200',
-    advanced: 'bg-red-100 text-red-800 border border-red-200'
+    beginner: 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 border border-green-300',
+    intermediate: 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border border-yellow-300',
+    advanced: 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border border-red-300'
   }
 
   return `${baseClasses} ${levelClasses[props.course.level]}`
 })
 
-const courseUrl = computed(() => `/courses/${props.course.id}`)
-const continueUrl = computed(() => `/courses/${props.course.id}/learn`)
+const courseUrl = computed(() => `/courses/${props.course.slug}`)
+const continueUrl = computed(() => `/courses/${props.course.slug}/learn`)
 
 const getLevelText = (level: string) => {
-  const levelTexts = {
+  const levelTexts: Record<string, string> = {
     beginner: 'নতুন',
     intermediate: 'মধ্যম',
     advanced: 'উন্নত'
   }
-  return levelTexts[level as keyof typeof levelTexts] || level
+  return levelTexts[level] || level
 }
 
 const formatPrice = (price: number) => {
@@ -223,10 +253,22 @@ const formatPrice = (price: number) => {
 }
 
 const formatNumber = (num: number) => {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M'
+  }
   if (num >= 1000) {
     return (num / 1000).toFixed(1) + 'k'
   }
   return num.toString()
+}
+
+const getInitials = (name: string): string => {
+  return name
+    .split(' ')
+    .map(word => word.charAt(0))
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
 }
 
 const handleEnrollClick = (event: Event) => {
@@ -238,11 +280,14 @@ const toggleFavorite = () => {
   emit('favorite', props.course, isFavorite.value)
 }
 
-
+// Utility function to check for a valid image
+const isValidImage = (src: string | undefined | null): boolean => {
+  return !!src && typeof src === 'string' && src.trim() !== '' && !src.includes('undefined')
+}
 </script>
 
 <style scoped>
-/* Line clamp utilities */
+/* Enhanced line clamp utilities */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -250,33 +295,47 @@ const toggleFavorite = () => {
   overflow: hidden;
 }
 
-/* Islamic-inspired hover effects */
+/* Enhanced Islamic-inspired hover effects */
 .group:hover .islamic-pattern {
   opacity: 1;
+  transform: scale(1.05);
 }
 
-/* Enhanced card shadow on hover */
+/* Enhanced card float animation */
 @keyframes cardFloat {
   0%, 100% {
-    transform: translateY(0px);
+    transform: translateY(0px) rotate(0deg);
   }
   50% {
-    transform: translateY(-4px);
+    transform: translateY(-6px) rotate(0.5deg);
   }
 }
 
 .group:hover {
-  animation: cardFloat 2s ease-in-out infinite;
+  animation: cardFloat 3s ease-in-out infinite;
 }
 
-/* Progress bar animation */
-@keyframes progressFill {
-  from {
-    width: 0%;
+
+
+/* Enhanced shadow animation */
+@keyframes shadowPulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(95, 95, 205, 0.1), 0 2px 4px rgba(45, 90, 39, 0.05);
   }
-  to {
-    width: var(--progress-width);
+  50% {
+    box-shadow: 0 8px 25px rgba(95, 95, 205, 0.2), 0 4px 8px rgba(45, 90, 39, 0.1);
   }
+}
+
+.group:hover {
+  animation: shadowPulse 2s ease-in-out infinite;
+}
+
+/* Enhanced focus states for accessibility */
+.group:focus-within {
+  outline: 2px solid #5f5fcd;
+  outline-offset: 2px;
+  border-radius: 16px;
 }
 
 /* Custom scrollbar for long content */
@@ -292,4 +351,21 @@ const toggleFavorite = () => {
   background: #5f5fcd;
   border-radius: 2px;
 }
+
+/* Enhanced button hover effects */
+.group:hover button {
+  transform: scale(1.05);
+}
+
+/* Enhanced image hover effects */
+.group:hover img {
+  filter: brightness(1.1) contrast(1.1);
+}
+
+/* Enhanced placeholder animation */
+.group:hover .course-placeholder {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
 </style> 
+

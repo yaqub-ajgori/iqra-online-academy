@@ -54,85 +54,102 @@
 
                     <!-- Right Side - Forgot Password Form -->
                     <div>
-                        <div class="bg-white p-8 rounded-2xl shadow-islamic border border-gray-100">
-                            <div class="text-center mb-8">
-                                <div class="w-16 h-16 bg-gradient-to-r from-[#2d5a27]/20 to-[#5f5fcd]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <KeyIcon class="w-8 h-8 text-orange-600" />
-                                </div>
-                                <h2 class="text-2xl font-bold text-gray-900 mb-2">পাসওয়ার্ড ভুলে গেছেন?</h2>
-                                <p class="text-gray-600">আপনার ইমেইল ঠিকানা দিন পাসওয়ার্ড রিসেট করতে</p>
+                        <div class="bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-islamic-lg border border-gray-100/50 relative overflow-hidden">
+                            <!-- Background pattern -->
+                            <div class="absolute inset-0 opacity-5">
+                                <svg class="w-full h-full" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <pattern id="forgotPattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                                            <path d="M20 0 L40 20 L20 40 L0 20 Z" fill="none" stroke="#5f5fcd" stroke-width="1"/>
+                                            <circle cx="20" cy="20" r="8" fill="none" stroke="#2d5a27" stroke-width="1"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect width="400" height="400" fill="url(#forgotPattern)" />
+                                </svg>
                             </div>
-
-                            <div v-if="status" class="mb-6 text-center text-sm font-medium text-green-600 bg-green-50 p-3 rounded-lg">
-                                {{ status }}
-                            </div>
-
-                            <form @submit.prevent="submit" class="space-y-6">
-                                <!-- Email -->
-                                <div class="space-y-2">
-                                    <Label for="email">ইমেইল ঠিকানা</Label>
-                                    <div class="relative">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <MailIcon class="h-5 w-5 text-gray-400" />
-                                        </div>
-                                        <Input
-                                            id="email"
-                                            type="email"
-                                            v-model="form.email"
-                                            class="pl-10"
-                                            placeholder="আপনার নিবন্ধিত ইমেইল ঠিকানা"
-                                            required
-                                            autofocus
-                                            autocomplete="username"
-                                        />
+                            
+                            <div class="relative z-10">
+                                <div class="text-center mb-8">
+                                    <div class="w-16 h-16 bg-gradient-to-r from-[#5f5fcd]/20 via-[#2d5a27]/20 to-[#d4a574]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <KeyIcon class="w-8 h-8 text-[#5f5fcd]" />
                                     </div>
-                                    <InputError :message="form.errors.email" />
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-2">পাসওয়ার্ড ভুলে গেছেন?</h2>
+                                    <p class="text-gray-600">আপনার ইমেইল ঠিকানা দিন পাসওয়ার্ড রিসেট করতে</p>
                                 </div>
 
-                                <!-- Submit Button -->
-                                <Button
-                                    type="submit"
-                                    :disabled="form.processing"
-                                    class="w-full bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] text-white font-medium py-3 px-4 rounded-lg hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                                >
-                                    <LoaderCircle v-if="form.processing" class="w-4 h-4 mr-2 animate-spin" />
-                                    {{ form.processing ? 'পাঠানো হচ্ছে...' : 'পাসওয়ার্ড রিসেট লিংক পাঠান' }}
-                                </Button>
-                            </form>
+                                <div v-if="status" class="mb-6 text-center text-sm font-medium text-green-600 bg-green-50 p-3 rounded-lg">
+                                    {{ status }}
+                                </div>
 
-                            <!-- Back to Login -->
-                            <div class="mt-8 text-center">
-                                <p class="text-gray-600 mb-4">পাসওয়ার্ড মনে আছে?</p>
-                                <TextLink 
-                                    :href="route('login')" 
-                                    class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
-                                >
-                                    <ArrowLeftIcon class="w-4 h-4 mr-2" />
-                                    লগইন পেজে ফিরে যান
-                                </TextLink>
-                            </div>
+                                <form @submit.prevent="submit" class="space-y-6">
+                                    <!-- Email -->
+                                    <div class="space-y-2">
+                                        <Label for="email" class="text-gray-700 font-medium">ইমেইল ঠিকানা</Label>
+                                        <div class="relative group">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors duration-200 group-focus-within:text-[#5f5fcd]">
+                                                <MailIcon class="h-5 w-5 text-gray-400" />
+                                            </div>
+                                            <Input
+                                                id="email"
+                                                type="email"
+                                                v-model="form.email"
+                                                class="pl-10 border-gray-200 focus:border-[#5f5fcd] focus:ring-[#5f5fcd]/20 transition-all duration-200 rounded-xl"
+                                                placeholder="আপনার নিবন্ধিত ইমেইল ঠিকানা"
+                                                required
+                                                autofocus
+                                                autocomplete="username"
+                                            />
+                                        </div>
+                                        <InputError :message="form.errors.email" />
+                                    </div>
 
-                            <!-- Register Link -->
-                            <div class="mt-6 text-center">
-                                <p class="text-gray-600 mb-4">অথবা</p>
-                                <TextLink 
-                                    :href="route('register')" 
-                                    class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
-                                >
-                                    নতুন অ্যাকাউন্ট তৈরি করুন
-                                    <ArrowRightIcon class="w-4 h-4 ml-2" />
-                                </TextLink>
-                            </div>
+                                    <!-- Submit Button -->
+                                    <Button
+                                        type="submit"
+                                        :disabled="form.processing"
+                                        class="group w-full bg-gradient-to-r from-[#5f5fcd] via-[#2d5a27] to-[#d4a574] text-white font-semibold py-3 px-4 rounded-xl hover:shadow-islamic-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden"
+                                    >
+                                        <!-- Animated background overlay -->
+                                        <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                                        <LoaderCircle v-if="form.processing" class="w-4 h-4 mr-2 animate-spin relative z-10" />
+                                        <span class="relative z-10">{{ form.processing ? 'পাঠানো হচ্ছে...' : 'পাসওয়ার্ড রিসেট লিংক পাঠান' }}</span>
+                                    </Button>
+                                </form>
 
-                            <!-- Back to Website -->
-                            <div class="mt-8 text-center border-t pt-6">
-                                <TextLink 
-                                    href="/" 
-                                    class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
-                                >
-                                    <ArrowLeftIcon class="w-4 h-4 mr-2" />
-                                    মূল ওয়েবসাইটে ফিরে যান
-                                </TextLink>
+                                <!-- Back to Login -->
+                                <div class="mt-8 text-center">
+                                    <p class="text-gray-600 mb-4">পাসওয়ার্ড মনে আছে?</p>
+                                    <TextLink 
+                                        :href="route('login')" 
+                                        class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
+                                    >
+                                        <ArrowLeftIcon class="w-4 h-4 mr-2" />
+                                        লগইন পেজে ফিরে যান
+                                    </TextLink>
+                                </div>
+
+                                <!-- Register Link -->
+                                <div class="mt-6 text-center">
+                                    <p class="text-gray-600 mb-4">অথবা</p>
+                                    <TextLink 
+                                        :href="route('register')" 
+                                        class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
+                                    >
+                                        নতুন অ্যাকাউন্ট তৈরি করুন
+                                        <ArrowRightIcon class="w-4 h-4 ml-2" />
+                                    </TextLink>
+                                </div>
+
+                                <!-- Back to Website -->
+                                <div class="mt-8 text-center border-t pt-6">
+                                    <TextLink 
+                                        href="/" 
+                                        class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
+                                    >
+                                        <ArrowLeftIcon class="w-4 h-4 mr-2" />
+                                        মূল ওয়েবসাইটে ফিরে যান
+                                    </TextLink>
+                                </div>
                             </div>
                         </div>
                     </div>

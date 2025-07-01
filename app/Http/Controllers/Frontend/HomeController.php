@@ -3,6 +3,12 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
+use App\Models\CourseCategory;
+use App\Models\CourseEnrollment;
+use App\Models\Teacher;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -52,80 +58,94 @@ class HomeController extends Controller
     }
 
     /**
-     * Get featured courses for homepage
+     * Get featured courses for homepage from database
      */
     private function getFeaturedCourses(): array
     {
-        // This would typically fetch from database
-        // For now, returning mock data that matches the frontend
-        return [
-            [
-                'id' => 1,
-                'title' => 'কুরআন তিলাওয়াত ও তাজবীদ',
-                'description' => 'সহীহ উচ্চারণে কুরআন তিলাওয়াত শিখুন। তাজবীদের নিয়মকানুন সহ বিস্তারিত আলোচনা।',
-                'image' => 'https://images.unsplash.com/photo-1544113503-7ad5ac882d5d?w=400&h=250&fit=crop',
-                'category' => 'কুরআন',
-                'level' => 'beginner',
-                'price' => 0,
-                'duration' => '২ মাস',
-                'students_count' => 1250,
-                'rating' => 4.9,
-                'instructor' => [
-                    'name' => 'উস্তাদ মোহাম্মদ রহমান',
-                    'avatar' => 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'
-                ],
-                'has_preview' => true,
-                'enrolled' => false
-            ],
-            [
-                'id' => 2,
-                'title' => 'হাদিস ও সুন্নাহর আলোকে জীবনযাত্রা',
-                'description' => 'রাসূল (সা.) এর সুন্নাহ অনুসরণ করে আদর্শ জীবনযাত্রার নির্দেশনা।',
-                'image' => 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=250&fit=crop',
-                'category' => 'হাদিস',
-                'level' => 'intermediate',
-                'price' => 1500,
-                'duration' => '৩ মাস',
-                'students_count' => 890,
-                'rating' => 4.8,
-                'instructor' => [
-                    'name' => 'উস্তাদ আবদুল কারিম',
-                    'avatar' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face'
-                ],
-                'has_preview' => true,
-                'enrolled' => false
-            ],
-            [
-                'id' => 3,
-                'title' => 'ইসলামিক ফিকহ - দৈনন্দিন মাসায়েল',
-                'description' => 'দৈনন্দিন জীবনের ইসলামিক সমাধান। ইবাদত, মুআমালাত এবং সামাজিক বিষয়াবলী।',
-                'image' => 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=250&fit=crop',
-                'category' => 'ফিকহ',
-                'level' => 'advanced',
-                'price' => 2500,
-                'duration' => '৪ মাস',
-                'students_count' => 650,
-                'rating' => 4.7,
-                'instructor' => [
-                    'name' => 'উস্তাদ মোহাম্মদ হাসান',
-                    'avatar' => 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=40&h=40&fit=crop&crop=face'
-                ],
-                'has_preview' => true,
-                'enrolled' => false
-            ]
-        ];
+        $courses = Course::with(['category', 'teacher'])
+            ->where('status', 'published')
+            ->where('is_featured', true)
+            ->orderBy('created_at', 'desc')
+            ->limit(6)
+            ->get()
+            ->map(function ($course) {
+                return [
+                    'id' => $course->id,
+                    'slug' => $course->slug,
+                    'title' => $course->title,
+                    'full_description' => $course->full_description,
+                    'image' => $course->thumbnail,
+                    'category' => $course->category->name ?? 'Uncategorized',
+                    'level' => $course->level,
+                    'price' => $course->price,
+                    'duration' => $course->duration_hours ? $course->duration_hours . ' ঘন্টা' : 'স্ব-নির্ধারিত',
+                    'students_count' => $course->enrollments()->count(),
+                    'rating' => 0, // Default rating since we removed average_rating
+                    'instructor' => [
+                        'name' => $course->teacher->full_name ?? 'Unknown Instructor',
+                        'avatar' => $course->teacher->profile_picture ?? null,
+                    ],
+                    'isNew' => $course->created_at->diffInDays(now()) <= 30,
+                    'enrolled' => false, // Will be updated based on authenticated user
+                    'progress' => 0, // Will be updated based on authenticated user
+                ];
+            })
+            ->toArray();
+
+        // If no featured courses, get the latest published courses
+        if (empty($courses)) {
+            $courses = Course::with(['category', 'teacher'])
+                ->where('status', 'published')
+                ->orderBy('created_at', 'desc')
+                ->limit(6)
+                ->get()
+                ->map(function ($course) {
+                    return [
+                        'id' => $course->id,
+                        'slug' => $course->slug,
+                        'title' => $course->title,
+                        'full_description' => $course->full_description,
+                        'image' => $course->thumbnail,
+                        'category' => $course->category->name ?? 'Uncategorized',
+                        'level' => $course->level,
+                        'price' => $course->price,
+                        'duration' => $course->duration_hours ? $course->duration_hours . ' ঘন্টা' : 'স্ব-নির্ধারিত',
+                        'students_count' => $course->enrollments()->count(),
+                        'rating' => 0, // Default rating since we removed average_rating
+                        'instructor' => [
+                            'name' => $course->teacher->full_name ?? 'Unknown Instructor',
+                            'avatar' => $course->teacher->profile_picture ?? null,
+                        ],
+                        'isNew' => $course->created_at->diffInDays(now()) <= 30,
+                        'enrolled' => false,
+                        'progress' => 0,
+                    ];
+                })
+                ->toArray();
+        }
+
+        return $courses;
     }
 
     /**
-     * Get stats for homepage
+     * Get real stats from database
      */
     private function getStats(): array
     {
+        $totalCourses = Course::where('status', 'published')->count();
+        $totalStudents = \App\Models\Student::count();
+        $totalEnrollments = CourseEnrollment::count();
+        $totalTeachers = Teacher::count();
+
+        // Calculate satisfaction rate (mock for now, would need rating system)
+        $satisfactionRate = 95; // This would be calculated from actual ratings
+
         return [
-            'total_courses' => 100,
-            'total_students' => 5000,
-            'satisfaction_rate' => 95,
-            'total_instructors' => 25
+            'total_courses' => $totalCourses,
+            'total_students' => $totalStudents,
+            'satisfaction_rate' => $satisfactionRate,
+            'total_instructors' => $totalTeachers,
+            'total_enrollments' => $totalEnrollments
         ];
     }
 } 

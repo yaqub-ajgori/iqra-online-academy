@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from '@inertiajs/vue3';
 
@@ -12,10 +11,16 @@ defineProps<{
 <template>
     <div class="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
         <div class="flex w-full max-w-md flex-col gap-6">
-            <Link :href="route('frontend.home')" class="flex items-center gap-2 self-center font-medium">
-                <div class="flex h-9 w-9 items-center justify-center">
-                    <AppLogoIcon class="size-9 fill-current text-gray-900" />
+            <Link :href="route('frontend.home')" class="flex items-center space-x-3 self-center font-medium">
+              <div class="relative">
+                <div class="w-10 h-10 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-lg flex items-center justify-center shadow-lg">
+                  <span class="text-white font-bold text-lg">ই</span>
                 </div>
+                <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#d4a574] rounded-full animate-pulse"></div>
+              </div>
+              <div>
+                <h1 class="text-xl font-bold text-gradient-islamic">ইকরা</h1>
+              </div>
             </Link>
 
             <div class="flex flex-col gap-6">

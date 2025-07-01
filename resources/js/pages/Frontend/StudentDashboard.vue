@@ -1,39 +1,6 @@
 <template>
-  <FrontendLayout title="ছাত্র ড্যাশবোর্ড - ইকরা অনলাইন একাডেমি">
-    <Head title="ছাত্র ড্যাশবোর্ড" />
-
-    <!-- Dashboard Header -->
-    <section class="py-12 bg-gradient-to-br from-[#5f5fcd]/10 via-white to-[#2d5a27]/5">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <div class="w-24 h-24 bg-[#5f5fcd]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <UserIcon class="w-12 h-12 text-[#5f5fcd]" />
-          </div>
-          <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            আস্সালামু আলাইকুম, {{ studentName }}!
-          </h1>
-          <p class="text-lg text-gray-600 mb-8">
-            আপনার শিক্ষার যাত্রায় স্বাগতম। আল্লাহ আপনার জ্ঞান বৃদ্ধি করুন।
-          </p>
-          
-          <!-- Quick Stats -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-              <div class="text-3xl font-bold text-[#5f5fcd] mb-2">{{ enrolledCourses.length }}</div>
-              <div class="text-gray-600">এনরোল করা কোর্স</div>
-            </div>
-            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-              <div class="text-3xl font-bold text-[#2d5a27] mb-2">{{ completedLessons }}</div>
-              <div class="text-gray-600">সম্পন্ন পাঠ</div>
-            </div>
-            <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-              <div class="text-3xl font-bold text-[#d4a574] mb-2">{{ studyHours }}</div>
-              <div class="text-gray-600">অধ্যয়ন ঘন্টা</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+  <FrontendLayout title="Student Dashboard - Iqra Online Academy">
+    <Head title="Student Dashboard" />
 
     <!-- Dashboard Content -->
     <section class="py-16 bg-gray-50">
@@ -43,7 +10,7 @@
           <!-- Sidebar Navigation -->
           <div class="lg:col-span-1">
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-8">
-              <h3 class="text-xl font-bold text-gray-900 mb-6">ড্যাশবোর্ড মেনু</h3>
+              <h3 class="text-xl font-bold text-gray-900 mb-6">Dashboard Menu</h3>
               
               <nav class="space-y-2">
                 <button 
@@ -65,9 +32,9 @@
               <!-- Islamic Quote -->
               <div class="mt-8 p-4 bg-[#2d5a27]/5 rounded-lg border-l-4 border-[#2d5a27]">
                 <p class="text-sm text-gray-600 italic mb-2">
-                  "যে ব্যক্তি জ্ঞানের সন্ধানে বের হয়, সে আল্লাহর পথে থাকে।"
+                  "Whoever seeks knowledge, Allah will make the path to Paradise easy for them."
                 </p>
-                <p class="text-xs text-gray-500">- হাদিস শরীফ</p>
+                <p class="text-xs text-gray-500">- Hadith Sharif</p>
               </div>
             </div>
           </div>
@@ -78,63 +45,91 @@
             <!-- Enrolled Courses Section -->
             <div v-if="activeSection === 'courses'" class="space-y-8">
               <div class="flex items-center justify-between">
-                <h2 class="text-2xl font-bold text-gray-900">আমার কোর্সসমূহ</h2>
+                <h2 class="text-2xl font-bold text-gray-900">My Courses</h2>
                 <PrimaryButton
                   @click="goToCourses"
                   variant="outline"
                   size="md"
                   :icon="PlusIcon"
                 >
-                  নতুন কোর্স খুঁজুন
+                  Find New Courses
                 </PrimaryButton>
               </div>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div v-if="enrollments.length === 0" class="text-center py-12">
+                <div class="flex flex-col items-center justify-center space-y-4">
+                  <BookOpenIcon class="h-16 w-16 text-gray-400" />
+                  <h3 class="text-lg font-medium text-gray-900">No courses enrolled yet</h3>
+                  <p class="text-gray-600">Start your learning journey by enrolling in a course.</p>
+                  <PrimaryButton
+                    @click="goToCourses"
+                    variant="primary"
+                    size="md"
+                    :icon="PlusIcon"
+                  >
+                    Browse Courses
+                  </PrimaryButton>
+                </div>
+              </div>
+
+              <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div 
-                  v-for="course in enrolledCourses" 
-                  :key="course.id"
+                  v-for="enrollment in enrollments" 
+                  :key="enrollment.id"
                   class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow duration-300"
                 >
-                  <img 
-                    :src="course.image" 
-                    :alt="course.title"
-                    class="w-full h-48 object-cover"
-                  />
+                  <div class="w-full h-48">
+                    <img 
+                      v-if="isValidImage(enrollment.course.thumbnail_image)" 
+                      :src="enrollment.course.thumbnail_image" 
+                      :alt="enrollment.course.title"
+                      class="w-full h-full object-cover"
+                    />
+                    <CoursePlaceholder 
+                      v-else 
+                      text="Course Image"
+                      class="w-full h-full"
+                    />
+                  </div>
                   <div class="p-6">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ course.title }}</h3>
-                    <p class="text-gray-600 mb-4">{{ course.instructor }}</p>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ enrollment.course.title }}</h3>
+                    <p class="text-gray-600 mb-2">{{ enrollment.course.instructor }}</p>
+                    <p v-if="enrollment.course.category" class="text-sm text-gray-500 mb-4">
+                      {{ enrollment.course.category }}
+                    </p>
                     
                     <!-- Progress Bar -->
                     <div class="mb-4">
                       <div class="flex justify-between text-sm text-gray-600 mb-2">
-                        <span>অগ্রগতি</span>
-                        <span>{{ course.progress }}%</span>
+                        <span>Progress</span>
+                        <span>{{ enrollment.progress_percentage }}%</span>
                       </div>
                       <div class="w-full bg-gray-200 rounded-full h-2">
                         <div 
                           class="bg-[#2d5a27] h-2 rounded-full transition-all duration-300"
-                          :style="{ width: course.progress + '%' }"
+                          :style="{ width: enrollment.progress_percentage + '%' }"
                         ></div>
                       </div>
                     </div>
 
                     <div class="flex space-x-3">
                       <PrimaryButton
-                        @click="goToLearning(course.slug)"
+                        @click="goToLearning(enrollment.course.slug)"
                         variant="primary"
                         size="sm"
                         :icon="PlayIcon"
                         class="flex-1 justify-center"
                       >
-                        {{ course.progress === 0 ? 'শুরু করুন' : 'চালিয়ে যান' }}
+                        {{ enrollment.progress_percentage === 0 ? 'Start Learning' : 'Continue' }}
                       </PrimaryButton>
                       <PrimaryButton
+                        @click="goToCourseDetails(enrollment.course.slug)"
                         variant="outline"
                         size="sm"
                         :icon="BookOpenIcon"
                         class="flex-1 justify-center"
                       >
-                        বিস্তারিত
+                        Details
                       </PrimaryButton>
                     </div>
                   </div>
@@ -144,82 +139,210 @@
 
             <!-- Profile Section -->
             <div v-if="activeSection === 'profile'" class="space-y-8">
-              <h2 class="text-2xl font-bold text-gray-900">প্রোফাইল সেটিংস</h2>
+              <h2 class="text-2xl font-bold text-gray-900">Profile Settings</h2>
               
+              <!-- Profile Information -->
               <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">পূর্ণ নাম</label>
-                    <input
-                      v-model="profileData.name"
-                      type="text"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
-                    />
+                <h3 class="text-lg font-semibold text-gray-900 mb-6">Personal Information</h3>
+                <form @submit.prevent="updateProfile" class="space-y-6">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                      <input
+                        v-model="profileForm.full_name"
+                        type="text"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
+                        :class="{ 'border-red-500': profileForm.errors.full_name }"
+                      />
+                      <div v-if="profileForm.errors.full_name" class="mt-1 text-sm text-red-600">
+                        {{ profileForm.errors.full_name }}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                      <input
+                        :value="student.email"
+                        type="email"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
+                        disabled
+                      />
+                      <p class="mt-1 text-xs text-gray-500">Email cannot be changed</p>
+                    </div>
+                    
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                      <input
+                        v-model="profileForm.phone"
+                        type="tel"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
+                        :class="{ 'border-red-500': profileForm.errors.phone }"
+                      />
+                      <div v-if="profileForm.errors.phone" class="mt-1 text-sm text-red-600">
+                        {{ profileForm.errors.phone }}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                      <input
+                        v-model="profileForm.date_of_birth"
+                        type="date"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
+                        :class="{ 'border-red-500': profileForm.errors.date_of_birth }"
+                      />
+                      <div v-if="profileForm.errors.date_of_birth" class="mt-1 text-sm text-red-600">
+                        {{ profileForm.errors.date_of_birth }}
+                      </div>
+                    </div>
                   </div>
                   
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">ইমেইল</label>
-                    <input
-                      v-model="profileData.email"
-                      type="email"
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                    <textarea
+                      v-model="profileForm.address"
+                      rows="3"
                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
-                    />
+                      :class="{ 'border-red-500': profileForm.errors.address }"
+                    ></textarea>
+                    <div v-if="profileForm.errors.address" class="mt-1 text-sm text-red-600">
+                      {{ profileForm.errors.address }}
+                    </div>
                   </div>
-                  
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">ফোন নম্বর</label>
-                    <input
-                      v-model="profileData.phone"
-                      type="tel"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">বয়স</label>
-                    <input
-                      v-model="profileData.age"
-                      type="number"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
-                    />
-                  </div>
-                </div>
-                
-                <div class="mt-6">
-                  <label class="block text-sm font-medium text-gray-700 mb-2">ঠিকানা</label>
-                  <textarea
-                    v-model="profileData.address"
-                    rows="3"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
-                  ></textarea>
-                </div>
 
-                <div class="mt-8 flex space-x-4">
-                  <PrimaryButton
-                    @click="updateProfile"
-                    variant="primary"
-                    size="md"
-                    :icon="SaveIcon"
-                  >
-                    প্রোফাইল আপডেট করুন
-                  </PrimaryButton>
-                  <PrimaryButton
-                    @click="goToSettings"
-                    variant="outline"
-                    size="md"
-                    :icon="SettingsIcon"
-                  >
-                    অতিরিক্ত সেটিংস
-                  </PrimaryButton>
-                </div>
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                      <input
+                        v-model="profileForm.city"
+                        type="text"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
+                        :class="{ 'border-red-500': profileForm.errors.city }"
+                      />
+                      <div v-if="profileForm.errors.city" class="mt-1 text-sm text-red-600">
+                        {{ profileForm.errors.city }}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">District</label>
+                      <input
+                        v-model="profileForm.district"
+                        type="text"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
+                        :class="{ 'border-red-500': profileForm.errors.district }"
+                      />
+                      <div v-if="profileForm.errors.district" class="mt-1 text-sm text-red-600">
+                        {{ profileForm.errors.district }}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                      <input
+                        v-model="profileForm.country"
+                        type="text"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
+                        :class="{ 'border-red-500': profileForm.errors.country }"
+                      />
+                      <div v-if="profileForm.errors.country" class="mt-1 text-sm text-red-600">
+                        {{ profileForm.errors.country }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex space-x-4 pt-6 border-t border-gray-200">
+                    <PrimaryButton
+                      type="submit"
+                      variant="primary"
+                      size="md"
+                      :icon="SaveIcon"
+                      :disabled="profileForm.processing"
+                    >
+                      <Icon v-if="profileForm.processing" name="Loader2" class="mr-2 h-4 w-4 animate-spin" />
+                      {{ profileForm.processing ? 'Updating...' : 'Update Profile' }}
+                    </PrimaryButton>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Change Password Section -->
+              <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+                <h3 class="text-lg font-semibold text-gray-900 mb-6">Change Password</h3>
+                <form @submit.prevent="changePassword" class="space-y-6">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                    <input
+                      v-model="passwordForm.current_password"
+                      type="password"
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
+                      :class="{ 'border-red-500': passwordForm.errors.current_password }"
+                      required
+                    />
+                    <div v-if="passwordForm.errors.current_password" class="mt-1 text-sm text-red-600">
+                      {{ passwordForm.errors.current_password }}
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                      <input
+                        v-model="passwordForm.password"
+                        type="password"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
+                        :class="{ 'border-red-500': passwordForm.errors.password }"
+                        required
+                      />
+                      <div v-if="passwordForm.errors.password" class="mt-1 text-sm text-red-600">
+                        {{ passwordForm.errors.password }}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                      <input
+                        v-model="passwordForm.password_confirmation"
+                        type="password"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent"
+                        :class="{ 'border-red-500': passwordForm.errors.password_confirmation }"
+                        required
+                      />
+                      <div v-if="passwordForm.errors.password_confirmation" class="mt-1 text-sm text-red-600">
+                        {{ passwordForm.errors.password_confirmation }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex space-x-4 pt-6 border-t border-gray-200">
+                    <PrimaryButton
+                      type="submit"
+                      variant="primary"
+                      size="md"
+                      :icon="LockIcon"
+                      :disabled="passwordForm.processing"
+                    >
+                      <Icon v-if="passwordForm.processing" name="Loader2" class="mr-2 h-4 w-4 animate-spin" />
+                      {{ passwordForm.processing ? 'Updating...' : 'Change Password' }}
+                    </PrimaryButton>
+                  </div>
+                </form>
               </div>
             </div>
 
             <!-- Certificates Section -->
             <div v-if="activeSection === 'certificates'" class="space-y-8">
-              <h2 class="text-2xl font-bold text-gray-900">সার্টিফিকেট</h2>
+              <h2 class="text-2xl font-bold text-gray-900">Certificates</h2>
               
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div v-if="certificates.length === 0" class="text-center py-12">
+                <div class="flex flex-col items-center justify-center space-y-4">
+                  <AwardIcon class="h-16 w-16 text-gray-400" />
+                  <h3 class="text-lg font-medium text-gray-900">No certificates yet</h3>
+                  <p class="text-gray-600">Complete courses to earn certificates.</p>
+                </div>
+              </div>
+              
+              <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div 
                   v-for="certificate in certificates" 
                   :key="certificate.id"
@@ -236,12 +359,13 @@
                   </div>
                   
                   <PrimaryButton
+                    @click="downloadCertificate(certificate)"
                     variant="outline"
                     size="sm"
                     :icon="DownloadIcon"
                     class="w-full justify-center"
                   >
-                    সার্টিফিকেট ডাউনলোড
+                    Download Certificate
                   </PrimaryButton>
                 </div>
               </div>
@@ -249,27 +373,15 @@
 
             <!-- Progress Section -->
             <div v-if="activeSection === 'progress'" class="space-y-8">
-              <h2 class="text-2xl font-bold text-gray-900">অগ্রগতি রিপোর্ট</h2>
+              <h2 class="text-2xl font-bold text-gray-900">Progress Report</h2>
               
               <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  <div class="text-center">
-                    <div class="text-4xl font-bold text-[#5f5fcd] mb-2">85%</div>
-                    <div class="text-gray-600">সামগ্রিক অগ্রগতি</div>
-                  </div>
-                  <div class="text-center">
-                    <div class="text-4xl font-bold text-[#2d5a27] mb-2">24</div>
-                    <div class="text-gray-600">এই সপ্তাহে পাঠ</div>
-                  </div>
-                  <div class="text-center">
-                    <div class="text-4xl font-bold text-[#d4a574] mb-2">12</div>
-                    <div class="text-gray-600">ধারাবাহিক দিন</div>
-                  </div>
-                </div>
-
                 <!-- Recent Activity -->
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">সাম্প্রতিক কার্যক্রম</h3>
-                <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                <div v-if="recentActivities.length === 0" class="text-center py-8">
+                  <p class="text-gray-500">No recent activity to show.</p>
+                </div>
+                <div v-else class="space-y-4">
                   <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
                     <div class="w-10 h-10 bg-[#5f5fcd]/10 rounded-full flex items-center justify-center">
                       <CheckIcon class="w-5 h-5 text-[#5f5fcd]" />
@@ -291,12 +403,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { router, Head } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
+import { router, Head, useForm } from '@inertiajs/vue3'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
+import CoursePlaceholder from '@/components/Frontend/CoursePlaceholder.vue'
+import Icon from '@/components/Icon.vue'
+import { useToast } from '@/composables/useToast'
 import {
-  UserIcon,
   BookOpenIcon,
   PlayIcon,
   PlusIcon,
@@ -305,94 +419,157 @@ import {
   AwardIcon,
   DownloadIcon,
   CheckIcon,
-  TrendingUpIcon
+  TrendingUpIcon,
+  LockIcon
 } from 'lucide-vue-next'
 
-// Mock student data
-const studentName = ref('আবু বকর সিদ্দিক')
-const completedLessons = ref(45)
-const studyHours = ref(28)
+// Props
+interface Props {
+  student?: {
+    id: number
+    full_name: string
+    email: string
+    phone?: string
+    profile_picture?: string
+    date_of_birth?: string
+    address?: string
+    city?: string
+    district?: string
+    country?: string
+    is_active: boolean
+    is_verified: boolean
+  }
+  enrollments?: Array<{
+    id: number
+    course: {
+      id: number
+      title: string
+      slug: string
+      thumbnail_image?: string
+      category?: string
+      instructor?: string
+    }
+    enrolled_at: string
+    enrollment_type: string
+    payment_status: string
+    progress_percentage: number
+    lessons_completed: number
+    is_completed: boolean
+    is_active: boolean
+  }>
+  recentActivities?: Array<{
+    id: number
+    title: string
+    course: string
+    date: string
+    type: string
+  }>
+  certificates?: Array<{
+    id: number
+    course: string
+    date: string
+    course_slug: string
+  }>
+}
+
+const props = defineProps<Props>()
+
+// Toast composable
+const { success, error } = useToast()
 
 // Active section
 const activeSection = ref('courses')
 
 // Navigation items
 const navigationItems = [
-  { id: 'courses', name: 'আমার কোর্স', icon: BookOpenIcon },
-  { id: 'profile', name: 'প্রোফাইল', icon: UserIcon },
-  { id: 'progress', name: 'অগ্রগতি', icon: TrendingUpIcon },
-  { id: 'certificates', name: 'সার্টিফিকেট', icon: AwardIcon }
+  { id: 'courses', name: 'My Courses', icon: BookOpenIcon },
+  { id: 'profile', name: 'Profile', icon: SettingsIcon },
+  { id: 'progress', name: 'Progress', icon: TrendingUpIcon },
+  { id: 'certificates', name: 'Certificates', icon: AwardIcon }
 ]
 
-// Mock enrolled courses
-const enrolledCourses = ref([
-  {
-    id: 1,
-    title: 'কুরআন তিলাওয়াত ও তাজবীদ',
-    slug: 'quran-tilawat-tajwid',
-    instructor: 'উস্তাদ মোহাম্মদ রহমান',
-    image: 'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=400&h=250&fit=crop',
-    progress: 75
-  },
-  {
-    id: 2,
-    title: 'হাদিস ও সুন্নাহর আলোকে জীবনযাত্রা',
-    slug: 'hadith-sunnah-jibon',
-    instructor: 'উস্তাদ আবদুল কারিম',
-    image: 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=250&fit=crop',
-    progress: 30
-  }
-])
-
-// Profile data
-const profileData = ref({
-  name: 'আবু বকর সিদ্দিক',
-  email: 'abubakr@example.com',
-  phone: '01712345678',
-  age: 28,
-  address: 'ঢাকা, বাংলাদেশ'
+// Default values for optional props
+const student = computed(() => props.student || {
+  id: 0,
+  full_name: 'Student',
+  email: 'student@example.com',
+  phone: '',
+  profile_picture: '',
+  date_of_birth: '',
+  address: '',
+  city: '',
+  district: '',
+  country: '',
+  is_active: false,
+  is_verified: false,
 })
 
-// Mock certificates
-const certificates = ref([
-  {
-    id: 1,
-    course: 'কুরআন তিলাওয়াত ও তাজবীদ',
-    date: '১৫ রমজান, ১৪৪৫'
-  }
-])
+const enrollments = computed(() => props.enrollments || [])
+const recentActivities = computed(() => props.recentActivities || [])
+const certificates = computed(() => props.certificates || [])
 
-// Recent activities
-const recentActivities = ref([
-  {
-    id: 1,
-    title: 'তাজবীদের মৌলিক নিয়ম সম্পন্ন',
-    course: 'কুরআন তিলাওয়াত ও তাজবীদ',
-    date: '২ ঘন্টা আগে'
-  },
-  {
-    id: 2,
-    title: 'হাদিসের পরিচিতি পাঠ শুরু',
-    course: 'হাদিস ও সুন্নাহর আলোকে জীবনযাত্রা',
-    date: 'গতকাল'
-  }
-])
+// Profile form
+const profileForm = useForm({
+  full_name: student.value.full_name,
+  phone: student.value.phone || '',
+  date_of_birth: student.value.date_of_birth || '',
+  address: student.value.address || '',
+  city: student.value.city || '',
+  district: student.value.district || '',
+  country: student.value.country || '',
+})
+
+// Password form
+const passwordForm = useForm({
+  current_password: '',
+  password: '',
+  password_confirmation: '',
+})
 
 // Methods
 const goToLearning = (courseSlug: string) => {
-  router.visit(route('frontend.learn', { course: courseSlug }))
+  router.visit(`/learn/${courseSlug}`)
 }
 
 const goToCourses = () => {
   router.visit(route('frontend.courses.index'))
 }
 
-const goToSettings = () => {
-  router.visit(route('settings.profile'))
+const goToCourseDetails = (courseSlug: string) => {
+  router.visit(`/courses/${courseSlug}`)
 }
 
 const updateProfile = () => {
-  // Simulate profile update
-  alert('প্রোফাইল সফলভাবে আপডেট হয়েছে!')
+  profileForm.patch(route('frontend.student.profile.update'), {
+    preserveScroll: true,
+    onSuccess: () => {
+      success('Profile updated successfully.')
+    },
+    onError: () => {
+      error('Failed to update profile. Please check the form and try again.')
+    }
+  })
+}
+
+const changePassword = () => {
+  passwordForm.patch(route('frontend.student.password.update'), {
+    preserveScroll: true,
+    onSuccess: () => {
+      success('Password changed successfully.')
+      passwordForm.reset()
+    },
+    onError: () => {
+      error('Failed to change password. Please check your current password and try again.')
+    }
+  })
+}
+
+const downloadCertificate = (certificate: any) => {
+  // Implement certificate download functionality
+}
+
+// Utility function to check for a valid image
+const isValidImage = (src: string | undefined | null): boolean => {
+  return !!src && typeof src === 'string' && src.trim() !== ''
 }
 </script> 

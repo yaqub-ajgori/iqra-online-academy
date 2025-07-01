@@ -1,10 +1,5 @@
 <template>
   <div class="group relative bg-white rounded-2xl p-8 shadow-islamic hover:shadow-islamic-lg transition-all duration-300 border border-gray-100 overflow-hidden">
-    <!-- Background Islamic Pattern -->
-    <div class="absolute top-0 right-0 w-24 h-24 opacity-5">
-      <div class="w-full h-full bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-full transform rotate-45"></div>
-    </div>
-
     <!-- Quote Icon -->
     <div class="relative mb-6">
       <div class="w-12 h-12 bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10 rounded-full flex items-center justify-center">
@@ -32,19 +27,6 @@
         ]"
       />
       <span class="ml-2 text-sm text-gray-500">({{ testimonial.rating }}/৫)</span>
-    </div>
-
-    <!-- Course Information (if provided) -->
-    <div v-if="testimonial.course" class="mb-6 p-3 bg-gray-50 rounded-lg">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-lg flex items-center justify-center">
-          <BookOpenIcon class="w-5 h-5 text-white" />
-        </div>
-        <div>
-          <p class="text-sm font-medium text-gray-700">{{ testimonial.course.title }}</p>
-          <p class="text-xs text-gray-500">{{ testimonial.course.category }}</p>
-        </div>
-      </div>
     </div>
 
     <!-- Student Information -->
@@ -112,17 +94,11 @@ interface Student {
   location?: string
 }
 
-interface Course {
-  title: string
-  category: string
-}
-
 interface Testimonial {
   id: number
   content: string
   rating: number
   student: Student
-  course?: Course
   verified: boolean
   created_at: string
   completion_date?: string

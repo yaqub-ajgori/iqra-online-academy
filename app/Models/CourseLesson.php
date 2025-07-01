@@ -23,7 +23,7 @@ class CourseLesson extends Model
         'video_duration',
         'video_provider',
         'reading_time_minutes',
-        'is_preview',
+
         'is_mandatory',
         'sort_order',
         'is_active',
@@ -35,7 +35,7 @@ class CourseLesson extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_preview' => 'boolean',
+
         'is_mandatory' => 'boolean',
         'is_active' => 'boolean',
         'sort_order' => 'integer',
@@ -91,13 +91,7 @@ class CourseLesson extends Model
         return $query->where('lesson_type', $type);
     }
 
-    /**
-     * Scope: Filter preview lessons
-     */
-    public function scopePreview($query)
-    {
-        return $query->where('is_preview', true);
-    }
+
 
     /**
      * Get formatted video duration

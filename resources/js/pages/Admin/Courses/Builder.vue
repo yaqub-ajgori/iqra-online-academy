@@ -326,16 +326,7 @@
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <label class="flex items-center">
-                    <input 
-                      v-model="lessonForm.is_preview"
-                      type="checkbox"
-                      class="mr-2 rounded border-gray-300 text-[#2d5a27] focus:border-[#2d5a27] focus:ring focus:ring-green-200 focus:ring-opacity-50"
-                    />
-                    <span class="text-sm text-gray-700">Free Preview</span>
-                  </label>
-                </div>
+
                 <div>
                   <label class="flex items-center">
                     <input 
@@ -412,7 +403,7 @@
                         <span class="capitalize">{{ lesson.lesson_type }}</span>
                         <span v-if="lesson.video_duration">{{ lesson.video_duration }} min</span>
                         <span v-if="lesson.reading_time_minutes">{{ lesson.reading_time_minutes }} min read</span>
-                        <span v-if="lesson.is_preview" class="text-[#5f5fcd]">Preview</span>
+
                         <span v-if="lesson.is_mandatory" class="text-orange-600">Mandatory</span>
                       </div>
                     </div>
@@ -528,16 +519,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                      <div>
-                        <label class="flex items-center">
-                          <input 
-                            v-model="editLessonForm.is_preview"
-                            type="checkbox"
-                            class="mr-2 rounded border-gray-300 text-[#2d5a27] focus:border-[#2d5a27] focus:ring focus:ring-green-200 focus:ring-opacity-50"
-                          />
-                          <span class="text-sm text-gray-700">Free Preview</span>
-                        </label>
-                      </div>
                       <div>
                         <label class="flex items-center">
                           <input 
@@ -677,7 +658,6 @@ const lessonForm = ref({
   video_duration: null,
   video_provider: '',
   reading_time_minutes: null,
-  is_preview: false,
   is_mandatory: false,
   is_active: true
 })
@@ -691,7 +671,6 @@ const editLessonForm = ref({
   video_duration: null,
   video_provider: '',
   reading_time_minutes: null,
-  is_preview: false,
   is_mandatory: false,
   is_active: true
 })
@@ -800,7 +779,6 @@ const editLesson = (lesson) => {
     video_duration: lesson.video_duration,
     video_provider: lesson.video_provider || '',
     reading_time_minutes: lesson.reading_time_minutes,
-    is_preview: lesson.is_preview,
     is_mandatory: lesson.is_mandatory,
     is_active: lesson.is_active
   }
@@ -894,7 +872,6 @@ const resetLessonForm = () => {
     video_duration: null,
     video_provider: '',
     reading_time_minutes: null,
-    is_preview: false,
     is_mandatory: false,
     is_active: true
   }
@@ -910,7 +887,6 @@ const resetEditLessonForm = () => {
     video_duration: null,
     video_provider: '',
     reading_time_minutes: null,
-    is_preview: false,
     is_mandatory: false,
     is_active: true
   }

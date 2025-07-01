@@ -62,19 +62,7 @@
               </div>
             </div>
 
-            <!-- Course Video Preview -->
-            <div class="mb-12">
-              <div class="aspect-video rounded-2xl overflow-hidden shadow-2xl relative">
-                <!-- Video iframe without autoplay -->
-                <iframe 
-                  :src="course.preview_video_url" 
-                  class="w-full h-full" 
-                  frameborder="0" 
-                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  allowfullscreen
-                ></iframe>
-              </div>
-            </div>
+
 
             <!-- Course Content Tabs -->
             <div class="mb-12">
@@ -101,15 +89,7 @@
                 <h3>কোর্স সম্পর্কে</h3>
                 <p>{{ course.full_description }}</p>
                 
-                <h4>আপনি যা শিখবেন:</h4>
-                <ul>
-                  <li v-for="outcome in course.learning_outcomes" :key="outcome">{{ outcome }}</li>
-                </ul>
-
-                <h4>কোর্সের প্রয়োজনীয়তা:</h4>
-                <ul>
-                  <li v-for="requirement in course.requirements" :key="requirement">{{ requirement }}</li>
-                </ul>
+                <!-- Course content will be displayed through modules and lessons -->
               </div>
 
               <div v-if="activeTab === 'curriculum'" class="space-y-4">
@@ -247,11 +227,11 @@
                   <ul class="space-y-3 text-sm text-gray-600">
                     <li class="flex items-center space-x-3">
                       <CheckIcon class="w-4 h-4 text-[#2d5a27]" />
-                      <span>{{ course.total_lessons }} টি লেসন</span>
+                      <span>{{ course.total_lessons || 0 }} টি লেসন</span>
                     </li>
                     <li class="flex items-center space-x-3">
                       <CheckIcon class="w-4 h-4 text-[#2d5a27]" />
-                      <span>{{ course.total_duration }} ঘণ্টা কন্টেন্ট</span>
+                      <span>{{ course.total_duration || 0 }} ঘণ্টা কন্টেন্ট</span>
                     </li>
                     <li class="flex items-center space-x-3">
                       <CheckIcon class="w-4 h-4 text-[#2d5a27]" />
@@ -296,7 +276,6 @@
             :course="relatedCourse"
             @enroll="handleCourseEnroll"
             @favorite="handleCourseFavorite"
-            @preview="handleCoursePreview"
           />
         </div>
       </div>
@@ -306,7 +285,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Link, Head, router } from '@inertiajs/vue3'
+import { Link, Head, router, usePage } from '@inertiajs/vue3'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import SectionHeader from '@/components/Frontend/SectionHeader.vue'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
@@ -323,8 +302,60 @@ import {
   CheckIcon
 } from 'lucide-vue-next'
 
-// Mock course data - in real app this would come from props
-const course = ref({
+// Type definitions
+interface Course {
+  id: number
+  slug: string
+  title: string
+  description: string
+  full_description?: string
+  image?: string
+  category: string
+  level: 'beginner' | 'intermediate' | 'advanced'
+  price: number
+  duration: string
+  students_count: number
+  rating: number
+  reviews_count?: number
+  total_lessons?: number
+  total_duration?: number
+  learning_outcomes?: string[]
+  requirements?: string[]
+  instructor: {
+    name: string
+    title?: string
+    avatar?: string
+    bio?: string
+    courses_count?: number
+    students_count?: number
+    rating?: number
+  }
+  modules?: Array<{
+    id: number
+    title: string
+    lessons_count: number
+    duration: string
+    lessons: Array<{
+      id: number
+      title: string
+      duration: string
+    }>
+  }>
+  reviews?: Array<{
+    id: number
+    student: {
+      name: string
+      avatar: string
+    }
+    rating: number
+    date: string
+    comment: string
+  }>
+}
+
+// Get course data from props
+const page = usePage()
+const course = ref<Course>(page.props.course as Course || {
   id: 1,
   title: 'কুরআন তিলাওয়াত ও তাজবীদ',
   slug: 'quran-tilawat-tajwid',
@@ -409,7 +440,7 @@ const course = ref({
   ]
 })
 
-const relatedCourses = ref([
+const relatedCourses = ref<Course[]>(page.props.related_courses as Course[] || [
   {
     id: 2,
     title: 'হাদিস ও সুন্নাহর আলোকে জীবনযাত্রা',
@@ -425,10 +456,11 @@ const relatedCourses = ref([
       name: 'উস্তাদ আবদুল কারিম',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face'
     },
-    has_preview: true
+    slug: 'hadith-sunnah-life'
   },
   {
     id: 3,
+    slug: 'islamic-fiqh-daily',
     title: 'ইসলামিক ফিকহ - দৈনন্দিন মাসায়েল',
     description: 'দৈনন্দিন জীবনের ইসলামিক সমাধান। ইবাদত, মুআমালাত এবং সামাজিক বিষয়াবলী।',
     image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=250&fit=crop',
@@ -441,8 +473,7 @@ const relatedCourses = ref([
     instructor: {
       name: 'উস্তাদ মোহাম্মদ হাসান',
       avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=40&h=40&fit=crop&crop=face'
-    },
-    has_preview: true
+    }
   }
 ])
 
@@ -479,33 +510,27 @@ const toggleModule = (moduleId: number) => {
 
 const handleEnroll = () => {
   if (course.value.price === 0) {
-    console.log('Free enrollment')
     isEnrolled.value = true
   } else {
-    console.log('Redirecting to payment')
     // Redirect to payment page with course information
     router.visit(route('frontend.payment.checkout', { course: course.value.slug }))
   }
 }
 
 const handleContinue = () => {
-  console.log('Continuing course')
   // In real app, redirect to learning route
 }
 
-
-
 const handleCourseEnroll = (courseData: any) => {
-  console.log('Enrolling in related course:', courseData.title)
+  // Redirect to payment page for related course enrollment
+  router.visit(route('frontend.payment.checkout', { course: courseData.slug }))
 }
 
 const handleCourseFavorite = (courseData: any, favorite: boolean) => {
-  console.log('Related course favorite toggled:', courseData.title, favorite)
+  // Handle related course favorite toggle
 }
 
-const handleCoursePreview = (courseData: any) => {
-  console.log('Opening related course preview:', courseData.title)
-}
+
 </script>
 
 <style scoped>

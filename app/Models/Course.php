@@ -19,24 +19,14 @@ class Course extends Model
         'level',
         'instructor_id',
         'thumbnail_image',
-        'preview_video_url',
         'price',
         'currency',
         'discount_price',
         'discount_expires_at',
         'duration_hours',
-        'total_lessons',
-        'total_quizzes',
-        'total_assignments',
-        'max_students',
-        'current_students',
-        'enrollment_starts_at',
-        'enrollment_ends_at',
         'status',
         'is_featured',
         'is_free',
-        'average_rating',
-        'total_reviews',
         'published_at',
     ];
 
@@ -44,11 +34,8 @@ class Course extends Model
         'price' => 'decimal:2',
         'discount_price' => 'decimal:2',
         'discount_expires_at' => 'datetime',
-        'enrollment_starts_at' => 'datetime',
-        'enrollment_ends_at' => 'datetime',
         'is_featured' => 'boolean',
         'is_free' => 'boolean',
-        'average_rating' => 'decimal:2',
         'published_at' => 'datetime',
     ];
 
@@ -64,6 +51,14 @@ class Course extends Model
      * Get the course's instructor.
      */
     public function instructor(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class, 'instructor_id');
+    }
+
+    /**
+     * Get the course's teacher (alias for instructor).
+     */
+    public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'instructor_id');
     }
@@ -119,6 +114,41 @@ class Course extends Model
     }
 
     /**
+     * Check if course is published.
+     */
+    public function getIsPublishedAttribute(): bool
+    {
+        return $this->status === 'published';
+    }
+
+    /**
+     * Get thumbnail attribute.
+     */
+    public function getThumbnailAttribute(): ?string
+    {
+        return $this->thumbnail_image;
+    }
+
+    /**
+     * Get duration attribute.
+     */
+    public function getDurationAttribute(): string
+    {
+        if ($this->duration_hours) {
+            return $this->duration_hours . ' ঘন্টা';
+        }
+        return 'স্ব-নির্ধারিত';
+    }
+
+    /**
+     * Get enrollments count.
+     */
+    public function getEnrollmentsCountAttribute(): int
+    {
+        return $this->enrollments()->count();
+    }
+
+    /**
      * Scope to get only featured courses.
      */
     public function scopeFeatured($query)
@@ -132,28 +162,6 @@ class Course extends Model
     public function scopeFree($query)
     {
         return $query->where('is_free', true);
-    }
-
-    /**
-     * Check if course enrollment is open.
-     */
-    public function isEnrollmentOpen(): bool
-    {
-        $now = now();
-        
-        if ($this->enrollment_starts_at && $now->isBefore($this->enrollment_starts_at)) {
-            return false;
-        }
-        
-        if ($this->enrollment_ends_at && $now->isAfter($this->enrollment_ends_at)) {
-            return false;
-        }
-        
-        if ($this->max_students && $this->current_students >= $this->max_students) {
-            return false;
-        }
-        
-        return $this->status === 'published';
     }
 
     /**
