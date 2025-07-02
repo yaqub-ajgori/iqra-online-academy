@@ -71,8 +71,28 @@
               </Link>
             </div>
 
-            <!-- Search Bar -->
-
+            <!-- Course Search Form (Desktop) -->
+            <form
+              class="hidden lg:flex items-center mx-4 w-72 relative"
+              @submit.prevent="onSearchSubmit"
+              role="search"
+              aria-label="কোর্স অনুসন্ধান"
+            >
+              <label for="course-search" class="sr-only">কোর্স অনুসন্ধান করুন</label>
+              <input
+                id="course-search"
+                v-model="searchQuery"
+                type="text"
+                placeholder="কোর্স অনুসন্ধান করুন..."
+                class="w-full py-2 pl-4 pr-10 rounded-xl border border-gray-200 focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/20 bg-white shadow-sm text-sm text-gray-700 placeholder-gray-400 transition-all duration-200"
+                autocomplete="off"
+                :disabled="searching"
+              />
+              <button type="submit" :disabled="searching" class="absolute right-2 top-1/2 -translate-y-1/2 text-[#5f5fcd] hover:text-[#2d5a27] focus:outline-none">
+                <svg v-if="!searching" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" /></svg>
+                <svg v-else class="animate-spin h-5 w-5 text-[#5f5fcd]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>
+              </button>
+            </form>
 
             <!-- Enhanced Auth Buttons -->
             <div class="hidden md:flex items-center space-x-4">
@@ -307,9 +327,9 @@
         </div>
         
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div class="grid grid-cols-1 lg:grid-cols-8 gap-12">
             <!-- Enhanced Brand Section -->
-            <div class="lg:col-span-4">
+            <div class="lg:col-span-2">
               <div class="flex items-center space-x-4 mb-6">
                 <div class="relative">
                   <div class="w-16 h-16 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-xl flex items-center justify-center shadow-islamic-lg">
@@ -318,33 +338,13 @@
                   <div class="absolute -top-2 -right-2 w-6 h-6 bg-[#d4a574] rounded-full animate-pulse shadow-lg"></div>
                 </div>
                 <div>
-                  <h2 class="text-3xl font-bold text-gradient-islamic">ইকরা অনলাইন একাডেমি</h2>
+                  <h2 class="text-lg font-semibold text-gray-200">ইকরা অনলাইন একাডেমি</h2>
                 </div>
               </div>
               <p class="text-gray-300 mb-6 leading-relaxed text-lg">
                 ইসলামিক শিক্ষায় আধুনিক প্রযুক্তির সমন্বয়ে গড়ে উঠেছে ইকরা অনলাইন একাডেমি। 
                 কুরআন, হাদিস ও ইসলামিক জ্ঞানচর্চায় আমরা আপনার সাথে রয়েছি।
               </p>
-              
-              <!-- Newsletter Signup -->
-              <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-6">
-                <h4 class="text-lg font-semibold mb-3 text-[#d4a574]">নিউজলেটার সাবস্ক্রাইব</h4>
-                <p class="text-gray-300 text-sm mb-4">নতুন কোর্স ও আপডেট পেতে সাবস্ক্রাইব করুন</p>
-                <div class="flex space-x-2">
-                  <input 
-                    type="email" 
-                    placeholder="আপনার ইমেইল" 
-                    class="flex-1 px-4 py-2 bg-white/20 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-[#d4a574] focus:border-transparent transition-all duration-200"
-                    v-model="newsletterEmail"
-                  />
-                  <button 
-                    @click="subscribeNewsletter"
-                    class="px-4 py-2 bg-gradient-to-r from-[#d4a574] to-[#b8945f] text-white rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-                  >
-                    <SendIcon class="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
               
               <!-- Enhanced Social Links -->
               <div class="flex space-x-4">
@@ -479,40 +479,6 @@
                 </li>
               </ul>
             </div>
-
-            <!-- Support & Help -->
-            <div class="lg:col-span-2">
-              <h3 class="text-xl font-semibold mb-6 text-[#d4a574] flex items-center">
-                <HelpCircleIcon class="w-5 h-5 mr-2" />
-                সহায়তা
-              </h3>
-              <ul class="space-y-3">
-                <li>
-                  <Link :href="route('frontend.contact')" class="text-gray-300 hover:text-white transition-colors flex items-center group">
-                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
-                    সাপোর্ট সেন্টার
-                  </Link>
-                </li>
-                <li>
-                  <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center group">
-                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
-                    FAQ
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center group">
-                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
-                    টেকনিক্যাল সাপোর্ট
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center group">
-                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
-                    লাইভ চ্যাট
-                  </a>
-                </li>
-              </ul>
-            </div>
           </div>
 
           <!-- Enhanced Bottom Border -->
@@ -605,9 +571,6 @@ const mobileMenuOpen = ref(false)
 // User dropdown state
 const userDropdownOpen = ref(false)
 
-// Newsletter subscription
-const newsletterEmail = ref('')
-
 // Notification toast ref
 const notificationToast = ref()
 
@@ -617,18 +580,9 @@ const { toasts, removeToast } = useToast()
 // Page composable for accessing auth data
 const page = usePage()
 
-
-
-// Handle newsletter subscription
-const subscribeNewsletter = () => {
-  if (newsletterEmail.value.trim()) {
-    // Show success message
-    if (notificationToast.value) {
-      notificationToast.value.show('সফলভাবে সাবস্ক্রাইব করা হয়েছে!', 'success')
-    }
-    newsletterEmail.value = ''
-  }
-}
+// Search query state
+const searchQuery = ref('')
+const searching = ref(false)
 
 // Check if user is admin (based on current route or user data)
 const isAdmin = () => {
@@ -686,6 +640,23 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
+
+function onSearchSubmit() {
+  const query = searchQuery.value.trim()
+  if (!query) return
+  // Prevent redundant navigation
+  const currentUrl = window.location.pathname + window.location.search
+  const targetUrl = route('frontend.courses.index', { search: query })
+  if (currentUrl === targetUrl) return
+  searching.value = true
+  router.get(route('frontend.courses.index'), { search: query }, {
+    onFinish: () => {
+      searching.value = false
+      // Optionally clear the search field after navigation
+      // searchQuery.value = ''
+    }
+  })
+}
 </script>
 
 <style scoped>

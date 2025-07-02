@@ -151,7 +151,6 @@
                                     >
                                         <!-- Animated background overlay -->
                                         <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                                        <LoaderCircle v-if="form.processing" class="w-4 h-4 mr-2 animate-spin relative z-10" />
                                         <span class="relative z-10">{{ form.processing ? 'লগইন হচ্ছে...' : 'লগইন করুন' }}</span>
                                     </Button>
                                 </form>
@@ -198,7 +197,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Head } from '@inertiajs/vue3'
-import { LoaderCircle, Mail, Lock, User, ArrowLeft, ArrowRight, BookOpen, Users, Tablet, Award } from 'lucide-vue-next'
+import { Mail, Lock, User, ArrowLeft, ArrowRight, BookOpen, Users, Tablet, Award } from 'lucide-vue-next'
+import { useToast } from '@/composables/useToast'
 
 defineProps({
   canResetPassword: Boolean,
@@ -211,8 +211,21 @@ const form = useForm({
   remember: false,
 })
 
+const { error: showError } = useToast()
+
 const submit = () => {
   form.post(route('login'), {
+    onError: (errors) => {
+      // Rate limit error (from backend or HTTP 429)
+      if (form.errors.email && form.errors.email.includes('seconds')) {
+        showError('Too many login attempts. Please try again in a minute.')
+      } else if (form.errors.email || form.errors.password) {
+        showError('Login failed. Please check your credentials.')
+      } else {
+        showError('An unexpected error occurred. Please try again.')
+      }
+      form.reset('password')
+    },
     onFinish: () => form.reset('password'),
   })
 }

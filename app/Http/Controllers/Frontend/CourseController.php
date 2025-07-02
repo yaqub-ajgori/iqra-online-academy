@@ -8,6 +8,7 @@ use App\Models\CourseCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\DB;
 
 class CourseController extends Controller
 {
@@ -16,11 +17,25 @@ class CourseController extends Controller
      */
     public function index(Request $request): Response
     {
-        // Get courses
-        $courses = Course::with(['category', 'teacher'])
-            ->where('status', 'published')
-            ->orderBy('created_at', 'desc')
-            ->paginate(12);
+        $query = Course::with(['category', 'teacher'])
+            ->where('status', 'published');
+
+        // Robust search filter with full-text search
+        if ($search = $request->input('search')) {
+            // Use full-text search for MySQL
+            $dbDriver = DB::getDriverName();
+            if ($dbDriver === 'mysql') {
+                $query->whereRaw('MATCH(title, full_description) AGAINST (? IN BOOLEAN MODE)', [$search]);
+            } else {
+                // Fallback for other DBs
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhere('full_description', 'like', "%{$search}%");
+                });
+            }
+        }
+
+        $courses = $query->orderBy('created_at', 'desc')->paginate(12)->withQueryString();
 
         // Transform courses for frontend - match HomeController structure
         $courses->getCollection()->transform(function ($course) {
@@ -49,6 +64,7 @@ class CourseController extends Controller
 
         return Inertia::render('Frontend/CoursesPage', [
             'courses' => $courses,
+            'search' => $search,
             'stats' => [
                 'total_courses' => Course::where('status', 'published')->count(),
                 'total_categories' => CourseCategory::count(),

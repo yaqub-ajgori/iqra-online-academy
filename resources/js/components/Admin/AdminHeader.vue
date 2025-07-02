@@ -15,23 +15,8 @@
           </Link>
         </div>
 
-        <!-- Right section - Search and user menu -->
+        <!-- Right section - User menu only (search removed) -->
         <div class="flex-1 flex items-center justify-end px-6 space-x-4">
-          <!-- Search -->
-          <div class="hidden md:block">
-            <div class="relative">
-              <Icon 
-                name="search" 
-                class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-              />
-              <input
-                type="text"
-                placeholder="Search..."
-                class="w-64 rounded-lg border border-gray-200 bg-gray-50 pl-10 pr-4 py-2.5 text-sm text-gray-900 placeholder-gray-500 focus:bg-white focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/20 transition-all"
-              />
-            </div>
-          </div>
-
           <!-- User menu -->
           <div class="relative" ref="userDropdownRef">
             <button 
@@ -44,7 +29,6 @@
               <span class="hidden xl:block text-sm font-medium text-gray-700">{{ user?.name }}</span>
               <Icon name="chevronDown" class="h-4 w-4 text-gray-500 transition-transform" :class="{ 'rotate-180': userDropdownOpen }" />
             </button>
-            
             <!-- Dropdown Menu -->
             <Transition
               enter-active-class="transition ease-out duration-100"
@@ -59,16 +43,10 @@
                 class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
                 @click.stop
               >
-                <!-- User Type Indicator -->
-                <div class="px-4 py-2 text-xs text-gray-500 bg-gray-50 border-b border-gray-100">
-                  🔧 অ্যাডমিন অ্যাকাউন্ট
-                </div>
-                
                 <!-- User Email -->
                 <div class="px-4 py-2 text-sm text-gray-600 border-b border-gray-100">
                   {{ user?.email }}
                 </div>
-                
                 <Link 
                   :href="route('admin.settings')" 
                   class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
@@ -77,9 +55,7 @@
                   <Icon name="settings" class="w-4 h-4 mr-3" />
                   Settings
                 </Link>
-                
                 <div class="border-t border-gray-200 my-2"></div>
-                
                 <button 
                   @click="logout"
                   class="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
@@ -107,7 +83,6 @@
             >
               <Icon name="menu" class="h-6 w-6" />
             </button>
-
             <!-- Mobile Logo -->
             <Link href="/admin" class="flex items-center space-x-2">
               <div class="w-8 h-8 bg-gradient-to-br from-[#2d5a27] to-[#5f5fcd] rounded-lg flex items-center justify-center">
@@ -118,7 +93,6 @@
               </span>
             </Link>
           </div>
-
           <!-- Mobile right side -->
           <div class="flex items-center">
             <!-- Mobile user menu -->
@@ -132,7 +106,6 @@
                 </div>
                 <Icon name="chevronDown" class="h-4 w-4 text-gray-500 transition-transform" :class="{ 'rotate-180': mobileDropdownOpen }" />
               </button>
-              
               <!-- Mobile Dropdown Menu -->
               <Transition
                 enter-active-class="transition ease-out duration-100"
@@ -147,16 +120,10 @@
                   class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
                   @click.stop
                 >
-                  <!-- User Type Indicator -->
-                  <div class="px-4 py-2 text-xs text-gray-500 bg-gray-50 border-b border-gray-100">
-                    🔧 অ্যাডমিন অ্যাকাউন্ট
-                  </div>
-                  
                   <!-- User Email -->
                   <div class="px-4 py-2 text-sm text-gray-600 border-b border-gray-100">
                     {{ user?.email }}
                   </div>
-                  
                   <Link 
                     :href="route('admin.settings')" 
                     class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
@@ -165,9 +132,7 @@
                     <Icon name="settings" class="w-4 h-4 mr-3" />
                     Settings
                   </Link>
-                  
                   <div class="border-t border-gray-200 my-2"></div>
-                  
                   <button 
                     @click="logout"
                     class="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"

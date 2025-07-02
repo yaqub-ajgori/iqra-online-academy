@@ -2,30 +2,8 @@
   <div class="h-screen bg-gray-900 flex flex-col overflow-hidden">
     <Head :title="`${currentLesson?.title || 'Loading...'} - ${course?.title || 'Course'}`" />
 
-    <!-- Loading State -->
-    <div v-if="loading" class="h-screen flex items-center justify-center">
-      <div class="text-center">
-        <ProgressIndicator type="spinner" :size="48" show-label label="কোর্স লোড হচ্ছে..." />
-        <p class="text-gray-400 mt-4">আপনার শিক্ষার যাত্রা প্রস্তুত হচ্ছে...</p>
-      </div>
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="h-screen flex items-center justify-center">
-      <div class="text-center max-w-md mx-auto px-4">
-        <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertTriangleIcon class="w-12 h-12 text-red-500" />
-        </div>
-        <h3 class="text-xl font-semibold text-white mb-4">কোর্স লোড করতে সমস্যা হয়েছে</h3>
-        <p class="text-gray-400 mb-6">{{ error }}</p>
-        <PrimaryButton @click="loadCourseData" variant="outline" class="text-white border-white/20">
-          আবার চেষ্টা করুন
-        </PrimaryButton>
-      </div>
-    </div>
-
     <!-- Main Learning Interface -->
-    <div v-else class="h-screen flex flex-col overflow-hidden">
+    <div class="h-screen flex flex-col overflow-hidden">
       <!-- Header Bar -->
       <header class="bg-gray-800 border-b border-gray-700 px-6 py-3 flex items-center justify-between z-10">
         <div class="flex items-center space-x-4">
@@ -170,7 +148,7 @@
           <div class="flex-1 bg-black flex items-center justify-center">
             <!-- Loading Content -->
             <div v-if="contentLoading" class="text-center">
-              <ProgressIndicator type="spinner" :size="48" show-label label="কনটেন্ট লোড হচ্ছে..." />
+              Loading...
             </div>
 
             <!-- Video Player -->
@@ -285,7 +263,6 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { router, Head, usePage } from '@inertiajs/vue3'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
-import ProgressIndicator from '@/components/Frontend/ProgressIndicator.vue'
 import {
   ArrowLeftIcon,
   PanelLeftIcon,
@@ -339,9 +316,7 @@ interface Course {
 const page = usePage()
 const courseSlug = computed(() => (page.props.course_slug as string) || '')
 const course = ref<Course | null>(null)
-const loading = ref(true)
 const contentLoading = ref(false)
-const error = ref('')
 const markingComplete = ref(false)
 
 // State
@@ -373,9 +348,6 @@ const hasNextLesson = computed(() => currentLessonIndex.value < totalLessons.val
 
 // Methods
 const loadCourseData = async () => {
-  loading.value = true
-  error.value = ''
-  
   try {
     await router.get(route('frontend.learning.show', courseSlug.value), {}, {
       preserveState: true,
@@ -398,10 +370,7 @@ const loadCourseData = async () => {
       }
     }
   } catch (err) {
-    error.value = 'কোর্স লোড করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।'
     console.error('Error loading course:', err)
-  } finally {
-    loading.value = false
   }
 }
 

@@ -12,6 +12,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rule;
+use App\Http\Requests\Admin\EnrollmentRequest;
 
 class EnrollmentController extends Controller
 {
@@ -86,22 +87,9 @@ class EnrollmentController extends Controller
     /**
      * Store a newly created enrollment.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(EnrollmentRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'student_id' => ['required', 'exists:students,id'],
-            'course_id' => ['required', 'exists:courses,id'],
-            'enrolled_at' => ['required', 'date'],
-            'enrollment_type' => ['required', Rule::in(['paid', 'free', 'scholarship', 'trial'])],
-            'payment_id' => ['nullable', 'exists:payments,id'],
-            'amount_paid' => ['required', 'numeric', 'min:0'],
-            'currency' => ['required', 'string', 'max:3'],
-            'payment_status' => ['required', Rule::in(['pending', 'completed', 'failed', 'refunded'])],
-            'progress_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'lessons_completed' => ['nullable', 'integer', 'min:0'],
-            'is_completed' => ['boolean'],
-            'is_active' => ['boolean'],
-        ]);
+        $validated = $request->validated();
 
         // Check for unique student-course combination
         $existingEnrollment = CourseEnrollment::where('student_id', $validated['student_id'])
@@ -175,22 +163,9 @@ class EnrollmentController extends Controller
     /**
      * Update the specified enrollment.
      */
-    public function update(Request $request, CourseEnrollment $enrollment): RedirectResponse
+    public function update(EnrollmentRequest $request, CourseEnrollment $enrollment): RedirectResponse
     {
-        $validated = $request->validate([
-            'student_id' => ['required', 'exists:students,id'],
-            'course_id' => ['required', 'exists:courses,id'],
-            'enrolled_at' => ['required', 'date'],
-            'enrollment_type' => ['required', Rule::in(['paid', 'free', 'scholarship', 'trial'])],
-            'payment_id' => ['nullable', 'exists:payments,id'],
-            'amount_paid' => ['required', 'numeric', 'min:0'],
-            'currency' => ['required', 'string', 'max:3'],
-            'payment_status' => ['required', Rule::in(['pending', 'completed', 'failed', 'refunded'])],
-            'progress_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'lessons_completed' => ['nullable', 'integer', 'min:0'],
-            'is_completed' => ['boolean'],
-            'is_active' => ['boolean'],
-        ]);
+        $validated = $request->validated();
 
         // Check for unique student-course combination (excluding current enrollment)
         $existingEnrollment = CourseEnrollment::where('student_id', $validated['student_id'])

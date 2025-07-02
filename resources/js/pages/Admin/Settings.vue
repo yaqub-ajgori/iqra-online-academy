@@ -56,7 +56,6 @@
                 :disabled="profileForm.processing"
                 variant="primary"
               >
-                <Icon v-if="profileForm.processing" name="loader-2" class="mr-2 h-4 w-4 animate-spin" />
                 {{ profileForm.processing ? 'Saving...' : 'Save Changes' }}
               </Button>
             </div>
@@ -124,7 +123,6 @@
                 :disabled="passwordForm.processing"
                 variant="primary"
               >
-                <Icon v-if="passwordForm.processing" name="loader-2" class="mr-2 h-4 w-4 animate-spin" />
                 {{ passwordForm.processing ? 'Updating...' : 'Update Password' }}
               </Button>
             </div>

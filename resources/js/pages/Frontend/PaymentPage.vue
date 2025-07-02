@@ -2,30 +2,8 @@
   <FrontendLayout title="পেমেন্ট - ইকরা অনলাইন একাডেমি">
     <Head :title="`পেমেন্ট - ${course?.title || 'কোর্স'}`" />
 
-    <!-- Loading State -->
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
-      <div class="text-center">
-        <ProgressIndicator type="spinner" :size="48" show-label label="কোর্স তথ্য লোড হচ্ছে..." />
-        <p class="text-gray-500 mt-4">পেমেন্ট পৃষ্ঠা প্রস্তুত হচ্ছে...</p>
-      </div>
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="min-h-screen flex items-center justify-center">
-      <div class="text-center max-w-md mx-auto px-4">
-        <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertTriangleIcon class="w-12 h-12 text-red-500" />
-        </div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-4">কোর্স লোড করতে সমস্যা হয়েছে</h3>
-        <p class="text-gray-600 mb-6">{{ error }}</p>
-        <PrimaryButton @click="loadCourseData" variant="outline">
-          আবার চেষ্টা করুন
-        </PrimaryButton>
-      </div>
-    </div>
-
     <!-- Main Payment Interface -->
-    <div v-else>
+    <div>
       <!-- Payment Header -->
       <section class="py-8 bg-gradient-to-br from-[#5f5fcd]/5 via-white to-[#2d5a27]/3 border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -508,8 +486,6 @@ const props = defineProps<{
 }>()
 
 // State
-const loading = ref(true)
-const error = ref('')
 const course = ref<Course | null>(null)
 
 // Form state
@@ -580,9 +556,6 @@ const canSubmit = computed(() => {
 
 // Methods
 const loadCourseData = async () => {
-  loading.value = true
-  error.value = ''
-  
   try {
     const page = usePage()
     const courseSlug = page.props.course_slug as string
@@ -600,13 +573,10 @@ const loadCourseData = async () => {
     } else if (props.course) {
       course.value = props.course
     } else {
-      error.value = 'কোর্স তথ্য পাওয়া যায়নি।'
+      console.error('কোর্স তথ্য পাওয়া যায়নি।')
     }
   } catch (err) {
-    error.value = 'কোর্স লোড করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।'
-    console.error('Error loading course:', err)
-  } finally {
-    loading.value = false
+    console.error('কোর্স লোড করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।', err)
   }
 }
 

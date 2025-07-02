@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_locked',
+        'locked_until',
     ];
 
     /**
@@ -43,6 +45,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_locked' => 'boolean',
+            'locked_until' => 'datetime',
         ];
     }
 
@@ -100,5 +104,36 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->hasRole('admin');
+    }
+
+    /**
+     * Check if user account is locked.
+     */
+    public function isLocked(): bool
+    {
+        if (!$this->is_locked) return false;
+        if ($this->locked_until && now()->lessThan($this->locked_until)) return true;
+        // Auto-unlock if time has passed
+        if ($this->locked_until && now()->greaterThanOrEqualTo($this->locked_until)) {
+            $this->is_locked = false;
+            $this->locked_until = null;
+            $this->save();
+            return false;
+        }
+        return $this->is_locked;
+    }
+
+    /**
+     * Send the password reset notification.
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        if ($this->isAdmin()) {
+            $this->notify(new \App\Notifications\AdminResetPasswordNotification($token));
+        } elseif ($this->isStudent()) {
+            $this->notify(new \App\Notifications\StudentResetPasswordNotification($token));
+        } else {
+            parent::sendPasswordResetNotification($token);
+        }
     }
 }

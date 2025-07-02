@@ -53,6 +53,7 @@ return new class extends Migration
             $table->index('level', 'idx_courses_level');
             $table->index('is_featured', 'idx_courses_featured');
             $table->index('price', 'idx_courses_price');
+            $table->fullText(['title', 'full_description'], 'ft_courses_title_full_description');
         });
     }
 

@@ -7,7 +7,8 @@
     :class="buttonClasses"
     @click="handleClick"
   >
-    <LoaderIcon v-if="loading" class="w-4 h-4 mr-2 animate-spin" />
+    <span v-if="loading">
+    </span>
     <component v-if="icon && !loading" :is="icon" :class="iconClasses" />
     <span v-if="$slots.default">
       <slot />
@@ -17,7 +18,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { LoaderIcon } from 'lucide-vue-next'
 
 interface Props {
   variant?: 'primary' | 'secondary' | 'accent' | 'outline' | 'ghost' | 'destructive'

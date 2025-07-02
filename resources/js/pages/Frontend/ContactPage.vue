@@ -2,30 +2,8 @@
   <FrontendLayout title="যোগাযোগ - ইকরা অনলাইন একাডেমি">
     <Head title="যোগাযোগ - ইকরা অনলাইন একাডেমি" />
 
-    <!-- Loading State -->
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
-      <div class="text-center">
-        <ProgressIndicator type="spinner" :size="48" show-label label="তথ্য লোড হচ্ছে..." />
-        <p class="text-gray-500 mt-4">যোগাযোগের তথ্য প্রস্তুত হচ্ছে...</p>
-      </div>
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="min-h-screen flex items-center justify-center">
-      <div class="text-center max-w-md mx-auto px-4">
-        <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertTriangleIcon class="w-12 h-12 text-red-500" />
-        </div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-4">তথ্য লোড করতে সমস্যা হয়েছে</h3>
-        <p class="text-gray-600 mb-6">{{ error }}</p>
-        <PrimaryButton @click="loadContactData" variant="outline">
-          আবার চেষ্টা করুন
-        </PrimaryButton>
-      </div>
-    </div>
-
     <!-- Main Content -->
-    <div v-else>
+    <div>
       <!-- Page Header -->
       <section class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-20 relative overflow-hidden">
         <!-- Background Pattern -->
@@ -222,7 +200,6 @@ import { ref, onMounted } from 'vue'
 import { Head, router, usePage } from '@inertiajs/vue3'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
-import ProgressIndicator from '@/components/Frontend/ProgressIndicator.vue'
 import {
   MailIcon,
   PhoneIcon,
@@ -268,8 +245,6 @@ interface ContactData {
 }
 
 // State
-const loading = ref(true)
-const error = ref('')
 const contactData = ref<ContactData | null>(null)
 
 // Form state
@@ -292,9 +267,6 @@ const toast = useToast()
 
 // Methods
 const loadContactData = async () => {
-  loading.value = true
-  error.value = ''
-  
   try {
     await router.get(route('frontend.contact'), {}, {
       preserveState: true,
@@ -306,10 +278,7 @@ const loadContactData = async () => {
     const page = usePage()
     contactData.value = page.props.contactData as ContactData
   } catch (err) {
-    error.value = 'তথ্য লোড করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।'
     console.error('Error loading contact data:', err)
-  } finally {
-    loading.value = false
   }
 }
 

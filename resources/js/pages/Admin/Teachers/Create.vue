@@ -46,8 +46,7 @@
               :disabled="form.processing"
               variant="primary"
             >
-              <Icon v-if="form.processing" name="Loader2" class="h-4 w-4 animate-spin mr-2" />
-              <Icon v-else name="Plus" class="h-4 w-4 mr-2" />
+              <Icon v-if="!form.processing" name="Plus" class="h-4 w-4 mr-2" />
               {{ form.processing ? 'Creating...' : 'Create Teacher' }}
             </Button>
           </div>

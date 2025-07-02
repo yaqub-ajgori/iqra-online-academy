@@ -35,10 +35,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Loading State -->
         <div v-if="loading" class="text-center py-16">
-          <div class="inline-flex items-center px-4 py-2 rounded-full bg-[#5f5fcd]/10 text-[#5f5fcd] mb-4">
-            <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-[#5f5fcd] mr-2"></div>
-            কোর্স লোড হচ্ছে...
-          </div>
+          Loading...
         </div>
 
         <!-- Error State -->
@@ -204,6 +201,8 @@ const page = usePage()
 watch(() => page.props.courses, (newCourses) => {
   if (newCourses && typeof newCourses === 'object' && 'data' in newCourses) {
     courses.value = (newCourses as any).data || []
+  } else {
+    courses.value = []
   }
 }, { immediate: true })
 

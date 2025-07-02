@@ -18,13 +18,17 @@
 
       <!-- Form -->
       <form @submit.prevent="submit" class="space-y-8">
-        <!-- Basic Information -->
-        <div class="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-6">Basic Information</h2>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Course Title -->
-            <div class="md:col-span-2">
+        <!-- Section 1: Core Details -->
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2 text-gray-900">
+              <Icon name="BookOpen" class="w-5 h-5 text-blue-600" />
+              Basic Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-6">
+            <!-- Course Title (full width) -->
+            <div>
               <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
                 Course Title <span class="text-red-500">*</span>
               </label>
@@ -32,59 +36,57 @@
                 id="title"
                 v-model="form.title"
                 type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g., Quran Learning - Beginner Level"
                 required
               />
               <div v-if="errors?.title" class="mt-1 text-sm text-red-600">{{ errors.title }}</div>
             </div>
-
-            <!-- Category -->
-            <div>
-              <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">
-                Category
-              </label>
-              <select
-                id="category_id"
-                v-model="form.category_id"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              >
-                <option value="">Select Category (Optional)</option>
-                <option v-for="category in categories" :key="category.id" :value="category.id">
-                  {{ category.name }}
-                </option>
-              </select>
-              <div v-if="errors?.category_id" class="mt-1 text-sm text-red-600">{{ errors.category_id }}</div>
+            <!-- Category & Level (side by side) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">
+                  Category
+                </label>
+                <select
+                  id="category_id"
+                  v-model="form.category_id"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">Select Category (Optional)</option>
+                  <option v-for="category in categories" :key="category.id" :value="category.id">
+                    {{ category.name }}
+                  </option>
+                </select>
+                <div v-if="errors?.category_id" class="mt-1 text-sm text-red-600">{{ errors.category_id }}</div>
+              </div>
+              <div>
+                <label for="level" class="block text-sm font-medium text-gray-700 mb-2">
+                  Course Level <span class="text-red-500">*</span>
+                </label>
+                <select
+                  id="level"
+                  v-model="form.level"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                >
+                  <option value="">Select Level</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+                <div v-if="errors?.level" class="mt-1 text-sm text-red-600">{{ errors.level }}</div>
+              </div>
             </div>
-
-            <!-- Level -->
+            <!-- Primary Instructor (full width) -->
             <div>
-              <label for="level" class="block text-sm font-medium text-gray-700 mb-2">
-                Course Level <span class="text-red-500">*</span>
-              </label>
-              <select
-                id="level"
-                v-model="form.level"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                required
-              >
-                <option value="">Select Level</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
-              <div v-if="errors?.level" class="mt-1 text-sm text-red-600">{{ errors.level }}</div>
-            </div>
-
-            <!-- Instructor -->
-            <div class="md:col-span-2">
               <label for="instructor_id" class="block text-sm font-medium text-gray-700 mb-2">
                 Primary Instructor <span class="text-red-500">*</span>
               </label>
               <select
                 id="instructor_id"
                 v-model="form.instructor_id"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 required
               >
                 <option value="">Select Instructor</option>
@@ -94,215 +96,225 @@
               </select>
               <div v-if="errors?.instructor_id" class="mt-1 text-sm text-red-600">{{ errors.instructor_id }}</div>
             </div>
-
-            <!-- Full Description -->
-            <div class="md:col-span-2">
-              <RichTextEditor
-                v-model="form.full_description"
-                label="Course Description"
-                placeholder="Write a detailed description of the course..."
-                :error="errors?.full_description"
-                input-id="full_description"
-                min-height="250px"
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- Media & Content -->
-        <div class="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-6">Media & Content</h2>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Thumbnail Image -->
-            <div>
-              <label for="thumbnail_image" class="block text-sm font-medium text-gray-700 mb-2">
-                Thumbnail Image
-              </label>
-              <input
-                id="thumbnail_image"
-                @change="handleImageUpload"
-                type="file"
-                accept="image/*"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 file:mr-3 file:py-1 file:px-3 file:border-0 file:text-sm file:font-medium file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100"
-              />
-              <p class="mt-1 text-xs text-gray-500">Optional. Upload a course thumbnail image (JPG, PNG, WEBP max 2MB)</p>
-              <div v-if="errors?.thumbnail_image" class="mt-1 text-sm text-red-600">{{ errors.thumbnail_image }}</div>
-              
-              <!-- Image Preview -->
-              <div v-if="imagePreview" class="mt-3">
-                <img :src="imagePreview" alt="Preview" class="w-32 h-20 object-cover rounded-lg border" />
-                <button
-                  type="button"
-                  @click="removeImage"
-                  class="mt-1 text-xs text-red-600 hover:text-red-800"
-                >
-                  Remove image
-                </button>
-              </div>
-            </div>
-
-
-          </div>
-        </div>
-
-        <!-- Pricing & Duration -->
-        <div class="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-6">Pricing & Duration</h2>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Free Course Toggle -->
-            <div class="md:col-span-3">
-              <div class="flex items-center">
-                <input
-                  id="is_free"
-                  v-model="form.is_free"
-                  type="checkbox"
-                  class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                />
-                <label for="is_free" class="ml-2 block text-sm text-gray-900">
-                  This is a free course
+          </CardContent>
+        </Card>
+        <!-- Section 2: Description -->
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2 text-gray-900">
+              <Icon name="AlignLeft" class="w-5 h-5 text-indigo-600" />
+              Description
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RichTextEditor
+              v-model="form.full_description"
+              label="Course Description"
+              placeholder="Write a detailed description of the course..."
+              :error="errors?.full_description"
+              input-id="full_description"
+              min-height="250px"
+            />
+          </CardContent>
+        </Card>
+        <!-- Section 3: Media -->
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2 text-gray-900">
+              <Icon name="Image" class="w-5 h-5 text-purple-600" />
+              Media
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="thumbnail_image" class="block text-sm font-medium text-gray-700 mb-2">
+                  Thumbnail Image
+                  <span class="ml-1 text-xs text-gray-400">(JPG, PNG, WEBP max 2MB)</span>
                 </label>
-              </div>
-            </div>
-
-            <!-- Price -->
-            <div v-if="!form.is_free">
-              <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
-                Course Price <span class="text-red-500">*</span>
-              </label>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span class="text-gray-500 sm:text-sm">৳</span>
+                <div class="flex flex-col gap-2">
+                  <input
+                    id="thumbnail_image"
+                    @change="handleImageUpload"
+                    type="file"
+                    accept="image/*"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 file:mr-3 file:py-1 file:px-3 file:border-0 file:text-sm file:font-medium file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100"
+                  />
+                  <div v-if="imagePreview" class="flex items-center gap-3 mt-2">
+                    <img :src="imagePreview" alt="Preview" class="w-32 h-20 object-cover rounded-lg border" />
+                    <Button type="button" variant="ghost" size="sm" @click="removeImage">
+                      <Icon name="X" class="h-4 w-4 mr-1" /> Remove
+                    </Button>
+                  </div>
                 </div>
-                <input
-                  id="price"
-                  v-model="form.price"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  placeholder="0.00"
-                  :required="!form.is_free"
-                />
+                <p class="mt-1 text-xs text-gray-500">Optional. Upload a course thumbnail image for better visibility.</p>
+                <div v-if="errors?.thumbnail_image" class="mt-1 text-sm text-red-600">{{ errors.thumbnail_image }}</div>
               </div>
-              <div v-if="errors?.price" class="mt-1 text-sm text-red-600">{{ errors.price }}</div>
+              <div></div>
             </div>
-
-            <!-- Discount Price -->
-            <div v-if="!form.is_free">
-              <label for="discount_price" class="block text-sm font-medium text-gray-700 mb-2">
-                Discount Price
-              </label>
-              <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span class="text-gray-500 sm:text-sm">৳</span>
-                </div>
-                <input
-                  id="discount_price"
-                  v-model="form.discount_price"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                  placeholder="0.00"
-                />
-              </div>
-              <div v-if="errors?.discount_price" class="mt-1 text-sm text-red-600">{{ errors.discount_price }}</div>
-            </div>
-
-            <!-- Discount Expires At -->
-            <div v-if="!form.is_free && form.discount_price">
-              <label for="discount_expires_at" class="block text-sm font-medium text-gray-700 mb-2">
-                Discount Expires At
-              </label>
+          </CardContent>
+        </Card>
+        <!-- Section 4: Pricing & Duration -->
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2 text-gray-900">
+              <Icon name="CreditCard" class="w-5 h-5 text-green-600" />
+              Pricing & Duration
+            </CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-6">
+            <!-- Free Course Toggle (full width) -->
+            <div class="flex items-center gap-2 mb-2">
               <input
-                id="discount_expires_at"
-                v-model="form.discount_expires_at"
-                type="datetime-local"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              />
-              <div v-if="errors?.discount_expires_at" class="mt-1 text-sm text-red-600">{{ errors.discount_expires_at }}</div>
-            </div>
-
-            <!-- Duration Hours -->
-            <div>
-              <label for="duration_hours" class="block text-sm font-medium text-gray-700 mb-2">
-                Duration (Hours)
-              </label>
-              <input
-                id="duration_hours"
-                v-model="form.duration_hours"
-                type="number"
-                min="1"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                placeholder="e.g., 40"
-              />
-              <div v-if="errors?.duration_hours" class="mt-1 text-sm text-red-600">{{ errors.duration_hours }}</div>
-            </div>
-
-            <!-- Currency -->
-            <div>
-              <label for="currency" class="block text-sm font-medium text-gray-700 mb-2">
-                Currency
-              </label>
-              <select
-                id="currency"
-                v-model="form.currency"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-              >
-                <option value="BDT">BDT (৳)</option>
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-              </select>
-              <div v-if="errors?.currency" class="mt-1 text-sm text-red-600">{{ errors.currency }}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Course Settings -->
-        <div class="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 class="text-lg font-semibold text-gray-900 mb-6">Course Settings</h2>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Status -->
-            <div>
-              <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
-                Course Status <span class="text-red-500">*</span>
-              </label>
-              <select
-                id="status"
-                v-model="form.status"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                required
-              >
-                <option value="draft">Draft</option>
-                <option value="review">Under Review</option>
-                <option value="published">Published</option>
-                <option value="archived">Archived</option>
-              </select>
-              <div v-if="errors?.status" class="mt-1 text-sm text-red-600">{{ errors.status }}</div>
-            </div>
-
-            <!-- Featured -->
-            <div class="flex items-center pt-8">
-              <input
-                id="is_featured"
-                v-model="form.is_featured"
+                id="is_free"
+                v-model="form.is_free"
                 type="checkbox"
-                class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
               />
-              <label for="is_featured" class="ml-2 block text-sm text-gray-900">
-                Mark as Featured Course
+              <label for="is_free" class="block text-sm text-gray-900">
+                This is a free course
               </label>
+              <span class="ml-2 text-xs text-gray-400">(If checked, price fields will be hidden)</span>
             </div>
-          </div>
-        </div>
-
-        <!-- Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Price (left) -->
+              <div v-if="!form.is_free">
+                <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
+                  Course Price <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="text-gray-500 sm:text-sm">৳</span>
+                  </div>
+                  <input
+                    id="price"
+                    v-model="form.price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="0.00"
+                    :required="!form.is_free"
+                  />
+                </div>
+                <div v-if="errors?.price" class="mt-1 text-sm text-red-600">{{ errors.price }}</div>
+              </div>
+              <!-- Discount Price (right) -->
+              <div v-if="!form.is_free">
+                <label for="discount_price" class="block text-sm font-medium text-gray-700 mb-2">
+                  Discount Price
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="text-gray-500 sm:text-sm">৳</span>
+                  </div>
+                  <input
+                    id="discount_price"
+                    v-model="form.discount_price"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="0.00"
+                  />
+                </div>
+                <div v-if="errors?.discount_price" class="mt-1 text-sm text-red-600">{{ errors.discount_price }}</div>
+              </div>
+              <!-- Currency (left) -->
+              <div v-if="!form.is_free">
+                <label for="currency" class="block text-sm font-medium text-gray-700 mb-2">
+                  Currency
+                </label>
+                <select
+                  id="currency"
+                  v-model="form.currency"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                >
+                  <option value="BDT">BDT (৳)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                </select>
+                <div v-if="errors?.currency" class="mt-1 text-sm text-red-600">{{ errors.currency }}</div>
+              </div>
+              <!-- Discount Expires At (right) -->
+              <div v-if="!form.is_free && form.discount_price">
+                <label for="discount_expires_at" class="block text-sm font-medium text-gray-700 mb-2">
+                  Discount Expires At
+                </label>
+                <input
+                  id="discount_expires_at"
+                  v-model="form.discount_expires_at"
+                  type="datetime-local"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                />
+                <div v-if="errors?.discount_expires_at" class="mt-1 text-sm text-red-600">{{ errors.discount_expires_at }}</div>
+              </div>
+              <!-- Duration (right) -->
+              <div>
+                <label for="duration_hours" class="block text-sm font-medium text-gray-700 mb-2">
+                  Duration (Hours)
+                </label>
+                <input
+                  id="duration_hours"
+                  v-model="form.duration_hours"
+                  type="number"
+                  min="1"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                  placeholder="e.g., 40"
+                />
+                <div v-if="errors?.duration_hours" class="mt-1 text-sm text-red-600">{{ errors.duration_hours }}</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <!-- Section 5: Settings -->
+        <Card>
+          <CardHeader>
+            <CardTitle class="flex items-center gap-2 text-gray-900">
+              <Icon name="Settings" class="w-5 h-5 text-gray-700" />
+              Course Settings
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Status (left) -->
+              <div>
+                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">
+                  Course Status <span class="text-red-500">*</span>
+                </label>
+                <select
+                  id="status"
+                  v-model="form.status"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-700 focus:border-gray-700"
+                  required
+                >
+                  <option value="draft">Draft</option>
+                  <option value="review">Under Review</option>
+                  <option value="published">Published</option>
+                  <option value="archived">Archived</option>
+                </select>
+                <div v-if="errors?.status" class="mt-1 text-sm text-red-600">{{ errors.status }}</div>
+              </div>
+              <!-- Featured (right) -->
+              <div class="flex items-center pt-8">
+                <input
+                  id="is_featured"
+                  v-model="form.is_featured"
+                  type="checkbox"
+                  class="h-4 w-4 text-gray-700 focus:ring-gray-700 border-gray-300 rounded"
+                />
+                <label for="is_featured" class="ml-2 block text-sm text-gray-900">
+                  Mark as Featured Course
+                </label>
+                <span class="ml-2 text-xs text-gray-400">(Featured courses are highlighted in listings)</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <!-- Section 6: Actions -->
         <Card>
           <CardContent class="pt-6">
-            <div class="flex space-x-3 justify-end">
+            <div class="flex flex-col md:flex-row md:justify-between gap-3">
               <Link 
                 :href="route('admin.courses.index')"
                 :class="buttonVariants({ variant: 'outline' })"
@@ -314,8 +326,6 @@
                 variant="primary"
                 :disabled="processing"
               >
-                <Icon v-if="processing" name="Loader2" class="h-4 w-4 animate-spin" />
-                <Icon v-else name="Check" class="h-4 w-4" />
                 {{ processing ? 'Creating...' : 'Create Course' }}
               </Button>
             </div>
@@ -332,7 +342,7 @@ import { useForm } from '@inertiajs/vue3'
 import { Link } from '@inertiajs/vue3'
 import AdminLayout from '@/layouts/admin/AdminLayout.vue'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Icon from '@/components/Icon.vue'
 import RichTextEditor from '@/components/RichTextEditor.vue'
 import { useToast } from '@/composables/useToast'

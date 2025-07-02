@@ -34,11 +34,12 @@
             </div>
 
             <!-- Enhanced Hero Title with Typing Animation -->
-            <h1 class="text-4xl lg:text-6xl font-bold leading-tight mb-6">
+            <h1 class="text-4xl lg:text-6xl font-bold leading-tight mb-2">
               <span class="text-gradient-islamic animate-gradient-shift">ইকরা অনলাইন একাডেমি</span>
               <br>
               <span class="text-gray-800">তে স্বাগতম</span>
             </h1>
+            <h2 class="text-base text-[#5f5fcd] font-semibold mb-6">বাংলাদেশের #১ ইসলামিক অনলাইন একাডেমি</h2>
 
             <!-- Enhanced Value Proposition -->
             <p class="text-lg lg:text-xl text-gray-600 leading-relaxed mb-8 max-w-2xl">
@@ -120,6 +121,7 @@
                   src="https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=600&h=450&fit=crop" 
                   alt="ইসলামিক শিক্ষা - কুরআন ও ইসলামিক ক্যালিগ্রাফি"
                   class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
                 />
                 
                 <!-- Enhanced Islamic Pattern Overlay -->
@@ -128,11 +130,11 @@
               
               <!-- Enhanced Floating Elements -->
               <div class="absolute -top-4 -left-4 w-20 h-20 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-xl flex items-center justify-center shadow-lg animate-bounce">
-                <BookOpenIcon class="w-8 h-8 text-white" />
+                <BookOpenIcon class="w-8 h-8 text-white" aria-hidden="true" />
               </div>
               
               <div class="absolute -bottom-4 -right-4 w-16 h-16 bg-gradient-to-br from-[#d4a574] to-[#5f5fcd] rounded-xl flex items-center justify-center shadow-lg animate-bounce-delayed">
-                <AwardIcon class="w-6 h-6 text-white" />
+                <AwardIcon class="w-6 h-6 text-white" aria-hidden="true" />
               </div>
             </div>
 
@@ -246,70 +248,71 @@
         />
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- Enhanced Feature 1 -->
-          <div class="group text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm border border-gray-200/50 hover:border-[#5f5fcd]/30 hover:shadow-islamic transition-all duration-300 hover:scale-105">
-            <div class="w-16 h-16 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
-              <BookOpenIcon class="w-8 h-8 text-white" />
+          <!-- Feature 1 -->
+          <div class="group relative bg-white rounded-2xl p-8 shadow-islamic hover:shadow-islamic-lg transition-all duration-300 border border-gray-100 overflow-hidden text-center">
+            <div class="relative mb-6 flex justify-center">
+              <div class="w-12 h-12 bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10 rounded-full flex items-center justify-center">
+                <BookOpenIcon class="w-6 h-6 text-[#5f5fcd]" />
+              </div>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">অভিজ্ঞ শিক্ষকমণ্ডলী</h3>
-            <p class="text-gray-600 leading-relaxed">
-              দেশের সেরা আলেম ও ইসলামিক স্কলারদের তত্ত্বাবধানে তৈরি আমাদের সব কোর্স।
-            </p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4 group-hover:text-[#5f5fcd] transition-colors duration-200">অভিজ্ঞ শিক্ষকমণ্ডলী</h3>
+            <p class="text-gray-700 leading-relaxed text-base mb-2">দেশের সেরা আলেম ও ইসলামিক স্কলারদের তত্ত্বাবধানে তৈরি আমাদের সব কোর্স।</p>
+            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#d4a574] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
-
-          <!-- Enhanced Feature 2 -->
-          <div class="group text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm border border-gray-200/50 hover:border-[#5f5fcd]/30 hover:shadow-islamic transition-all duration-300 hover:scale-105">
-            <div class="w-16 h-16 bg-gradient-to-br from-[#2d5a27] to-[#d4a574] rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
-              <SmartphoneIcon class="w-8 h-8 text-white" />
+          <!-- Feature 2 -->
+          <div class="group relative bg-white rounded-2xl p-8 shadow-islamic hover:shadow-islamic-lg transition-all duration-300 border border-gray-100 overflow-hidden text-center">
+            <div class="relative mb-6 flex justify-center">
+              <div class="w-12 h-12 bg-gradient-to-br from-[#2d5a27]/10 to-[#d4a574]/10 rounded-full flex items-center justify-center">
+                <SmartphoneIcon class="w-6 h-6 text-[#2d5a27]" />
+              </div>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">ইন্টারঅ্যাক্টিভ শিক্ষা</h3>
-            <p class="text-gray-600 leading-relaxed">
-              অডিও, ইন্টারঅ্যাক্টিভ অনুশীলন, কুইজ এবং লাইভ সেশনের মাধ্যমে উপভোগ্য শিক্ষার পরিবেশ।
-            </p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4 group-hover:text-[#5f5fcd] transition-colors duration-200">ইন্টারঅ্যাক্টিভ শিক্ষা</h3>
+            <p class="text-gray-700 leading-relaxed text-base mb-2">অডিও, ইন্টারঅ্যাক্টিভ অনুশীলন, কুইজ এবং লাইভ সেশনের মাধ্যমে উপভোগ্য শিক্ষার পরিবেশ।</p>
+            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#d4a574] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
-
-          <!-- Enhanced Feature 3 -->
-          <div class="group text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm border border-gray-200/50 hover:border-[#5f5fcd]/30 hover:shadow-islamic transition-all duration-300 hover:scale-105">
-            <div class="w-16 h-16 bg-gradient-to-br from-[#d4a574] to-[#5f5fcd] rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
-              <AwardIcon class="w-8 h-8 text-white" />
+          <!-- Feature 3 -->
+          <div class="group relative bg-white rounded-2xl p-8 shadow-islamic hover:shadow-islamic-lg transition-all duration-300 border border-gray-100 overflow-hidden text-center">
+            <div class="relative mb-6 flex justify-center">
+              <div class="w-12 h-12 bg-gradient-to-br from-[#d4a574]/10 to-[#5f5fcd]/10 rounded-full flex items-center justify-center">
+                <AwardIcon class="w-6 h-6 text-[#d4a574]" />
+              </div>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">সার্টিফিকেট প্রদান</h3>
-            <p class="text-gray-600 leading-relaxed">
-              কোর্স সম্পন্ন করলে পাবেন আন্তর্জাতিক মানের সার্টিফিকেট।
-            </p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4 group-hover:text-[#5f5fcd] transition-colors duration-200">সার্টিফিকেট প্রদান</h3>
+            <p class="text-gray-700 leading-relaxed text-base mb-2">কোর্স সম্পন্ন করলে পাবেন আন্তর্জাতিক মানের সার্টিফিকেট।</p>
+            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#d4a574] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
-
-          <!-- Enhanced Feature 4 -->
-          <div class="group text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm border border-gray-200/50 hover:border-[#5f5fcd]/30 hover:shadow-islamic transition-all duration-300 hover:scale-105">
-            <div class="w-16 h-16 bg-gradient-to-br from-[#5f5fcd]/80 to-[#2d5a27]/80 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
-              <ClockIcon class="w-8 h-8 text-white" />
+          <!-- Feature 4 -->
+          <div class="group relative bg-white rounded-2xl p-8 shadow-islamic hover:shadow-islamic-lg transition-all duration-300 border border-gray-100 overflow-hidden text-center">
+            <div class="relative mb-6 flex justify-center">
+              <div class="w-12 h-12 bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10 rounded-full flex items-center justify-center">
+                <ClockIcon class="w-6 h-6 text-[#5f5fcd]" />
+              </div>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">নিজের সময়ে শিখুন</h3>
-            <p class="text-gray-600 leading-relaxed">
-              ২৪/৭ অ্যাক্সেস এবং নিজের সুবিধামতো সময়ে শিক্ষা গ্রহণের সুবিধা।
-            </p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4 group-hover:text-[#5f5fcd] transition-colors duration-200">নিজের সময়ে শিখুন</h3>
+            <p class="text-gray-700 leading-relaxed text-base mb-2">২৪/৭ অ্যাক্সেস এবং নিজের সুবিধামতো সময়ে শিক্ষা গ্রহণের সুবিধা।</p>
+            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#d4a574] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
-
-          <!-- Enhanced Feature 5 -->
-          <div class="group text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm border border-gray-200/50 hover:border-[#5f5fcd]/30 hover:shadow-islamic transition-all duration-300 hover:scale-105">
-            <div class="w-16 h-16 bg-gradient-to-br from-[#2d5a27]/80 to-[#d4a574]/80 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
-              <UsersIcon class="w-8 h-8 text-white" />
+          <!-- Feature 5 -->
+          <div class="group relative bg-white rounded-2xl p-8 shadow-islamic hover:shadow-islamic-lg transition-all duration-300 border border-gray-100 overflow-hidden text-center">
+            <div class="relative mb-6 flex justify-center">
+              <div class="w-12 h-12 bg-gradient-to-br from-[#2d5a27]/10 to-[#d4a574]/10 rounded-full flex items-center justify-center">
+                <UsersIcon class="w-6 h-6 text-[#2d5a27]" />
+              </div>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">কমিউনিটি সাপোর্ট</h3>
-            <p class="text-gray-600 leading-relaxed">
-              অন্যান্য শিক্ষার্থীদের সাথে আলোচনা এবং শিক্ষকদের সরাসরি গাইডেন্স।
-            </p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4 group-hover:text-[#5f5fcd] transition-colors duration-200">কমিউনিটি সাপোর্ট</h3>
+            <p class="text-gray-700 leading-relaxed text-base mb-2">অন্যান্য শিক্ষার্থীদের সাথে আলোচনা এবং শিক্ষকদের সরাসরি গাইডেন্স।</p>
+            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#d4a574] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
-
-          <!-- Enhanced Feature 6 -->
-          <div class="group text-center p-8 rounded-2xl bg-white/60 backdrop-blur-sm border border-gray-200/50 hover:border-[#5f5fcd]/30 hover:shadow-islamic transition-all duration-300 hover:scale-105">
-            <div class="w-16 h-16 bg-gradient-to-br from-[#d4a574]/80 to-[#5f5fcd]/80 rounded-2xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
-              <SmartphoneIcon class="w-8 h-8 text-white" />
+          <!-- Feature 6 -->
+          <div class="group relative bg-white rounded-2xl p-8 shadow-islamic hover:shadow-islamic-lg transition-all duration-300 border border-gray-100 overflow-hidden text-center">
+            <div class="relative mb-6 flex justify-center">
+              <div class="w-12 h-12 bg-gradient-to-br from-[#d4a574]/10 to-[#5f5fcd]/10 rounded-full flex items-center justify-center">
+                <SmartphoneIcon class="w-6 h-6 text-[#d4a574]" />
+              </div>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-4">মোবাইল অ্যাপ</h3>
-            <p class="text-gray-600 leading-relaxed">
-              যেকোনো জায়গা থেকে মোবাইল অ্যাপের মাধ্যমে শিক্ষা গ্রহণ করুন।
-            </p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-4 group-hover:text-[#5f5fcd] transition-colors duration-200">মোবাইল অ্যাপ</h3>
+            <p class="text-gray-700 leading-relaxed text-base mb-2">যেকোনো জায়গা থেকে মোবাইল অ্যাপের মাধ্যমে শিক্ষা গ্রহণ করুন।</p>
+            <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#d4a574] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         </div>
       </div>

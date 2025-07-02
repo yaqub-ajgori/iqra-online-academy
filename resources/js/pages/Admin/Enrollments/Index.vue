@@ -169,7 +169,6 @@
           <CardTitle class="flex items-center justify-between">
             <span class="flex items-center gap-2">
               Enrollments List
-              <Icon v-if="isFiltering" name="Loader2" class="h-4 w-4 animate-spin text-blue-600" />
             </span>
             <div class="text-sm text-gray-500">
               {{ enrollments.from }}-{{ enrollments.to }} of {{ enrollments.total }}
@@ -382,13 +381,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
   Table,
   TableBody,
   TableCell,
@@ -455,17 +447,6 @@ const activeFiltersCount = computed(() => {
   if (filters.value.payment_status && filters.value.payment_status !== 'all') count++
   if (filters.value.enrollment_type && filters.value.enrollment_type !== 'all') count++
   return count
-})
-
-// Selected text for dropdowns
-const selectedPaymentStatusText = computed(() => {
-  if (!filters.value.payment_status || filters.value.payment_status === 'all') return 'All Statuses'
-  return capitalizeWords(filters.value.payment_status)
-})
-
-const selectedEnrollmentTypeText = computed(() => {
-  if (!filters.value.enrollment_type || filters.value.enrollment_type === 'all') return 'All Types'
-  return capitalizeWords(filters.value.enrollment_type)
 })
 
 // Methods

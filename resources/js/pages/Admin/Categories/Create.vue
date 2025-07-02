@@ -109,8 +109,7 @@
                 :disabled="form.processing"
                 variant="primary"
               >
-                <Icon v-if="form.processing" name="Loader2" class="h-4 w-4 animate-spin" />
-                <Icon v-else name="Plus" class="h-4 w-4" />
+                <Icon name="Plus" class="h-4 w-4" />
                 {{ form.processing ? 'Creating...' : 'Create Category' }}
               </Button>
             </div>

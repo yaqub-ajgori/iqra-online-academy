@@ -2,30 +2,8 @@
   <FrontendLayout title="আমাদের সম্পর্কে - ইকরা অনলাইন একাডেমি">
     <Head title="আমাদের সম্পর্কে - ইকরা অনলাইন একাডেমি" />
 
-    <!-- Loading State -->
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
-      <div class="text-center">
-        <ProgressIndicator type="spinner" :size="48" show-label label="তথ্য লোড হচ্ছে..." />
-        <p class="text-gray-500 mt-4">আমাদের সম্পর্কে জানতে অপেক্ষা করুন...</p>
-      </div>
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="min-h-screen flex items-center justify-center">
-      <div class="text-center max-w-md mx-auto px-4">
-        <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertTriangleIcon class="w-12 h-12 text-red-500" />
-        </div>
-        <h3 class="text-xl font-semibold text-gray-900 mb-4">তথ্য লোড করতে সমস্যা হয়েছে</h3>
-        <p class="text-gray-600 mb-6">{{ error }}</p>
-        <PrimaryButton @click="loadAboutData" variant="outline">
-          আবার চেষ্টা করুন
-        </PrimaryButton>
-      </div>
-    </div>
-
     <!-- Main Content -->
-    <div v-else>
+    <div>
       <!-- Page Header -->
       <section class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-20 relative overflow-hidden">
         <!-- Background Pattern -->
@@ -219,7 +197,6 @@ import { ref, onMounted } from 'vue'
 import { Head, router, usePage } from '@inertiajs/vue3'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
-import ProgressIndicator from '@/components/Frontend/ProgressIndicator.vue'
 import {
   BookOpenIcon,
   HeartIcon,

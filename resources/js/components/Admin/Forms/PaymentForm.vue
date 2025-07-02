@@ -2,13 +2,6 @@
 import { watch, computed } from 'vue'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import InputError from '@/components/InputError.vue'
 import { formatCurrency } from '@/lib/utils'
 
@@ -65,44 +58,18 @@ watch(
     <!-- Student -->
     <div>
       <Label for="student_id">Student</Label>
-      <Select v-model="form.student_id">
-        <SelectTrigger>
-          <SelectValue :value="form.student_id">
-            {{ selectedStudentText || 'Select a student' }}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem
-            v-for="student in students"
-            :key="student.id"
-            :value="student.id.toString()"
-          >
-            {{ student.name }} ({{ student.email }})
-          </SelectItem>
-        </SelectContent>
-      </Select>
+      <div>
+        {{ selectedStudentText || 'Select a student' }}
+      </div>
       <InputError :message="form.errors.student_id" />
     </div>
 
     <!-- Course -->
     <div>
       <Label for="course_id">Course</Label>
-      <Select v-model="form.course_id">
-        <SelectTrigger>
-          <SelectValue :value="form.course_id">
-            {{ selectedCourseText || 'Select a course' }}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem
-            v-for="course in courses"
-            :key="course.id"
-            :value="course.id.toString()"
-          >
-            {{ course.title }} - {{ formatCurrency(course.price, course.currency) }}
-          </SelectItem>
-        </SelectContent>
-      </Select>
+      <div>
+        {{ selectedCourseText || 'Select a course' }}
+      </div>
       <InputError :message="form.errors.course_id" />
     </div>
 
@@ -123,44 +90,18 @@ watch(
     <!-- Payment Method -->
     <div>
       <Label for="payment_method">Payment Method</Label>
-      <Select v-model="form.payment_method">
-        <SelectTrigger>
-          <SelectValue :value="form.payment_method">
-            {{ selectedMethodText ? selectedMethodText.charAt(0).toUpperCase() + selectedMethodText.slice(1) : 'Select a method' }}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem
-            v-for="method in paymentMethods"
-            :key="method"
-            :value="method"
-          >
-            <span class="capitalize">{{ method.replace('_', ' ') }}</span>
-          </SelectItem>
-        </SelectContent>
-      </Select>
+      <div>
+        {{ selectedMethodText ? selectedMethodText.charAt(0).toUpperCase() + selectedMethodText.slice(1) : 'Select a method' }}
+      </div>
       <InputError :message="form.errors.payment_method" />
     </div>
 
     <!-- Status -->
     <div>
       <Label for="status">Status</Label>
-      <Select v-model="form.status">
-        <SelectTrigger>
-          <SelectValue :value="form.status">
-            {{ selectedStatusText ? selectedStatusText.charAt(0).toUpperCase() + selectedStatusText.slice(1) : 'Select a status' }}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem
-            v-for="statusItem in paymentStatuses"
-            :key="statusItem"
-            :value="statusItem"
-          >
-            <span class="capitalize">{{ statusItem }}</span>
-          </SelectItem>
-        </SelectContent>
-      </Select>
+      <div>
+        {{ selectedStatusText ? selectedStatusText.charAt(0).toUpperCase() + selectedStatusText.slice(1) : 'Select a status' }}
+      </div>
       <InputError :message="form.errors.status" />
     </div>
 

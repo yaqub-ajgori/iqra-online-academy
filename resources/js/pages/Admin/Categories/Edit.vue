@@ -188,8 +188,7 @@
                 :disabled="form.processing"
                 variant="primary"
               >
-                <Icon v-if="form.processing" name="Loader2" class="h-4 w-4 animate-spin" />
-                <Icon v-else name="Save" class="h-4 w-4" />
+                <Icon name="Save" class="h-4 w-4" />
                 {{ form.processing ? 'Updating...' : 'Update Category' }}
               </Button>
             </div>

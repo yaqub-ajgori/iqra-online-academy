@@ -24,7 +24,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest')->group(function () {
         // Login
         Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
-        Route::post('/login', [AdminAuthController::class, 'login'])->name('login.submit');
+        Route::post('/login', [AdminAuthController::class, 'login'])->middleware('throttle:3,1')->name('login.submit');
         
         // Forgot Password
         Route::get('/forgot-password', [AdminPasswordController::class, 'showForgotForm'])->name('password.request');

@@ -96,8 +96,7 @@ function submit() {
                 :disabled="form.processing"
                 variant="primary"
               >
-                <Icon v-if="form.processing" name="Loader2" class="h-4 w-4 animate-spin mr-2" />
-                <Icon v-else name="Save" class="h-4 w-4 mr-2" />
+                <Icon name="Save" class="h-4 w-4 mr-2" />
                 {{ form.processing ? 'Saving...' : 'Save Changes' }}
               </Button>
             </div>

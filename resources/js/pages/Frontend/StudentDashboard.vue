@@ -259,7 +259,6 @@
                       :icon="SaveIcon"
                       :disabled="profileForm.processing"
                     >
-                      <Icon v-if="profileForm.processing" name="Loader2" class="mr-2 h-4 w-4 animate-spin" />
                       {{ profileForm.processing ? 'Updating...' : 'Update Profile' }}
                     </PrimaryButton>
                   </div>
@@ -322,7 +321,6 @@
                       :icon="LockIcon"
                       :disabled="passwordForm.processing"
                     >
-                      <Icon v-if="passwordForm.processing" name="Loader2" class="mr-2 h-4 w-4 animate-spin" />
                       {{ passwordForm.processing ? 'Updating...' : 'Change Password' }}
                     </PrimaryButton>
                   </div>

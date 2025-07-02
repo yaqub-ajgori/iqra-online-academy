@@ -131,7 +131,6 @@
                                     :disabled="form.processing"
                                     class="w-full bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] text-white font-medium py-3 px-4 rounded-lg hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                 >
-                                    <LoaderCircle v-if="form.processing" class="w-4 h-4 mr-2 animate-spin" />
                                     {{ form.processing ? 'আপডেট হচ্ছে...' : 'পাসওয়ার্ড আপডেট করুন' }}
                                 </Button>
                             </form>
@@ -175,7 +174,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Head } from '@inertiajs/vue3'
-import { LoaderCircle, Mail, Lock, RefreshCw, ArrowLeft, ArrowRight, Check } from 'lucide-vue-next'
+import { Mail, Lock, RefreshCw, ArrowLeft, ArrowRight, Check } from 'lucide-vue-next'
 
 const props = defineProps({
   token: String,

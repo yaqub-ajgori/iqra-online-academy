@@ -130,7 +130,9 @@
                                     class="w-full bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] hover:from-[#254521] hover:to-[#4a4aa6] text-white py-3 rounded-lg font-medium shadow-islamic hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-[1.02]" 
                                     :disabled="form.processing"
                                 >
-                                    <LoaderCircle v-if="form.processing" class="h-5 w-5 animate-spin mr-2" />
+                                    <span v-if="form.processing">
+                                        <svg class="animate-spin h-5 w-5 text-white inline-block mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+                                    </span>
                                     <ShieldCheckIcon v-else class="h-5 w-5 mr-2" />
                                     অ্যাডমিন প্যানেলে প্রবেশ করুন
                                 </Button>
@@ -165,7 +167,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Head } from '@inertiajs/vue3'
-import { LoaderCircle, MailIcon, LockIcon, ShieldCheckIcon, ArrowLeftIcon } from 'lucide-vue-next'
+import { MailIcon, LockIcon, ShieldCheckIcon, ArrowLeftIcon } from 'lucide-vue-next'
+import { useToast } from '@/composables/useToast'
 
 defineProps({
   status: String,
@@ -177,8 +180,23 @@ const form = useForm({
   remember: false,
 })
 
+const { error: showError } = useToast()
+
 const submit = () => {
   form.post(route('admin.login.submit'), {
+    onError: (errors) => {
+      // Lockout error detection
+      if (form.errors.email && form.errors.email.includes('locked')) {
+        showError(form.errors.email)
+      } else if (form.errors.email && form.errors.email.includes('seconds')) {
+        showError('Too many login attempts. Please try again in a minute.')
+      } else if (form.errors.email || form.errors.password) {
+        showError('Invalid credentials. Please try again.')
+      } else {
+        showError('An unexpected error occurred. Please try again.')
+      }
+      form.reset('password')
+    },
     onFinish: () => form.reset('password'),
   })
 }

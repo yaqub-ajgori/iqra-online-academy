@@ -111,7 +111,6 @@
                                     >
                                         <!-- Animated background overlay -->
                                         <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                                        <LoaderCircle v-if="form.processing" class="w-4 h-4 mr-2 animate-spin relative z-10" />
                                         <span class="relative z-10">{{ form.processing ? 'পাঠানো হচ্ছে...' : 'পাসওয়ার্ড রিসেট লিংক পাঠান' }}</span>
                                     </Button>
                                 </form>
@@ -168,7 +167,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Head } from '@inertiajs/vue3'
-import { LoaderCircle, MailIcon, KeyIcon, ArrowLeftIcon, ArrowRightIcon, ClockIcon, ShieldIcon, RefreshCwIcon } from 'lucide-vue-next'
+import { MailIcon, KeyIcon, ArrowLeftIcon, ArrowRightIcon, ClockIcon, ShieldIcon, RefreshCwIcon } from 'lucide-vue-next'
 
 defineProps({
   status: String,
