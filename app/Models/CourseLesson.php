@@ -21,9 +21,7 @@ class CourseLesson extends Model
         'lesson_type',
         'video_url',
         'video_duration',
-        'video_provider',
-        'reading_time_minutes',
-
+        'is_preview',
         'is_mandatory',
         'sort_order',
         'is_active',
@@ -35,12 +33,11 @@ class CourseLesson extends Model
      * @var array<string, string>
      */
     protected $casts = [
-
+        'is_preview' => 'boolean',
         'is_mandatory' => 'boolean',
         'is_active' => 'boolean',
         'sort_order' => 'integer',
         'video_duration' => 'integer',
-        'reading_time_minutes' => 'integer',
     ];
 
     /**
@@ -56,7 +53,7 @@ class CourseLesson extends Model
      */
     public function course(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Course::class, 'course_id');
     }
 
     /**

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Course extends Model
 {
@@ -55,6 +56,7 @@ class Course extends Model
         return $this->belongsTo(Teacher::class, 'instructor_id');
     }
 
+
     /**
      * Get the course's teacher (alias for instructor).
      */
@@ -88,11 +90,27 @@ class Course extends Model
     }
 
     /**
-     * Get the course's lessons.
+     * Get all the lessons for the course.
      */
-    public function lessons(): HasMany
+    public function lessons(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
-        return $this->hasMany(CourseLesson::class)->orderBy('sort_order');
+        return $this->hasManyThrough(
+            CourseLesson::class,
+            CourseModule::class,
+            'course_id', // Foreign key on course_modules table
+            'module_id', // Foreign key on course_lessons table
+            'id',        // Local key on courses table
+            'id'         // Local key on course_modules table
+        )->orderBy('course_modules.sort_order')
+         ->orderBy('course_lessons.sort_order');
+    }
+
+    /**
+     * Get preview lessons for the course.
+     */
+    public function previewLessons(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
+    {
+        return $this->lessons()->where('course_lessons.is_preview', true);
     }
 
     /**

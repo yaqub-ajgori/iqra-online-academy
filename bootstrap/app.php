@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\StudentMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -27,7 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Register custom middleware
         $middleware->alias([
-            'admin' => AdminMiddleware::class,
             'student' => StudentMiddleware::class,
         ]);
     })
@@ -38,16 +36,13 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json(['message' => 'Not found.'], 404);
             }
             
-            // Check if this is a frontend route (not admin routes)
-            if (!str_starts_with($request->path(), 'admin')) {
-                return Inertia::render('Errors/NotFound', [
-                    'status' => 404,
-                    'message' => 'Page not found',
-                    'auth' => [
-                        'user' => null
-                    ]
-                ])->toResponse($request)->setStatusCode(404);
-            }
+            return Inertia::render('Errors/NotFound', [
+                'status' => 404,
+                'message' => 'Page not found',
+                'auth' => [
+                    'user' => null
+                ]
+            ])->toResponse($request)->setStatusCode(404);
         });
 
         // Custom error pages for other HTTP errors
@@ -56,22 +51,19 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json(['message' => $e->getMessage()], $e->getStatusCode());
             }
             
-            // Check if this is a frontend route (not admin routes)
-            if (!str_starts_with($request->path(), 'admin')) {
-                $status = $e->getStatusCode();
-                
-                // Only handle specific error codes
-                if (in_array($status, [419, 429, 500, 503])) {
-                    return Inertia::render('Errors/Error', [
-                        'status' => $status,
-                        'title' => $e->getMessage(),
-                        'message' => $e->getMessage(),
-                        'description' => 'দুঃখিত, একটি সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।',
-                        'auth' => [
-                            'user' => null
-                        ]
-                    ])->toResponse($request)->setStatusCode($status);
-                }
+            $status = $e->getStatusCode();
+            
+            // Only handle specific error codes
+            if (in_array($status, [419, 429, 500, 503])) {
+                return Inertia::render('Errors/Error', [
+                    'status' => $status,
+                    'title' => $e->getMessage(),
+                    'message' => $e->getMessage(),
+                    'description' => 'দুঃখিত, একটি সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।',
+                    'auth' => [
+                        'user' => null
+                    ]
+                ])->toResponse($request)->setStatusCode($status);
             }
         });
     })->create();

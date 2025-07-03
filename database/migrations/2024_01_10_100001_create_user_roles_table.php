@@ -15,10 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->enum('role_type', ['student', 'teacher', 'admin']);
-            $table->boolean('is_active')->default(true);
-            $table->timestamp('assigned_at')->useCurrent();
-            $table->foreignId('assigned_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
             
             // Indexes

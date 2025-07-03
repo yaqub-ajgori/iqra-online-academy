@@ -22,11 +22,7 @@ return new class extends Migration
             // Video Content
             $table->string('video_url', 500)->nullable();
             $table->integer('video_duration')->nullable(); // Duration in seconds
-            $table->enum('video_provider', ['youtube', 'vimeo', 'local'])->nullable();
-            
-            // Text Content
-            $table->integer('reading_time_minutes')->nullable();
-            
+    
             // Access Control
             $table->boolean('is_preview')->default(false); // Can be viewed without enrollment
             $table->boolean('is_mandatory')->default(true);

@@ -2,55 +2,109 @@
 
 namespace Database\Seeders;
 
-use App\Models\Student;
-use App\Models\User;
-use App\Models\UserRole;
 use Illuminate\Database\Seeder;
-use Faker\Factory as Faker;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Student;
+use Carbon\Carbon;
 
 class StudentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $faker = Faker::create();
-
-        for ($i = 0; $i < 10; $i++) {
-            $user = User::create([
-                'name' => $faker->name(),
-                'email' => $faker->unique()->safeEmail(),
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-            ]);
-
-            $student = Student::create([
-                'user_id' => $user->id,
-                'full_name' => $user->name,
-                'phone' => $faker->optional()->phoneNumber(),
-                'date_of_birth' => $faker->optional()->date('Y-m-d', '-5 years'),
-                'gender' => $faker->randomElement(['male', 'female', 'other']),
-                'address' => $faker->optional()->address(),
-                'city' => $faker->optional()->city(),
-                'district' => $faker->optional()->citySuffix(),
+        $students = [
+            [
+                'user_id' => 1,
+                'full_name' => 'Ayesha Rahman',
+                'phone' => '01720000001',
+                'date_of_birth' => Carbon::parse('2000-01-15'),
+                'gender' => 'female',
+                'address' => '123 Main Street',
+                'city' => 'Dhaka',
+                'district' => 'Dhaka',
                 'country' => 'Bangladesh',
-                'postal_code' => $faker->optional()->postcode(),
+                'postal_code' => '1207',
                 'profile_picture' => null,
-                'bio' => $faker->optional()->sentence(10),
-                'occupation' => $faker->optional()->jobTitle(),
-                'education_level' => $faker->optional()->randomElement(['high_school', 'college', 'university']),
-                'is_active' => $faker->boolean(90),
-                'is_verified' => $faker->boolean(80),
-            ]);
-
-            UserRole::create([
-                'user_id' => $user->id,
-                'role_type' => 'student',
+                'bio' => 'Enthusiastic learner.',
+                'occupation' => 'Student',
+                'education_level' => 'Undergraduate',
                 'is_active' => true,
-                'assigned_at' => now(),
-            ]);
+                'is_verified' => true,
+            ],
+            [
+                'user_id' => 2,
+                'full_name' => 'Imran Hossain',
+                'phone' => '01720000002',
+                'date_of_birth' => Carbon::parse('1998-05-22'),
+                'gender' => 'male',
+                'address' => '456 College Road',
+                'city' => 'Chittagong',
+                'district' => 'Chittagong',
+                'country' => 'Bangladesh',
+                'postal_code' => '4000',
+                'profile_picture' => null,
+                'bio' => 'Math lover.',
+                'occupation' => 'Student',
+                'education_level' => 'Graduate',
+                'is_active' => true,
+                'is_verified' => false,
+            ],
+            [
+                'user_id' => 3,
+                'full_name' => 'Sadia Karim',
+                'phone' => '01720000003',
+                'date_of_birth' => Carbon::parse('2002-09-10'),
+                'gender' => 'female',
+                'address' => '789 School Lane',
+                'city' => 'Rajshahi',
+                'district' => 'Rajshahi',
+                'country' => 'Bangladesh',
+                'postal_code' => '6000',
+                'profile_picture' => null,
+                'bio' => 'Aspiring scientist.',
+                'occupation' => 'Student',
+                'education_level' => 'HSC',
+                'is_active' => true,
+                'is_verified' => true,
+            ],
+            [
+                'user_id' => 4,
+                'full_name' => 'Tanvir Ahmed',
+                'phone' => '01720000004',
+                'date_of_birth' => Carbon::parse('1999-12-01'),
+                'gender' => 'male',
+                'address' => '321 University Ave',
+                'city' => 'Khulna',
+                'district' => 'Khulna',
+                'country' => 'Bangladesh',
+                'postal_code' => '9000',
+                'profile_picture' => null,
+                'bio' => 'Business enthusiast.',
+                'occupation' => 'Student',
+                'education_level' => 'Undergraduate',
+                'is_active' => false,
+                'is_verified' => false,
+            ],
+            [
+                'user_id' => 5,
+                'full_name' => 'Mitu Sultana',
+                'phone' => '01720000005',
+                'date_of_birth' => Carbon::parse('2001-03-18'),
+                'gender' => 'female',
+                'address' => '654 College Road',
+                'city' => 'Sylhet',
+                'district' => 'Sylhet',
+                'country' => 'Bangladesh',
+                'postal_code' => '3100',
+                'profile_picture' => null,
+                'bio' => 'Language lover.',
+                'occupation' => 'Student',
+                'education_level' => 'Graduate',
+                'is_active' => true,
+                'is_verified' => true,
+            ],
+        ];
+
+        foreach ($students as $student) {
+            Student::create($student);
         }
     }
-}
+} 

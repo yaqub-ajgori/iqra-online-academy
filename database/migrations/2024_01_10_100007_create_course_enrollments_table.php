@@ -45,6 +45,7 @@ return new class extends Migration
             $table->index('payment_status', 'idx_enrollments_status');
             $table->index('progress_percentage', 'idx_enrollments_progress');
             $table->index('enrolled_at', 'idx_enrollments_enrolled_at');
+            $table->index('enrollment_type', 'idx_enrollments_type');
         });
     }
 

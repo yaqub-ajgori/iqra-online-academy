@@ -16,9 +16,7 @@ class CourseModule extends Model
     protected $fillable = [
         'course_id',
         'title',
-        'description',
         'sort_order',
-        'is_active',
     ];
 
     /**
@@ -27,7 +25,6 @@ class CourseModule extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_active' => 'boolean',
         'sort_order' => 'integer',
     ];
 
@@ -45,14 +42,6 @@ class CourseModule extends Model
     public function lessons(): HasMany
     {
         return $this->hasMany(CourseLesson::class, 'module_id');
-    }
-
-    /**
-     * Scope: Filter active modules
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
     }
 
     /**

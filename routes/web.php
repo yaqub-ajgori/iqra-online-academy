@@ -17,9 +17,6 @@ use Inertia\Inertia;
 // Include Frontend Routes (Public facing Islamic LMS)
 require __DIR__.'/frontend.php';
 
-// Include Admin Routes (Admin Panel)
-require __DIR__.'/admin.php';
-
 // Auth Routes
 require __DIR__.'/auth.php';
 

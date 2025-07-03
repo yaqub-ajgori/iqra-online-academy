@@ -607,9 +607,10 @@ const isAdmin = () => {
 // Get appropriate dashboard route based on user type
 const getDashboardRoute = () => {
   if (isAdmin()) {
-    return route('admin.dashboard')
+    // Assuming the Filament admin panel is at '/admin'
+    return '/admin';
   }
-  return route('frontend.student.dashboard')
+  return route('frontend.student.dashboard');
 }
 
 // Get appropriate logout route based on user type

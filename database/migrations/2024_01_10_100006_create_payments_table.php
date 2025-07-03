@@ -40,6 +40,11 @@ return new class extends Migration
             // Refund Information
             
             $table->timestamps();
+
+            $table->index('status', 'idx_payments_status');
+            $table->index('payment_method', 'idx_payments_method');
+            $table->index('student_id', 'idx_payments_student');
+            $table->index('course_id', 'idx_payments_course');
         });
     }
 
