@@ -91,7 +91,7 @@ class CourseController extends Controller
             'modules.lessons' => function ($query) {
                 $query->where('is_active', true)->orderBy('sort_order');
             }
-        ]);
+        ]);footer fixed
 
         $user = auth()->user();
         $isAuthenticated = $user !== null;

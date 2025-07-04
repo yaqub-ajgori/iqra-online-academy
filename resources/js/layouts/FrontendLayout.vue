@@ -248,6 +248,7 @@
                 class="flex items-center px-4 py-3 text-gray-700 hover:text-[#5f5fcd] hover:bg-gray-50 rounded-lg transition-colors"
                 @click.prevent="scrollToDonation"
               >
+                <HeartIcon class="w-5 h-5 mr-3" />
                 ডোনেশন
               </a>
               
@@ -341,47 +342,47 @@
           </svg>
         </div>
         
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div class="grid grid-cols-1 lg:grid-cols-8 gap-12">
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-6 sm:gap-8 lg:gap-12">
             <!-- Enhanced Brand Section -->
-            <div class="lg:col-span-2">
-              <div class="flex items-center space-x-4 mb-6">
+            <div class="sm:col-span-2 lg:col-span-2">
+              <div class="flex items-center space-x-3 sm:space-x-4 mb-4 sm:mb-6">
                 <div class="relative">
-                  <div class="w-16 h-16 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-xl flex items-center justify-center shadow-islamic-lg">
-                    <span class="text-white font-bold text-2xl">ই</span>
+                  <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-xl flex items-center justify-center shadow-islamic-lg">
+                    <span class="text-white font-bold text-lg sm:text-2xl">ই</span>
                   </div>
-                  <div class="absolute -top-2 -right-2 w-6 h-6 bg-[#d4a574] rounded-full animate-pulse shadow-lg"></div>
+                  <div class="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-6 sm:h-6 bg-[#d4a574] rounded-full animate-pulse shadow-lg"></div>
                 </div>
                 <div>
-                  <h2 class="text-lg font-semibold text-gray-200">ইকরা অনলাইন একাডেমি</h2>
+                  <h2 class="text-base sm:text-lg font-semibold text-gray-200">ইকরা অনলাইন একাডেমি</h2>
                 </div>
               </div>
-              <p class="text-gray-300 mb-6 leading-relaxed text-lg">
+              <p class="text-gray-300 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base lg:text-lg">
                 ইসলামিক শিক্ষায় আধুনিক প্রযুক্তির সমন্বয়ে গড়ে উঠেছে ইকরা অনলাইন একাডেমি। 
                 কুরআন, হাদিস ও ইসলামিক জ্ঞানচর্চায় আমরা আপনার সাথে রয়েছি।
               </p>
               
               <!-- Enhanced Social Links -->
-              <div class="flex space-x-4">
-                <a href="https://www.facebook.com/IqraOA" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-lg flex items-center justify-center text-white hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-110">
-                  <FacebookIcon class="w-5 h-5" />
+              <div class="flex space-x-3 sm:space-x-4">
+                <a href="https://www.facebook.com/IqraOA" target="_blank" rel="noopener noreferrer" class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-lg flex items-center justify-center text-white hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-110">
+                  <FacebookIcon class="w-4 h-4 sm:w-5 sm:h-5" />
                 </a>
-                <a href="#" class="w-10 h-10 bg-gradient-to-br from-[#d4a574] to-[#b8945f] rounded-lg flex items-center justify-center text-white hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-110">
-                  <YoutubeIcon class="w-5 h-5" />
+                <a href="#" class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#d4a574] to-[#b8945f] rounded-lg flex items-center justify-center text-white hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-110">
+                  <YoutubeIcon class="w-4 h-4 sm:w-5 sm:h-5" />
                 </a>
-                <a href="#" class="w-10 h-10 bg-gradient-to-br from-[#2d5a27] to-[#1f3e1b] rounded-lg flex items-center justify-center text-white hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-110">
-                  <TwitterIcon class="w-5 h-5" />
+                <a href="#" class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#2d5a27] to-[#1f3e1b] rounded-lg flex items-center justify-center text-white hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-110">
+                  <TwitterIcon class="w-4 h-4 sm:w-5 sm:h-5" />
                 </a>
-                <a href="#" class="w-10 h-10 bg-gradient-to-br from-[#5f5fcd] to-[#4a4aa6] rounded-lg flex items-center justify-center text-white hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-110">
-                  <InstagramIcon class="w-5 h-5" />
+                <a href="#" class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#5f5fcd] to-[#4a4aa6] rounded-lg flex items-center justify-center text-white hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-110">
+                  <InstagramIcon class="w-4 h-4 sm:w-5 sm:h-5" />
                 </a>
               </div>
             </div>
 
             <!-- Quick Links -->
             <div class="lg:col-span-2">
-              <h3 class="text-xl font-semibold mb-6 text-[#d4a574] flex items-center">
-                <LinkIcon class="w-5 h-5 mr-2" />
+              <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 lg:mb-6 text-[#d4a574] flex items-center">
+                <LinkIcon class="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 দ্রুত লিঙ্ক
               </h3>
               <ul class="space-y-3">
@@ -402,8 +403,8 @@
 
             <!-- Student Resources -->
             <div class="lg:col-span-2">
-              <h3 class="text-xl font-semibold mb-6 text-[#d4a574] flex items-center">
-                <BookOpenIcon class="w-5 h-5 mr-2" />
+              <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 lg:mb-6 text-[#d4a574] flex items-center">
+                <BookOpenIcon class="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 শিক্ষার্থী রিসোর্স
               </h3>
               <ul class="space-y-3">
@@ -423,36 +424,36 @@
             </div>
 
             <!-- Enhanced Contact Info -->
-            <div class="lg:col-span-2">
-              <h3 class="text-xl font-semibold mb-6 text-[#d4a574] flex items-center">
-                <MessageCircleIcon class="w-5 h-5 mr-2" />
+            <div class="sm:col-span-2 lg:col-span-2">
+              <h3 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 lg:mb-6 text-[#d4a574] flex items-center">
+                <MessageCircleIcon class="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 যোগাযোগ
               </h3>
-              <ul class="space-y-4 text-gray-300">
-                <li class="flex items-start space-x-3 group">
-                  <div class="w-8 h-8 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                    <PhoneIcon class="w-4 h-4 text-white" />
+              <ul class="space-y-3 sm:space-y-4 text-gray-300">
+                <li class="flex items-start space-x-2 sm:space-x-3 group">
+                  <div class="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <PhoneIcon class="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
                   <div>
-                    <span class="block font-medium">01750-469027</span>
-                    <span class="text-sm text-gray-400">সোম-শুক্র, সকাল ৯টা-সন্ধ্যা ৬টা</span>
+                    <span class="block font-medium text-sm sm:text-base">01750-469027</span>
+                    <span class="text-xs sm:text-sm text-gray-400">সোম-শুক্র, সকাল ৯টা-সন্ধ্যা ৬টা</span>
                   </div>
                 </li>
-                <li class="flex items-start space-x-3 group">
-                  <div class="w-8 h-8 bg-gradient-to-br from-[#d4a574] to-[#b8945f] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                    <MailIcon class="w-4 h-4 text-white" />
+                <li class="flex items-start space-x-2 sm:space-x-3 group">
+                  <div class="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-[#d4a574] to-[#b8945f] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <MailIcon class="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
                   <div>
-                    <span class="block font-medium">iqraoa313@gmail.com</span>
-                    <span class="text-sm text-gray-400">২৪ ঘণ্টার মধ্যে উত্তর</span>
+                    <span class="block font-medium text-sm sm:text-base">iqraoa313@gmail.com</span>
+                    <span class="text-xs sm:text-sm text-gray-400">২৪ ঘণ্টার মধ্যে উত্তর</span>
                   </div>
                 </li>
-                <li class="flex items-start space-x-3 group">
-                  <div class="w-8 h-8 bg-gradient-to-br from-[#2d5a27] to-[#1f3e1b] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                    <MapPinIcon class="w-4 h-4 text-white" />
+                <li class="flex items-start space-x-2 sm:space-x-3 group">
+                  <div class="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-[#2d5a27] to-[#1f3e1b] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                    <MapPinIcon class="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
                   <div>
-                    <span class="block font-medium">হাউজিং এস্টেট, চট্টগ্রাম, বাংলাদেশ</span>
+                    <span class="block font-medium text-sm sm:text-base">হাউজিং এস্টেট, চট্টগ্রাম, বাংলাদেশ</span>
                   </div>
                 </li>
               </ul>
@@ -460,14 +461,14 @@
           </div>
 
           <!-- Enhanced Bottom Border -->
-          <div class="border-t border-gray-800 mt-12 pt-8">
-            <div class="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
-              <div class="flex items-center space-x-4">
-                <p class="text-gray-400 text-sm">
+          <div class="border-t border-gray-800 mt-6 sm:mt-8 lg:mt-12 pt-4 sm:pt-6 lg:pt-8">
+            <div class="flex flex-col lg:flex-row justify-between items-center space-y-3 sm:space-y-4 lg:space-y-0">
+              <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 lg:space-x-4 text-center sm:text-left">
+                <p class="text-gray-400 text-xs sm:text-sm">
                   © ২০২৫ ইকরা অনলাইন একাডেমি। সর্বস্বত্ব সংরক্ষিত।
                 </p>
-                <div class="w-1 h-1 bg-gray-600 rounded-full"></div>
-                <p class="text-gray-400 text-sm">
+                <div class="hidden sm:block w-1 h-1 bg-gray-600 rounded-full"></div>
+                <p class="text-gray-400 text-xs sm:text-sm">
           Developed by 
           <a 
             href="https://www.pixelweblab.com/" 
@@ -479,7 +480,7 @@
           </a>
         </p>
               </div>
-              <div class="flex space-x-6 text-sm">
+              <div class="flex flex-wrap justify-center lg:justify-end gap-3 sm:gap-4 lg:gap-6 text-xs sm:text-sm">
                 <a href="#" class="text-gray-400 hover:text-white transition-colors">প্রাইভেসি পলিসি</a>
                 <a href="#" class="text-gray-400 hover:text-white transition-colors">ব্যবহারের শর্তাবলী</a>
                 <a href="#" class="text-gray-400 hover:text-white transition-colors">রিফান্ড পলিসি</a>

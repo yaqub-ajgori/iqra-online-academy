@@ -47,43 +47,6 @@ Route::get('/', function () {
     ]);
 });
 
-// Temporary debugging route - REMOVE AFTER DEBUGGING
-Route::get('/debug-course/{course}', function (\App\Models\Course $course) {
-    $course->load([
-        'teacher', 
-        'category',
-        'modules' => function ($query) {
-            $query->orderBy('sort_order');
-        },
-        'modules.lessons' => function ($query) {
-            $query->where('is_active', true)->orderBy('sort_order');
-        }
-    ]);
 
-    $moduleData = $course->modules->map(function ($module) {
-        return [
-            'id' => $module->id,
-            'title' => $module->title,
-            'lessons_count' => $module->lessons->count(),
-            'lessons' => $module->lessons->map(function ($lesson) {
-                return [
-                    'id' => $lesson->id,
-                    'title' => $lesson->title,
-                    'is_active' => $lesson->is_active,
-                    'duration' => $lesson->formatted_duration ?? '0:00',
-                ];
-            }),
-        ];
-    });
-
-    return response()->json([
-        'course_id' => $course->id,
-        'course_title' => $course->title,
-        'total_modules' => $course->modules->count(),
-        'total_lessons' => $course->lessons()->count(),
-        'active_lessons' => $course->lessons()->where('is_active', true)->count(),
-        'modules_data' => $moduleData,
-    ], 200, [], JSON_PRETTY_PRINT);
-});
 
 // Profile routes would go here if needed
