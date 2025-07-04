@@ -2,7 +2,7 @@
     <FrontendLayout title="ইমেইল যাচাইকরণ - ইকরা অনলাইন একাডেমি">
         <Head title="ইমেইল যাচাইকরণ" />
 
-        <section class="py-20 min-h-screen flex items-center">
+        <section class="py-8 sm:py-20 min-h-screen flex items-center">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <!-- Left Side - Information -->
