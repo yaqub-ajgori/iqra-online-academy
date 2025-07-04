@@ -7,48 +7,18 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <!-- Left Side - Information -->
-                    <div class="space-y-8">
+                    <div class="space-y-8 hidden lg:block">
                         <div>
                             <div class="inline-flex items-center px-4 py-2 rounded-full bg-blue-600/10 border border-blue-600/20 mb-6">
                                 <UserPlus class="w-4 h-4 text-blue-600 mr-2" />
                                 <span class="text-blue-600 text-sm font-medium">নতুন ছাত্র রেজিস্ট্রেশন</span>
                             </div>
-                            
                             <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                                <span class="text-gradient-islamic bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] bg-clip-text text-transparent">ইকরা একাডেমিতে</span> যোগ দিন
+                                নতুন ছাত্র রেজিস্ট্রেশন
                             </h1>
-                            
                             <p class="text-xl text-gray-600 leading-relaxed mb-8">
-                                আজই শুরু করুন আপনার ইসলামিক শিক্ষার যাত্রা। সম্পূর্ণ বিনামূল্যে রেজিস্ট্রেশন করে অ্যাক্সেস পান হাজারো ইসলামিক কোর্সে।
+                                নতুন অ্যাকাউন্ট তৈরি করতে আপনার নাম, ইমেইল ও পাসওয়ার্ড দিন। রেজিস্ট্রেশনের পর ইমেইল যাচাই করুন।
                             </p>
-                        </div>
-
-                        <!-- Benefits List -->
-                        <div class="space-y-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <BookOpen class="w-4 h-4 text-blue-600" />
-                                </div>
-                                <span class="text-gray-700">১০০+ ইসলামিক কোর্সে বিনামূল্যে অ্যাক্সেস</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <Clock class="w-4 h-4 text-blue-600" />
-                                </div>
-                                <span class="text-gray-700">নিজের সুবিধামতো সময়ে পড়াশোনা</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <Users class="w-4 h-4 text-blue-600" />
-                                </div>
-                                <span class="text-gray-700">অন্যান্য ছাত্রদের সাথে আলোচনার সুযোগ</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <Award class="w-4 h-4 text-blue-600" />
-                                </div>
-                                <span class="text-gray-700">কোর্স সমাপনে সার্টিফিকেট</span>
-                            </div>
                         </div>
                     </div>
 
@@ -160,17 +130,18 @@
                                     </div>
 
                                     <!-- Terms and Conditions -->
-                                    <div class="flex items-start space-x-2">
+                                    <div class="flex flex-row items-start gap-2 flex-wrap">
                                         <Checkbox 
                                             id="terms" 
                                             v-model="form.terms"
-                                            class="mt-1"
+                                            class="mt-1 flex-shrink-0"
                                             required
                                         />
-                                        <Label for="terms" class="text-sm text-gray-600 leading-relaxed">
-                                            আমি ইকরা অনলাইন একাডেমির 
+                                        <Label for="terms" class="text-sm text-gray-600 leading-relaxed w-0 min-w-0 flex-1 break-words">
+                                            আমি ইকরা অনলাইন একাডেমির
+                                            <br class="block sm:hidden" />
                                             <TextLink href="#" class="text-[#5f5fcd] hover:text-[#4a4aa6]">শর্তাবলী</TextLink>
-                                            এবং 
+                                            এবং
                                             <TextLink href="#" class="text-[#5f5fcd] hover:text-[#4a4aa6]">গোপনীয়তা নীতি</TextLink>
                                             তে সম্মত আছি।
                                         </Label>
@@ -190,25 +161,13 @@
 
                                 <!-- Login Link -->
                                 <div class="mt-8 text-center">
-                                    <p class="text-gray-600 mb-4">ইতিমধ্যে অ্যাকাউন্ট আছে?</p>
+                                    <span class="text-gray-600">ইতিমধ্যে অ্যাকাউন্ট আছে? </span>
                                     <TextLink 
                                         :href="route('login')" 
                                         class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
                                     >
                                         লগইন করুন
                                         <ArrowRight class="w-4 h-4 ml-2" />
-                                    </TextLink>
-                                </div>
-
-                                <!-- Back to Website -->
-                                <div class="mt-8 text-center">
-                                    <p class="text-gray-600 mb-4">অথবা</p>
-                                    <TextLink 
-                                        href="/" 
-                                        class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
-                                    >
-                                        <ArrowLeft class="w-4 h-4 mr-2" />
-                                        মূল ওয়েবসাইটে ফিরে যান
                                     </TextLink>
                                 </div>
                             </div>
@@ -230,7 +189,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Head } from '@inertiajs/vue3'
-import { Mail, Lock, User, UserPlus, ArrowLeft, ArrowRight, BookOpen, Clock, Users, Award } from 'lucide-vue-next'
+import { Mail, Lock, User, UserPlus, ArrowLeft, ArrowRight } from 'lucide-vue-next'
 import { useToast } from '@/composables/useToast'
 
 const form = useForm({
@@ -241,12 +200,16 @@ const form = useForm({
   terms: false,
 })
 
-const { error: showError } = useToast()
+const { error: showError, success: showSuccess } = useToast()
 
 const submit = () => {
   form.post(route('register'), {
-    onError: (errors) => {
-      // Rate limit error (from backend or HTTP 429)
+    onSuccess: () => {
+      form.reset();
+      showSuccess('Registration successful. Please check your email for verification.')
+    },
+    onError: () => {
+      // Show error and reset only password fields
       if (form.errors.email && form.errors.email.includes('seconds')) {
         showError('Too many registration attempts. Please try again in a minute.')
       } else if (form.errors.email || form.errors.password) {
@@ -255,8 +218,7 @@ const submit = () => {
         showError('An unexpected error occurred. Please try again.')
       }
       form.reset('password', 'password_confirmation')
-    },
-    onFinish: () => form.reset('password', 'password_confirmation'),
+    }
   })
 }
 </script>

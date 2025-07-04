@@ -66,12 +66,7 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
         Auth::login($user);
 
-        // Support intended redirect after registration
-        $intended = $request->input('intended') ?? session('url.intended');
-        if ($intended) {
-            return redirect()->intended($intended);
-        }
-
-        return to_route('frontend.student.dashboard');
+        // Redirect to email verification notice after registration
+        return redirect()->route('verification.notice');
     }
 }

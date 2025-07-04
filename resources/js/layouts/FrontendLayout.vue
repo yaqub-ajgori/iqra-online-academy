@@ -117,10 +117,6 @@
                       </div>
                       <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
                     </div>
-                    <div class="text-left">
-                      <span class="text-sm font-medium block">{{ $page.props.auth.user.name }}</span>
-                      <span class="text-xs text-gray-500">{{ isAdmin() ? 'Admin' : 'Student' }}</span>
-                    </div>
                     <ChevronDownIcon class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': userDropdownOpen }" />
                   </button>
                   
@@ -129,26 +125,13 @@
                     v-show="userDropdownOpen" 
                     class="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-islamic-lg border border-gray-200 py-2 z-50"
                   >
-                    <!-- User Info Header -->
-                    <div class="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200 rounded-t-xl">
-                      <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-full flex items-center justify-center">
-                          <span class="text-white text-xs font-semibold">{{ $page.props.auth.user.name.charAt(0) }}</span>
-                        </div>
-                        <div>
-                          <p class="text-sm font-medium text-gray-900">{{ $page.props.auth.user.name }}</p>
-                          <p class="text-xs text-gray-500">{{ isAdmin() ? '🔧 Admin Account' : '👨‍🎓 Student Account' }}</p>
-                        </div>
-                      </div>
-                    </div>
-                    
                     <div class="py-2">
                       <Link 
-                        :href="getDashboardRoute()" 
+                        :href="route('frontend.student.dashboard')" 
                         class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
                       >
                         <UserIcon class="w-4 h-4 mr-3" />
-                        {{ isAdmin() ? 'Admin Dashboard' : 'Student Dashboard' }}
+                         Dashboard
                       </Link>
                       <Link 
                         :href="route('frontend.student.dashboard')" 
@@ -156,13 +139,6 @@
                       >
                         <BookOpenIcon class="w-4 h-4 mr-3" />
                         My Courses
-                      </Link>
-                      <Link 
-                        :href="route('frontend.contact')" 
-                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
-                      >
-                        <MessageCircleIcon class="w-4 h-4 mr-3" />
-                        Support
                       </Link>
                     </div>
                     
@@ -254,23 +230,12 @@
               
               <div class="border-t border-gray-200 pt-4 mt-4">
                 <template v-if="$page.props.auth && $page.props.auth.user">
-                  <div class="px-4 py-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg mb-3">
-                    <div class="flex items-center space-x-3">
-                      <div class="w-8 h-8 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-full flex items-center justify-center">
-                        <span class="text-white text-xs font-semibold">{{ $page.props.auth.user.name.charAt(0) }}</span>
-                      </div>
-                      <div>
-                        <p class="text-sm font-medium text-gray-900">{{ $page.props.auth.user.name }}</p>
-                        <p class="text-xs text-gray-500">{{ isAdmin() ? '🔧 Admin Account' : '👨‍🎓 Student Account' }}</p>
-                      </div>
-                    </div>
-                  </div>
                   <Link 
-                    :href="getDashboardRoute()" 
+                    :href="route('frontend.student.dashboard')" 
                     class="flex items-center px-4 py-3 text-gray-700 hover:text-[#5f5fcd] hover:bg-gray-50 rounded-lg transition-colors"
                   >
                     <UserIcon class="w-5 h-5 mr-3" />
-                    {{ isAdmin() ? 'Admin Dashboard' : 'Student Dashboard' }}
+                    Student Dashboard
                   </Link>
                   <Link 
                     :href="route('frontend.student.dashboard')" 
@@ -565,46 +530,9 @@ const page = usePage()
 const searchQuery = ref('')
 const searching = ref(false)
 
-// Check if user is admin (based on current route or user data)
-const isAdmin = () => {
-  // Check if we're on an admin route
-  const currentUrl = window.location.pathname
-  if (currentUrl.startsWith('/admin')) {
-    return true
-  }
-  
-  // Check if user has admin role (using any type to avoid TypeScript issues)
-  const user = page.props.auth.user as any
-  if (!user || !user.roles) {
-    return false
-  }
-  
-  // Check if user has an active admin role
-  const hasAdminRole = user.roles.some((role: any) => role.role_type === 'admin' && role.is_active)
-  
-  return hasAdminRole
-}
-
-// Get appropriate dashboard route based on user type
-const getDashboardRoute = () => {
-  if (isAdmin()) {
-    // Assuming the Filament admin panel is at '/admin'
-    return '/admin';
-  }
-  return route('frontend.student.dashboard');
-}
-
-// Get appropriate logout route based on user type
-const getLogoutRoute = () => {
-  if (isAdmin()) {
-    return route('admin.logout')
-  }
-  return route('logout')
-}
-
 // Logout function
 const logout = () => {
-  router.post(getLogoutRoute())
+  router.post(route('logout'))
 }
 
 // Close dropdown when clicking outside

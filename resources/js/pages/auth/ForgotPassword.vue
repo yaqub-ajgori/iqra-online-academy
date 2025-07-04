@@ -7,7 +7,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <!-- Left Side - Information -->
-                    <div class="space-y-8">
+                    <div class="space-y-8 hidden lg:block">
                         <div>
                             <div class="inline-flex items-center px-4 py-2 rounded-full bg-orange-600/10 border border-orange-600/20 mb-6">
                                 <KeyIcon class="w-4 h-4 text-orange-600 mr-2" />
@@ -15,40 +15,12 @@
                             </div>
                             
                             <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                                <span class="text-gradient-islamic bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] bg-clip-text text-transparent">পাসওয়ার্ড</span> রিসেট করুন
+                                পাসওয়ার্ড রিসেট
                             </h1>
                             
                             <p class="text-xl text-gray-600 leading-relaxed mb-8">
-                                চিন্তা করবেন না! আপনার ইমেইল ঠিকানা দিন, আমরা আপনাকে পাসওয়ার্ড রিসেট করার লিংক পাঠিয়ে দিব।
+                                আপনার ইমেইল দিন, আমরা একটি পাসওয়ার্ড রিসেট লিঙ্ক পাঠাবো।
                             </p>
-                        </div>
-
-                        <!-- Help Information -->
-                        <div class="space-y-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <MailIcon class="w-4 h-4 text-orange-600" />
-                                </div>
-                                <span class="text-gray-700">ইমেইলে পাসওয়ার্ড রিসেট লিংক পাবেন</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <ClockIcon class="w-4 h-4 text-orange-600" />
-                                </div>
-                                <span class="text-gray-700">লিংক ২৪ ঘন্টার জন্য বৈধ থাকবে</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <ShieldIcon class="w-4 h-4 text-orange-600" />
-                                </div>
-                                <span class="text-gray-700">নিরাপদ এবং সুরক্ষিত প্রক্রিয়া</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <RefreshCwIcon class="w-4 h-4 text-orange-600" />
-                                </div>
-                                <span class="text-gray-700">নতুন পাসওয়ার্ড সেট করুন</span>
-                            </div>
                         </div>
                     </div>
 
@@ -117,36 +89,13 @@
 
                                 <!-- Back to Login -->
                                 <div class="mt-8 text-center">
-                                    <p class="text-gray-600 mb-4">পাসওয়ার্ড মনে আছে?</p>
+                                    <span class="text-gray-600">পাসওয়ার্ড মনে আছে? </span>
                                     <TextLink 
                                         :href="route('login')" 
                                         class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
                                     >
                                         <ArrowLeftIcon class="w-4 h-4 mr-2" />
                                         লগইন পেজে ফিরে যান
-                                    </TextLink>
-                                </div>
-
-                                <!-- Register Link -->
-                                <div class="mt-6 text-center">
-                                    <p class="text-gray-600 mb-4">অথবা</p>
-                                    <TextLink 
-                                        :href="route('register')" 
-                                        class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
-                                    >
-                                        নতুন অ্যাকাউন্ট তৈরি করুন
-                                        <ArrowRightIcon class="w-4 h-4 ml-2" />
-                                    </TextLink>
-                                </div>
-
-                                <!-- Back to Website -->
-                                <div class="mt-8 text-center border-t pt-6">
-                                    <TextLink 
-                                        href="/" 
-                                        class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
-                                    >
-                                        <ArrowLeftIcon class="w-4 h-4 mr-2" />
-                                        মূল ওয়েবসাইটে ফিরে যান
                                     </TextLink>
                                 </div>
                             </div>

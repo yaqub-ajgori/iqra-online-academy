@@ -40,14 +40,14 @@ Route::prefix('payment')->name('frontend.payment.')->group(function () {
 });
 
 // Student Dashboard (Protected - requires student authentication)
-Route::middleware(['auth', 'student'])->group(function () {
+Route::middleware(['auth', 'student', 'verified'])->group(function () {
     Route::get('/student/dashboard', [StudentDashboardController::class, 'index'])->name('frontend.student.dashboard');
     Route::patch('/student/profile', [StudentDashboardController::class, 'updateProfile'])->name('frontend.student.profile.update');
     Route::patch('/student/password', [StudentDashboardController::class, 'changePassword'])->name('frontend.student.password.update');
 });
 
 // Learning Routes (Protected - requires student authentication and enrollment)
-Route::middleware(['auth', 'student'])->prefix('learning')->name('frontend.learning.')->group(function () {
+Route::middleware(['auth', 'student', 'verified'])->prefix('learning')->name('frontend.learning.')->group(function () {
     Route::get('/{course:slug}', [LearningController::class, 'show'])->name('show');
     Route::post('/complete-lesson', [LearningController::class, 'completeLesson'])->name('complete-lesson');
     Route::get('/{course:slug}/lesson/{lesson}', [LearningController::class, 'lesson'])->name('lesson');

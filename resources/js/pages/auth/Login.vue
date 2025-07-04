@@ -7,48 +7,20 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <!-- Left Side - Information -->
-                    <div class="space-y-8">
+                    <div class="space-y-8 hidden lg:block">
                         <div>
                             <div class="inline-flex items-center px-4 py-2 rounded-full bg-green-600/10 border border-green-600/20 mb-6">
                                 <User class="w-4 h-4 text-green-600 mr-2" />
-                                <span class="text-green-600 text-sm font-medium">ছাত্র প্যানেল</span>
+                                <span class="text-green-600 text-sm font-medium">ছাত্র লগইন</span>
                             </div>
                             
                             <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                                <span class="text-gradient-islamic bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] bg-clip-text text-transparent">ইকরা একাডেমিতে</span> স্বাগতম
+                                ছাত্র লগইন
                             </h1>
                             
                             <p class="text-xl text-gray-600 leading-relaxed mb-8">
-                                আপনার ইসলামিক শিক্ষার যাত্রা শুরু করুন। কুরআন, হাদিস, ফিকহ, এবং আরো অনেক বিষয়ে বিশেষজ্ঞ শিক্ষকদের কাছ থেকে শিখুন।
+                                আপনার ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন। লগইন করতে সমস্যা হলে পাসওয়ার্ড রিসেট করুন বা সাপোর্টে যোগাযোগ করুন।
                             </p>
-                        </div>
-
-                        <!-- Features List -->
-                        <div class="space-y-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <BookOpen class="w-4 h-4 text-green-600" />
-                                </div>
-                                <span class="text-gray-700">২৪/৭ অনলাইন কোর্স অ্যাক্সেস</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <Users class="w-4 h-4 text-green-600" />
-                                </div>
-                                <span class="text-gray-700">অভিজ্ঞ ইসলামিক স্কলারদের পাঠদান</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <Award class="w-4 h-4 text-green-600" />
-                                </div>
-                                <span class="text-gray-700">সার্টিফিকেট এবং কোর্স সমাপনী প্রমাণপত্র</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                    <Tablet class="w-4 h-4 text-green-600" />
-                                </div>
-                                <span class="text-gray-700">মোবাইল এবং ডেস্কটপে সহজ ব্যবহার</span>
-                            </div>
                         </div>
                     </div>
 
@@ -157,25 +129,13 @@
 
                                 <!-- Register Link -->
                                 <div class="mt-8 text-center">
-                                    <p class="text-gray-600 mb-4">এখনো অ্যাকাউন্ট নেই?</p>
+                                    <span class="text-gray-600">এখনো অ্যাকাউন্ট নেই? </span>
                                     <TextLink 
                                         :href="route('register')" 
                                         class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
                                     >
                                         এখনই রেজিস্ট্রেশন করুন
                                         <ArrowRight class="w-4 h-4 ml-2" />
-                                    </TextLink>
-                                </div>
-
-                                <!-- Back to Website -->
-                                <div class="mt-8 text-center">
-                                    <p class="text-gray-600 mb-4">অথবা</p>
-                                    <TextLink 
-                                        href="/" 
-                                        class="inline-flex items-center text-[#5f5fcd] hover:text-[#4a4aa6] font-medium"
-                                    >
-                                        <ArrowLeft class="w-4 h-4 mr-2" />
-                                        মূল ওয়েবসাইটে ফিরে যান
                                     </TextLink>
                                 </div>
                             </div>
@@ -199,10 +159,12 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Head } from '@inertiajs/vue3'
 import { Mail, Lock, User, ArrowLeft, ArrowRight, BookOpen, Users, Tablet, Award } from 'lucide-vue-next'
 import { useToast } from '@/composables/useToast'
+import { onMounted, watch } from 'vue'
 
-defineProps({
+const props = defineProps({
   canResetPassword: Boolean,
   status: String,
+  error: String,
 })
 
 const form = useForm({
@@ -229,6 +191,16 @@ const submit = () => {
     onFinish: () => form.reset('password'),
   })
 }
+
+onMounted(() => {
+  if (props.error) {
+    showError(props.error)
+  }
+})
+
+watch(() => props.error, (val) => {
+  if (val) showError(val)
+})
 </script>
 
 <style scoped>
