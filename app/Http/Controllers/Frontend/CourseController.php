@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller
 {
@@ -91,9 +92,9 @@ class CourseController extends Controller
             'modules.lessons' => function ($query) {
                 $query->where('is_active', true)->orderBy('sort_order');
             }
-        ]);footer fixed
+        ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
         $isAuthenticated = $user !== null;
         $isEnrolled = false;
         if ($isAuthenticated) {
