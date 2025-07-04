@@ -81,7 +81,17 @@ class CourseController extends Controller
             abort(404);
         }
 
-        $course->load(['teacher', 'modules.lessons', 'category']);
+        // Load course relationships with only active lessons
+        $course->load([
+            'teacher', 
+            'category',
+            'modules' => function ($query) {
+                $query->orderBy('sort_order');
+            },
+            'modules.lessons' => function ($query) {
+                $query->where('is_active', true)->orderBy('sort_order');
+            }
+        ]);
 
         $user = auth()->user();
         $isAuthenticated = $user !== null;
@@ -115,10 +125,12 @@ class CourseController extends Controller
                 return [
                     'id' => $module->id,
                     'title' => $module->title,
+                    'lessons_count' => $module->lessons->count(),
                     'lessons' => $module->lessons->map(function ($lesson) {
                         return [
                             'id' => $lesson->id,
                             'title' => $lesson->title,
+                            'duration' => $lesson->formatted_duration ?? '0:00',
                         ];
                     }),
                 ];

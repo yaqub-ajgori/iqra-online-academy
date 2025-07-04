@@ -75,18 +75,40 @@
               </div>
 
               <div v-if="activeTab === 'curriculum'" class="space-y-4">
+                <!-- Show message if no modules -->
+                <div v-if="!course.modules || course.modules.length === 0" class="text-center py-8 text-gray-500">
+                  <p>এই কোর্সের জন্য এখনো কোনো কারিকুলাম যোগ করা হয়নি।</p>
+                </div>
+                
+                <!-- Show modules if available -->
                 <div v-for="module in course.modules" :key="module.id"
                      :class="['curriculum-module', expandedModules.includes(module.id) && 'expanded']">
                   <div class="curriculum-header" @click="toggleModule(module.id)">
-                    <span>{{ module.title }}</span>
+                    <div>
+                      <span>{{ module.title }}</span>
+                      <span v-if="module.lessons_count" class="text-sm text-gray-500 ml-2">
+                        ({{ module.lessons_count }} টি পাঠ)
+                      </span>
+                    </div>
                     <ChevronDownIcon :class="['curriculum-chevron', expandedModules.includes(module.id) && 'expanded']" />
                   </div>
                   <transition name="fade-slide">
                     <div v-show="expandedModules.includes(module.id)" class="curriculum-lessons">
-                      <ul>
+                      <!-- Show message if module has no lessons -->
+                      <div v-if="!module.lessons || module.lessons.length === 0" class="text-center py-4 text-gray-500">
+                        <p>এই মডিউলে এখনো কোনো পাঠ যোগ করা হয়নি।</p>
+                      </div>
+                      
+                      <!-- Show lessons if available -->
+                      <ul v-else>
                         <li v-for="lesson in module.lessons" :key="lesson.id" class="curriculum-lesson">
                           <span class="curriculum-dot"></span>
-                          <span>{{ lesson.title }}</span>
+                          <div>
+                            <span>{{ lesson.title }}</span>
+                            <span v-if="lesson.duration" class="text-xs text-gray-400 ml-2">
+                              {{ lesson.duration }}
+                            </span>
+                          </div>
                         </li>
                       </ul>
                     </div>
