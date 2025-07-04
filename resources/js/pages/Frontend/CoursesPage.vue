@@ -66,7 +66,6 @@
               :key="course.id"
               :course="course"
               @enroll="handleCourseEnroll"
-              @favorite="handleCourseFavorite"
             />
           </div>
 
@@ -189,12 +188,6 @@ const handleCourseEnroll = (course: Course) => {
   // Redirect to payment page for enrollment
   router.visit(route('frontend.payment.checkout', { course: course.slug }))
 }
-
-const handleCourseFavorite = (course: Course, isFavorite: boolean) => {
-  // Handle favorite toggle logic here
-}
-
-
 
 // Watch for page props changes
 const page = usePage()

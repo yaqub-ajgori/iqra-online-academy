@@ -75,7 +75,7 @@
                       type="tel" 
                       :disabled="isSubmitting"
                       class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      placeholder="+৮৮০ ১২৩৪ ৫৬৭৮৯০"
+                      placeholder="01750-469027"
                       :class="{ 'border-red-500': errors.phone }"
                     />
                     <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
@@ -133,16 +133,15 @@
             <div class="space-y-8">
               <!-- Quick Contact -->
               <div class="bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] p-8 rounded-2xl text-white">
-                <h3 class="text-2xl font-bold mb-6">{{ contactData?.quick_contact_title || 'দ্রুত যোগাযোগ' }}</h3>
-                
+                <h3 class="text-2xl font-bold mb-6">দ্রুত যোগাযোগ</h3>
                 <div class="space-y-4">
-                  <div v-for="contact in contactData?.contact_info" :key="contact.type" class="flex items-center space-x-3">
+                  <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                      <component :is="getContactIcon(contact.type)" class="w-5 h-5" />
+                      <PhoneIcon class="w-5 h-5" />
                     </div>
                     <div>
-                      <p class="font-medium">{{ contact.label }}</p>
-                      <p class="text-white/80">{{ contact.value }}</p>
+                      <p class="font-medium">মোবাইল নম্বর</p>
+                      <p class="text-white/80">01750-469027</p>
                     </div>
                   </div>
                 </div>
@@ -184,9 +183,11 @@
                 <span class="font-medium text-gray-900">{{ faq.question }}</span>
                 <ChevronDownIcon :class="{'rotate-180': openFaq === index}" class="w-5 h-5 text-gray-500 transition-transform" />
               </button>
-              <div v-show="openFaq === index" class="px-6 pb-4">
-                <p class="text-gray-600">{{ faq.answer }}</p>
-              </div>
+              <Transition name="faq-fade-slide">
+                <div v-show="openFaq === index" class="px-6 pb-4">
+                  <p class="text-gray-600">{{ faq.answer }}</p>
+                </div>
+              </Transition>
             </div>
           </div>
         </div>
@@ -422,5 +423,22 @@ onMounted(() => {
 
 .rotate-180 {
   transform: rotate(180deg);
+}
+
+/* FAQ animation */
+.faq-fade-slide-enter-active,
+.faq-fade-slide-leave-active {
+  transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1), transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  will-change: opacity, transform;
+}
+.faq-fade-slide-enter-from,
+.faq-fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.faq-fade-slide-enter-to,
+.faq-fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style> 

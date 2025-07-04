@@ -9,27 +9,9 @@
           
           <!-- Course Content -->
           <div class="lg:col-span-2">
-            <!-- Breadcrumb -->
-            <nav class="mb-8">
-              <ol class="flex items-center space-x-2 text-sm text-gray-600">
-                <li><Link :href="route('frontend.home')" class="hover:text-[#5f5fcd]">হোম</Link></li>
-                <li><ChevronRightIcon class="w-4 h-4 text-gray-400" /></li>
-                <li><Link :href="route('frontend.courses.index')" class="hover:text-[#5f5fcd]">কোর্স</Link></li>
-                <li><ChevronRightIcon class="w-4 h-4 text-gray-400" /></li>
-                <li class="text-gray-900">{{ course.title }}</li>
-              </ol>
-            </nav>
 
             <!-- Course Header -->
             <div class="mb-8">
-              <div class="flex items-center gap-4 mb-4">
-                <span class="px-3 py-1 bg-[#5f5fcd]/10 text-[#5f5fcd] rounded-full text-sm font-medium">
-                  {{ course.category }}
-                </span>
-                <span class="px-3 py-1 bg-[#2d5a27]/10 text-[#2d5a27] rounded-full text-sm font-medium">
-                  {{ getLevelText(course.level) }}
-                </span>
-              </div>
               
               <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 leading-tight">
                 {{ course.title }}
@@ -57,7 +39,7 @@
                     <StarIcon class="w-4 h-4 fill-current" />
                     <StarIcon class="w-4 h-4 fill-current" />
                   </div>
-                  <span>{{ course.rating }} ({{ course.reviews_count }} রিভিউ)</span>
+                  <span>{{ reviewRating }} ({{ reviewCount }} রিভিউ)</span>
                 </div>
               </div>
             </div>
@@ -87,79 +69,66 @@
               <!-- Tab Content -->
               <div v-if="activeTab === 'overview'" class="prose prose-slate max-w-none">
                 <h3>কোর্স সম্পর্কে</h3>
-                <p>{{ course.full_description }}</p>
+                <div v-html="course.full_description"></div>
                 
                 <!-- Course content will be displayed through modules and lessons -->
               </div>
 
               <div v-if="activeTab === 'curriculum'" class="space-y-4">
-                <div v-for="module in course.modules" :key="module.id" class="border border-gray-200 rounded-lg overflow-hidden">
-                  <button 
-                    @click="toggleModule(module.id)"
-                    class="w-full px-6 py-4 text-left bg-gray-50 hover:bg-gray-100 transition-colors duration-200 flex items-center justify-between"
-                  >
-                    <div>
-                      <h4 class="font-semibold text-gray-900">{{ module.title }}</h4>
-                      <p class="text-sm text-gray-600">{{ module.lessons_count }} টি পাঠ • {{ module.duration }}</p>
-                    </div>
-                    <ChevronDownIcon 
-                      :class="[
-                        'w-5 h-5 text-gray-500 transition-transform duration-200',
-                        expandedModules.includes(module.id) ? 'rotate-180' : ''
-                      ]" 
-                    />
-                  </button>
-                  
-                  <div v-show="expandedModules.includes(module.id)" class="px-6 py-4 border-t border-gray-200">
-                    <div v-for="lesson in module.lessons" :key="lesson.id" class="flex items-center justify-between py-2">
-                      <div class="flex items-center space-x-3">
-                        <ImageIcon class="w-5 h-5 text-[#5f5fcd]" />
-                        <span class="text-gray-700">{{ lesson.title }}</span>
-                      </div>
-                      <span class="text-sm text-gray-500">{{ lesson.duration }}</span>
-                    </div>
+                <div v-for="module in course.modules" :key="module.id"
+                     :class="['curriculum-module', expandedModules.includes(module.id) && 'expanded']">
+                  <div class="curriculum-header" @click="toggleModule(module.id)">
+                    <span>{{ module.title }}</span>
+                    <ChevronDownIcon :class="['curriculum-chevron', expandedModules.includes(module.id) && 'expanded']" />
                   </div>
+                  <transition name="fade-slide">
+                    <div v-show="expandedModules.includes(module.id)" class="curriculum-lessons">
+                      <ul>
+                        <li v-for="lesson in module.lessons" :key="lesson.id" class="curriculum-lesson">
+                          <span class="curriculum-dot"></span>
+                          <span>{{ lesson.title }}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </transition>
                 </div>
               </div>
 
               <div v-if="activeTab === 'instructor'" class="bg-gray-50 rounded-2xl p-8">
                 <div class="flex items-start space-x-6">
-                  <img 
-                    :src="course.instructor.avatar" 
-                    :alt="course.instructor.name"
-                    class="w-24 h-24 rounded-full object-cover shadow-lg"
-                  />
-                  <div class="flex-1">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ course.instructor.name }}</h3>
-                    <p class="text-lg text-[#5f5fcd] mb-4">{{ course.instructor.title }}</p>
-                    <p class="text-gray-600 leading-relaxed mb-6">{{ course.instructor.bio }}</p>
-                    
-                    <div class="grid grid-cols-3 gap-6 text-center">
-                      <div>
-                        <div class="text-2xl font-bold text-[#5f5fcd]">{{ course.instructor.courses_count }}</div>
-                        <div class="text-sm text-gray-600">কোর্স</div>
-                      </div>
-                      <div>
-                        <div class="text-2xl font-bold text-[#2d5a27]">{{ course.instructor.students_count }}</div>
-                        <div class="text-sm text-gray-600">শিক্ষার্থী</div>
-                      </div>
-                      <div>
-                        <div class="text-2xl font-bold text-[#d4a574]">{{ course.instructor.rating }}</div>
-                        <div class="text-sm text-gray-600">রেটিং</div>
-                      </div>
+                  <div>
+                    <img 
+                      v-if="course.instructor.avatar"
+                      :src="course.instructor.avatar" 
+                      :alt="course.instructor.name"
+                      class="w-24 h-24 rounded-full object-cover shadow-lg border-4 border-white"
+                    />
+                    <div v-else class="w-24 h-24 rounded-full bg-[#5f5fcd]/10 flex items-center justify-center shadow-lg border-4 border-white">
+                      <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="28" cy="28" r="28" fill="#5f5fcd"/>
+                        <path d="M28 29c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7 3.582 7 8 7zm0 2c-5.33 0-16 2.686-16 8v3a1 1 0 001 1h30a1 1 0 001-1v-3c0-5.314-10.67-8-16-8z" fill="#fff"/>
+                      </svg>
                     </div>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ course.instructor.name }}</h3>
+                    <p v-if="course.instructor.bio" class="text-lg text-[#5f5fcd] mb-2">{{ course.instructor.bio }}</p>
+                    <p v-if="course.instructor.experience" class="text-gray-700 mb-2">অভিজ্ঞতা: {{ course.instructor.experience }}</p>
                   </div>
                 </div>
               </div>
 
               <div v-if="activeTab === 'reviews'" class="space-y-6">
-                <div v-for="review in course.reviews" :key="review.id" class="border-b border-gray-200 pb-6">
+                <div v-for="review in reviews" :key="review.id" class="border-b border-gray-200 pb-6">
                   <div class="flex items-start space-x-4">
-                    <img 
-                      :src="review.student.avatar" 
-                      :alt="review.student.name"
-                      class="w-12 h-12 rounded-full object-cover"
-                    />
+                    <div>
+                      <div class="w-12 h-12 rounded-full bg-[#5f5fcd]/10 flex items-center justify-center shadow-lg border-4 border-white">
+                        <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="28" cy="28" r="28" fill="#5f5fcd"/>
+                          <path d="M28 29c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7 3.582 7 8 7zm0 2c-5.33 0-16 2.686-16 8v3a1 1 0 001 1h30a1 1 0 001-1v-3c0-5.314-10.67-8-16-8z" fill="#fff"/>
+                        </svg>
+                      </div>
+                    </div>
                     <div class="flex-1">
                       <div class="flex items-center justify-between mb-2">
                         <h4 class="font-semibold text-gray-900">{{ review.student.name }}</h4>
@@ -209,13 +178,13 @@
 
                   <PrimaryButton 
                     v-else
-                    @click="handleContinue"
+                    disabled
                     size="lg"
                     variant="accent"
                     :icon="ImageIcon"
-                    class="w-full justify-center"
+                    class="w-full justify-center opacity-60 cursor-not-allowed"
                   >
-                    কোর্স চালিয়ে যান
+                    আপনি ইতিমধ্যে এনরোল করেছেন
                   </PrimaryButton>
 
 
@@ -231,7 +200,7 @@
                     </li>
                     <li class="flex items-center space-x-3">
                       <CheckIcon class="w-4 h-4 text-[#2d5a27]" />
-                      <span>{{ course.total_duration || 0 }} ঘণ্টা কন্টেন্ট</span>
+                      <span>{{ course.duration }} কন্টেন্ট</span>
                     </li>
                     <li class="flex items-center space-x-3">
                       <CheckIcon class="w-4 h-4 text-[#2d5a27]" />
@@ -259,7 +228,7 @@
     </section>
 
     <!-- Related Courses -->
-    <section class="py-20 bg-gray-50">
+    <!-- <section class="py-20 bg-gray-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeader 
           title="সম্পর্কিত কোর্সসমূহ"
@@ -279,23 +248,20 @@
           />
         </div>
       </div>
-    </section>
+    </section> -->
   </FrontendLayout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Link, Head, router, usePage } from '@inertiajs/vue3'
+import { ref, onMounted, computed, watch } from 'vue'
+import { Head, router, usePage } from '@inertiajs/vue3'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
-import SectionHeader from '@/components/Frontend/SectionHeader.vue'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
-import CourseCard from '@/components/Frontend/CourseCard.vue'
 import {
   BookOpenIcon,
   UsersIcon,
   ClockIcon,
   StarIcon,
-  ChevronRightIcon,
   ChevronDownIcon,
   ImageIcon,
 
@@ -310,15 +276,12 @@ interface Course {
   description: string
   full_description?: string
   image?: string
-  category: string
-  level: 'beginner' | 'intermediate' | 'advanced'
   price: number
   duration: string
   students_count: number
   rating: number
   reviews_count?: number
   total_lessons?: number
-  total_duration?: number
   learning_outcomes?: string[]
   requirements?: string[]
   instructor: {
@@ -329,6 +292,8 @@ interface Course {
     courses_count?: number
     students_count?: number
     rating?: number
+    experience?: string
+    phone?: string
   }
   modules?: Array<{
     id: number
@@ -353,136 +318,24 @@ interface Course {
   }>
 }
 
-// Get course data from props
-const page = usePage()
-const course = ref<Course>(page.props.course as Course || {
-  id: 1,
-  title: 'কুরআন তিলাওয়াত ও তাজবীদ',
-  slug: 'quran-tilawat-tajwid',
-  description: 'সহীহ উচ্চারণে কুরআন তিলাওয়াত শিখুন। তাজবীদের নিয়মকানুন সহ বিস্তারিত আলোচনা।',
-  full_description: 'এই কোর্সে আপনি কুরআন তিলাওয়াতের সঠিক পদ্ধতি এবং তাজবীদের সমস্ত নিয়ম-কানুন শিখবেন। অভিজ্ঞ শিক্ষকদের তত্ত্বাবধানে ধাপে ধাপে আরবি হরফের উচ্চারণ, তাজবীদের বিধি-বিধান এবং সুন্দর তিলাওয়াতের কৌশল আয়ত্ত করুন।',
-  image: 'https://images.unsplash.com/photo-1544113503-7ad5ac882d5d?w=800&h=450&fit=crop',
-  category: 'কুরআন',
-  level: 'beginner' as const,
-  price: 1500,
-  duration: '২ মাস',
-  students_count: 1250,
-  rating: 4.9,
-  reviews_count: 98,
-  preview_video_url: 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1',
-  total_lessons: 45,
-  total_duration: 12,
-  learning_outcomes: [
-    'সঠিক উচ্চারণে কুরআন তিলাওয়াত করতে পারবেন',
-    'তাজবীদের সমস্ত নিয়ম-কানুন জানবেন',
-    'আরবি হরফের সঠিক উচ্চারণ শিখবেন',
-    'কুরআনের অর্থ বুঝে তিলাওয়াত করতে পারবেন'
-  ],
-  requirements: [
-    'আরবি পড়তে পারার প্রাথমিক দক্ষতা',
-    'ইন্টারনেট সংযোগ এবং স্মার্টফোন/কম্পিউটার',
-    'প্রতিদিন অন্তত ৩০ মিনিট অনুশীলনের সময়'
-  ],
-  instructor: {
-    name: 'উস্তাদ মোহাম্মদ রহমান',
-    title: 'কুরআন ও তাজবীদ বিশেষজ্ঞ',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&crop=face',
-    bio: 'আল-আযহার বিশ্ববিদ্যালয় থেকে কুরআন ও তাজবীদে স্নাতকোত্তর। ১৫ বছরের অভিজ্ঞতা সহ দেশের একজন প্রখ্যাত কারী ও তাজবীদ শিক্ষক।',
-    courses_count: 12,
-    students_count: 5420,
-    rating: 4.9
-  },
-  modules: [
-    {
-      id: 1,
-      title: 'আরবি হরফ ও উচ্চারণ',
-      lessons_count: 8,
-      duration: '২ ঘণ্টা',
-      lessons: [
-        { id: 1, title: 'আরবি বর্ণমালা পরিচিতি', duration: '১৫ মিনিট' },
-        { id: 2, title: 'হরকত ও তানভীন', duration: '২০ মিনিট' },
-        { id: 3, title: 'যের, যবর, পেশ', duration: '১৮ মিনিট' }
-      ]
+const props = defineProps({
+    course: {
+        type: Object,
+        required: true,
     },
-    {
-      id: 2,
-      title: 'তাজবীদের মৌলিক নিয়ম',
-      lessons_count: 12,
-      duration: '৩.৫ ঘণ্টা',
-      lessons: [
-        { id: 4, title: 'তাজবীদ পরিচিতি', duration: '২৫ মিনিট' },
-        { id: 5, title: 'মদ্দের প্রকারভেদ', duration: '৩০ মিনিট' },
-        { id: 6, title: 'গুন্নাহর নিয়ম', duration: '২২ মিনিট' }
-      ]
-    }
-  ],
-  reviews: [
-    {
-      id: 1,
-      student: {
-        name: 'আবু বকর সিদ্দিক',
-        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=48&h=48&fit=crop&crop=face'
-      },
-      rating: 5,
-      date: '২ সপ্তাহ আগে',
-      comment: 'অসাধারণ কোর্স। উস্তাদের শেখানোর পদ্ধতি খুবই সহজ এবং কার্যকর। কুরআন তিলাওয়াতে অনেক উন্নতি হয়েছে।'
+    isAuthenticated: {
+        type: Boolean,
+        default: false,
     },
-    {
-      id: 2,
-      student: {
-        name: 'ফাতিমা খাতুন',
-        avatar: 'https://images.unsplash.com/photo-1494790108755-2616b0867b26?w=48&h=48&fit=crop&crop=face'
-      },
-      rating: 5,
-      date: '১ মাস আগে',
-      comment: 'তাজবীদের নিয়মগুলো এত সুন্দরভাবে বুঝিয়েছেন যে মনে রাখা খুবই সহজ হয়েছে। ধন্যবাদ উস্তাদকে।'
+    isEnrolled: {
+        type: Boolean,
+        default: false,
     }
-  ]
-})
+});
 
-const relatedCourses = ref<Course[]>(page.props.related_courses as Course[] || [
-  {
-    id: 2,
-    title: 'হাদিস ও সুন্নাহর আলোকে জীবনযাত্রা',
-    description: 'রাসূল (সা.) এর সুন্নাহ অনুসরণ করে আদর্শ জীবনযাত্রার নির্দেশনা।',
-    image: 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=400&h=250&fit=crop',
-    category: 'হাদিস',
-    level: 'intermediate' as const,
-    price: 1500,
-    duration: '৩ মাস',
-    students_count: 890,
-    rating: 4.8,
-    instructor: {
-      name: 'উস্তাদ আবদুল কারিম',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face'
-    },
-    slug: 'hadith-sunnah-life'
-  },
-  {
-    id: 3,
-    slug: 'islamic-fiqh-daily',
-    title: 'ইসলামিক ফিকহ - দৈনন্দিন মাসায়েল',
-    description: 'দৈনন্দিন জীবনের ইসলামিক সমাধান। ইবাদত, মুআমালাত এবং সামাজিক বিষয়াবলী।',
-    image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=250&fit=crop',
-    category: 'ফিকহ',
-    level: 'advanced' as const,
-    price: 2500,
-    duration: '৪ মাস',
-    students_count: 650,
-    rating: 4.7,
-    instructor: {
-      name: 'উস্তাদ মোহাম্মদ হাসান',
-      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=40&h=40&fit=crop&crop=face'
-    }
-  }
-])
-
-// State
 const activeTab = ref('overview')
 const expandedModules = ref<number[]>([])
-const isEnrolled = ref(false)
 
-// Tabs
 const tabs = [
   { id: 'overview', name: 'কোর্স সম্পর্কে' },
   { id: 'curriculum', name: 'কারিকুলাম' },
@@ -490,90 +343,248 @@ const tabs = [
   { id: 'reviews', name: 'রিভিউ' }
 ]
 
-// Methods
-const getLevelText = (level: string) => {
-  const levels = {
-    beginner: 'শুরুর স্তর',
-    intermediate: 'মধ্যম স্তর',
-    advanced: 'উন্নত স্তর'
-  }
-  return levels[level as keyof typeof levels] || level
-}
-
 const toggleModule = (moduleId: number) => {
-  if (expandedModules.value.includes(moduleId)) {
-    expandedModules.value = expandedModules.value.filter(id => id !== moduleId)
+    // If the clicked module is already open, close it by clearing the array.
+    if (expandedModules.value.includes(moduleId)) {
+        expandedModules.value = [];
   } else {
-    expandedModules.value.push(moduleId)
+        // Otherwise, set the clicked module as the only open one.
+        expandedModules.value = [moduleId];
   }
-}
+};
+
+onMounted(() => {
+  if (props.course.modules && props.course.modules.length > 0) {
+    expandedModules.value.push(props.course.modules[0].id)
+  }
+})
+
+// Dummy data for reviews (replace with actual data)
+const reviews = ref([
+  {
+    id: 1,
+    student: {
+      name: 'মাহমুদুল হাসান',
+      avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    },
+    rating: 5,
+    date: '১ দিন আগে',
+    comment: 'এই কোর্সটি অসাধারণ! শিক্ষক খুবই সহানুভূতিশীল এবং বিষয়বস্তু সহজবোধ্য।'
+  },
+  {
+    id: 2,
+    student: {
+      name: 'সাবরিনা আক্তার',
+      avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+    },
+    rating: 5,
+    date: '২ দিন আগে',
+    comment: 'আমি অনেক কিছু শিখেছি। ভিডিও গুলো খুবই পরিষ্কার এবং গঠনমূলক।'
+  },
+  {
+    id: 3,
+    student: {
+      name: 'রাশেদুল ইসলাম',
+      avatar: 'https://randomuser.me/api/portraits/men/45.jpg',
+    },
+    rating: 5,
+    date: '৩ দিন আগে',
+    comment: 'কোর্সের কনটেন্ট আপডেটেড এবং প্রাসঙ্গিক। ধন্যবাদ ইকরা একাডেমি!'
+  },
+  {
+    id: 4,
+    student: {
+      name: 'নাজমুল হোসেন',
+      avatar: 'https://randomuser.me/api/portraits/men/46.jpg',
+    },
+    rating: 5,
+    date: '৪ দিন আগে',
+    comment: 'শেখার জন্য খুবই ভালো একটি প্ল্যাটফর্ম। সকলের জন্য সুপারিশ করছি।'
+  },
+  {
+    id: 5,
+    student: {
+      name: 'তানজিলা রহমান',
+      avatar: 'https://randomuser.me/api/portraits/women/47.jpg',
+    },
+    rating: 5,
+    date: '৫ দিন আগে',
+    comment: 'ইনস্ট্রাক্টর খুবই দক্ষ এবং সহানুভূতিশীল। কোর্সটি উপভোগ করেছি।'
+  },
+  {
+    id: 6,
+    student: {
+      name: 'মো. সাইফুল ইসলাম',
+      avatar: 'https://randomuser.me/api/portraits/men/48.jpg',
+    },
+    rating: 5,
+    date: '৬ দিন আগে',
+    comment: 'কোর্সের প্রতিটি মডিউল খুব সুন্দরভাবে সাজানো। শেখার জন্য আদর্শ।'
+  },
+  {
+    id: 7,
+    student: {
+      name: 'শারমিন আক্তার',
+      avatar: 'https://randomuser.me/api/portraits/women/49.jpg',
+    },
+    rating: 5,
+    date: '১ সপ্তাহ আগে',
+    comment: 'প্র্যাকটিক্যাল উদাহরণগুলো খুবই সহায়ক ছিল। ধন্যবাদ।'
+  },
+  {
+    id: 8,
+    student: {
+      name: 'জুবায়ের আহমেদ',
+      avatar: 'https://randomuser.me/api/portraits/men/50.jpg',
+    },
+    rating: 5,
+    date: '১ সপ্তাহ আগে',
+    comment: 'কোর্সটি আমার ক্যারিয়ারে অনেক সাহায্য করেছে। highly recommended!'
+  },
+  {
+    id: 9,
+    student: {
+      name: 'রিমা খাতুন',
+      avatar: 'https://randomuser.me/api/portraits/women/51.jpg',
+    },
+    rating: 5,
+    date: '১ সপ্তাহ আগে',
+    comment: 'কোর্সের কনটেন্ট খুবই মানসম্মত এবং সহজবোধ্য।'
+  },
+  {
+    id: 10,
+    student: {
+      name: 'মো. আব্দুল্লাহ',
+      avatar: 'https://randomuser.me/api/portraits/men/52.jpg',
+    },
+    rating: 5,
+    date: '২ সপ্তাহ আগে',
+    comment: 'ইন্টারেক্টিভ কুইজ ও অ্যাসাইনমেন্টগুলো খুবই উপকারী ছিল।'
+  },
+  {
+    id: 11,
+    student: {
+      name: 'সাদিয়া ইসলাম',
+      avatar: 'https://randomuser.me/api/portraits/women/53.jpg',
+    },
+    rating: 5,
+    date: '২ সপ্তাহ আগে',
+    comment: 'আমি কোর্সটি সম্পূর্ণ করেছি এবং অনেক আত্মবিশ্বাস পেয়েছি।'
+  },
+  {
+    id: 12,
+    student: {
+      name: 'আরিফুল ইসলাম',
+      avatar: 'https://randomuser.me/api/portraits/men/54.jpg',
+    },
+    rating: 5,
+    date: '৩ সপ্তাহ আগে',
+    comment: 'তাজবীদের নিয়মগুলো এত সুন্দরভাবে বুঝিয়েছেন যে মনে রাখা খুবই সহজ হয়েছে। ধন্যবাদ উস্তাদকে।'
+  }
+])
+
+const reviewRating = computed(() => {
+  if (!reviews.value || reviews.value.length === 0) return '0.0'
+  const total = reviews.value.reduce((acc, review) => acc + (review.rating || 0), 0)
+  return (total / reviews.value.length).toFixed(1)
+})
+
+const reviewCount = computed(() => reviews.value ? reviews.value.length : 0)
 
 const handleEnroll = () => {
-  if (course.value.price === 0) {
-    isEnrolled.value = true
+  const intendedUrl = route('frontend.payment.checkout', { course: props.course.slug })
+  if (!props.isAuthenticated) {
+    // Store the intended URL in the session before redirecting to login
+    sessionStorage.setItem('intended_url', intendedUrl)
+    router.visit(route('login'))
   } else {
-    // Redirect to payment page with course information
-    router.visit(route('frontend.payment.checkout', { course: course.value.slug }))
+    // If authenticated, proceed directly to payment
+    router.visit(intendedUrl)
   }
 }
-
-const handleContinue = () => {
-  // In real app, redirect to learning route
-}
-
-const handleCourseEnroll = (courseData: any) => {
-  // Redirect to payment page for related course enrollment
-  router.visit(route('frontend.payment.checkout', { course: courseData.slug }))
-}
-
-const handleCourseFavorite = (courseData: any, favorite: boolean) => {
-  // Handle related course favorite toggle
-}
-
-
 </script>
 
 <style scoped>
-.prose {
-  color: #6b7280;
+.prose :where(p):not(:where([class~="not-prose"] *)) {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
 }
 
-.prose h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 1rem;
-  margin-top: 2rem;
-}
-
-.prose h4 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 0.75rem;
-  margin-top: 1.5rem;
-}
-
-.prose p {
-  margin-bottom: 1rem;
-  line-height: 1.625;
-}
-
-.prose ul {
+.curriculum-module {
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px 0 rgba(95,95,205,0.06);
   margin-bottom: 1.5rem;
+  background: #fff;
+  transition: box-shadow 0.3s;
 }
-
-.prose li {
+.curriculum-module.expanded {
+  box-shadow: 0 4px 16px 0 rgba(95,95,205,0.12);
+  background: linear-gradient(90deg, #f5f7fa 0%, #e9ecff 100%);
+}
+.curriculum-header {
+  padding: 1.25rem 2rem;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #23235b;
+  transition: background 0.2s, color 0.2s;
+}
+.curriculum-header:hover {
+  background: #f0f4ff;
+  color: #5f5fcd;
+}
+.curriculum-chevron {
+  transition: transform 0.4s cubic-bezier(.4,0,.2,1);
+}
+.curriculum-chevron.expanded {
+  transform: rotate(180deg) scale(1.2);
+}
+.curriculum-lessons {
+  padding: 1.25rem 2.5rem 1.5rem 2.5rem;
+  background: #f8fafc;
+  animation: fadeInUp 0.4s;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+.curriculum-lesson {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.05rem;
+  color: #444;
   margin-bottom: 0.5rem;
+  transition: color 0.2s;
+}
+.curriculum-lesson:hover {
+  color: #5f5fcd;
+}
+.curriculum-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5f5fcd 60%, #2d5a27 100%);
+  box-shadow: 0 0 6px #5f5fcd44;
+  animation: pulse 1.2s infinite alternate;
+}
+@keyframes pulse {
+  to { box-shadow: 0 0 12px #5f5fcd88; }
 }
 
-.prose li::before {
-  content: '•';
-  color: #5f5fcd;
-  font-weight: bold;
-  margin-right: 0.5rem;
-  margin-top: 0.25rem;
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+}
+.fade-slide-enter-from, .fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+.fade-slide-enter-to, .fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>

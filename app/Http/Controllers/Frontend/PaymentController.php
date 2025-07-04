@@ -4,9 +4,14 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\Payment;
+use App\Models\CourseEnrollment;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -23,6 +28,7 @@ class PaymentController extends Controller
         return Inertia::render('Frontend/PaymentPage', [
             'title' => 'পেমেন্ট - ' . $courseModel->title,
             'course' => $courseModel,
+            'user' => Auth::user(),
             'meta' => [
                 'description' => 'Complete your enrollment for ' . $courseModel->title,
                 'keywords' => 'payment, enrollment, ইসলামিক কোর্স, অনলাইন পেমেন্ট'
@@ -33,15 +39,94 @@ class PaymentController extends Controller
     /**
      * Process course enrollment payment
      */
-    public function processPayment($course)
+    public function processPayment(Request $request, $course)
     {
-        // This would handle the payment processing logic
-        // For now, return a success response
-        return response()->json([
-            'success' => true,
-            'message' => 'Payment processed successfully',
-            'redirect' => route('frontend.learn.course', ['course' => $course])
+        // Validate the request
+        $validated = $request->validate([
+            'transactionId' => 'required|string|max:255',
+            'paymentMethod' => 'required|string|in:bkash,nagad,rocket',
+            'agreeTerms' => 'required|accepted',
+            'agreeRefund' => 'required|accepted',
+            'agreeNewsletter' => 'boolean',
+            'course_id' => 'required|exists:courses,id',
+            'amount' => 'required|numeric|min:0'
         ]);
+
+        // Get the course
+        $courseModel = Course::findOrFail($validated['course_id']);
+        
+        // Get the authenticated user and their student record
+        $user = Auth::user();
+        $student = Student::where('user_id', $user->id)->first();
+        
+        if (!$student) {
+            return back()->withErrors(['error' => 'Student profile not found.']);
+        }
+
+        // Check if student is already enrolled
+        $existingEnrollment = CourseEnrollment::where('student_id', $student->id)
+            ->where('course_id', $courseModel->id)
+            ->first();
+            
+        if ($existingEnrollment) {
+            return back()->withErrors(['error' => 'You are already enrolled in this course.']);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Create payment record
+            $payment = Payment::create([
+                'student_id' => $student->id,
+                'course_id' => $courseModel->id,
+                'amount' => $validated['amount'],
+                'currency' => 'BDT',
+                'payment_method' => $validated['paymentMethod'],
+                'transaction_id' => $validated['transactionId'],
+                'status' => 'pending', // Admin will verify and update to 'completed'
+                'sender_number' => null, // Can be added later if needed
+                'receiver_number' => $this->getReceiverNumber($validated['paymentMethod']),
+            ]);
+
+            // Create enrollment record
+            $enrollment = CourseEnrollment::create([
+                'student_id' => $student->id,
+                'course_id' => $courseModel->id,
+                'enrolled_at' => now(),
+                'enrollment_type' => $courseModel->price > 0 ? 'paid' : 'free',
+                'payment_id' => $payment->id,
+                'amount_paid' => $validated['amount'],
+                'currency' => 'BDT',
+                'payment_status' => 'pending',
+                'progress_percentage' => 0,
+                'lessons_completed' => 0,
+                'is_active' => false, // Will be activated after payment verification
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('frontend.student.dashboard')
+                ->with('success', 'Payment submitted successfully! Your enrollment will be activated after payment verification.');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            
+            return back()->withErrors(['error' => 'Payment processing failed. Please try again.']);
+        }
+    }
+
+    /**
+     * Get receiver number based on payment method
+     */
+    private function getReceiverNumber($paymentMethod)
+    {
+        $numbers = [
+            'bkash' => '01915878662',
+            'nagad' => '01750-469027',
+            'rocket' => '019158786625'
+        ];
+
+        return $numbers[$paymentMethod] ?? null;
     }
 
     /**

@@ -24,7 +24,7 @@ class Course extends Model
         'currency',
         'discount_price',
         'discount_expires_at',
-        'duration_hours',
+        'duration_in_minutes',
         'status',
         'is_featured',
         'is_free',
@@ -144,18 +144,50 @@ class Course extends Model
      */
     public function getThumbnailAttribute(): ?string
     {
-        return $this->thumbnail_image;
+        if (!$this->thumbnail_image) {
+            return null;
+        }
+
+        // If the path already includes 'http', it's a full URL
+        if (str_starts_with($this->thumbnail_image, 'http')) {
+            return $this->thumbnail_image;
+        }
+
+        // Otherwise, build the full URL from the public storage path
+        return asset('storage/' . $this->thumbnail_image);
     }
 
     /**
-     * Get duration attribute.
+     * Get total lessons count for the course.
+     */
+    public function getTotalLessonsCountAttribute(): int
+    {
+        return $this->lessons()->count();
+    }
+
+    /**
+     * Get duration attribute, formatted from minutes.
      */
     public function getDurationAttribute(): string
     {
-        if ($this->duration_hours) {
-            return $this->duration_hours . ' ঘন্টা';
+        $minutes = $this->duration_in_minutes;
+
+        if (!$minutes || $minutes <= 0) {
+            return 'স্ব-নির্ধারিত';
         }
-        return 'স্ব-নির্ধারিত';
+
+        $hours = floor($minutes / 60);
+        $remainingMinutes = $minutes % 60;
+
+        $parts = [];
+        if ($hours > 0) {
+            $parts[] = $hours . ' ঘন্টা';
+        }
+        if ($remainingMinutes > 0) {
+            $parts[] = $remainingMinutes . ' মিনিট';
+        }
+
+        return implode(' ', $parts);
     }
 
     /**

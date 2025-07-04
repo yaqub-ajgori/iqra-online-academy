@@ -34,7 +34,7 @@ return new class extends Migration
             $table->timestamp('discount_expires_at')->nullable();
             
             // Course Metrics
-            $table->integer('duration_hours')->nullable();
+            $table->integer('duration_in_minutes')->nullable();
             
             // Course Status
             $table->enum('status', ['draft', 'review', 'published', 'archived'])->default('draft');

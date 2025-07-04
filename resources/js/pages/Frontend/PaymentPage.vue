@@ -22,94 +22,6 @@
             <!-- Payment Form -->
             <div class="lg:col-span-2 space-y-8">
               
-              <!-- Student Information -->
-              <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                  <UserIcon class="w-6 h-6 text-[#5f5fcd] mr-3" />
-                  শিক্ষার্থীর তথ্য
-                </h2>
-                
-                <form @submit.prevent="handleSubmit" class="space-y-6">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-2">
-                        পূর্ণ নাম *
-                      </label>
-                      <input
-                        v-model="form.name"
-                        type="text"
-                        required
-                        :disabled="isSubmitting"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        placeholder="আপনার পূর্ণ নাম লিখুন"
-                        :class="{ 'border-red-500': errors.name }"
-                      />
-                      <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
-                    </div>
-                    
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-2">
-                        ইমেইল ঠিকানা *
-                      </label>
-                      <input
-                        v-model="form.email"
-                        type="email"
-                        required
-                        :disabled="isSubmitting"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        placeholder="আপনার ইমেইল ঠিকানা"
-                        :class="{ 'border-red-500': errors.email }"
-                      />
-                      <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
-                    </div>
-                    
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-2">
-                        ফোন নম্বর *
-                      </label>
-                      <input
-                        v-model="form.phone"
-                        type="tel"
-                        required
-                        :disabled="isSubmitting"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        placeholder="০১৭xxxxxxxx"
-                        :class="{ 'border-red-500': errors.phone }"
-                      />
-                      <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
-                    </div>
-                    
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-2">
-                        বয়স
-                      </label>
-                      <input
-                        v-model="form.age"
-                        type="number"
-                        min="10"
-                        max="100"
-                        :disabled="isSubmitting"
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        placeholder="আপনার বয়স"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                      ঠিকানা
-                    </label>
-                    <textarea
-                      v-model="form.address"
-                      rows="3"
-                      :disabled="isSubmitting"
-                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      placeholder="আপনার সম্পূর্ণ ঠিকানা"
-                    ></textarea>
-                  </div>
-                </form>
-              </div>
-
               <!-- Payment Methods -->
               <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
@@ -134,7 +46,7 @@
                         v-model="selectedPaymentMethod"
                         :value="method.id"
                         type="radio"
-                        :disabled="isSubmitting"
+                        :disabled="form.processing"
                         class="sr-only"
                       />
                       <div class="flex items-center flex-1">
@@ -177,91 +89,87 @@
                       />
                     </label>
                   </div>
-
-                  <!-- Bank Transfer -->
-                  <label 
-                    :class="[
-                      'relative flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200',
-                      selectedPaymentMethod === 'bank_transfer' 
-                        ? 'border-[#2d5a27] bg-[#2d5a27]/5' 
-                        : 'border-gray-200 hover:border-[#2d5a27]/30'
-                    ]"
-                  >
-                    <input
-                      v-model="selectedPaymentMethod"
-                      value="bank_transfer"
-                      type="radio"
-                      :disabled="isSubmitting"
-                      class="sr-only"
-                    />
-                    <div class="flex items-center flex-1">
-                      <BuildingIcon class="w-12 h-12 text-[#2d5a27] mr-4" />
-                      <div>
-                        <div class="font-semibold text-gray-900">ব্যাংক ট্রান্সফার</div>
-                        <div class="text-sm text-gray-600">সরাসরি ব্যাংক অ্যাকাউন্টে পেমেন্ট</div>
-                      </div>
-                    </div>
-                    <CheckCircleIcon 
-                      v-if="selectedPaymentMethod === 'bank_transfer'"
-                      class="w-6 h-6 text-[#2d5a27]" 
-                    />
-                  </label>
-                </div>
-
-                <!-- Payment Instructions -->
-                <div v-if="selectedPaymentMethod" class="mt-6 p-4 bg-gray-50 rounded-xl">
-                  <h4 class="font-semibold text-gray-900 mb-3">পেমেন্ট নির্দেশনা:</h4>
-                  <div v-if="selectedPaymentMethod === 'bkash'" class="space-y-2 text-sm text-gray-600">
-                    <p>• বিকাশে 01712-345678 নম্বরে "Send Money" করুন</p>
-                    <p>• Reference হিসেবে আপনার ফোন নম্বর লিখুন</p>
-                    <p>• Transaction ID সংরক্ষণ করুন</p>
-                  </div>
-                  <div v-else-if="selectedPaymentMethod === 'nagad'" class="space-y-2 text-sm text-gray-600">
-                    <p>• নগদে 01812-345678 নম্বরে "Send Money" করুন</p>
-                    <p>• Reference হিসেবে আপনার ফোন নম্বর লিখুন</p>
-                    <p>• Transaction ID সংরক্ষণ করুন</p>
-                  </div>
-                  <div v-else-if="selectedPaymentMethod === 'rocket'" class="space-y-2 text-sm text-gray-600">
-                    <p>• রকেটে 01912-345678 নম্বরে "Send Money" করুন</p>
-                    <p>• Reference হিসেবে আপনার ফোন নম্বর লিখুন</p>
-                    <p>• Transaction ID সংরক্ষণ করুন</p>
-                  </div>
-                  <div v-else-if="selectedPaymentMethod === 'bank_transfer'" class="space-y-2 text-sm text-gray-600">
-                    <p>• ব্যাংক: ইসলামী ব্যাংক বাংলাদেশ লিমিটেড</p>
-                    <p>• অ্যাকাউন্ট নাম: ইকরা অনলাইন একাডেমি</p>
-                    <p>• অ্যাকাউন্ট নম্বর: 20123456789012</p>
-                    <p>• ব্রাঞ্চ: ধানমন্ডি, ঢাকা</p>
-                  </div>
-                </div>
-
-                <!-- Transaction ID -->
-                <div v-if="selectedPaymentMethod && selectedPaymentMethod !== 'bank_transfer'" class="mt-6">
-                  <label class="block text-sm font-medium text-gray-700 mb-2">
-                    Transaction ID *
-                  </label>
-                  <input
-                    v-model="form.transactionId"
-                    type="text"
-                    required
-                    :disabled="isSubmitting"
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                    placeholder="পেমেন্টের Transaction ID দিন"
-                    :class="{ 'border-red-500': errors.transactionId }"
-                  />
-                  <p v-if="errors.transactionId" class="mt-1 text-sm text-red-600">{{ errors.transactionId }}</p>
                 </div>
               </div>
+
+              <!-- Payment Instructions -->
+              <transition name="fade-slide">
+                <div v-if="selectedPaymentMethod" class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
+                  <h2 class="text-2xl font-bold text-gray-900 mb-6">পেমেন্ট নির্দেশনা</h2>
+                  <div class="prose prose-slate max-w-none">
+                    <div v-if="selectedPaymentMethod === 'bkash'">
+                      <p>অনুগ্রহ করে নিচের নম্বরে সেন্ড মানি করুন:</p>
+                      <p class="text-lg font-mono font-bold text-gray-800 bg-gray-100 p-3 rounded-lg inline-block">01915878662 (পার্সোনাল)</p>
+                      <ol>
+                        <li>আপনার বিকাশ অ্যাপে যান এবং "সেন্ড মানি" অপশনটি নির্বাচন করুন।</li>
+                        <li>অ্যামাউন্ট হিসেবে <strong>৳{{ finalPrice.toLocaleString() }}</strong> দিন।</li>
+                        <li>রেফারেন্স হিসেবে আপনার নাম এবং কোর্সের নাম লিখুন।</li>
+                        <li>আপনার বিকাশ পিন দিয়ে পেমেন্ট সম্পন্ন করুন।</li>
+                        <li>পেমেন্ট সম্পন্ন হলে ট্রানজেকশন আইডিটি সংরক্ষণ করুন।</li>
+                      </ol>
+                    </div>
+                    <div v-else-if="selectedPaymentMethod === 'nagad'">
+                      <p>অনুগ্রহ করে নিচের নম্বরে সেন্ড মানি করুন:</p>
+                       <p class="text-lg font-mono font-bold text-gray-800 bg-gray-100 p-3 rounded-lg inline-block">01750-469027 (পার্সোনাল)</p>
+                      <ol>
+                        <li>আপনার নগদ অ্যাপে যান এবং "সেন্ড মানি" অপশনটি নির্বাচন করুন।</li>
+                        <li>অ্যামাউন্ট হিসেবে <strong>৳{{ finalPrice.toLocaleString() }}</strong> দিন।</li>
+                        <li>আপনার নগদ পিন দিয়ে পেমেন্ট সম্পন্ন করুন।</li>
+                        <li>পেমেন্ট সম্পন্ন হলে ট্রানজেকশন আইডিটি সংরক্ষণ করুন।</li>
+                      </ol>
+                    </div>
+                    <div v-else-if="selectedPaymentMethod === 'rocket'">
+                      <p>অনুগ্রহ করে নিচের নম্বরে সেন্ড মানি করুন:</p>
+                      <p class="text-lg font-mono font-bold text-gray-800 bg-gray-100 p-3 rounded-lg inline-block">019158786625 (পার্সোনাল)</p>
+                      <ol>
+                        <li>আপনার রকেট অ্যাপে যান এবং "সেন্ড মানি" অপশনটি নির্বাচন করুন।</li>
+                        <li>অ্যামাউন্ট হিসেবে <strong>৳{{ finalPrice.toLocaleString() }}</strong> দিন।</li>
+                        <li>আপনার রকেট পিন দিয়ে পেমেন্ট সম্পন্ন করুন।</li>
+                        <li>পেমেন্ট সম্পন্ন হলে ট্রানজেকশন আইডিটি সংরক্ষণ করুন।</li>
+                      </ol>
+                    </div>
+                  </div>
+                  
+                  <!-- Transaction ID Input -->
+                  <div class="mt-8">
+                    <label for="transaction_id" class="block text-lg font-semibold text-gray-800 mb-2">ট্রানজেকশন আইডি</label>
+                    <input 
+                        type="text"
+                        id="transaction_id"
+                        v-model="form.transactionId"
+                        placeholder="পেমেন্টের পর প্রাপ্ত ট্রানজেকশন আইডি লিখুন"
+                        required
+                        :disabled="form.processing"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-[#5f5fcd] focus:border-[#5f5fcd] transition duration-200"
+                    />
+                    <p class="mt-2 text-sm text-gray-500">
+                      বিকাশ, নগদ বা রকেট থেকে পেমেন্ট করার পর মেসেজে যে ট্রানজেকশন আইডিটি পেয়েছেন, সেটি এখানে সাবমিট করুন।
+                    </p>
+                  </div>
+                </div>
+              </transition>
 
               <!-- Terms and Conditions -->
               <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6">শর্তাবলী</h2>
                 <div class="space-y-4 text-sm text-gray-600">
+                  <label class="flex items-start space-x-3 font-semibold text-gray-800">
+                    <input
+                      v-model="allAgreed"
+                      type="checkbox"
+                      class="mt-1 w-4 h-4 text-[#5f5fcd] border-gray-300 rounded focus:ring-[#5f5fcd] disabled:opacity-50"
+                    />
+                    <span>সবগুলো নির্বাচন করুন</span>
+                  </label>
+                  
+                  <hr class="my-4">
+
                   <label class="flex items-start space-x-3">
                     <input
                       v-model="form.agreeTerms"
                       type="checkbox"
                       required
-                      :disabled="isSubmitting"
+                      :disabled="form.processing"
                       class="mt-1 w-4 h-4 text-[#5f5fcd] border-gray-300 rounded focus:ring-[#5f5fcd] disabled:opacity-50"
                     />
                     <span>আমি <Link href="#" class="text-[#5f5fcd] hover:underline">শর্তাবলী ও নীতিমালা</Link> পড়েছি এবং সম্মত আছি</span>
@@ -271,7 +179,7 @@
                       v-model="form.agreeRefund"
                       type="checkbox"
                       required
-                      :disabled="isSubmitting"
+                      :disabled="form.processing"
                       class="mt-1 w-4 h-4 text-[#5f5fcd] border-gray-300 rounded focus:ring-[#5f5fcd] disabled:opacity-50"
                     />
                     <span>আমি <Link href="#" class="text-[#5f5fcd] hover:underline">রিফান্ড নীতি</Link> সম্পর্কে অবগত আছি</span>
@@ -280,7 +188,7 @@
                     <input
                       v-model="form.agreeNewsletter"
                       type="checkbox"
-                      :disabled="isSubmitting"
+                      :disabled="form.processing"
                       class="mt-1 w-4 h-4 text-[#5f5fcd] border-gray-300 rounded focus:ring-[#5f5fcd] disabled:opacity-50"
                     />
                     <span>নতুন কোর্স ও আপডেটের জন্য ইমেইল নোটিফিকেশন পেতে চাই</span>
@@ -310,63 +218,11 @@
                       </div>
                     </div>
 
-                    <!-- Coupon Code -->
-                    <div class="mb-5">
-                      <label class="block text-sm font-medium text-gray-700 mb-2">
-                        কুপন কোড (ঐচ্ছিক)
-                      </label>
-                      <div class="flex space-x-2">
-                        <input
-                          v-model="couponCode"
-                          type="text"
-                          :disabled="couponApplied || isSubmitting"
-                          class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                          placeholder="কুপন কোড লিখুন (যেমন: IQRA10)"
-                        />
-                        <PrimaryButton
-                          v-if="!couponApplied"
-                          @click="applyCoupon"
-                          variant="outline"
-                          size="md"
-                          :disabled="!couponCode || isSubmitting"
-                          :loading="applyingCoupon"
-                        >
-                          প্রয়োগ করুন
-                        </PrimaryButton>
-                        <PrimaryButton
-                          v-else
-                          @click="removeCoupon"
-                          variant="destructive"
-                          size="md"
-                          :icon="XIcon"
-                          :disabled="isSubmitting"
-                        >
-                          রিমুভ করুন
-                        </PrimaryButton>
-                      </div>
-                      
-                      <!-- Testing Hints -->
-                      <div class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                        <p class="text-xs text-blue-700 font-medium mb-1">পরীক্ষার জন্য কুপন কোড:</p>
-                        <div class="text-xs text-blue-600 space-y-1">
-                          <div><strong>IQRA10</strong> - ১০% ছাড় (বৈধ)</div>
-                          <div><strong>STUDENT50</strong> - ৫০% ছাড় (বৈধ)</div>
-                          <div><strong>OLDCOUPON</strong> - মেয়াদোত্তীর্ণ (পরীক্ষার জন্য)</div>
-                          <div><strong>EXPIRED2024</strong> - মেয়াদোত্তীর্ণ (পরীক্ষার জন্য)</div>
-                          <div><strong>INVALID123</strong> - অবৈধ কোড (পরীক্ষার জন্য)</div>
-                        </div>
-                      </div>
-                    </div>
-
                     <!-- Price Breakdown -->
                     <div class="space-y-2 border-t border-gray-100 pt-4">
                       <div class="flex justify-between text-gray-600">
                         <span>কোর্স ফি</span>
                         <span>৳{{ (course?.price || 0).toLocaleString() }}</span>
-                      </div>
-                      <div v-if="discount > 0" class="flex justify-between text-green-600">
-                        <span>ছাড় ({{ appliedCoupon }})</span>
-                        <span>-৳{{ discount.toLocaleString() }}</span>
                       </div>
                       <div class="flex justify-between font-bold text-lg text-gray-900 border-t border-gray-100 pt-2">
                         <span>সর্বমোট</span>
@@ -378,13 +234,13 @@
                     <PrimaryButton
                       @click="handleSubmit"
                       :disabled="!canSubmit"
-                      :loading="isSubmitting"
+                      :loading="form.processing"
                       size="lg"
                       variant="primary"
                       :icon="CreditCardIcon"
                       class="w-full justify-center mt-5"
                     >
-                      {{ isSubmitting ? 'প্রক্রিয়াধীন...' : `৳${finalPrice.toLocaleString()} পেমেন্ট করুন` }}
+                      {{ form.processing ? 'প্রক্রিয়াধীন...' : 'পেমেন্ট করুন' }}
                     </PrimaryButton>
                   </div>
                 </div>
@@ -402,10 +258,6 @@
                     </li>
                     <li class="flex items-center space-x-2">
                       <CheckIcon class="w-4 h-4 text-[#2d5a27]" />
-                      <span>৭ দিনের মানি ব্যাক গ্যারান্টি</span>
-                    </li>
-                    <li class="flex items-center space-x-2">
-                      <CheckIcon class="w-4 h-4 text-[#2d5a27]" />
                       <span>লাইফটাইম অ্যাক্সেস</span>
                     </li>
                     <li class="flex items-center space-x-2">
@@ -413,20 +265,6 @@
                       <span>২৪/৭ কাস্টমার সাপোর্ট</span>
                     </li>
                   </ul>
-                </div>
-
-                <!-- Need Help -->
-                <div class="bg-[#5f5fcd]/5 rounded-2xl p-6 text-center">
-                  <h4 class="font-semibold text-gray-900 mb-2">সাহায্য দরকার?</h4>
-                  <p class="text-sm text-gray-600 mb-4">আমাদের সাপোর্ট টিম সর্বদা আপনার সেবায় নিয়োজিত</p>
-                  <PrimaryButton
-                    variant="outline"
-                    size="sm"
-                    :icon="PhoneIcon"
-                    class="w-full justify-center"
-                  >
-                    +৮৮০১৭১২-৩৪৫৬৭৮
-                  </PrimaryButton>
                 </div>
               </div>
             </div>
@@ -439,7 +277,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { Link, Head, router, usePage } from '@inertiajs/vue3'
+import { Link, Head, router, usePage, useForm } from '@inertiajs/vue3'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
 import ProgressIndicator from '@/components/Frontend/ProgressIndicator.vue'
@@ -479,316 +317,102 @@ interface Course {
   }
 }
 
-// Props from Laravel controller
-const props = defineProps<{
-  course?: Course
-  title?: string
-}>()
+// Props
+const props = defineProps({
+  course: {
+    type: Object,
+    required: true
+  },
+  user: {
+    type: Object,
+    default: () => ({})
+  }
+});
 
-// State
-const course = ref<Course | null>(null)
+const toast = useToast();
 
-// Form state
-const form = ref({
-  name: '',
-  email: '',
-  phone: '',
-  age: '',
-  address: '',
+const mobileBankingMethods = [
+  { id: 'bkash', name: 'bKash', description: 'bKash Payment', color: '#e2136e' },
+  { id: 'nagad', name: 'Nagad', description: 'Nagad Payment', color: '#f58220' },
+  { id: 'rocket', name: 'Rocket', description: 'DBBL Mobile Banking', color: '#8a2be2' }
+]
+
+const selectedPaymentMethod = ref<string | null>(null)
+
+// Form state using Inertia's useForm
+const form = useForm({
+  studentId: props.user?.id || null,
   transactionId: '',
   agreeTerms: false,
   agreeRefund: false,
-  agreeNewsletter: false
+  agreeNewsletter: false,
+  paymentMethod: null as string | null,
+  course_id: props.course.id,
+  amount: props.course?.price || 0
 })
 
-const errors = ref<Record<string, string>>({})
-const selectedPaymentMethod = ref('')
-const isSubmitting = ref(false)
-const discount = ref(0)
-
-// Coupon state
-const couponCode = ref('')
-const couponApplied = ref(false)
-const appliedCoupon = ref('')
-const applyingCoupon = ref(false)
-
-// Toast system
-const toast = useToast()
-
-// Payment methods
-const mobileBankingMethods = [
-  {
-    id: 'bkash',
-    name: 'বিকাশ',
-    description: 'Send Money দিয়ে পেমেন্ট',
-    color: '#e2136e',
-    bgColor: '#fce7f3'
-  },
-  {
-    id: 'nagad',
-    name: 'নগদ',
-    description: 'Send Money দিয়ে পেমেন্ট',
-    color: '#ec4a0a',
-    bgColor: '#fff7ed'
-  },
-  {
-    id: 'rocket',
-    name: 'রকেট',
-    description: 'Send Money দিয়ে পেমেন্ট',
-    color: '#8b5cf6',
-    bgColor: '#f3e8ff'
+const allAgreed = computed({
+  get: () => form.agreeTerms && form.agreeRefund && form.agreeNewsletter,
+  set: (value) => {
+    form.agreeTerms = value
+    form.agreeRefund = value
+    form.agreeNewsletter = value
   }
-]
+})
 
-// Computed properties
-const finalPrice = computed(() => (course.value?.price || 0) - discount.value)
+const finalPrice = computed(() => props.course?.price || 0)
 
 const canSubmit = computed(() => {
-  return form.value.name && 
-         form.value.email && 
-         form.value.phone &&
-         selectedPaymentMethod.value &&
-         form.value.agreeTerms && 
-         form.value.agreeRefund &&
-         !isSubmitting.value &&
-         Object.keys(errors.value).length === 0
+  return (
+    form.agreeTerms &&
+    form.agreeRefund &&
+    selectedPaymentMethod.value !== null &&
+    form.transactionId.trim() !== '' &&
+    !form.processing
+  )
 })
 
-// Methods
-const loadCourseData = async () => {
-  try {
-    const page = usePage()
-    const courseSlug = page.props.course_slug as string
-    
-    if (courseSlug) {
-      const response = await router.get(route('frontend.payment.checkout', courseSlug), {}, {
-        preserveState: true,
-        preserveScroll: true,
-        only: ['course']
-      })
+const handleSubmit = () => {
+  // Update paymentMethod in form just before submitting
+  form.paymentMethod = selectedPaymentMethod.value;
+
+  // Submit the form to the backend
+  form.post(route('frontend.payment.process', props.course.slug), {
+    onSuccess: () => {
+      toast.success({
+        title: 'সফল হয়েছে',
+        message: `অভিনন্দন! আপনার পেমেন্ট জমা দেওয়া হয়েছে। যাচাইয়ের পর আপনার এনরোলমেন্ট সক্রিয় করা হবে।`,
+      });
       
-      if (response) {
-        course.value = response.props.course
-      }
-    } else if (props.course) {
-      course.value = props.course
-    } else {
-      console.error('কোর্স তথ্য পাওয়া যায়নি।')
-    }
-  } catch (err) {
-    console.error('কোর্স লোড করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।', err)
-  }
-}
-
-const validateForm = () => {
-  errors.value = {}
-  
-  if (!form.value.name.trim()) {
-    errors.value.name = 'নাম প্রয়োজন'
-  }
-  
-  if (!form.value.email.trim()) {
-    errors.value.email = 'ইমেইল প্রয়োজন'
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) {
-    errors.value.email = 'সঠিক ইমেইল ঠিকানা দিন'
-  }
-  
-  if (!form.value.phone.trim()) {
-    errors.value.phone = 'ফোন নম্বর প্রয়োজন'
-  } else if (!/^(\+880|880|0)?1[3-9]\d{8}$/.test(form.value.phone.replace(/\s/g, ''))) {
-    errors.value.phone = 'সঠিক বাংলাদেশী ফোন নম্বর দিন'
-  }
-  
-  if (selectedPaymentMethod.value && selectedPaymentMethod.value !== 'bank_transfer' && !form.value.transactionId.trim()) {
-    errors.value.transactionId = 'Transaction ID প্রয়োজন'
-  }
-  
-  return Object.keys(errors.value).length === 0
-}
-
-const applyCoupon = async () => {
-  if (!couponCode.value) {
-    toast.warning('অনুগ্রহ করে একটি কুপন কোড প্রবেশ করান।')
-    return
-  }
-
-  applyingCoupon.value = true
-
-  try {
-    // Mock coupon validation with expiry dates (in real app, this would be an API call)
-    const coupons = {
-      'IQRA10': { 
-        discount: 10, 
-        type: 'percentage', 
-        expiry: '2025-12-31',
-        active: true 
-      },
-      'RAMADAN': { 
-        discount: 200, 
-        type: 'fixed', 
-        expiry: '2024-05-30', 
-        active: true 
-      },
-      'STUDENT50': { 
-        discount: 50, 
-        type: 'percentage', 
-        expiry: '2025-06-30', 
-        active: true 
-      },
-      'OLDCOUPON': { 
-        discount: 20, 
-        type: 'percentage', 
-        expiry: '2023-12-31', 
-        active: false 
-      },
-      'EXPIRED2024': { 
-        discount: 30, 
-        type: 'percentage', 
-        expiry: '2024-01-31', 
-        active: false 
+      form.reset();
+      selectedPaymentMethod.value = null;
+    },
+    onError: (errors) => {
+      if (errors.error) {
+        toast.error({
+          title: 'ত্রুটি',
+          message: errors.error,
+        });
+      } else {
+        toast.error({
+          title: 'ত্রুটি',
+          message: 'পেমেন্ট প্রক্রিয়ায় সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।',
+        });
       }
     }
-
-    const inputCode = couponCode.value.toUpperCase()
-    const coupon = coupons[inputCode as keyof typeof coupons]
-    
-    if (!coupon) {
-      // Invalid/non-existent coupon code
-      couponApplied.value = false
-      discount.value = 0
-      appliedCoupon.value = ''
-      
-      toast.error({
-        title: 'অবৈধ কুপন কোড',
-        message: 'এই কুপন কোডটি বিদ্যমান নেই। সঠিক কোড দিন।',
-        duration: 6000
-      })
-      return
-    }
-
-    if (!coupon.active || new Date(coupon.expiry) < new Date()) {
-      // Expired coupon
-      couponApplied.value = false
-      discount.value = 0
-      appliedCoupon.value = ''
-      
-      toast.error({
-        title: 'মেয়াদোত্তীর্ণ কুপন কোড',
-        message: `এই কুপনটির মেয়াদ ${coupon.expiry} তারিখে শেষ হয়ে গেছে।`,
-        duration: 7000
-      })
-      return
-    }
-
-    // Valid coupon - apply discount
-    if (coupon.type === 'percentage') {
-      discount.value = Math.round(((course.value?.price || 0) * coupon.discount) / 100)
-    } else {
-      discount.value = coupon.discount
-    }
-    
-    couponApplied.value = true
-    appliedCoupon.value = inputCode
-    
-    toast.success({
-      title: 'কুপন সফলভাবে প্রয়োগ হয়েছে!',
-      message: `৳${discount.value} ছাড় পেয়েছেন। কুপন: ${appliedCoupon.value}`,
-      duration: 5000
-    })
-  } finally {
-    applyingCoupon.value = false
-  }
+  });
 }
-
-const removeCoupon = () => {
-  // Reset coupon state
-  couponApplied.value = false
-  discount.value = 0
-  appliedCoupon.value = ''
-  couponCode.value = ''
-  
-  // Show success toast for coupon removal
-  toast.success({
-    title: 'কুপন সরানো হয়েছে',
-    message: 'কুপন কোড সফলভাবে রিমুভ করা হয়েছে।',
-    duration: 3000
-  })
-}
-
-const handleSubmit = async () => {
-  if (!validateForm()) {
-    toast.warning('অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন।')
-    return
-  }
-
-  if (!canSubmit.value) {
-    toast.warning('অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন।')
-    return
-  }
-
-  isSubmitting.value = true
-
-  try {
-    // Show processing toast
-    const processingToast = toast.info({
-      message: 'পেমেন্ট প্রক্রিয়াধীন... অনুগ্রহ করে অপেক্ষা করুন।',
-      persistent: true
-    })
-
-    // Prepare payment data
-    const paymentData = {
-      ...form.value,
-      payment_method: selectedPaymentMethod.value,
-      course_id: course.value?.id,
-      amount: finalPrice.value,
-      discount: discount.value,
-      coupon_code: appliedCoupon.value || null,
-    }
-
-    // Submit payment
-    await router.post(route('frontend.payment.process', course.value?.id), paymentData, {
-      preserveState: true,
-      preserveScroll: true,
-    })
-
-    // Remove processing toast
-    toast.dismiss(processingToast)
-
-    // Show success toast
-    toast.success({
-      title: 'পেমেন্ট সফল!',
-      message: `${course.value?.title} কোর্সে সফলভাবে নিবন্ধিত হয়েছেন।`,
-      duration: 5000
-    })
-
-    // Wait a bit then redirect
-    setTimeout(() => {
-      router.visit(route('frontend.student.dashboard'))
-    }, 1500)
-    
-  } catch (error: any) {
-    // Handle validation errors
-    if (error.response?.data?.errors) {
-      errors.value = error.response.data.errors
-      toast.error({
-        title: 'ফর্মে ত্রুটি রয়েছে',
-        message: 'অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন।',
-        duration: 7000
-      })
-    } else {
-      toast.error({
-        title: 'পেমেন্ট ব্যর্থ!',
-        message: 'পেমেন্ট প্রক্রিয়ায় সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।',
-        duration: 7000
-      })
-    }
-  } finally {
-    isSubmitting.value = false
-  }
-}
-
-// Initialize on mount
-onMounted(() => {
-  loadCourseData()
-})
 </script>
+
+<style scoped>
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-15px);
+}
+</style>

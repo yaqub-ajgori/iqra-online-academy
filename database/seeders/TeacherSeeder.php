@@ -11,7 +11,7 @@ class TeacherSeeder extends Seeder
     {
         $teachers = [
             [
-                'full_name' => 'Alice Johnson',
+                'full_name' => 'Md Yaqub Ajgori',
                 'speciality' => 'Web Development',
                 'experience' => '5 years',
                 'profile_picture' => null,
@@ -19,7 +19,7 @@ class TeacherSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'full_name' => 'Bob Smith',
+                'full_name' => 'Md Saeedul Mostafa',
                 'speciality' => 'Mathematics',
                 'experience' => '8 years',
                 'profile_picture' => null,
@@ -27,7 +27,7 @@ class TeacherSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'full_name' => 'Carol Lee',
+                'full_name' => 'Md Ayub Ajgori',
                 'speciality' => 'Physics',
                 'experience' => '6 years',
                 'profile_picture' => null,
@@ -35,7 +35,7 @@ class TeacherSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'full_name' => 'David Kim',
+                'full_name' => 'Md Ismail',
                 'speciality' => 'English Language',
                 'experience' => '4 years',
                 'profile_picture' => null,
@@ -43,7 +43,7 @@ class TeacherSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'full_name' => 'Eva Brown',
+                'full_name' => 'Karim Ullah',
                 'speciality' => 'Business Studies',
                 'experience' => '7 years',
                 'profile_picture' => null,

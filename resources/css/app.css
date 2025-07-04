@@ -397,3 +397,7 @@
     transform: translateY(-5px) scale(1.02);
     box-shadow: var(--shadow-islamic-lg);
 }
+
+html {
+    scroll-behavior: smooth;
+}

@@ -75,18 +75,6 @@
         </div>
       </section>
 
-      <!-- Stats Section -->
-      <section v-if="stats.length > 0" class="py-20 bg-gradient-to-br from-[#5f5fcd]/5 to-[#2d5a27]/5">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div v-for="stat in stats" :key="stat.id" class="text-center">
-              <div class="text-4xl font-bold text-[#5f5fcd] mb-2">{{ stat.value }}</div>
-              <div class="text-gray-600">{{ stat.label }}</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- Values Section -->
       <section class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

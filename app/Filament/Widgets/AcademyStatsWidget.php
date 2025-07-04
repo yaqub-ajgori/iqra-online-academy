@@ -9,6 +9,7 @@ use App\Models\Course;
 use App\Models\Payment;
 use App\Models\CourseEnrollment;
 use App\Models\User;
+use App\Models\Donation;
 
 class AcademyStatsWidget extends StatsOverviewWidget
 {
@@ -41,6 +42,18 @@ class AcademyStatsWidget extends StatsOverviewWidget
                 ->description('Completed Payments')
                 ->descriptionIcon('heroicon-m-currency-dollar')
                 ->chart([1000, 1200, 1500, 1700, 2000, 2500, 3000]),
+            Stat::make('Total Donations', Donation::count())
+                ->icon('heroicon-m-heart')
+                ->color('rose')
+                ->description('Donations Received')
+                ->descriptionIcon('heroicon-m-heart')
+                ->chart([1, 2, 3, 4, 5, 6, 7]),
+            Stat::make('Donation Amount', '৳' . number_format(Donation::sum('amount'), 2))
+                ->icon('heroicon-m-heart')
+                ->color('rose')
+                ->description('Total Donated')
+                ->descriptionIcon('heroicon-m-heart')
+                ->chart([100, 200, 300, 400, 500, 600, 700]),
             Stat::make('Total Enrollments', CourseEnrollment::count())
                 ->icon('heroicon-m-clipboard-document-list')
                 ->color('warning')

@@ -26,26 +26,18 @@
             : 'text-gray-300'
         ]"
       />
-      <span class="ml-2 text-sm text-gray-500">({{ testimonial.rating }}/৫)</span>
+      <span class="ml-2 text-sm text-gray-500">({{ testimonial.rating_bn || testimonial.rating }}/৫)</span>
     </div>
 
     <!-- Student Information -->
     <div class="flex items-center space-x-4">
       <!-- Avatar -->
       <div class="relative">
-        <img 
-          v-if="testimonial.student.avatar" 
-          :src="testimonial.student.avatar" 
-          :alt="testimonial.student.name"
-          class="w-14 h-14 rounded-full object-cover border-3 border-[#d4a574]"
-        />
-        <div 
-          v-else 
-          class="w-14 h-14 rounded-full bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] flex items-center justify-center border-3 border-[#d4a574]"
-        >
-          <span class="text-white font-semibold text-lg">
-            {{ getInitials(testimonial.student.name) }}
-          </span>
+        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10 flex items-center justify-center border-3 border-[#d4a574]">
+            <component v-if="testimonial.student.avatar" :is="testimonial.student.avatar" class="w-8 h-8 text-[#5f5fcd]" />
+            <span v-else class="text-white font-semibold text-lg">
+                {{ getInitials(testimonial.student.name) }}
+            </span>
         </div>
         
         <!-- Verified Badge -->
@@ -73,9 +65,6 @@
         <time class="text-xs text-gray-400" :datetime="testimonial.created_at">
           {{ formatDate(testimonial.created_at) }}
         </time>
-        <div v-if="testimonial.completion_date" class="text-xs text-[#2d5a27] font-medium">
-          কোর্স সম্পন্ন
-        </div>
       </div>
     </div>
 
@@ -86,10 +75,11 @@
 
 <script setup lang="ts">
 import { QuoteIcon, StarIcon, BookOpenIcon, CheckIcon, MapPinIcon } from 'lucide-vue-next'
+import type { Component } from 'vue'
 
 interface Student {
   name: string
-  avatar?: string
+  avatar?: Component
   title?: string
   location?: string
 }
@@ -98,10 +88,10 @@ interface Testimonial {
   id: number
   content: string
   rating: number
+  rating_bn?: string
   student: Student
   verified: boolean
   created_at: string
-  completion_date?: string
 }
 
 interface Props {

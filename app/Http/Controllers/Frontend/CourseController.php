@@ -81,6 +81,15 @@ class CourseController extends Controller
             abort(404);
         }
 
+        $course->load(['teacher', 'modules.lessons', 'category']);
+
+        $user = auth()->user();
+        $isAuthenticated = $user !== null;
+        $isEnrolled = false;
+        if ($isAuthenticated) {
+            $isEnrolled = $course->enrollments()->where('student_id', $user->id)->exists();
+        }
+
         $courseData = [
             'id' => $course->id,
             'slug' => $course->slug,
@@ -88,64 +97,40 @@ class CourseController extends Controller
             'full_description' => $course->full_description,
             'content' => $course->content,
             'image' => $course->thumbnail,
-            'category' => $course->category->name ?? 'সাধারণ',
-            'level' => $course->level ?? 'beginner',
             'price' => $course->price ?? 0,
-            'duration' => $course->duration ?? 'স্ব-নির্ধারিত',
+            'duration' => $course->duration,
+            'total_lessons' => $course->total_lessons_count,
             'students_count' => $course->enrollments_count ?? 0,
             'rating' => 0, // Default rating since we removed average_rating
             'instructor' => [
                 'name' => $course->teacher->full_name ?? 'অজানা শিক্ষক',
                 'avatar' => $course->teacher->profile_picture ?? null,
                 'bio' => $course->teacher->speciality ?? '',
+                'experience' => $course->teacher->experience ?? '',
             ],
             'isNew' => $course->created_at->diffInDays(now()) <= 30,
-            'enrolled' => false, // Will be updated based on authenticated user
+            'enrolled' => $isEnrolled,
             'progress' => 0, // Will be updated based on authenticated user
             'modules' => $course->modules->map(function ($module) {
                 return [
                     'id' => $module->id,
                     'title' => $module->title,
-                    'description' => $module->description,
-                    'lessons_count' => $module->lessons->count(),
-                    'duration' => $module->duration ?? 'স্ব-নির্ধারিত',
+                    'lessons' => $module->lessons->map(function ($lesson) {
+                        return [
+                            'id' => $lesson->id,
+                            'title' => $lesson->title,
+                        ];
+                    }),
                 ];
             }),
             'created_at' => $course->created_at->format('Y-m-d'),
             'updated_at' => $course->updated_at->format('Y-m-d'),
         ];
 
-        // Get related courses
-        $relatedCourses = Course::with(['category', 'teacher'])
-            ->where('status', 'published')
-            ->where('id', '!=', $course->id)
-            ->where('category_id', $course->category_id)
-            ->limit(3)
-            ->get()
-            ->map(function ($relatedCourse) {
-                return [
-                    'id' => $relatedCourse->id,
-                    'slug' => $relatedCourse->slug,
-                    'title' => $relatedCourse->title,
-                    'full_description' => $relatedCourse->full_description,
-                    'image' => $relatedCourse->thumbnail,
-                    'category' => $relatedCourse->category->name ?? 'সাধারণ',
-                    'level' => $relatedCourse->level ?? 'beginner',
-                    'price' => $relatedCourse->price ?? 0,
-                    'duration' => $relatedCourse->duration ?? 'স্ব-নির্ধারিত',
-                    'students_count' => $relatedCourse->enrollments_count ?? 0,
-                    'rating' => 0, // Default rating since we removed average_rating
-                    'instructor' => [
-                        'name' => $relatedCourse->teacher->full_name ?? 'অজানা শিক্ষক',
-                        'avatar' => $relatedCourse->teacher->profile_picture ?? null
-                    ],
-                    'isNew' => $relatedCourse->created_at->diffInDays(now()) <= 30,
-                ];
-            });
-
         return Inertia::render('Frontend/CourseDetailsPage', [
             'course' => $courseData,
-            'relatedCourses' => $relatedCourses,
+            'isAuthenticated' => $isAuthenticated,
+            'isEnrolled' => $isEnrolled,
         ]);
     }
 

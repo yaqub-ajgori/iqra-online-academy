@@ -6,7 +6,7 @@
       <meta property="og:title" content="ইকরা অনলাইন একাডেমি - ইসলামিক শিক্ষায় নতুন মাত্রা" />
       <meta property="og:description" content="কুরআন, হাদিস ও ইসলামিক জ্ঞানচর্চায় আধুনিক প্রযুক্তির সমন্বয়ে গড়ে তুলুন আপনার আধ্যাত্মিক জীবন।" />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://iqra-online-academy.test" />
+      <meta property="og:url" content="https://iqra-online-academy.com" />
     </Head>
 
     <!-- Enhanced Hero Section with Better Animations -->
@@ -98,7 +98,6 @@
                 </div>
                 <span>৫০০০+ সন্তুষ্ট শিক্ষার্থী</span>
               </div>
-              
               <div class="flex items-center space-x-1">
                 <div class="flex space-x-1 text-[#d4a574]">
                   <StarIcon class="w-4 h-4 fill-current" />
@@ -194,7 +193,6 @@
             :key="course?.id || index"
             :course="course"
             @enroll="handleCourseEnroll"
-            @favorite="handleCourseFavorite"
           />
         </div>
       </div>
@@ -319,70 +317,90 @@
     </section>
 
     <!-- Simplified CTA Section -->
-    <section class="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
-      <!-- Background Pattern -->
-      <div class="absolute inset-0 pattern-grid opacity-10"></div>
-      
-      <!-- Floating Elements -->
-      <div class="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-[#5f5fcd]/20 to-transparent rounded-full transform -translate-x-16 -translate-y-16 animate-float"></div>
-      <div class="absolute bottom-0 right-0 w-40 h-40 bg-gradient-to-tl from-[#d4a574]/20 to-transparent rounded-full transform translate-x-20 translate-y-20 animate-float-delayed"></div>
-
-      <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <!-- Header Section -->
-        <div class="mb-10">
+    <section class="py-12 lg:py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden" id="donation">
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center lg:items-start">
+          <!-- Left: Heading and Description -->
+          <div class="w-full lg:w-1/2 flex flex-col justify-center items-center text-center lg:min-h-[400px]">
           <div class="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-6 hover:scale-105 transition-transform duration-300">
-            <span class="text-white text-sm font-medium mr-2">🌟 আজই শুরু করুন</span>
-            <div class="w-2 h-2 bg-[#d4a574] rounded-full animate-pulse"></div>
+              <HeartIcon class="w-5 h-5 text-[#d4a574] mr-2" />
+              <span class="text-white text-sm font-medium">দান করুন, সওয়াবের অংশীদার হোন</span>
           </div>
-
-          <h2 class="text-3xl lg:text-5xl font-bold text-white mb-6 leading-tight">
-            আপনার <span class="text-gradient-islamic bg-gradient-to-r from-[#d4a574] to-[#5f5fcd] bg-clip-text text-transparent animate-gradient-shift">ইসলামিক জ্ঞানের</span> যাত্রা শুরু করুন
+            <h2 class="text-3xl lg:text-4xl font-bold text-white mb-6 leading-tight text-center">
+              ইসলামী শিক্ষার প্রসারে <span class="text-gradient-islamic bg-gradient-to-r from-[#d4a574] to-[#5f5fcd] bg-clip-text text-transparent animate-gradient-shift">আপনার দান</span> গুরুত্বপূর্ণ
           </h2>
-
-          <p class="text-lg lg:text-xl text-gray-300 mb-8 leading-relaxed max-w-2xl mx-auto">
-            আজই নিবন্ধন করুন এবং পেয়ে যান প্রথম মাসের জন্য <span class="text-[#d4a574] font-semibold">৫০% ছাড়</span>। 
-            সীমিত সময়ের জন্য এই বিশেষ অফার।
+            <p class="text-lg lg:text-xl text-gray-300 leading-relaxed max-w-xl mx-auto text-center">
+              ইকরা অনলাইন একাডেমির মাধ্যমে হাজারো শিক্ষার্থী ইসলামী শিক্ষা গ্রহণ করছে। আপনার দান সরাসরি শিক্ষার্থীদের বৃত্তি, পাঠ্যপুস্তক ও প্রযুক্তি সহায়তায় ব্যবহৃত হবে।
           </p>
         </div>
-
-        <!-- CTA Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <PrimaryButton 
-            :href="route('register')" 
-            tag="a"
-            size="xl"
-            variant="primary"
-            :icon="UserPlusIcon"
-            class="hover:scale-105 transition-transform duration-300 shadow-2xl hover:shadow-3xl min-w-[200px]"
-          >
-            ফ্রি রেজিস্ট্রেশন
-          </PrimaryButton>
-          
-          <PrimaryButton 
-            :href="route('frontend.courses.index')" 
-            tag="a"
-            size="xl"
-            variant="outline"
-            class="border-white/20 text-white hover:scale-105 transition-transform duration-300 min-w-[200px]"
-          >
-            কোর্স ব্রাউজ করুন
-          </PrimaryButton>
-        </div>
-
-        <!-- Simple Trust Indicator -->
-        <div class="mt-8 flex items-center justify-center space-x-6 text-sm text-gray-400">
-          <div class="flex items-center space-x-2">
-            <div class="flex space-x-1 text-[#d4a574]">
-              <StarIcon class="w-4 h-4 fill-current" />
-              <StarIcon class="w-4 h-4 fill-current" />
-              <StarIcon class="w-4 h-4 fill-current" />
-              <StarIcon class="w-4 h-4 fill-current" />
-              <StarIcon class="w-4 h-4 fill-current" />
+          <!-- Right: Donation Form -->
+          <div class="w-full lg:w-1/2">
+            <form class="bg-white/10 rounded-2xl p-8 shadow-lg border border-white/10 space-y-6 text-left max-w-xl mx-auto" @submit.prevent="submitDonation">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-gray-200 mb-2">নাম</label>
+                  <input type="text" v-model="form.name" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-[#5f5fcd] focus:border-[#5f5fcd] bg-white/80 text-gray-900" placeholder="আপনার নাম" required />
+                </div>
+                <div>
+                  <label class="block text-gray-200 mb-2">ইমেইল</label>
+                  <input type="email" v-model="form.email" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-[#5f5fcd] focus:border-[#5f5fcd] bg-white/80 text-gray-900" placeholder="আপনার ইমেইল" required />
+                </div>
+                <div>
+                  <label class="block text-gray-200 mb-2">ফোন নম্বর</label>
+                  <input type="tel" v-model="form.phone" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-[#5f5fcd] focus:border-[#5f5fcd] bg-white/80 text-gray-900" placeholder="ফোন নম্বর" required />
+                </div>
+                <div>
+                  <label class="block text-gray-200 mb-2">দানের পরিমাণ (৳)</label>
+                  <input type="number" v-model="form.amount" min="1" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-[#5f5fcd] focus:border-[#5f5fcd] bg-white/80 text-gray-900" placeholder="যত টাকা দান করতে চান" required />
+                </div>
+              </div>
+              <div>
+                <label class="block text-gray-200 mb-2">দানের কারণ</label>
+                <input type="text" v-model="form.reason" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-[#5f5fcd] focus:border-[#5f5fcd] bg-white/80 text-gray-900" placeholder="কেন দান করছেন (ঐচ্ছিক)" />
+              </div>
+              <div>
+                <label class="block text-gray-200 mb-2">পেমেন্ট মাধ্যম</label>
+                <div class="flex flex-col sm:flex-row gap-4">
+                  <button type="button" @click="form.payment_method = 'bkash'" :class="['flex-1 px-4 py-3 rounded-xl font-semibold flex items-center justify-center gap-2', form.payment_method === 'bkash' ? 'bg-[#e2136e]/90 text-white shadow-lg' : 'bg-white/80 text-gray-900 border border-gray-300']">
+                    <span>bKash</span>
+                  </button>
+                  <button type="button" @click="form.payment_method = 'nagad'" :class="['flex-1 px-4 py-3 rounded-xl font-semibold flex items-center justify-center gap-2', form.payment_method === 'nagad' ? 'bg-[#f58220]/90 text-white shadow-lg' : 'bg-white/80 text-gray-900 border border-gray-300']">
+                    <span>Nagad</span>
+                  </button>
+                  <button type="button" @click="form.payment_method = 'rocket'" :class="['flex-1 px-4 py-3 rounded-xl font-semibold flex items-center justify-center gap-2', form.payment_method === 'rocket' ? 'bg-[#8a2be2]/90 text-white shadow-lg' : 'bg-white/80 text-gray-900 border border-gray-300']">
+                    <span>Rocket</span>
+                  </button>
+                </div>
+              </div>
+              <div v-if="form.payment_method" class="bg-white/20 rounded-xl p-4 mt-2 text-gray-100">
+                <div v-if="form.payment_method === 'bkash'">
+                  <div class="font-bold">bKash নম্বর: <span class="font-mono">01915878662 (পার্সোনাল)</span></div>
+                </div>
+                <div v-else-if="form.payment_method === 'nagad'">
+                  <div class="font-bold">Nagad নম্বর: <span class="font-mono">01750-469027 (পার্সোনাল)</span></div>
+                </div>
+                <div v-else-if="form.payment_method === 'rocket'">
+                  <div class="font-bold">Rocket নম্বর: <span class="font-mono">019158786625 (পার্সোনাল)</span></div>
+                </div>
+                <div class="mt-2 text-sm">অনুগ্রহ করে উপরের নম্বরে সেন্ড মানি করুন এবং নিচে ট্রানজেকশন আইডি লিখুন।</div>
+              </div>
+              <div v-if="form.payment_method">
+                <label class="block text-gray-200 mb-2 mt-4">ট্রানজেকশন আইডি</label>
+                <input type="text" v-model="form.transaction_id" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-[#5f5fcd] focus:border-[#5f5fcd] bg-white/80 text-gray-900" placeholder="পেমেন্টের পর প্রাপ্ত ট্রানজেকশন আইডি লিখুন" required />
+              </div>
+              <div class="pt-4">
+                <PrimaryButton size="xl" variant="primary" :icon="HeartIcon" class="min-w-[200px] w-full" :loading="form.processing" type="submit">
+                  দান জমা দিন
+                </PrimaryButton>
+              </div>
+            </form>
+            <div v-if="form.hasErrors" class="mt-4 text-red-500 text-center">
+              <div v-for="(msg, field) in form.errors" :key="field">{{ msg }}</div>
             </div>
-            <span>৪.৯/৫ রেটিং</span>
+            <div class="text-sm text-gray-400 mt-8 text-center lg:text-left">
+              <span>আল্লাহ্‌ আপনার দান কবুল করুন এবং দ্বীনি শিক্ষার প্রসারে আপনাকে অংশীদার করুন।</span>
+            </div>
           </div>
-          <div class="w-1 h-1 bg-gray-600 rounded-full"></div>
-          <span>৫০০০+ সন্তুষ্ট শিক্ষার্থী</span>
         </div>
       </div>
     </section>
@@ -392,7 +410,7 @@
 <script setup lang="ts">
 // Enhanced HomePage component - Islamic LMS frontend
 import { ref, onMounted } from 'vue'
-import { Head, usePage, router } from '@inertiajs/vue3'
+import { Head, usePage, router, useForm } from '@inertiajs/vue3'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import SectionHeader from '@/components/Frontend/SectionHeader.vue'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
@@ -406,9 +424,13 @@ import {
   ClockIcon,
   UsersIcon,
   SmartphoneIcon,
-  UserPlusIcon,
-  StarIcon
+  StarIcon,
+  UserCircleIcon,
+  UserIcon,
+  UserSquareIcon,
+  HeartIcon
 } from 'lucide-vue-next'
+import { useToast } from '@/composables/useToast'
 
 // Get data from backend
 const page = usePage()
@@ -444,12 +466,8 @@ interface Course {
 }
 
 const handleCourseEnroll = (course: any) => {
-  // Redirect to payment page for course enrollment
-  router.visit(route('frontend.payment.checkout', { course: course.slug }))
-}
-
-const handleCourseFavorite = (course: any, isFavorite: boolean) => {
-  // Handle favorite toggle logic here
+  // Logic to handle course enrollment
+  router.visit(route('frontend.courses.show', { slug: course.slug }))
 }
 
 // Counter animation function
@@ -480,62 +498,101 @@ onMounted(() => {
   setTimeout(() => {
     animateCounters()
   }, 500)
+
+  // Smooth scroll to donation if coming from menu
+  const urlParams = new URLSearchParams(window.location.search)
+  if (urlParams.get('scroll') === 'donation') {
+    const el = document.getElementById('donation')
+    if (el) {
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        el.classList.add('donation-highlight')
+        setTimeout(() => el.classList.remove('donation-highlight'), 1200)
+      }, 300)
+    }
+  }
 })
 
 // Testimonials Section
-const testimonials = [
+const testimonials = ref([
   {
     id: 1,
     content: 'এই একাডেমির কোর্সগুলো খুবই মানসম্মত। শিক্ষকরা আন্তরিক এবং সহায়ক। আমি অনেক কিছু শিখেছি।',
     rating: 5,
+    rating_bn: '৫',
     student: {
       name: 'মাহমুদুল হাসান',
       title: 'বিশ্ববিদ্যালয় শিক্ষার্থী',
-      avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+      avatar: UserCircleIcon,
       location: 'ঢাকা, বাংলাদেশ'
     },
     verified: true,
-    created_at: '2024-06-01',
-    course: {
-      title: 'কুরআন তিলাওয়াত শিক্ষা',
-      category: 'কুরআন'
-    }
+    created_at: '2024-06-01'
   },
   {
     id: 2,
     content: 'ইকরা একাডেমির মাধ্যমে আমি ইসলামিক জ্ঞান সহজে ও সুন্দরভাবে পেয়েছি। ধন্যবাদ!',
     rating: 5,
+    rating_bn: '৫',
     student: {
       name: 'সাবরিনা আক্তার',
       title: 'স্কুল শিক্ষিকা',
-      avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+      avatar: UserIcon,
       location: 'চট্টগ্রাম, বাংলাদেশ'
     },
     verified: true,
-    created_at: '2024-05-20',
-    course: {
-      title: 'হাদিস শরীফ',
-      category: 'হাদিস'
-    }
+    created_at: '2024-05-20'
   },
   {
     id: 3,
     content: 'অনলাইন প্ল্যাটফর্ম হিসেবে ইকরা একাডেমি অসাধারণ। কোর্স কনটেন্ট ও সাপোর্ট টিম খুবই ভালো।',
     rating: 4,
+    rating_bn: '৪',
     student: {
       name: 'রাশেদুল ইসলাম',
       title: 'ফ্রিল্যান্সার',
-      avatar: 'https://randomuser.me/api/portraits/men/65.jpg',
+      avatar: UserSquareIcon,
       location: 'রাজশাহী, বাংলাদেশ'
     },
     verified: true,
-    created_at: '2024-04-15',
-    course: {
-      title: 'ইসলামিক ফিকহ',
-      category: 'ফিকহ'
-    }
+    created_at: '2024-04-15'
   }
-]
+])
+
+const toast = useToast()
+const form = useForm({
+  name: '',
+  email: '',
+  phone: '',
+  amount: '',
+  reason: '',
+  payment_method: '',
+  transaction_id: ''
+})
+
+const submitDonation = () => {
+  form.post(route('donations.store'), {
+    preserveScroll: true,
+    onSuccess: () => {
+      let successMsg = 'আপনার দান সফলভাবে গ্রহণ করা হয়েছে!';
+      const flash = page.props.flash as Record<string, any>;
+      if (flash && typeof flash === 'object' && typeof flash.success === 'string') {
+        successMsg = flash.success;
+      }
+      toast.success({
+        title: 'সফল',
+        message: successMsg
+      })
+      form.reset()
+    },
+    onError: () => {
+      toast.error({
+        title: 'ত্রুটি',
+        message: 'অনুগ্রহ করে ফর্মটি সঠিকভাবে পূরণ করুন।'
+      })
+    }
+  })
+}
 </script>
 
 <style scoped>
@@ -649,5 +706,20 @@ const testimonials = [
 .hover-lift:hover {
   transform: translateY(-5px);
   box-shadow: 0 20px 40px rgba(95, 95, 205, 0.15);
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-24px); }
+}
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-float-slow {
+  animation: float-slow 10s ease-in-out infinite;
+}
+.animate-spin-slow {
+  animation: spin-slow 18s linear infinite;
 }
 </style> 

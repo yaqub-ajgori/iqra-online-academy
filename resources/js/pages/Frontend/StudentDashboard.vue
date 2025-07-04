@@ -78,19 +78,45 @@
                   :key="enrollment.id"
                   class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow duration-300"
                 >
-                  <div class="w-full h-48">
-                    <img 
-                      v-if="isValidImage(enrollment.course.thumbnail_image)" 
-                      :src="enrollment.course.thumbnail_image" 
-                      :alt="enrollment.course.title"
-                      class="w-full h-full object-cover"
-                    />
-                    <CoursePlaceholder 
-                      v-else 
-                      text="Course Image"
-                      class="w-full h-full"
-                    />
+                  <!-- Status Badge -->
+                  <div class="relative">
+                    <div class="w-full h-48">
+                      <img 
+                        v-if="isValidImage(enrollment.course.thumbnail_image)" 
+                        :src="enrollment.course.thumbnail_image" 
+                        :alt="enrollment.course.title"
+                        class="w-full h-full object-cover"
+                      />
+                      <CoursePlaceholder 
+                        v-else 
+                        text="Course Image"
+                        class="w-full h-full"
+                      />
+                    </div>
+                    
+                    <!-- Payment Status Badge -->
+                    <div class="absolute top-4 right-4">
+                      <span 
+                        v-if="enrollment.payment_status === 'pending'"
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"
+                      >
+                        Payment Pending
+                      </span>
+                      <span 
+                        v-else-if="enrollment.payment_status === 'completed'"
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                      >
+                        Verified
+                      </span>
+                      <span 
+                        v-else-if="enrollment.payment_status === 'failed'"
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800"
+                      >
+                        Payment Failed
+                      </span>
+                    </div>
                   </div>
+                  
                   <div class="p-6">
                     <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ enrollment.course.title }}</h3>
                     <p class="text-gray-600 mb-2">{{ enrollment.course.instructor }}</p>
@@ -98,8 +124,29 @@
                       {{ enrollment.course.category }}
                     </p>
                     
-                    <!-- Progress Bar -->
-                    <div class="mb-4">
+                    <!-- Payment Status Message -->
+                    <div 
+                      v-if="enrollment.payment_status === 'pending'"
+                      class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg"
+                    >
+                      <p class="text-sm text-yellow-800">
+                        <span class="font-medium">Payment Verification Pending:</span>
+                        Your payment is being verified by our admin team. You'll be able to access the course once verified.
+                      </p>
+                    </div>
+                    
+                    <div 
+                      v-else-if="enrollment.payment_status === 'failed'"
+                      class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg"
+                    >
+                      <p class="text-sm text-red-800">
+                        <span class="font-medium">Payment Failed:</span>
+                        Please contact support to resolve payment issues.
+                      </p>
+                    </div>
+                    
+                    <!-- Progress Bar (only show for verified enrollments) -->
+                    <div v-if="enrollment.payment_status === 'completed'" class="mb-4">
                       <div class="flex justify-between text-sm text-gray-600 mb-2">
                         <span>Progress</span>
                         <span>{{ enrollment.progress_percentage }}%</span>
@@ -114,6 +161,7 @@
 
                     <div class="flex space-x-3">
                       <PrimaryButton
+                        v-if="enrollment.payment_status === 'completed'"
                         @click="goToLearning(enrollment.course.slug)"
                         variant="primary"
                         size="sm"
@@ -122,6 +170,19 @@
                       >
                         {{ enrollment.progress_percentage === 0 ? 'Start Learning' : 'Continue' }}
                       </PrimaryButton>
+                      
+                      <PrimaryButton
+                        v-else
+                        @click="handlePendingCourseAccess(enrollment)"
+                        variant="secondary"
+                        size="sm"
+                        :icon="LockIcon"
+                        class="flex-1 justify-center"
+                        disabled
+                      >
+                        {{ enrollment.payment_status === 'pending' ? 'Awaiting Verification' : 'Access Restricted' }}
+                      </PrimaryButton>
+                      
                       <PrimaryButton
                         @click="goToCourseDetails(enrollment.course.slug)"
                         variant="outline"
@@ -526,7 +587,7 @@ const passwordForm = useForm({
 
 // Methods
 const goToLearning = (courseSlug: string) => {
-  router.visit(`/learn/${courseSlug}`)
+  router.visit(route('frontend.learning.show', courseSlug))
 }
 
 const goToCourses = () => {
@@ -564,6 +625,16 @@ const changePassword = () => {
 
 const downloadCertificate = (certificate: any) => {
   // Implement certificate download functionality
+}
+
+const handlePendingCourseAccess = (enrollment: any) => {
+  if (enrollment.payment_status === 'pending') {
+    error('আপনার পেমেন্ট যাচাই হওয়ার পর এই কোর্সটি অ্যাক্সেস করতে পারবেন। অনুগ্রহ করে অপেক্ষা করুন।')
+  } else if (enrollment.payment_status === 'failed') {
+    error('পেমেন্ট সমস্যা সমাধানের জন্য অনুগ্রহ করে সাপোর্ট টিমের সাথে যোগাযোগ করুন।')
+  } else {
+    error('এই মুহূর্তে কোর্সটি অ্যাক্সেস করা যাচ্ছে না। পরে আবার চেষ্টা করুন।')
+  }
 }
 
 // Utility function to check for a valid image

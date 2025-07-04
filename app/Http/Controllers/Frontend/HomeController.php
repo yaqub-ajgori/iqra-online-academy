@@ -4,11 +4,8 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\CourseCategory;
 use App\Models\CourseEnrollment;
 use App\Models\Teacher;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -66,7 +63,7 @@ class HomeController extends Controller
             ->where('status', 'published')
             ->where('is_featured', true)
             ->orderBy('created_at', 'desc')
-            ->limit(6)
+            ->limit(3)
             ->get()
             ->map(function ($course) {
                 return [
@@ -81,6 +78,8 @@ class HomeController extends Controller
                     'duration' => $course->duration_hours ? $course->duration_hours . ' ঘন্টা' : 'স্ব-নির্ধারিত',
                     'students_count' => $course->enrollments()->count(),
                     'rating' => 0, // Default rating since we removed average_rating
+                    'is_featured' => $course->is_featured,
+                    'is_free' => $course->price == 0,
                     'instructor' => [
                         'name' => $course->teacher->full_name ?? 'Unknown Instructor',
                         'avatar' => $course->teacher->profile_picture ?? null,
@@ -112,6 +111,8 @@ class HomeController extends Controller
                         'duration' => $course->duration_hours ? $course->duration_hours . ' ঘন্টা' : 'স্ব-নির্ধারিত',
                         'students_count' => $course->enrollments()->count(),
                         'rating' => 0, // Default rating since we removed average_rating
+                        'is_featured' => $course->is_featured,
+                        'is_free' => $course->price == 0,
                         'instructor' => [
                             'name' => $course->teacher->full_name ?? 'Unknown Instructor',
                             'avatar' => $course->teacher->profile_picture ?? null,

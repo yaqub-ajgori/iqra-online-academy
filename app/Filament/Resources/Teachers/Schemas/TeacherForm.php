@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Teachers\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
@@ -23,8 +24,12 @@ class TeacherForm
                 TextInput::make('experience')
                     ->label('Experience')
                     ->columnSpan(1),
-                TextInput::make('profile_picture')
+                FileUpload::make('profile_picture')
                     ->label('Profile Picture')
+                    ->image()
+                    ->disk('public')
+                    ->directory('teachers/avatars')
+                    ->imageEditor()
                     ->columnSpan(2),
                 TextInput::make('phone')
                     ->label('Phone')

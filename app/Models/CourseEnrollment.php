@@ -23,6 +23,7 @@ class CourseEnrollment extends Model
         'progress_percentage',
         'lessons_completed',
         'is_active',
+        'is_completed',
     ];
 
     protected $casts = [

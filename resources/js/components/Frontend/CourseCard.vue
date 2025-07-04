@@ -14,53 +14,27 @@
         :text="course.category"
       />
       
-      <!-- Enhanced Image Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      
-      <!-- Course Level Badge with Enhanced Design -->
-      <div class="absolute top-3 left-3">
-        <span :class="levelBadgeClasses" class="shadow-lg">
-          {{ getLevelText(course.level) }}
+      <!-- Badges Container -->
+      <div class="absolute top-3 left-3 flex flex-col space-y-2">
+        <!-- Featured Badge -->
+        <span v-if="course.is_featured" class="px-3 py-1 rounded-full text-xs font-semibold shadow-lg bg-gradient-to-r from-yellow-400 to-amber-500 text-white border border-yellow-300">
+          ফিচার্ড
         </span>
-      </div>
-
-      <!-- Enhanced Price Badge -->
-      <div class="absolute top-3 right-3">
-        <span v-if="course.price === 0" class="bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+        <!-- Free Badge -->
+        <span v-if="course.is_free" class="px-3 py-1 rounded-full text-xs font-semibold shadow-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white border border-green-400">
           ফ্রি
         </span>
-        <span v-else class="bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-xs font-semibold shadow-lg border border-gray-200">
-          ৳{{ formatPrice(course.price) }}
-        </span>
       </div>
 
-      <!-- Enhanced Favorite Button -->
-      <button 
-        v-if="showFavorite"
-        @click.prevent="toggleFavorite"
-        class="absolute bottom-3 right-3 w-10 h-10 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white hover:scale-110 transition-all duration-200 shadow-lg"
-        :aria-label="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
-      >
-        <HeartIcon 
-          :class="[
-            'w-5 h-5 transition-all duration-200',
-            isFavorite ? 'text-red-500 fill-red-500 scale-110' : 'text-gray-600 hover:text-red-500'
-          ]"
-        />
-      </button>
+      <!-- Enhanced Image Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
       <!-- Course Progress Overlay (if enrolled) -->
       <div v-if="course.enrolled && course.progress !== undefined" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
-        <div class="flex items-center justify-between text-white text-xs mb-1">
-          <span>সম্পন্ন হয়েছে</span>
-          <span class="font-semibold">{{ course.progress }}%</span>
+        <div class="h-1 bg-white rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27]" :style="{ width: course.progress + '%' }"></div>
         </div>
-        <div class="w-full bg-white/20 rounded-full h-1.5">
-          <div 
-            class="bg-gradient-to-r from-[#d4a574] to-[#5f5fcd] h-1.5 rounded-full transition-all duration-500"
-            :style="{ width: `${course.progress}%` }"
-          ></div>
-        </div>
+        <p class="text-white text-xs mt-1">{{ course.progress }}% পূর্ণ হয়েছে</p>
       </div>
     </div>
 
@@ -133,21 +107,19 @@
       <!-- Enhanced Action Buttons -->
       <div class="space-y-3">
         <PrimaryButton 
-          v-if="!course.enrolled"
           :href="courseUrl"
           tag="a"
           variant="primary"
           size="sm"
           full-width
           :icon="BookOpenIcon"
-          @click="handleEnrollClick"
           class="hover:scale-105 transition-transform duration-200"
         >
           {{ course.price === 0 ? 'ফ্রি এনরোল' : 'এনরোল করুন' }}
         </PrimaryButton>
 
         <PrimaryButton 
-          v-else
+          v-if="course.enrolled"
           :href="continueUrl"
           tag="a"
           variant="secondary"
@@ -165,18 +137,12 @@
     <div class="absolute top-0 right-0 w-20 h-20 overflow-hidden">
       <div class="absolute top-3 right-3 w-10 h-10 bg-gradient-to-br from-[#d4a574]/30 to-[#5f5fcd]/20 transform rotate-45 rounded-lg group-hover:scale-110 transition-transform duration-300"></div>
     </div>
-
-    <!-- New Course Status Badge -->
-    <div v-if="course.isNew" class="absolute top-0 left-0 bg-gradient-to-r from-[#d4a574] to-[#5f5fcd] text-white px-3 py-1 text-xs font-semibold rounded-br-lg shadow-lg">
-      নতুন
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { 
-  HeartIcon, 
   ClockIcon, 
   UsersIcon, 
   StarIcon, 
@@ -202,6 +168,8 @@ interface Course {
   enrolled?: boolean
   progress?: number
   isNew?: boolean
+  is_featured?: boolean
+  is_free?: boolean
   instructor?: {
     name: string
     avatar?: string
@@ -210,43 +178,12 @@ interface Course {
 
 interface Props {
   course: Course
-  showFavorite?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  showFavorite: true
-})
-
-const emit = defineEmits<{
-  enroll: [course: Course]
-  favorite: [course: Course, isFavorite: boolean]
-}>()
-
-const isFavorite = ref(false)
-
-const levelBadgeClasses = computed(() => {
-  const baseClasses = 'px-3 py-1 rounded-full text-xs font-semibold shadow-lg'
-  
-  const levelClasses = {
-    beginner: 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 border border-green-300',
-    intermediate: 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border border-yellow-300',
-    advanced: 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border border-red-300'
-  }
-
-  return `${baseClasses} ${levelClasses[props.course.level]}`
-})
+const props = defineProps<Props>()
 
 const courseUrl = computed(() => `/courses/${props.course.slug}`)
 const continueUrl = computed(() => `/courses/${props.course.slug}/learn`)
-
-const getLevelText = (level: string) => {
-  const levelTexts: Record<string, string> = {
-    beginner: 'নতুন',
-    intermediate: 'মধ্যম',
-    advanced: 'উন্নত'
-  }
-  return levelTexts[level] || level
-}
 
 const formatPrice = (price: number) => {
   return new Intl.NumberFormat('bn-BD').format(price)
@@ -269,15 +206,6 @@ const getInitials = (name: string): string => {
     .join('')
     .toUpperCase()
     .slice(0, 2)
-}
-
-const handleEnrollClick = (event: Event) => {
-  emit('enroll', props.course)
-}
-
-const toggleFavorite = () => {
-  isFavorite.value = !isFavorite.value
-  emit('favorite', props.course, isFavorite.value)
 }
 
 // Utility function to check for a valid image

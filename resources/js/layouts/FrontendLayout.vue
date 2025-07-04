@@ -69,6 +69,14 @@
                 যোগাযোগ
                 <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] transition-all duration-200 group-hover:w-3/4"></div>
               </Link>
+              <a 
+                href="#donation"
+                class="text-gray-700 hover:text-[#5f5fcd] px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-50 relative group"
+                @click.prevent="scrollToDonation"
+              >
+                ডোনেশন
+                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] transition-all duration-200 group-hover:w-3/4"></div>
+              </a>
             </div>
 
             <!-- Course Search Form (Desktop) -->
@@ -235,6 +243,13 @@
                 <MessageCircleIcon class="w-5 h-5 mr-3" />
                 যোগাযোগ
               </Link>
+              <a 
+                href="#donation"
+                class="flex items-center px-4 py-3 text-gray-700 hover:text-[#5f5fcd] hover:bg-gray-50 rounded-lg transition-colors"
+                @click.prevent="scrollToDonation"
+              >
+                ডোনেশন
+              </a>
               
               <div class="border-t border-gray-200 pt-4 mt-4">
                 <template v-if="$page.props.auth && $page.props.auth.user">
@@ -348,7 +363,7 @@
               
               <!-- Enhanced Social Links -->
               <div class="flex space-x-4">
-                <a href="#" class="w-10 h-10 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-lg flex items-center justify-center text-white hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-110">
+                <a href="https://www.facebook.com/IqraOA" target="_blank" rel="noopener noreferrer" class="w-10 h-10 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-lg flex items-center justify-center text-white hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-110">
                   <FacebookIcon class="w-5 h-5" />
                 </a>
                 <a href="#" class="w-10 h-10 bg-gradient-to-br from-[#d4a574] to-[#b8945f] rounded-lg flex items-center justify-center text-white hover:shadow-islamic-lg transition-all duration-200 transform hover:scale-110">
@@ -382,24 +397,6 @@
                     আমাদের সম্পর্কে
                   </Link>
                 </li>
-                <li>
-                  <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center group">
-                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
-                    ইন্সট্রাক্টর
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center group">
-                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
-                    সার্টিফিকেট
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center group">
-                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
-                    ব্লগ
-                  </a>
-                </li>
               </ul>
             </div>
 
@@ -411,34 +408,16 @@
               </h3>
               <ul class="space-y-3">
                 <li>
+                  <Link :href="route('register')" class="text-gray-300 hover:text-white transition-colors flex items-center group">
+                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
+                    নিবন্ধন
+                  </Link>
+                </li>
+                <li>
                   <Link :href="route('frontend.student.dashboard')" class="text-gray-300 hover:text-white transition-colors flex items-center group">
                     <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
                     ড্যাশবোর্ড
                   </Link>
-                </li>
-                <li>
-                  <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center group">
-                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
-                    প্রোগ্রেস ট্র্যাকিং
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center group">
-                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
-                    সার্টিফিকেট
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center group">
-                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
-                    স্টাডি মেটেরিয়াল
-                  </a>
-                </li>
-                <li>
-                  <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center group">
-                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
-                    কুইজ ও টেস্ট
-                  </a>
                 </li>
               </ul>
             </div>
@@ -455,7 +434,7 @@
                     <PhoneIcon class="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <span class="block font-medium">+৮৮০ ১২৩৪ ৫৬৭৮৯০</span>
+                    <span class="block font-medium">01750-469027</span>
                     <span class="text-sm text-gray-400">সোম-শুক্র, সকাল ৯টা-সন্ধ্যা ৬টা</span>
                   </div>
                 </li>
@@ -464,7 +443,7 @@
                     <MailIcon class="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <span class="block font-medium">info@iqra-academy.com</span>
+                    <span class="block font-medium">iqraoa313@gmail.com</span>
                     <span class="text-sm text-gray-400">২৪ ঘণ্টার মধ্যে উত্তর</span>
                   </div>
                 </li>
@@ -473,8 +452,7 @@
                     <MapPinIcon class="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <span class="block font-medium">ঢাকা, বাংলাদেশ</span>
-                    <span class="text-sm text-gray-400">মূল কার্যালয়</span>
+                    <span class="block font-medium">হাউজিং এস্টেট, চট্টগ্রাম, বাংলাদেশ</span>
                   </div>
                 </li>
               </ul>
@@ -554,7 +532,8 @@ import {
   UserPlusIcon,
   SendIcon,
   LinkIcon,
-  HelpCircleIcon
+  HelpCircleIcon,
+  HeartIcon
 } from 'lucide-vue-next'
 import { ToastContainer, useToast } from '@/components/ui/toast'
 import NotificationToast from '@/components/Frontend/NotificationToast.vue'
@@ -658,6 +637,21 @@ function onSearchSubmit() {
     }
   })
 }
+
+function scrollToDonation() {
+  // Check if we are on the Home page
+  if (page.component === 'Frontend/HomePage') {
+    const el = document.getElementById('donation');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.classList.add('donation-highlight');
+      setTimeout(() => el.classList.remove('donation-highlight'), 1200);
+    }
+  } else {
+    // Navigate to Home page with scroll query
+    router.visit(route('frontend.home', { scroll: 'donation' }))
+  }
+}
 </script>
 
 <style scoped>
@@ -722,5 +716,14 @@ function onSearchSubmit() {
   height: 4px;
   background: linear-gradient(90deg, transparent 0%, rgba(95, 95, 205, 0.3) 25%, rgba(212, 165, 116, 0.3) 50%, rgba(45, 90, 39, 0.3) 75%, transparent 100%);
   border-radius: 2px;
+}
+
+.donation-highlight {
+  animation: donationFlash 1.2s;
+}
+@keyframes donationFlash {
+  0%   { box-shadow: 0 0 0 0 #5f5fcd66; }
+  50%  { box-shadow: 0 0 24px 8px #5f5fcd99; }
+  100% { box-shadow: 0 0 0 0 #5f5fcd00; }
 }
 </style> 

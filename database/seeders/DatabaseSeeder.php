@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             TeacherSeeder::class,
             CourseSeeder::class,
             StudentSeeder::class,
+            DonationSeeder::class,
         ]);
     }
 }

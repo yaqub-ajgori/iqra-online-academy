@@ -20,8 +20,12 @@ class RegisteredUserController extends Controller
     /**
      * Show the registration page.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
+        // Set intended URL in session if provided
+        if ($request->has('intended')) {
+            $request->session()->put('url.intended', $request->query('intended'));
+        }
         return Inertia::render('auth/Register');
     }
 
@@ -61,6 +65,12 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
         Auth::login($user);
+
+        // Support intended redirect after registration
+        $intended = $request->input('intended') ?? session('url.intended');
+        if ($intended) {
+            return redirect()->intended($intended);
+        }
 
         return to_route('frontend.student.dashboard');
     }

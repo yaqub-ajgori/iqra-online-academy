@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\DonationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +25,5 @@ require __DIR__.'/auth.php';
 Route::middleware(['auth'])->get('/dashboard', function () {
     return redirect()->route('frontend.student.dashboard');
 })->name('dashboard');
+
+Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');

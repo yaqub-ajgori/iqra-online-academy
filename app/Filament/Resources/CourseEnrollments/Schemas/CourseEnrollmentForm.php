@@ -88,31 +88,7 @@ class CourseEnrollmentForm
                     ->required()
                     ->columnSpan(1),
                     
-                // Progress Tracking
-                TextInput::make('progress_percentage')
-                    ->label('Progress (%)')
-                    ->required()
-                    ->numeric()
-                    ->default(0.0)
-                    ->minValue(0)
-                    ->maxValue(100)
-                    ->suffix('%')
-                    ->columnSpan(1),
-                    
-                TextInput::make('lessons_completed')
-                    ->label('Lessons Completed')
-                    ->required()
-                    ->numeric()
-                    ->default(0)
-                    ->minValue(0)
-                    ->columnSpan(1),
-                    
                 // Boolean fields in one row
-                Toggle::make('is_completed')
-                    ->label('Course Completed')
-                    ->default(false)
-                    ->columnSpan(1),
-                    
                 Toggle::make('is_active')
                     ->label('Active Enrollment')
                     ->default(true)

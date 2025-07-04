@@ -21,7 +21,6 @@ class LearningController extends Controller
         // Check if student is enrolled
         $enrollment = CourseEnrollment::where('course_id', $course->id)
             ->where('student_id', Auth::user()->student->id)
-            ->where('status', 'active')
             ->first();
 
         if (!$enrollment) {
@@ -29,19 +28,25 @@ class LearningController extends Controller
                 ->with('error', 'আপনি এই কোর্সে নিবন্ধিত নন।');
         }
 
+        // Check if enrollment is active and payment is verified
+        if (!$enrollment->is_active || $enrollment->payment_status !== 'completed') {
+            return redirect()->route('frontend.student.dashboard')
+                ->with('error', 'আপনার পেমেন্ট যাচাই হওয়ার পর এই কোর্সটি অ্যাক্সেস করতে পারবেন। অনুগ্রহ করে অপেক্ষা করুন।');
+        }
+
         // Load course with modules and lessons
         $course->load([
             'modules' => function ($query) {
-                $query->orderBy('order');
+                $query->orderBy('sort_order');
             },
             'modules.lessons' => function ($query) {
-                $query->orderBy('order');
+                $query->orderBy('sort_order');
             }
         ]);
 
         // Get completed lessons for this student
-        $completedLessons = LessonProgress::where('student_id', Auth::user()->student->id)
-            ->where('course_id', $course->id)
+        $completedLessons = LessonProgress::where('enrollment_id', $enrollment->id)
+            ->where('is_completed', true)
             ->pluck('lesson_id')
             ->toArray();
 
@@ -68,18 +73,18 @@ class LearningController extends Controller
                     return [
                         'id' => $module->id,
                         'title' => $module->title,
-                        'duration' => $module->duration ?? '0 min',
+                        'duration' => '0 min', // Duration is calculated from lessons, not stored on module
                         'lessons' => $module->lessons->map(function ($lesson) {
                             return [
                                 'id' => $lesson->id,
-                                'order' => $lesson->order,
+                                'order' => $lesson->sort_order,
                                 'title' => $lesson->title,
-                                'duration' => $lesson->duration ?? '0 min',
-                                'type' => $lesson->type,
+                                'duration' => $lesson->video_duration ? gmdate('H:i:s', $lesson->video_duration) : '0 min',
+                                'type' => $lesson->lesson_type,
                                 'video_url' => $lesson->video_url,
                                 'content' => $lesson->content,
-                                'pdf_url' => $lesson->pdf_url,
-                                'audio_url' => $lesson->audio_url,
+                                'pdf_url' => null, // This field doesn't exist in the current schema
+                                'audio_url' => null, // This field doesn't exist in the current schema
                                 'completed' => $lesson->completed,
                                 'module_id' => $lesson->module_id,
                             ];
@@ -112,14 +117,23 @@ class LearningController extends Controller
         $lessonId = $request->lesson_id;
         $courseId = $request->course_id;
 
+        // Get the course by ID to retrieve the slug
+        $course = Course::findOrFail($courseId);
+
         // Check if student is enrolled in this course
         $enrollment = CourseEnrollment::where('course_id', $courseId)
             ->where('student_id', $student->id)
-            ->where('status', 'active')
             ->first();
 
         if (!$enrollment) {
-            return response()->json(['error' => 'আপনি এই কোর্সে নিবন্ধিত নন।'], 403);
+            return redirect()->route('frontend.learning.show', $course->slug)
+                ->with('error', 'আপনি এই কোর্সে নিবন্ধিত নন।');
+        }
+
+        // Check if enrollment is active and payment is verified
+        if (!$enrollment->is_active || $enrollment->payment_status !== 'completed') {
+            return redirect()->route('frontend.learning.show', $course->slug)
+                ->with('error', 'আপনার পেমেন্ট যাচাই হওয়ার পর এই কোর্সটি অ্যাক্সেস করতে পারবেন।');
         }
 
         // Check if lesson belongs to this course
@@ -130,32 +144,35 @@ class LearningController extends Controller
             ->first();
 
         if (!$lesson) {
-            return response()->json(['error' => 'পাঠ পাওয়া যায়নি।'], 404);
+            return redirect()->route('frontend.learning.show', $course->slug)
+                ->with('error', 'পাঠ পাওয়া যায়নি।');
         }
 
         // Create or update lesson progress
+        $progressData = [
+            'is_completed' => true,
+            'completion_percentage' => 100.00,
+            'completed_at' => now(),
+            'last_accessed_at' => now(),
+        ];
+        $existingProgress = LessonProgress::where('enrollment_id', $enrollment->id)
+            ->where('lesson_id', $lessonId)
+            ->first();
+        if (!$existingProgress || !$existingProgress->started_at) {
+            $progressData['started_at'] = now();
+        }
         LessonProgress::updateOrCreate(
             [
-                'student_id' => $student->id,
-                'course_id' => $courseId,
+                'enrollment_id' => $enrollment->id,
                 'lesson_id' => $lessonId,
             ],
-            [
-                'completed_at' => now(),
-                'status' => 'completed',
-            ]
+            $progressData
         );
+        $enrollment->updateProgress();
 
-        // Get updated completion count
-        $completedCount = LessonProgress::where('student_id', $student->id)
-            ->where('course_id', $courseId)
-            ->count();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'পাঠ সম্পূর্ণ হিসেবে চিহ্নিত হয়েছে।',
-            'completed_lessons' => $completedCount,
-        ]);
+        // Redirect back to the learning page using the course slug
+        return redirect()->route('frontend.learning.show', $course->slug)
+            ->with('success', 'পাঠ সম্পূর্ণ হিসেবে চিহ্নিত হয়েছে।');
     }
 
     /**
@@ -166,12 +183,17 @@ class LearningController extends Controller
         // Check if student is enrolled
         $enrollment = CourseEnrollment::where('course_id', $course->id)
             ->where('student_id', Auth::user()->student->id)
-            ->where('status', 'active')
             ->first();
 
         if (!$enrollment) {
             return redirect()->route('frontend.courses.show', $course->slug)
                 ->with('error', 'আপনি এই কোর্সে নিবন্ধিত নন।');
+        }
+
+        // Check if enrollment is active and payment is verified
+        if (!$enrollment->is_active || $enrollment->payment_status !== 'completed') {
+            return redirect()->route('frontend.student.dashboard')
+                ->with('error', 'আপনার পেমেন্ট যাচাই হওয়ার পর এই কোর্সটি অ্যাক্সেস করতে পারবেন। অনুগ্রহ করে অপেক্ষা করুন।');
         }
 
         // Check if lesson belongs to this course
@@ -180,9 +202,9 @@ class LearningController extends Controller
         }
 
         // Check if lesson is completed
-        $isCompleted = LessonProgress::where('student_id', Auth::user()->student->id)
-            ->where('course_id', $course->id)
+        $isCompleted = LessonProgress::where('enrollment_id', $enrollment->id)
             ->where('lesson_id', $lesson->id)
+            ->where('is_completed', true)
             ->exists();
 
         return Inertia::render('Frontend/LearningPage', [
@@ -194,11 +216,11 @@ class LearningController extends Controller
             'current_lesson' => [
                 'id' => $lesson->id,
                 'title' => $lesson->title,
-                'type' => $lesson->type,
+                'type' => $lesson->lesson_type,
                 'video_url' => $lesson->video_url,
                 'content' => $lesson->content,
-                'pdf_url' => $lesson->pdf_url,
-                'audio_url' => $lesson->audio_url,
+                'pdf_url' => null, // This field doesn't exist in the current schema
+                'audio_url' => null, // This field doesn't exist in the current schema
                 'completed' => $isCompleted,
             ],
             'course_slug' => $course->slug,

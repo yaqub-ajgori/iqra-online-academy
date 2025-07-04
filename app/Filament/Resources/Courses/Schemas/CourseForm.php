@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Courses\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -35,9 +36,8 @@ class CourseForm
                     ->columnSpanFull(),
                     
                 // Course Description (Full Width)
-                Textarea::make('full_description')
+                RichEditor::make('full_description')
                     ->label('Course Description')
-                    ->rows(4)
                     ->columnSpanFull(),
                     
                 // Category and Level (Half width each)
@@ -73,6 +73,7 @@ class CourseForm
                     ->label('Course Thumbnail')
                     ->image()
                     ->directory('courses/thumbnails')
+                    ->disk('public')
                     ->columnSpanFull(),
                     
                 // Pricing Section
@@ -98,11 +99,11 @@ class CourseForm
                     ->columnSpan(2),
                     
                 // Duration and Status
-                TextInput::make('duration_hours')
-                    ->label('Duration (Hours)')
+                TextInput::make('duration_in_minutes')
+                    ->label('Duration (Minutes)')
                     ->numeric()
                     ->minValue(0)
-                    ->suffix('hours')
+                    ->suffix('minutes')
                     ->columnSpan(1),
                     
                 Select::make('status')

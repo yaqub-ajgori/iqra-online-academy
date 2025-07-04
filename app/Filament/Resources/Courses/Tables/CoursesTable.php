@@ -24,6 +24,7 @@ class CoursesTable
             ->columns([
                 ImageColumn::make('thumbnail_image')
                     ->label('Thumbnail')
+                    ->disk('public')
                     ->circular()
                     ->size(50),
                     
