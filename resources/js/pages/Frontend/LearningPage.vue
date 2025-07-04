@@ -20,8 +20,8 @@
           <div class="h-6 w-px bg-gray-200"></div>
           <!-- Course Title -->
           <div>
-            <h1 class="text-xl font-bold text-gray-900">{{ course?.title }}</h1>
-            <p class="text-sm text-gray-500">{{ currentLesson?.title }}</p>
+            <h1 class="text-lg sm:text-xl font-bold text-gray-900">{{ course?.title }}</h1>
+            <p class="text-xs sm:text-sm text-gray-500">{{ currentLesson?.title }}</p>
           </div>
         </div>
         <!-- Progress -->
@@ -182,7 +182,7 @@
                 ></iframe>
               </div>
               <div class="mt-6 text-center">
-                <h2 class="text-2xl font-bold text-gray-900 mb-2 leading-tight">{{ currentLesson.title }}</h2>
+                <h2 class="text-base sm:text-2xl font-bold text-gray-900 mb-2 leading-tight">{{ currentLesson.title }}</h2>
                 <p class="text-base text-gray-500">ভিডিও পাঠ</p>
               </div>
             </div>
@@ -191,7 +191,7 @@
               v-else-if="currentLesson?.type === 'text'"
               class="w-full h-full bg-white p-4 sm:p-8 overflow-y-auto"
             >
-              <h1 class="text-3xl font-extrabold text-gray-900 mb-6 leading-tight">{{ currentLesson.title }}</h1>
+              <h1 class="text-xl sm:text-3xl font-extrabold text-gray-900 mb-6 leading-tight">{{ currentLesson.title }}</h1>
               <div class="prose prose-lg max-w-none text-gray-800 leading-relaxed" v-html="currentLesson.content"></div>
             </div>
             <!-- Quiz Content -->
@@ -199,7 +199,7 @@
               v-else-if="currentLesson?.type === 'quiz'"
               class="w-full h-full bg-white p-4 sm:p-8 overflow-y-auto"
             >
-              <h1 class="text-2xl font-bold text-gray-900 mb-6 leading-tight">{{ currentLesson.title }}</h1>
+              <h1 class="text-lg sm:text-2xl font-bold text-gray-900 mb-6 leading-tight">{{ currentLesson.title }}</h1>
               <div class="bg-[#f5f6fd] rounded-lg p-6 text-gray-600 text-base">
                 কুইজ কনটেন্ট এখানে আসবে...
               </div>
@@ -222,7 +222,7 @@
               v-else-if="currentLesson?.type === 'audio' && currentLesson.audio_url"
               class="w-full h-full bg-white p-4 sm:p-8 overflow-y-auto"
             >
-              <h1 class="text-2xl font-bold text-gray-900 mb-6 leading-tight">{{ currentLesson.title }}</h1>
+              <h1 class="text-lg sm:text-2xl font-bold text-gray-900 mb-6 leading-tight">{{ currentLesson.title }}</h1>
               <audio controls class="w-full mb-4">
                 <source :src="currentLesson.audio_url" type="audio/mpeg">
                 আপনার ব্রাউজার অডিও সাপোর্ট করে না।
