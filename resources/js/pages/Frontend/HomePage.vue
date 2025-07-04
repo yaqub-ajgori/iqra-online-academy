@@ -50,15 +50,15 @@
             <!-- Enhanced Stats with Counter Animation -->
             <div class="grid grid-cols-3 gap-8 mb-10">
               <div class="text-center group hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl lg:text-4xl font-bold text-[#5f5fcd] mb-2 counter-animation" :data-target="stats?.total_courses || 0">১০+</div>
+                <div class="text-3xl lg:text-4xl font-bold text-[#5f5fcd] mb-2">১০+</div>
                 <div class="text-sm text-gray-600">কোর্স</div>
               </div>
               <div class="text-center group hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl lg:text-4xl font-bold text-[#2d5a27] mb-2 counter-animation" :data-target="stats?.total_students || 0">১০০+</div>
+                <div class="text-3xl lg:text-4xl font-bold text-[#2d5a27] mb-2">১০০+</div>
                 <div class="text-sm text-gray-600">শিক্ষার্থী</div>
               </div>
               <div class="text-center group hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl lg:text-4xl font-bold text-[#d4a574] mb-2 counter-animation" :data-target="stats?.satisfaction_rate || 0">৯৯+</div>
+                <div class="text-3xl lg:text-4xl font-bold text-[#d4a574] mb-2">৯৯+</div>
                 <div class="text-sm text-gray-600">সন্তুষ্টি</div>
               </div>
             </div>
@@ -470,35 +470,8 @@ const handleCourseEnroll = (course: any) => {
   router.visit(route('frontend.courses.show', { slug: course.slug }))
 }
 
-// Counter animation function
-const animateCounters = () => {
-  const counters = document.querySelectorAll('.counter-animation')
-  counters.forEach(counter => {
-    const target = parseInt(counter.getAttribute('data-target') || '0')
-    const duration = 2000 // 2 seconds
-    const step = target / (duration / 16) // 60fps
-    let current = 0
-    
-    const timer = setInterval(() => {
-      current += step
-      if (current >= target) {
-        current = target
-        clearInterval(timer)
-      }
-      if (counter.textContent !== null) {
-        counter.textContent = Math.floor(current).toString()
-      }
-    }, 16)
-  })
-}
-
 // Initialize on mount
 onMounted(() => {
-  // Start counter animation after a delay
-  setTimeout(() => {
-    animateCounters()
-  }, 500)
-
   // Smooth scroll to donation if coming from menu
   const urlParams = new URLSearchParams(window.location.search)
   if (urlParams.get('scroll') === 'donation') {
