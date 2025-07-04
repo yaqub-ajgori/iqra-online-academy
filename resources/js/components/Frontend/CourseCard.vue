@@ -57,9 +57,7 @@
       </h3>
 
       <!-- Enhanced Course Description -->
-      <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
-        {{ course.description }}
-      </p>
+      <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed" v-html="course.description"></p>
 
       <!-- Enhanced Course Meta -->
       <div class="flex items-center justify-between mb-4 text-sm">

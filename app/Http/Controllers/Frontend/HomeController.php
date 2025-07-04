@@ -133,13 +133,13 @@ class HomeController extends Controller
      */
     private function getStats(): array
     {
-        $totalCourses = Course::where('status', 'published')->count();
-        $totalStudents = \App\Models\Student::count();
+        $totalCourses = max(10, Course::where('status', 'published')->count());
+        $totalStudents = max(100, \App\Models\Student::count());
         $totalEnrollments = CourseEnrollment::count();
         $totalTeachers = Teacher::count();
 
         // Calculate satisfaction rate (mock for now, would need rating system)
-        $satisfactionRate = 95; // This would be calculated from actual ratings
+        $satisfactionRate = 99; // Always show 99% satisfaction
 
         return [
             'total_courses' => $totalCourses,
