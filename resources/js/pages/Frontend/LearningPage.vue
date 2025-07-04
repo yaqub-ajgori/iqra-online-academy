@@ -20,7 +20,7 @@
           <div class="h-6 w-px bg-gray-200"></div>
           <!-- Course Title -->
           <div>
-            <h1 class="text-lg sm:text-xl font-bold text-gray-900">{{ course?.title }}</h1>
+            <h1 class="hidden sm:block text-lg sm:text-xl font-bold text-gray-900">{{ course?.title }}</h1>
             <p class="text-xs sm:text-sm text-gray-500">{{ currentLesson?.title }}</p>
           </div>
         </div>
