@@ -52,9 +52,11 @@
       </div>
 
       <!-- Enhanced Course Title -->
-      <h3 class="text-lg font-bold text-gray-900 mb-3 group-hover:text-[#5f5fcd] transition-colors duration-200 line-clamp-2 leading-tight">
-        {{ course.title }}
-      </h3>
+      <a :href="courseUrl" class="block focus:outline-none">
+        <h3 class="text-lg font-bold text-gray-900 mb-3 group-hover:text-[#5f5fcd] transition-colors duration-200 line-clamp-2 leading-tight">
+          {{ course.title }}
+        </h3>
+      </a>
 
       <!-- Enhanced Course Description -->
       <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed" v-html="course.description"></p>
