@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\Frontend\HomeController;
 
 
 /*
@@ -38,14 +39,7 @@ Route::middleware(['auth'])->get('/dashboard', function () {
 
 Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
 
 
 
