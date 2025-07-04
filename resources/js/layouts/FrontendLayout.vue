@@ -539,6 +539,7 @@ import {
 import { ToastContainer, useToast } from '@/components/ui/toast'
 import NotificationToast from '@/components/Frontend/NotificationToast.vue'
 import ErrorBoundary from '@/components/Frontend/ErrorBoundary.vue'
+import InstallPWAButton from '@/components/Frontend/InstallPWAButton.vue'
 
 // Define props for receiving data
 defineProps<{
@@ -728,3 +729,5 @@ function scrollToDonation() {
   100% { box-shadow: 0 0 0 0 #5f5fcd00; }
 }
 </style> 
+
+<InstallPWAButton /> 
