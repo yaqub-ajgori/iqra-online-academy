@@ -49,16 +49,16 @@
 
             <!-- Enhanced Stats with Counter Animation -->
             <div class="grid grid-cols-3 gap-8 mb-10">
-              <div class="text-center group hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl lg:text-4xl font-bold text-[#5f5fcd] mb-2">১০+</div>
+              <div class="text-center group animate-stat-in" style="animation-delay:0s;">
+                <div class="text-3xl lg:text-4xl font-bold text-[#5f5fcd] mb-2">{{ toBanglaNumber(displayCourses) }}+</div>
                 <div class="text-sm text-gray-600">কোর্স</div>
               </div>
-              <div class="text-center group hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl lg:text-4xl font-bold text-[#2d5a27] mb-2">১০০+</div>
+              <div class="text-center group animate-stat-in" style="animation-delay:0.1s;">
+                <div class="text-3xl lg:text-4xl font-bold text-[#2d5a27] mb-2">{{ toBanglaNumber(displayStudents) }}+</div>
                 <div class="text-sm text-gray-600">শিক্ষার্থী</div>
               </div>
-              <div class="text-center group hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl lg:text-4xl font-bold text-[#d4a574] mb-2">৯৯+</div>
+              <div class="text-center group animate-stat-in" style="animation-delay:0.2s;">
+                <div class="text-3xl lg:text-4xl font-bold text-[#d4a574] mb-2">{{ toBanglaNumber(displaySatisfaction) }}+</div>
                 <div class="text-sm text-gray-600">সন্তুষ্টি</div>
               </div>
             </div>
@@ -470,8 +470,42 @@ const handleCourseEnroll = (course: any) => {
   router.visit(route('frontend.courses.show', { slug: course.slug }))
 }
 
-// Initialize on mount
+// Bangla numeral conversion
+function toBanglaNumber(num: number): string {
+  const en = '0123456789';
+  const bn = '০১২৩৪৫৬৭৮৯';
+  return num.toString().split('').map(d => en.includes(d) ? bn[en.indexOf(d)] : d).join('');
+}
+
+// Animated stat values
+const displayCourses = ref(0)
+const displayStudents = ref(0)
+const displaySatisfaction = ref(0)
+
+const targetCourses = 10
+const targetStudents = 100
+const targetSatisfaction = 99
+
+function animateStat(refValue: any, target: number, duration = 700) {
+  const start = 0
+  const startTime = performance.now()
+  function animate(now: number) {
+    const elapsed = now - startTime
+    const progress = Math.min(elapsed / duration, 1)
+    refValue.value = Math.floor(progress * (target - start) + start)
+    if (progress < 1) {
+      requestAnimationFrame(animate)
+    } else {
+      refValue.value = target
+    }
+  }
+  requestAnimationFrame(animate)
+}
+
 onMounted(() => {
+  animateStat(displayCourses, targetCourses)
+  setTimeout(() => animateStat(displayStudents, targetStudents), 200)
+  setTimeout(() => animateStat(displaySatisfaction, targetSatisfaction), 400)
   // Smooth scroll to donation if coming from menu
   const urlParams = new URLSearchParams(window.location.search)
   if (urlParams.get('scroll') === 'donation') {
@@ -694,5 +728,21 @@ const submitDonation = () => {
 }
 .animate-spin-slow {
   animation: spin-slow 18s linear infinite;
+}
+
+@keyframes statIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-stat-in {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: statIn 0.8s cubic-bezier(.4,0,.2,1) forwards;
 }
 </style> 
