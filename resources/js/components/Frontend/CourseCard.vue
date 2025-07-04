@@ -91,10 +91,6 @@
               {{ getInitials(course.instructor.name) }}
             </span>
           </div>
-          <!-- Verified Badge for Instructor -->
-          <div class="absolute -top-1 -right-1 w-4 h-4 bg-[#2d5a27] rounded-full flex items-center justify-center">
-            <CheckIcon class="w-2 h-2 text-white" />
-          </div>
         </div>
         <div class="ml-3">
           <p class="text-sm font-semibold text-gray-800">{{ course.instructor.name }}</p>
