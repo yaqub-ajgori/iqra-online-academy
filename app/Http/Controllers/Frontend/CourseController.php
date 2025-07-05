@@ -57,7 +57,7 @@ class CourseController extends Controller
                 'rating' => 0, // Default rating since we removed average_rating
                 'instructor' => [
                     'name' => $course->teacher->full_name ?? 'Unknown Instructor',
-                    'avatar' => $course->teacher->profile_picture ?? null,
+                    'avatar' => $course->teacher->profile_picture_url ?? null,
                 ],
                 'isNew' => $course->created_at->diffInDays(now()) <= 30,
                 'enrolled' => false,
@@ -121,7 +121,7 @@ class CourseController extends Controller
             'rating' => 0, // Default rating since we removed average_rating
             'instructor' => [
                 'name' => $course->teacher->full_name ?? 'অজানা শিক্ষক',
-                'avatar' => $course->teacher->profile_picture ?? null,
+                'avatar' => $course->teacher->profile_picture_url ?? null,
                 'bio' => $course->teacher->speciality ?? '',
                 'experience' => $course->teacher->experience ?? '',
             ],

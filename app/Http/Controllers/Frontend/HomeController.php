@@ -84,7 +84,7 @@ class HomeController extends Controller
                     'is_featured' => $course->is_featured,
                     'instructor' => [
                         'name' => $course->teacher->full_name ?? 'Unknown Instructor',
-                        'avatar' => $course->teacher->profile_picture ?? null,
+                        'avatar' => $course->teacher->profile_picture_url ?? null,
                     ],
                     'isNew' => $course->created_at->diffInDays(now()) <= 30,
                     'enrolled' => false, // Will be updated based on authenticated user
@@ -119,7 +119,7 @@ class HomeController extends Controller
                         'is_featured' => $course->is_featured,
                         'instructor' => [
                             'name' => $course->teacher->full_name ?? 'Unknown Instructor',
-                            'avatar' => $course->teacher->profile_picture ?? null,
+                            'avatar' => $course->teacher->profile_picture_url ?? null,
                         ],
                         'isNew' => $course->created_at->diffInDays(now()) <= 30,
                         'enrolled' => false,

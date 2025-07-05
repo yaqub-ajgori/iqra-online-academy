@@ -35,4 +35,22 @@ class Teacher extends Model
     {
         return $query->where('is_active', true);
     }
+
+    /**
+     * Get profile picture attribute as full URL.
+     */
+    public function getProfilePictureUrlAttribute(): ?string
+    {
+        if (!$this->profile_picture) {
+            return null;
+        }
+
+        // If the path already includes 'http', it's a full URL
+        if (str_starts_with($this->profile_picture, 'http')) {
+            return $this->profile_picture;
+        }
+
+        // Otherwise, build the full URL from the public storage path
+        return asset('storage/' . $this->profile_picture);
+    }
 }
