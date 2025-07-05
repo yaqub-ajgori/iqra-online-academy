@@ -130,20 +130,20 @@
                         <!-- Only show logout for admin, no extra whitespace above -->
                       </template>
                       <template v-else-if="userRole === 'student'">
-                        <Link 
-                          :href="route('frontend.student.dashboard')" 
-                          class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
-                        >
-                          <UserIcon class="w-4 h-4 mr-3" />
-                          Dashboard
-                        </Link>
-                        <Link 
-                          :href="route('frontend.student.dashboard')" 
-                          class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
-                        >
-                          <BookOpenIcon class="w-4 h-4 mr-3" />
-                          My Courses
-                        </Link>
+                      <Link 
+                        :href="route('frontend.student.dashboard')" 
+                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
+                      >
+                        <UserIcon class="w-4 h-4 mr-3" />
+                         Dashboard
+                      </Link>
+                      <Link 
+                        :href="route('frontend.student.dashboard')" 
+                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
+                      >
+                        <BookOpenIcon class="w-4 h-4 mr-3" />
+                        My Courses
+                      </Link>
                       </template>
                     </div>
                     <div v-if="userRole === 'student'" class="border-t border-gray-200 my-2"></div>

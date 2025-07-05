@@ -8,6 +8,27 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 class StudentResetPasswordNotification extends ResetPassword implements ShouldQueue
 {
+    /**
+     * The name of the queue connection to use when queuing the notification.
+     *
+     * @var string|null
+     */
+    public $connection = null;
+
+    /**
+     * The name of the queue the notification should be sent to.
+     *
+     * @var string|null
+     */
+    public $queue = null;
+
+    /**
+     * The delay (in seconds) before the queued notification is processed.
+     *
+     * @var int|null
+     */
+    public $delay = null;
+
     public function toMail($notifiable)
     {
         $resetUrl = url(route('password.reset', [
