@@ -18,9 +18,9 @@ class DatabaseSeeder extends Seeder
 
         // admin user
         $admin = User::create([
-            'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
+            'name' => 'Md Saeedul Mostafa',
+            'email' => 'saeedul.mostafa@gmail.com',
+            'password' => Hash::make('saeedul.mostafa@gmail.com'),
             'email_verified_at' => now(),
         ]);
 
@@ -29,12 +29,12 @@ class DatabaseSeeder extends Seeder
             'role_type' => 'admin',
         ]);
 
-        $this->call([
-            CourseCategorySeeder::class,
-            TeacherSeeder::class,
-            CourseSeeder::class,
-            StudentSeeder::class,
-            DonationSeeder::class,
-        ]);
+        // $this->call([
+        //     CourseCategorySeeder::class,
+        //     TeacherSeeder::class,
+        //     CourseSeeder::class,
+        //     StudentSeeder::class,
+        //     DonationSeeder::class,
+        // ]);
     }
 }
