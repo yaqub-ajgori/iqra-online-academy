@@ -79,7 +79,7 @@ class LearningController extends Controller
                                 'id' => $lesson->id,
                                 'order' => $lesson->sort_order,
                                 'title' => $lesson->title,
-                                'duration' => $lesson->video_duration ? gmdate('H:i:s', $lesson->video_duration) : '0 min',
+                                'duration' => $lesson->formatted_duration ? $lesson->formatted_duration : ($lesson->video_duration ? gmdate('H:i:s', $lesson->video_duration) : '0 min'),
                                 'type' => $lesson->lesson_type,
                                 'video_url' => $lesson->video_url,
                                 'content' => $lesson->content,

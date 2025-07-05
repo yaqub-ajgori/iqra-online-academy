@@ -75,7 +75,7 @@ class HomeController extends Controller
                     'category' => $course->category->name ?? 'Uncategorized',
                     'level' => $course->level,
                     'price' => $course->price,
-                    'duration' => $course->duration_hours ? $course->duration_hours . ' ঘন্টা' : 'স্ব-নির্ধারিত',
+                    'duration' => $course->duration,
                     'students_count' => $course->enrollments()->count(),
                     'rating' => 0, // Default rating since we removed average_rating
                     'is_featured' => $course->is_featured,
@@ -108,7 +108,7 @@ class HomeController extends Controller
                         'category' => $course->category->name ?? 'Uncategorized',
                         'level' => $course->level,
                         'price' => $course->price,
-                        'duration' => $course->duration_hours ? $course->duration_hours . ' ঘন্টা' : 'স্ব-নির্ধারিত',
+                        'duration' => $course->duration,
                         'students_count' => $course->enrollments()->count(),
                         'rating' => 0, // Default rating since we removed average_rating
                         'is_featured' => $course->is_featured,
