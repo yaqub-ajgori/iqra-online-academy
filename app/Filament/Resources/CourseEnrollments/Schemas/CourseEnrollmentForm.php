@@ -61,11 +61,19 @@ class CourseEnrollmentForm
                         return $query->with(['student.user', 'course']);
                     })
                     ->getOptionLabelFromRecordUsing(fn ($record) => 
-                        "#{$record->transaction_id} - {$record->student->user->name} - ৳{$record->amount}"
-                    )
+                        "#{$record->transaction_id} - {$record->student->user->name} - ৳{$record->amount}")
                     ->searchable()
                     ->preload()
-                    ->columnSpan(2),
+                    ->columnSpan(2)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        if ($state) {
+                            $payment = \App\Models\Payment::find($state);
+                            if ($payment) {
+                                $set('amount_paid', $payment->amount);
+                            }
+                        }
+                    }),
                     
                 TextInput::make('amount_paid')
                     ->label('Amount Paid')
@@ -74,7 +82,8 @@ class CourseEnrollmentForm
                     ->prefix('৳')
                     ->default(0.0)
                     ->minValue(0)
-                    ->columnSpan(1),
+                    ->columnSpan(1)
+                    ->readOnly(fn ($record) => $record !== null),
                     
                 Select::make('payment_status')
                     ->label('Payment Status')

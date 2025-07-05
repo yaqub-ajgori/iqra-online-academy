@@ -30,6 +30,11 @@ class CourseEnrollmentsTable
                     ->sortable()
                     ->description(fn ($record) => $record->course->category->name ?? ''),
                     
+                TextColumn::make('payment.amount')
+                    ->label('Paid Amount')
+                    ->formatStateUsing(fn ($state, $record) => $state ? '৳' . number_format($state, 2) : ($record->course ? '৳' . number_format($record->course->effective_price, 2) : '-'))
+                    ->sortable(),
+                    
                 BadgeColumn::make('enrollment_type')
                     ->label('Type')
                     ->colors([

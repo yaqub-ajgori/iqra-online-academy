@@ -140,4 +140,17 @@ class CourseEnrollment extends Model
             'progress_percentage' => 100,
         ]);
     }
+
+    protected static function booted()
+    {
+        parent::booted();
+        static::creating(function ($enrollment) {
+            if ($enrollment->payment_id) {
+                $payment = \App\Models\Payment::find($enrollment->payment_id);
+                if ($payment) {
+                    $enrollment->amount_paid = $payment->amount;
+                }
+            }
+        });
+    }
 }

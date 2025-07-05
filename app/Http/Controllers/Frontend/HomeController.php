@@ -75,11 +75,13 @@ class HomeController extends Controller
                     'category' => $course->category->name ?? 'Uncategorized',
                     'level' => $course->level,
                     'price' => $course->price,
+                    'discount_price' => $course->discount_price,
+                    'discount_expires_at' => $course->discount_expires_at,
+                    'is_free' => $course->is_free,
                     'duration' => $course->duration,
                     'students_count' => $course->enrollments()->count(),
                     'rating' => 0, // Default rating since we removed average_rating
                     'is_featured' => $course->is_featured,
-                    'is_free' => $course->price == 0,
                     'instructor' => [
                         'name' => $course->teacher->full_name ?? 'Unknown Instructor',
                         'avatar' => $course->teacher->profile_picture ?? null,
@@ -108,11 +110,13 @@ class HomeController extends Controller
                         'category' => $course->category->name ?? 'Uncategorized',
                         'level' => $course->level,
                         'price' => $course->price,
+                        'discount_price' => $course->discount_price,
+                        'discount_expires_at' => $course->discount_expires_at,
+                        'is_free' => $course->is_free,
                         'duration' => $course->duration,
                         'students_count' => $course->enrollments()->count(),
                         'rating' => 0, // Default rating since we removed average_rating
                         'is_featured' => $course->is_featured,
-                        'is_free' => $course->price == 0,
                         'instructor' => [
                             'name' => $course->teacher->full_name ?? 'Unknown Instructor',
                             'avatar' => $course->teacher->profile_picture ?? null,

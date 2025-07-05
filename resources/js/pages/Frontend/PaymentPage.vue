@@ -102,7 +102,7 @@
                       <p class="text-lg font-mono font-bold text-gray-800 bg-gray-100 p-3 rounded-lg inline-block">01915878662 (পার্সোনাল)</p>
                       <ol>
                         <li>আপনার বিকাশ অ্যাপে যান এবং "সেন্ড মানি" অপশনটি নির্বাচন করুন।</li>
-                        <li>অ্যামাউন্ট হিসেবে <strong>৳{{ finalPrice.toLocaleString() }}</strong> দিন।</li>
+                        <li>অ্যামাউন্ট হিসেবে <strong>৳{{ formatPrice(finalPrice) }}</strong> দিন।</li>
                         <li>রেফারেন্স হিসেবে আপনার নাম এবং কোর্সের নাম লিখুন।</li>
                         <li>আপনার বিকাশ পিন দিয়ে পেমেন্ট সম্পন্ন করুন।</li>
                         <li>পেমেন্ট সম্পন্ন হলে ট্রানজেকশন আইডিটি সংরক্ষণ করুন।</li>
@@ -113,7 +113,7 @@
                        <p class="text-lg font-mono font-bold text-gray-800 bg-gray-100 p-3 rounded-lg inline-block">01750-469027 (পার্সোনাল)</p>
                       <ol>
                         <li>আপনার নগদ অ্যাপে যান এবং "সেন্ড মানি" অপশনটি নির্বাচন করুন।</li>
-                        <li>অ্যামাউন্ট হিসেবে <strong>৳{{ finalPrice.toLocaleString() }}</strong> দিন।</li>
+                        <li>অ্যামাউন্ট হিসেবে <strong>৳{{ formatPrice(finalPrice) }}</strong> দিন।</li>
                         <li>আপনার নগদ পিন দিয়ে পেমেন্ট সম্পন্ন করুন।</li>
                         <li>পেমেন্ট সম্পন্ন হলে ট্রানজেকশন আইডিটি সংরক্ষণ করুন।</li>
                       </ol>
@@ -123,7 +123,7 @@
                       <p class="text-lg font-mono font-bold text-gray-800 bg-gray-100 p-3 rounded-lg inline-block">019158786625 (পার্সোনাল)</p>
                       <ol>
                         <li>আপনার রকেট অ্যাপে যান এবং "সেন্ড মানি" অপশনটি নির্বাচন করুন।</li>
-                        <li>অ্যামাউন্ট হিসেবে <strong>৳{{ finalPrice.toLocaleString() }}</strong> দিন।</li>
+                        <li>অ্যামাউন্ট হিসেবে <strong>৳{{ formatPrice(finalPrice) }}</strong> দিন।</li>
                         <li>আপনার রকেট পিন দিয়ে পেমেন্ট সম্পন্ন করুন।</li>
                         <li>পেমেন্ট সম্পন্ন হলে ট্রানজেকশন আইডিটি সংরক্ষণ করুন।</li>
                       </ol>
@@ -222,11 +222,22 @@
                     <div class="space-y-2 border-t border-gray-100 pt-4">
                       <div class="flex justify-between text-gray-600">
                         <span>কোর্স ফি</span>
-                        <span>৳{{ (course?.price || 0).toLocaleString() }}</span>
+                        <span>
+                          <template v-if="props.course.is_free">ফ্রি</template>
+                          <template v-else-if="showDiscount">
+                            <span class="text-[#e2136e] font-bold">৳{{ formatPrice(props.course.discount_price as number) }}</span>
+                            <span class="text-gray-400 line-through ml-2">৳{{ formatPrice(props.course.price as number) }}</span>
+                            <span v-if="discountExpiresIn" class="ml-2 px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 text-xs font-semibold">{{ discountExpiresIn }}</span>
+                          </template>
+                          <template v-else>৳{{ formatPrice(props.course.price as number) }}</template>
+                        </span>
                       </div>
                       <div class="flex justify-between font-bold text-lg text-gray-900 border-t border-gray-100 pt-2">
                         <span>সর্বমোট</span>
-                        <span>৳{{ finalPrice.toLocaleString() }}</span>
+                        <span>
+                          <template v-if="props.course.is_free">ফ্রি</template>
+                          <template v-else>৳{{ formatPrice(finalPrice) }}</template>
+                        </span>
                       </div>
                     </div>
 
@@ -294,6 +305,8 @@ import {
   AlertTriangleIcon
 } from 'lucide-vue-next'
 import { useToast } from '@/composables/useToast'
+// @ts-ignore
+import dayjs from 'dayjs'
 
 // Course interface
 interface Course {
@@ -315,6 +328,9 @@ interface Course {
     name: string
     avatar: string
   }
+  discount_price?: number
+  discount_expires_at?: string
+  is_free?: boolean
 }
 
 // Props
@@ -360,7 +376,31 @@ const allAgreed = computed({
   }
 })
 
-const finalPrice = computed(() => props.course?.price || 0)
+const showDiscount = computed(() => {
+  return props.course.discount_price && props.course.discount_expires_at && dayjs(props.course.discount_expires_at).isAfter(dayjs())
+})
+
+const discountExpiresIn = computed(() => {
+  if (!props.course.discount_expires_at) return ''
+  const expires = dayjs(props.course.discount_expires_at)
+  const now = dayjs()
+  if (expires.isBefore(now)) return ''
+  const days = expires.diff(now, 'day')
+  if (days > 0) return `ছাড় শেষ ${days} দিনে`
+  const hours = expires.diff(now, 'hour')
+  if (hours > 0) return `ছাড় শেষ আজ`
+  return ''
+})
+
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat('bn-BD').format(price)
+}
+
+const finalPrice = computed(() => {
+  if (props.course.is_free) return 0
+  if (showDiscount.value) return props.course.discount_price
+  return props.course.price
+})
 
 const canSubmit = computed(() => {
   return (

@@ -12,6 +12,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -55,6 +56,15 @@ class PaymentController extends Controller
         // Get the course
         $courseModel = Course::findOrFail($validated['course_id']);
         
+        \Log::info('Payment Debug', [
+            'course_id' => $courseModel->id,
+            'course_title' => $courseModel->title,
+            'effective_price' => $courseModel->effective_price,
+            'original_price' => $courseModel->price,
+            'discount_price' => $courseModel->discount_price,
+            'discount_expires_at' => $courseModel->discount_expires_at,
+        ]);
+        
         // Get the authenticated user and their student record
         $user = Auth::user();
         $student = Student::where('user_id', $user->id)->first();
@@ -79,7 +89,7 @@ class PaymentController extends Controller
             $payment = Payment::create([
                 'student_id' => $student->id,
                 'course_id' => $courseModel->id,
-                'amount' => $validated['amount'],
+                'amount' => $courseModel->effective_price,
                 'currency' => 'BDT',
                 'payment_method' => $validated['paymentMethod'],
                 'transaction_id' => $validated['transactionId'],
@@ -87,6 +97,11 @@ class PaymentController extends Controller
                 'sender_number' => null, // Can be added later if needed
                 'receiver_number' => $this->getReceiverNumber($validated['paymentMethod']),
             ]);
+            
+            // \Log::info('Payment Created', [
+            //     'payment_id' => $payment->id,
+            //     'amount_saved' => $payment->amount,
+            // ]);
 
             // Create enrollment record
             $enrollment = CourseEnrollment::create([
@@ -95,7 +110,7 @@ class PaymentController extends Controller
                 'enrolled_at' => now(),
                 'enrollment_type' => $courseModel->price > 0 ? 'paid' : 'free',
                 'payment_id' => $payment->id,
-                'amount_paid' => $validated['amount'],
+                'amount_paid' => $payment->amount,
                 'currency' => 'BDT',
                 'payment_status' => 'pending',
                 'progress_percentage' => 0,

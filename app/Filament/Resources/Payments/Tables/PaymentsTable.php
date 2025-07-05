@@ -31,7 +31,7 @@ class PaymentsTable
                     
                 TextColumn::make('amount')
                     ->label('Amount')
-                    ->formatStateUsing(fn ($state) => '৳' . number_format($state))
+                    ->formatStateUsing(fn ($state) => '৳' . number_format($state, 2))
                     ->sortable(),
                     
                 BadgeColumn::make('payment_method')

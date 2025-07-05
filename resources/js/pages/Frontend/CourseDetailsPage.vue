@@ -175,13 +175,19 @@
               <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
                 
                 <!-- Price Section -->
-                <div class="p-8 text-center border-b border-gray-100">
-                  <div v-if="course.price === 0" class="text-3xl font-bold text-[#2d5a27] mb-2">
-                    ফ্রি
-                  </div>
-                  <div v-else class="text-3xl font-bold text-gray-900 mb-2">
-                    ৳{{ course.price.toLocaleString() }}
-                  </div>
+                <div class="p-8 text-center border-b border-gray-200">
+                  <template v-if="course.is_free">
+                    <div class="text-3xl font-bold text-[#2d5a27] mb-2">ফ্রি</div>
+                  </template>
+                  <template v-else-if="showDiscount">
+                    <div class="text-3xl font-bold text-[#e2136e] mb-2">৳{{ formatPrice(course.discount_price as number) }}
+                      <span class="text-lg line-through text-gray-400 ml-2">৳{{ formatPrice(course.price as number) }}</span>
+                    </div>
+                    <div v-if="discountExpiresIn" class="mb-2 px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 text-xs font-semibold inline-block">{{ discountExpiresIn }}</div>
+                  </template>
+                  <template v-else>
+                    <div class="text-3xl font-bold text-gray-900 mb-2">৳{{ formatPrice(course.price as number) }}</div>
+                  </template>
                   <p class="text-sm text-gray-600">লাইফটাইম অ্যাক্সেস</p>
                 </div>
 
@@ -289,6 +295,8 @@ import {
 
   CheckIcon
 } from 'lucide-vue-next'
+// @ts-ignore
+import dayjs from 'dayjs'
 
 // Type definitions
 interface Course {
@@ -512,6 +520,26 @@ const reviewRating = computed(() => {
 })
 
 const reviewCount = computed(() => reviews.value ? reviews.value.length : 0)
+
+const showDiscount = computed(() => {
+  return props.course.discount_price && props.course.discount_expires_at && dayjs(props.course.discount_expires_at).isAfter(dayjs())
+})
+
+const discountExpiresIn = computed(() => {
+  if (!props.course.discount_expires_at) return ''
+  const expires = dayjs(props.course.discount_expires_at)
+  const now = dayjs()
+  if (expires.isBefore(now)) return ''
+  const days = expires.diff(now, 'day')
+  if (days > 0) return `ছাড় শেষ ${days} দিনে`
+  const hours = expires.diff(now, 'hour')
+  if (hours > 0) return `ছাড় শেষ আজ`
+  return ''
+})
+
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat('bn-BD').format(price)
+}
 
 const handleEnroll = () => {
   const intendedUrl = route('frontend.payment.checkout', { course: props.course.slug })

@@ -76,4 +76,17 @@ class Payment extends Model
     {
         return $this->status === 'completed';
     }
+
+    protected static function booted()
+    {
+        parent::booted();
+        static::creating(function ($payment) {
+            if ($payment->course_id) {
+                $course = \App\Models\Course::find($payment->course_id);
+                if ($course) {
+                    $payment->amount = $course->effective_price;
+                }
+            }
+        });
+    }
 }

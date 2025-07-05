@@ -58,6 +58,21 @@
         </h3>
       </a>
 
+      <!-- Price Section (add after course title/description, before action buttons) -->
+      <div class="mb-4">
+        <template v-if="course.is_free">
+          <span class="text-lg font-bold text-[#2d5a27]">ফ্রি</span>
+        </template>
+        <template v-else-if="showDiscount">
+          <span class="text-lg font-bold text-[#e2136e] mr-2">৳{{ formatPrice(course.discount_price as number) }}</span>
+          <span class="text-sm line-through text-gray-400">৳{{ formatPrice(course.price as number) }}</span>
+          <span v-if="discountExpiresIn" class="ml-2 px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 text-xs font-semibold">{{ discountExpiresIn }}</span>
+        </template>
+        <template v-else>
+          <span class="text-lg font-bold text-gray-900">৳{{ formatPrice(course.price as number) }}</span>
+        </template>
+      </div>
+
       <!-- Enhanced Course Description -->
       <p class="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed" v-html="course.description"></p>
 
@@ -148,6 +163,8 @@ import {
 } from 'lucide-vue-next'
 import PrimaryButton from './PrimaryButton.vue'
 import CoursePlaceholder from './CoursePlaceholder.vue'
+// @ts-ignore
+import dayjs from 'dayjs'
 
 interface Course {
   id: number
@@ -170,6 +187,8 @@ interface Course {
     name: string
     avatar?: string
   }
+  discount_price?: number
+  discount_expires_at?: string
 }
 
 interface Props {
@@ -208,6 +227,22 @@ const getInitials = (name: string): string => {
 const isValidImage = (src: string | undefined | null): boolean => {
   return !!src && typeof src === 'string' && src.trim() !== '' && !src.includes('undefined')
 }
+
+const showDiscount = computed(() => {
+  return props.course.discount_price && props.course.discount_expires_at && dayjs(props.course.discount_expires_at).isAfter(dayjs())
+})
+
+const discountExpiresIn = computed(() => {
+  if (!props.course.discount_expires_at) return ''
+  const expires = dayjs(props.course.discount_expires_at)
+  const now = dayjs()
+  if (expires.isBefore(now)) return ''
+  const days = expires.diff(now, 'day')
+  if (days > 0) return `ছাড় শেষ ${days} দিনে`
+  const hours = expires.diff(now, 'hour')
+  if (hours > 0) return `ছাড় শেষ আজ`
+  return ''
+})
 </script>
 
 <style scoped>

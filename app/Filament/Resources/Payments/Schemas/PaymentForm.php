@@ -31,7 +31,16 @@ class PaymentForm
                     ->required()
                     ->searchable()
                     ->preload()
-                    ->columnSpan(2),
+                    ->columnSpan(2)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        if ($state) {
+                            $course = \App\Models\Course::find($state);
+                            if ($course) {
+                                $set('amount', $course->effective_price);
+                            }
+                        }
+                    }),
                     
                 // Payment Details
                 TextInput::make('amount')
@@ -40,7 +49,8 @@ class PaymentForm
                     ->numeric()
                     ->prefix('৳')
                     ->minValue(0)
-                    ->columnSpan(1),
+                    ->columnSpan(1)
+                    ->readOnly(fn ($record) => $record !== null),
                     
                 Select::make('payment_method')
                     ->label('Payment Method')

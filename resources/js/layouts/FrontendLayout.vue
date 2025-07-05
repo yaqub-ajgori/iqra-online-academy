@@ -126,23 +126,27 @@
                     class="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-islamic-lg border border-gray-200 py-2 z-50"
                   >
                     <div class="py-2">
-                      <Link 
-                        :href="route('frontend.student.dashboard')" 
-                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
-                      >
-                        <UserIcon class="w-4 h-4 mr-3" />
-                         Dashboard
-                      </Link>
-                      <Link 
-                        :href="route('frontend.student.dashboard')" 
-                        class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
-                      >
-                        <BookOpenIcon class="w-4 h-4 mr-3" />
-                        My Courses
-                      </Link>
+                      <template v-if="userRole === 'admin'">
+                        <!-- Only show logout for admin, no extra whitespace above -->
+                      </template>
+                      <template v-else-if="userRole === 'student'">
+                        <Link 
+                          :href="route('frontend.student.dashboard')" 
+                          class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
+                        >
+                          <UserIcon class="w-4 h-4 mr-3" />
+                          Dashboard
+                        </Link>
+                        <Link 
+                          :href="route('frontend.student.dashboard')" 
+                          class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#5f5fcd] transition-colors"
+                        >
+                          <BookOpenIcon class="w-4 h-4 mr-3" />
+                          My Courses
+                        </Link>
+                      </template>
                     </div>
-                    
-                    <div class="border-t border-gray-200 my-2"></div>
+                    <div v-if="userRole === 'student'" class="border-t border-gray-200 my-2"></div>
                     <button 
                       @click="logout"
                       class="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -474,7 +478,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
 import {
   MenuIcon,
@@ -529,6 +533,16 @@ const page = usePage()
 // Search query state
 const searchQuery = ref('')
 const searching = ref(false)
+
+// Computed property to determine user role
+const userRole = computed(() => {
+  const user = page.props.auth?.user
+  const roles = Array.isArray((user as any)?.roles) ? (user as any).roles.map((r: any) => r.role_type) : []
+  if (roles.includes('admin')) return 'admin'
+  if (roles.includes('teacher')) return 'teacher'
+  if (roles.includes('student')) return 'student'
+  return null
+})
 
 // Logout function
 const logout = () => {
