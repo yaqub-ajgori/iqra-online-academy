@@ -15,7 +15,7 @@ class StudentVerifyEmail extends VerifyEmail implements ShouldQueue
     protected function buildMailMessage($url)
     {
         return (new \Illuminate\Notifications\Messages\MailMessage)
-            ->subject('আপনার ইমেইল ঠিকানা যাচাই করুন | ' . config('app.name'))
+            ->subject('ইমেইল যাচাই করুন | ' . config('app.name'))
             ->view('emails.student_verify_email', [
                 'url' => $url,
                 'appName' => config('app.name'),

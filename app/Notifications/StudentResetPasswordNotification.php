@@ -37,7 +37,7 @@ class StudentResetPasswordNotification extends ResetPassword implements ShouldQu
         ], false));
 
         return (new MailMessage)
-            ->subject('Student Password Reset | ' . config('app.name'))
+            ->subject('পাসওয়ার্ড রিসেট অনুরোধ | ' . config('app.name'))
             ->view('emails.student_password_reset', [
                 'resetUrl' => $resetUrl,
                 'count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire'),
