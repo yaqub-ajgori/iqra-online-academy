@@ -69,7 +69,7 @@
               <!-- Tab Content -->
               <div v-if="activeTab === 'overview'" class="prose prose-slate max-w-none">
                 <h3>কোর্স সম্পর্কে</h3>
-                <div v-html="course.full_description"></div>
+                <div v-html="sanitizeHtml(course.full_description)"></div>
                 
                 <!-- Course content will be displayed through modules and lessons -->
               </div>
@@ -199,9 +199,11 @@
                     size="lg"
                     variant="primary"
                     :icon="BookOpenIcon"
+                    :loading="enrollLoading"
+                    :disabled="enrollLoading"
                     class="w-full justify-center"
                   >
-                    {{ course.price === 0 ? 'ফ্রি এনরোল করুন' : 'এখনই কিনুন' }}
+                    {{ enrollLoading ? 'প্রক্রিয়াধীন...' : (course.price === 0 ? 'ফ্রি এনরোল করুন' : 'এখনই কিনুন') }}
                   </PrimaryButton>
 
                   <PrimaryButton 
@@ -365,6 +367,7 @@ const props = defineProps({
 
 const activeTab = ref('overview')
 const expandedModules = ref<number[]>([])
+const enrollLoading = ref(false)
 
 const tabs = [
   { id: 'overview', name: 'কোর্স সম্পর্কে' },
@@ -541,15 +544,30 @@ const formatPrice = (price: number) => {
   return new Intl.NumberFormat('bn-BD').format(price)
 }
 
+const sanitizeHtml = (html: string): string => {
+  if (!html) return ''
+  // Create a new DOMParser to safely parse HTML without executing scripts
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, 'text/html')
+  return doc.body.innerHTML || ''
+}
+
 const handleEnroll = () => {
+  enrollLoading.value = true
   const intendedUrl = route('frontend.payment.checkout', { course: props.course.slug })
-  if (!props.isAuthenticated) {
-    // Store the intended URL in the session before redirecting to login
-    sessionStorage.setItem('intended_url', intendedUrl)
-    router.visit(route('login'))
-  } else {
-    // If authenticated, proceed directly to payment
-    router.visit(intendedUrl)
+  
+  try {
+    if (!props.isAuthenticated) {
+      // Store the intended URL in the session before redirecting to login
+      sessionStorage.setItem('intended_url', intendedUrl)
+      router.visit(route('login'))
+    } else {
+      // If authenticated, proceed directly to payment
+      router.visit(intendedUrl)
+    }
+  } catch (error) {
+    console.error('Error during enrollment:', error)
+    enrollLoading.value = false
   }
 }
 </script>

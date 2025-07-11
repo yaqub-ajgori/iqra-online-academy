@@ -29,12 +29,13 @@ class DatabaseSeeder extends Seeder
             'role_type' => 'admin',
         ]);
 
-        // $this->call([
-        //     CourseCategorySeeder::class,
-        //     TeacherSeeder::class,
-        //     CourseSeeder::class,
-        //     StudentSeeder::class,
-        //     DonationSeeder::class,
-        // ]);
+        $this->call([
+            // CourseCategorySeeder::class,
+            BlogSeeder::class,
+            // TeacherSeeder::class,
+            // CourseSeeder::class,
+            // StudentSeeder::class,
+            // DonationSeeder::class,
+        ]);
     }
 }

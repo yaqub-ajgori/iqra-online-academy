@@ -412,33 +412,93 @@ const canSubmit = computed(() => {
   )
 })
 
+const sanitizeInput = (input: string): string => {
+  if (!input) return ''
+  return input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<[^>]*>/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '')
+    .trim()
+}
+
+const validatePaymentForm = (): boolean => {
+  if (!selectedPaymentMethod.value) {
+    toast.error({ title: 'ত্রুটি', message: 'পেমেন্ট পদ্ধতি নির্বাচন করুন।' })
+    return false
+  }
+  if (!form.transactionId || form.transactionId.trim().length < 5) {
+    toast.error({ title: 'ত্রুটি', message: 'ট্রানজেকশন আইডি কমপক্ষে ৫ অক্ষরের হতে হবে।' })
+    return false
+  }
+  if (!form.agreeTerms) {
+    toast.error({ title: 'ত্রুটি', message: 'শর্তাবলী সম্মত হতে হবে।' })
+    return false
+  }
+  if (!form.agreeRefund) {
+    toast.error({ title: 'ত্রুটি', message: 'রিফান্ড নীতি সম্মত হতে হবে।' })
+    return false
+  }
+  return true
+}
+
 const handleSubmit = () => {
+  if (!validatePaymentForm()) return
+  
   // Update paymentMethod in form just before submitting
   form.paymentMethod = selectedPaymentMethod.value;
+  
+  // Sanitize transaction ID
+  form.transactionId = sanitizeInput(form.transactionId)
 
   // Submit the form to the backend
   form.post(route('frontend.payment.process', props.course.slug), {
-    onSuccess: () => {
+    preserveState: true,
+    preserveScroll: true,
+    onSuccess: (page) => {
+      const flash = page.props.flash as Record<string, any>
+      let successMsg = `অভিনন্দন! আপনার পেমেন্ট জমা দেওয়া হয়েছে। যাচাইয়ের পর আপনার এনরোলমেন্ট সক্রিয় করা হবে।`
+      if (flash && flash.success) {
+        successMsg = flash.success
+      }
+      
       toast.success({
         title: 'সফল হয়েছে',
-        message: `অভিনন্দন! আপনার পেমেন্ট জমা দেওয়া হয়েছে। যাচাইয়ের পর আপনার এনরোলমেন্ট সক্রিয় করা হবে।`,
+        message: successMsg,
+        duration: 8000
       });
       
       form.reset();
       selectedPaymentMethod.value = null;
     },
     onError: (errors) => {
-      if (errors.error) {
+      console.error('Payment form submission error:', errors)
+      
+      // Handle specific field errors
+      if (errors.transactionId) {
+        toast.error({ title: 'ট্রানজেকশন আইডি ত্রুটি', message: errors.transactionId })
+      } else if (errors.paymentMethod) {
+        toast.error({ title: 'পেমেন্ট পদ্ধতি ত্রুটি', message: errors.paymentMethod })
+      } else if (errors.course_id) {
+        toast.error({ title: 'কোর্স ত্রুটি', message: errors.course_id })
+      } else if (errors.amount) {
+        toast.error({ title: 'অ্যামাউন্ট ত্রুটি', message: errors.amount })
+      } else if (errors.error) {
         toast.error({
           title: 'ত্রুটি',
           message: errors.error,
+          duration: 7000
         });
       } else {
         toast.error({
           title: 'ত্রুটি',
-          message: 'পেমেন্ট প্রক্রিয়ায় সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।',
+          message: 'পেমেন্ট প্রক্রিয়ায় সমস্যা হয়েছে। ইন্টারনেট সংযোগ যাচাই করে আবার চেষ্টা করুন।',
+          duration: 7000
         });
       }
+    },
+    onFinish: () => {
+      // Additional cleanup if needed
     }
   });
 }

@@ -175,10 +175,12 @@
                   :src="getEmbedUrl(currentLesson.video_url)"
                   class="absolute top-0 left-0 w-full h-full rounded-xl shadow-lg border border-gray-200"
                   frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  sandbox="allow-scripts allow-same-origin allow-presentation allow-fullscreen"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                   allowfullscreen
                   @load="handleVideoLoad"
                   title="Lesson Video"
+                  loading="lazy"
                 ></iframe>
               </div>
               <div class="mt-6 text-center">
@@ -192,7 +194,7 @@
               class="w-full h-full bg-white p-4 sm:p-8 overflow-y-auto"
             >
               <h1 class="text-xl sm:text-3xl font-extrabold text-gray-900 mb-6 leading-tight">{{ currentLesson.title }}</h1>
-              <div class="prose prose-lg max-w-none text-gray-800 leading-relaxed" v-html="currentLesson.content"></div>
+              <div class="prose prose-lg max-w-none text-gray-800 leading-relaxed" v-html="sanitizeHtml(currentLesson.content)"></div>
             </div>
             <!-- Quiz Content -->
             <div
@@ -227,15 +229,15 @@
                 <source :src="currentLesson.audio_url" type="audio/mpeg">
                 আপনার ব্রাউজার অডিও সাপোর্ট করে না।
               </audio>
-              <div class="prose prose-base text-gray-700" v-html="currentLesson.content"></div>
+              <div class="prose prose-base text-gray-700" v-html="sanitizeHtml(currentLesson.content)"></div>
             </div>
           </div>
           <!-- Lesson Controls: Always fixed at bottom -->
           <div
-            class="bg-[#f5f6fd] border-t border-gray-200 px-6 py-4 flex items-center justify-between transition-all duration-500 z-30 fixed left-0 right-0 bottom-0 w-full max-w-none mx-0 shadow-lg"
+            class="bg-[#f5f6fd] border-t border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between transition-all duration-500 z-30 sticky bottom-0 left-0 right-0 w-full shadow-lg"
             style="min-height: 64px;"
           >
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 sm:space-x-4 mb-2 sm:mb-0">
               <!-- Previous Lesson -->
               <PrimaryButton
                 @click="goToPreviousLesson"
@@ -529,6 +531,14 @@ function getEmbedUrl(url: string): string {
   }
   // Default: return as-is
   return url;
+}
+
+const sanitizeHtml = (html: string): string => {
+  if (!html) return ''
+  // Create a new DOMParser to safely parse HTML without executing scripts
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, 'text/html')
+  return doc.body.innerHTML || ''
 }
 
 // Initialize on mount

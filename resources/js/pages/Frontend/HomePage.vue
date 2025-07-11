@@ -317,7 +317,7 @@
     </section>
 
     <!-- Simplified CTA Section -->
-    <section class="py-12 lg:py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden" id="donation">
+    <section class="py-12 lg:py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden" id="donation" :class="{ 'donation-highlight': donationHighlight }">
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center lg:items-start">
           <!-- Left: Heading and Description -->
@@ -409,7 +409,7 @@
 
 <script setup lang="ts">
 // Enhanced HomePage component - Islamic LMS frontend
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { Head, usePage, router, useForm } from '@inertiajs/vue3'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import SectionHeader from '@/components/Frontend/SectionHeader.vue'
@@ -502,21 +502,39 @@ function animateStat(refValue: any, target: number, duration = 700) {
   requestAnimationFrame(animate)
 }
 
+// State for donation highlight animation
+const donationHighlight = ref(false)
+let highlightTimeout: NodeJS.Timeout | null = null
+
 onMounted(() => {
   animateStat(displayCourses, targetCourses)
   setTimeout(() => animateStat(displayStudents, targetStudents), 200)
   setTimeout(() => animateStat(displaySatisfaction, targetSatisfaction), 400)
+  
   // Smooth scroll to donation if coming from menu
   const urlParams = new URLSearchParams(window.location.search)
   if (urlParams.get('scroll') === 'donation') {
-    const el = document.getElementById('donation')
-    if (el) {
-      setTimeout(() => {
+    setTimeout(() => {
+      const el = document.getElementById('donation')
+      if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        el.classList.add('donation-highlight')
-        setTimeout(() => el.classList.remove('donation-highlight'), 1200)
-      }, 300)
-    }
+        // Use Vue reactivity instead of direct DOM manipulation
+        donationHighlight.value = true
+        highlightTimeout = setTimeout(() => {
+          donationHighlight.value = false
+        }, 1200)
+      }
+    }, 300)
+  }
+})
+
+// Cleanup on unmount
+import { onUnmounted } from 'vue'
+
+onUnmounted(() => {
+  if (highlightTimeout) {
+    clearTimeout(highlightTimeout)
+    highlightTimeout = null
   }
 })
 
@@ -577,8 +595,59 @@ const form = useForm({
   transaction_id: ''
 })
 
+const sanitizeInput = (input: string): string => {
+  if (!input) return ''
+  return input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<[^>]*>/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '')
+    .trim()
+}
+
+const validateForm = (): boolean => {
+  if (!form.name || form.name.trim().length < 2) {
+    toast.error({ title: 'ত্রুটি', message: 'নাম কমপক্ষে ২ অক্ষরের হতে হবে।' })
+    return false
+  }
+  if (!form.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+    toast.error({ title: 'ত্রুটি', message: 'সঠিক ইমেইল ঠিকানা দিন।' })
+    return false
+  }
+  if (!form.phone || !/^(\+880|880|0)?1[3-9]\d{8}$/.test(form.phone.replace(/\s/g, ''))) {
+    toast.error({ title: 'ত্রুটি', message: 'সঠিক বাংলাদেশী ফোন নম্বর দিন।' })
+    return false
+  }
+  if (!form.amount || form.amount < 1) {
+    toast.error({ title: 'ত্রুটি', message: 'দানের পরিমাণ ১ টাকার চেয়ে বেশি হতে হবে।' })
+    return false
+  }
+  if (!form.payment_method) {
+    toast.error({ title: 'ত্রুটি', message: 'পেমেন্ট মাধ্যম নির্বাচন করুন।' })
+    return false
+  }
+  if (!form.transaction_id || form.transaction_id.trim().length < 5) {
+    toast.error({ title: 'ত্রুটি', message: 'ট্রানজেকশন আইডি কমপক্ষে ৫ অক্ষরের হতে হবে।' })
+    return false
+  }
+  return true
+}
+
 const submitDonation = () => {
-  form.post(route('donations.store'), {
+  if (!validateForm()) return
+  
+  // Sanitize form data before submission
+  const sanitizedForm = {
+    name: sanitizeInput(form.name),
+    email: sanitizeInput(form.email),
+    phone: sanitizeInput(form.phone),
+    amount: Number(form.amount),
+    reason: sanitizeInput(form.reason),
+    payment_method: sanitizeInput(form.payment_method),
+    transaction_id: sanitizeInput(form.transaction_id)
+  }
+  
+  form.transform(data => sanitizedForm).post(route('donations.store'), {
     preserveScroll: true,
     onSuccess: () => {
       let successMsg = 'আপনার দান সফলভাবে গ্রহণ করা হয়েছে!';
@@ -588,15 +657,36 @@ const submitDonation = () => {
       }
       toast.success({
         title: 'সফল',
-        message: successMsg
+        message: successMsg,
+        duration: 5000
       })
       form.reset()
     },
-    onError: () => {
-      toast.error({
-        title: 'ত্রুটি',
-        message: 'অনুগ্রহ করে ফর্মটি সঠিকভাবে পূরণ করুন।'
-      })
+    onError: (errors) => {
+      if (errors.name) {
+        toast.error({ title: 'নাম ত্রুটি', message: errors.name })
+      } else if (errors.email) {
+        toast.error({ title: 'ইমেইল ত্রুটি', message: errors.email })
+      } else if (errors.phone) {
+        toast.error({ title: 'ফোন ত্রুটি', message: errors.phone })
+      } else if (errors.amount) {
+        toast.error({ title: 'দানের পরিমাণ ত্রুটি', message: errors.amount })
+      } else if (errors.payment_method) {
+        toast.error({ title: 'পেমেন্ট মাধ্যম ত্রুটি', message: errors.payment_method })
+      } else if (errors.transaction_id) {
+        toast.error({ title: 'ট্রানজেকশন আইডি ত্রুটি', message: errors.transaction_id })
+      } else if (errors.error) {
+        toast.error({ title: 'ত্রুটি', message: errors.error })
+      } else {
+        toast.error({
+          title: 'ত্রুটি',
+          message: 'দান জমা দিতে সমস্যা হয়েছে। অনুগ্রহ করে পুনরায় চেষ্টা করুন।',
+          duration: 7000
+        })
+      }
+    },
+    onFinish: () => {
+      // Reset processing state if needed
     }
   })
 }
@@ -744,5 +834,19 @@ const submitDonation = () => {
   opacity: 0;
   transform: translateY(24px);
   animation: statIn 0.8s cubic-bezier(.4,0,.2,1) forwards;
+}
+
+/* Donation highlight animation */
+.donation-highlight {
+  animation: highlightPulse 1.2s ease-in-out;
+}
+
+@keyframes highlightPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(95, 95, 205, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(95, 95, 205, 0.3), inset 0 0 20px rgba(95, 95, 205, 0.1);
+  }
 }
 </style> 

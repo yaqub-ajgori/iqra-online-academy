@@ -29,6 +29,9 @@ use App\Http\Controllers\Frontend\HomeController;
 // Include Frontend Routes (Public facing Islamic LMS)
 require __DIR__.'/frontend.php';
 
+// Include Blog Routes
+require __DIR__.'/blog.php';
+
 // Auth Routes
 require __DIR__.'/auth.php';
 
@@ -37,7 +40,9 @@ Route::middleware(['auth', 'verified'])->get('/dashboard', function () {
     return redirect()->route('frontend.student.dashboard');
 })->name('dashboard');
 
-Route::post('/donations', [DonationController::class, 'store'])->name('donations.store');
+Route::post('/donations', [DonationController::class, 'store'])
+    ->middleware('throttle:5,10') // 5 attempts per 10 minutes
+    ->name('donations.store');
 
 Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
 

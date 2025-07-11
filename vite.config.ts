@@ -31,21 +31,62 @@ export default defineConfig({
                 background_color: '#ffffff',
                 display: 'standalone',
                 start_url: '/',
+                scope: '/',
+                lang: 'bn',
+                dir: 'ltr',
+                orientation: 'portrait-primary',
+                categories: ['education', 'lifestyle', 'utilities'],
                 icons: [
                     {
                         src: '/icons/icon-192x192.png',
                         sizes: '192x192',
                         type: 'image/png',
+                        purpose: 'any maskable',
                     },
                     {
                         src: '/icons/icon-512x512.png',
                         sizes: '512x512',
                         type: 'image/png',
+                        purpose: 'any maskable',
                     },
                 ],
+                screenshots: [
+                    {
+                        src: '/icons/screenshot-mobile.png',
+                        sizes: '390x844',
+                        type: 'image/png',
+                        form_factor: 'narrow',
+                        label: 'ইকরা অনলাইন একাডেমি'
+                    }
+                ]
             },
             workbox: {
-                // Default: cache all static assets and pages for offline
+                globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg}'],
+                navigateFallback: null,
+                runtimeCaching: [
+                    {
+                        urlPattern: /^https:\/\/fonts\.(googleapis|bunny\.net)\//,
+                        handler: 'StaleWhileRevalidate',
+                        options: {
+                            cacheName: 'google-fonts',
+                            expiration: {
+                                maxEntries: 4,
+                                maxAgeSeconds: 365 * 24 * 60 * 60 // 1 year
+                            }
+                        }
+                    },
+                    {
+                        urlPattern: /^https:\/\/images\.unsplash\.com\//,
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'unsplash-images',
+                            expiration: {
+                                maxEntries: 50,
+                                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+                            }
+                        }
+                    }
+                ]
             },
         }),
     ],

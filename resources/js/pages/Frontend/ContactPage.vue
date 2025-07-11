@@ -170,14 +170,23 @@
       </section>
 
       <!-- FAQ Section -->
-      <section v-if="contactData?.faqs && contactData.faqs.length > 0" class="py-20 bg-gray-50">
+      <section class="py-20 bg-gray-50">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12">
             <h2 class="text-3xl font-bold text-gray-900 mb-4">{{ contactData?.faq_title || 'প্রায়শই জিজ্ঞাসিত প্রশ্ন' }}</h2>
             <p class="text-lg text-gray-600">{{ contactData?.faq_subtitle || 'আপনার প্রশ্নের উত্তর এখানে পেতে পারেন' }}</p>
           </div>
 
-          <div class="space-y-4">
+          <!-- Loading State -->
+          <div v-if="dataLoading" class="text-center py-12">
+            <div class="inline-flex items-center space-x-2 text-gray-500">
+              <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-[#5f5fcd]"></div>
+              <span>লোড হচ্ছে...</span>
+            </div>
+          </div>
+
+          <!-- FAQ Content -->
+          <div v-else-if="contactData?.faqs && contactData.faqs.length > 0" class="space-y-4">
             <div v-for="(faq, index) in contactData.faqs" :key="faq.id" class="bg-white rounded-lg shadow-sm border border-gray-200">
               <button @click="toggleFaq(index)" class="w-full px-6 py-4 text-left flex items-center justify-between">
                 <span class="font-medium text-gray-900">{{ faq.question }}</span>
@@ -189,6 +198,11 @@
                 </div>
               </Transition>
             </div>
+          </div>
+
+          <!-- No FAQ Content -->
+          <div v-else class="text-center py-12 text-gray-500">
+            <p>এখনো কোনো প্রশ্নোত্তর যোগ করা হয়নি।</p>
           </div>
         </div>
       </section>
@@ -247,6 +261,7 @@ interface ContactData {
 
 // State
 const contactData = ref<ContactData | null>(null)
+const dataLoading = ref(true)
 
 // Form state
 const form = ref({
@@ -268,6 +283,7 @@ const toast = useToast()
 
 // Methods
 const loadContactData = async () => {
+  dataLoading.value = true
   try {
     await router.get(route('frontend.contact'), {}, {
       preserveState: true,
@@ -280,6 +296,8 @@ const loadContactData = async () => {
     contactData.value = page.props.contactData as ContactData
   } catch (err) {
     console.error('Error loading contact data:', err)
+  } finally {
+    dataLoading.value = false
   }
 }
 
@@ -313,6 +331,17 @@ const validateForm = () => {
   return Object.keys(errors.value).length === 0
 }
 
+const sanitizeInput = (input: string): string => {
+  if (!input) return ''
+  // Remove HTML tags and dangerous characters
+  return input
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<[^>]*>/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '')
+    .trim()
+}
+
 const submitForm = async () => {
   if (!validateForm()) {
     toast.warning('অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন।')
@@ -320,44 +349,81 @@ const submitForm = async () => {
   }
 
   isSubmitting.value = true
+  errors.value = {} // Reset errors
+  
+  // Sanitize form data before submission
+  const sanitizedForm = {
+    name: sanitizeInput(form.value.name),
+    email: sanitizeInput(form.value.email),
+    phone: sanitizeInput(form.value.phone),
+    subject: sanitizeInput(form.value.subject),
+    message: sanitizeInput(form.value.message)
+  }
   
   try {
-    await router.post(route('frontend.contact.submit'), form.value, {
+    await router.post(route('frontend.contact.submit'), sanitizedForm, {
       preserveState: true,
       preserveScroll: true,
-    })
-    
-    // Reset form
-    form.value = {
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: ''
-    }
-    
-    toast.success({
-      title: 'বার্তা সফলভাবে পাঠানো হয়েছে!',
-      message: 'আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।',
-      duration: 5000
+      onSuccess: () => {
+        // Reset form
+        form.value = {
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        }
+        
+        toast.success({
+          title: 'বার্তা সফলভাবে পাঠানো হয়েছে!',
+          message: 'আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।',
+          duration: 5000
+        })
+      },
+      onError: (errorData: any) => {
+        console.error('Contact form submission error:', errorData)
+        
+        // Handle specific field errors
+        if (errorData.name) {
+          errors.value.name = errorData.name
+          toast.error({ title: 'নাম ত্রুটি', message: errorData.name })
+        } else if (errorData.email) {
+          errors.value.email = errorData.email
+          toast.error({ title: 'ইমেইল ত্রুটি', message: errorData.email })
+        } else if (errorData.phone) {
+          errors.value.phone = errorData.phone
+          toast.error({ title: 'ফোন ত্রুটি', message: errorData.phone })
+        } else if (errorData.subject) {
+          errors.value.subject = errorData.subject
+          toast.error({ title: 'বিষয় ত্রুটি', message: errorData.subject })
+        } else if (errorData.message) {
+          errors.value.message = errorData.message
+          toast.error({ title: 'বার্তা ত্রুটি', message: errorData.message })
+        } else if (errorData.error) {
+          toast.error({ title: 'ত্রুটি', message: errorData.error })
+        } else {
+          // Copy all errors to reactive errors object
+          errors.value = { ...errorData }
+          toast.error({
+            title: 'ফর্মে ত্রুটি রয়েছে',
+            message: 'অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন।',
+            duration: 7000
+          })
+        }
+      },
+      onFinish: () => {
+        isSubmitting.value = false
+      }
     })
   } catch (error: any) {
-    // Handle validation errors
-    if (error.response?.data?.errors) {
-      errors.value = error.response.data.errors
-      toast.error({
-        title: 'ফর্মে ত্রুটি রয়েছে',
-        message: 'অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন।',
-        duration: 7000
-      })
-    } else {
-      toast.error({
-        title: 'বার্তা পাঠানো ব্যর্থ!',
-        message: 'দুঃখিত, একটি সমস্যা হয়েছে। পুনরায় চেষ্টা করুন।',
-        duration: 7000
-      })
-    }
-  } finally {
+    console.error('Unexpected contact form error:', error)
+    
+    // Handle network or unexpected errors
+    toast.error({
+      title: 'বার্তা পাঠানো ব্যর্থ!',
+      message: 'দুঃখিত, একটি সমস্যা হয়েছে। ইন্টারনেট সংযোগ যাচাই করে পুনরায় চেষ্টা করুন।',
+      duration: 8000
+    })
     isSubmitting.value = false
   }
 }

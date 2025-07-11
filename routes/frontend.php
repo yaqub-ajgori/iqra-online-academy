@@ -24,7 +24,9 @@ Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
 // Static Pages
 Route::get('/about', [AboutController::class, 'index'])->name('frontend.about');
 Route::get('/contact', [ContactController::class, 'index'])->name('frontend.contact');
-Route::post('/contact', [ContactController::class, 'submit'])->name('frontend.contact.submit');
+Route::post('/contact', [ContactController::class, 'submit'])
+    ->middleware('throttle:5,15') // 5 attempts per 15 minutes
+    ->name('frontend.contact.submit');
 
 // Course Routes
 Route::prefix('courses')->name('frontend.courses.')->group(function () {
@@ -33,10 +35,12 @@ Route::prefix('courses')->name('frontend.courses.')->group(function () {
     Route::get('/{course:slug}', [App\Http\Controllers\Frontend\CourseController::class, 'show'])->name('show');
 });
 
-// Payment Routes
+// Payment Routes with rate limiting
 Route::prefix('payment')->name('frontend.payment.')->group(function () {
     Route::get('/checkout/{course}', [PaymentController::class, 'checkout'])->name('checkout');
-    Route::post('/process/{course}', [PaymentController::class, 'processPayment'])->name('process');
+    Route::post('/process/{course}', [PaymentController::class, 'processPayment'])
+        ->middleware('throttle:3,10') // 3 attempts per 10 minutes
+        ->name('process');
 });
 
 // Student Dashboard (Protected - requires student authentication)

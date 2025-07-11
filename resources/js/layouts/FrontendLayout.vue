@@ -22,17 +22,13 @@
           <div class="flex justify-between items-center h-20">
             <!-- Enhanced Logo -->
             <div class="flex items-center">
-              <Link :href="route('frontend.home')" class="flex items-center space-x-3 group">
+              <Link :href="route('frontend.home')" class="flex items-center group">
                 <div class="relative">
                   <div class="w-12 h-12 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-xl flex items-center justify-center shadow-islamic group-hover:shadow-islamic-lg transition-all duration-300 transform group-hover:scale-105">
                     <span class="text-white font-bold text-xl">ই</span>
                   </div>
                   <div class="absolute -top-1 -right-1 w-4 h-4 bg-[#d4a574] rounded-full animate-pulse shadow-lg"></div>
                   <div class="absolute -bottom-1 -left-1 w-2 h-2 bg-[#2d5a27] rounded-full animate-ping"></div>
-                </div>
-                <div>
-                  <h1 class="text-2xl font-bold text-gradient-islamic group-hover:scale-105 transition-transform duration-300">ইকরা</h1>
-                  <p class="text-xs text-gray-500 -mt-1">অনলাইন একাডেমি</p>
                 </div>
               </Link>
             </div>
@@ -53,6 +49,14 @@
                 :class="{ 'text-[#5f5fcd] bg-gray-100 shadow-sm': $page.component === 'Frontend/CoursesPage' }"
               >
                 কোর্সসমূহ
+                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] transition-all duration-200 group-hover:w-3/4"></div>
+              </Link>
+              <Link 
+                :href="route('frontend.blog.index')" 
+                class="text-gray-700 hover:text-[#5f5fcd] px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-50 relative group"
+                :class="{ 'text-[#5f5fcd] bg-gray-100 shadow-sm': $page.component?.startsWith('Frontend/Blog/') }"
+              >
+                ব্লগ
                 <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] transition-all duration-200 group-hover:w-3/4"></div>
               </Link>
               <Link 
@@ -315,15 +319,12 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-6 sm:gap-8 lg:gap-12">
             <!-- Enhanced Brand Section -->
             <div class="sm:col-span-2 lg:col-span-2">
-              <div class="flex items-center space-x-3 sm:space-x-4 mb-4 sm:mb-6">
+              <div class="flex items-center mb-4 sm:mb-6">
                 <div class="relative">
                   <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-xl flex items-center justify-center shadow-islamic-lg">
                     <span class="text-white font-bold text-lg sm:text-2xl">ই</span>
                   </div>
                   <div class="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-6 sm:h-6 bg-[#d4a574] rounded-full animate-pulse shadow-lg"></div>
-                </div>
-                <div>
-                  <h2 class="text-base sm:text-lg font-semibold text-gray-200">ইকরা অনলাইন একাডেমি</h2>
                 </div>
               </div>
               <p class="text-gray-300 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base lg:text-lg">
@@ -509,6 +510,7 @@ import { ToastContainer, useToast } from '@/components/ui/toast'
 import NotificationToast from '@/components/Frontend/NotificationToast.vue'
 import ErrorBoundary from '@/components/Frontend/ErrorBoundary.vue'
 import InstallPWAButton from '@/components/Frontend/InstallPWAButton.vue'
+import PWAUpdatePrompt from '@/components/Frontend/PWAUpdatePrompt.vue'
 
 // Define props for receiving data
 defineProps<{
@@ -672,4 +674,5 @@ function scrollToDonation() {
 }
 </style> 
 
-<InstallPWAButton /> 
+<InstallPWAButton />
+<PWAUpdatePrompt /> 

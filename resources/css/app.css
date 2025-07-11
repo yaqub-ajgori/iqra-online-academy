@@ -130,6 +130,46 @@
         --font-sans: 'Noto Sans Bengali', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
     }
 
+    /* Custom text colors to replace gray utilities */
+    .text-neutral-50 { color: var(--color-iqra-neutral-50); }
+    .text-neutral-100 { color: var(--color-iqra-neutral-100); }
+    .text-neutral-200 { color: var(--color-iqra-neutral-200); }
+    .text-neutral-300 { color: var(--color-iqra-neutral-300); }
+    .text-neutral-400 { color: var(--color-iqra-neutral-400); }
+    .text-neutral-500 { color: var(--color-iqra-neutral-500); }
+    .text-neutral-600 { color: var(--color-iqra-neutral-600); }
+    .text-neutral-700 { color: var(--color-iqra-neutral-700); }
+    .text-neutral-800 { color: var(--color-iqra-neutral-800); }
+    .text-neutral-900 { color: var(--color-iqra-neutral-900); }
+    
+    .text-primary { color: var(--color-iqra-text-primary); }
+    .text-secondary { color: var(--color-iqra-text-secondary); }
+    .text-muted { color: var(--color-iqra-text-muted); }
+
+    /* Custom background colors */
+    .bg-neutral-50 { background-color: var(--color-iqra-neutral-50); }
+    .bg-neutral-100 { background-color: var(--color-iqra-neutral-100); }
+    .bg-neutral-200 { background-color: var(--color-iqra-neutral-200); }
+    .bg-neutral-300 { background-color: var(--color-iqra-neutral-300); }
+    .bg-neutral-400 { background-color: var(--color-iqra-neutral-400); }
+    .bg-neutral-500 { background-color: var(--color-iqra-neutral-500); }
+    .bg-neutral-600 { background-color: var(--color-iqra-neutral-600); }
+    .bg-neutral-700 { background-color: var(--color-iqra-neutral-700); }
+    .bg-neutral-800 { background-color: var(--color-iqra-neutral-800); }
+    .bg-neutral-900 { background-color: var(--color-iqra-neutral-900); }
+
+    /* Custom border colors */
+    .border-neutral-50 { border-color: var(--color-iqra-neutral-50); }
+    .border-neutral-100 { border-color: var(--color-iqra-neutral-100); }
+    .border-neutral-200 { border-color: var(--color-iqra-neutral-200); }
+    .border-neutral-300 { border-color: var(--color-iqra-neutral-300); }
+    .border-neutral-400 { border-color: var(--color-iqra-neutral-400); }
+    .border-neutral-500 { border-color: var(--color-iqra-neutral-500); }
+    .border-neutral-600 { border-color: var(--color-iqra-neutral-600); }
+    .border-neutral-700 { border-color: var(--color-iqra-neutral-700); }
+    .border-neutral-800 { border-color: var(--color-iqra-neutral-800); }
+    .border-neutral-900 { border-color: var(--color-iqra-neutral-900); }
+
     /* Islamic geometric pattern utilities */
     .pattern-dots {
         background-image: radial-gradient(circle, var(--color-pattern-medium) 1px, transparent 1px);
