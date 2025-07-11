@@ -1,0 +1,32 @@
+
+    <svg width="180" height="180" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background circle with brand color -->
+      <circle cx="90" cy="90" r="82" fill="#5f5fcd" stroke="#4a4aa8" stroke-width="4"/>
+      
+      <!-- Inner highlight circle -->
+      <circle cx="90" cy="90" r="70" fill="none" stroke="#7979d9" stroke-width="2" opacity="0.5"/>
+      
+      <!-- Book symbol -->
+      <g transform="translate(90, 90)">
+        <!-- Book pages -->
+        <rect x="-30" y="-22.5" width="60" height="45" fill="white" stroke="#e5e5e5" stroke-width="1" rx="2"/>
+        
+        <!-- Book spine -->
+        <line x1="0" y1="-22.5" x2="0" y2="22.5" stroke="#d5d5d5" stroke-width="2"/>
+        
+        <!-- Text lines -->
+        <line x1="-22.5" y1="-11.25" x2="22.5" y2="-11.25" stroke="#bbb" stroke-width="1"/>
+        <line x1="-22.5" y1="0" x2="18" y2="0" stroke="#bbb" stroke-width="1"/>
+        <line x1="-22.5" y1="11.25" x2="15" y2="11.25" stroke="#bbb" stroke-width="1"/>
+        
+        <!-- Islamic star above book -->
+        <g transform="translate(0, -45)">
+          <polygon points="0,-5.625 2.25,-2.25 5.625,-2.25 2.8125,1.125 3.75,5.625 0,2.8125 -3.75,5.625 -2.8125,1.125 -5.625,-2.25 -2.25,-2.25" 
+                   fill="white" opacity="0.8"/>
+        </g>
+      </g>
+      
+      <!-- Subtle border -->
+      <circle cx="90" cy="90" r="82" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
+    </svg>
+  

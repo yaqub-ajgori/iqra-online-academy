@@ -214,6 +214,14 @@
                 কোর্সসমূহ
               </Link>
               <Link 
+                :href="route('frontend.blog.index')" 
+                class="flex items-center px-4 py-3 text-gray-700 hover:text-[#5f5fcd] hover:bg-gray-50 rounded-lg transition-colors"
+                :class="{ 'text-[#5f5fcd] bg-gray-100': $page.component?.startsWith('Frontend/Blog/') }"
+              >
+                <MessageCircleIcon class="w-5 h-5 mr-3" />
+                ব্লগ
+              </Link>
+              <Link 
                 :href="route('frontend.about')" 
                 class="flex items-center px-4 py-3 text-gray-700 hover:text-[#5f5fcd] hover:bg-gray-50 rounded-lg transition-colors"
               >

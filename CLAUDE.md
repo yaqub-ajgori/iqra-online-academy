@@ -83,17 +83,29 @@ php artisan db:seed --class=CourseSeeder
 - `Payment` - Payment transactions for courses
 - `Donation` - Donation records
 
+**Blog System:**
+- `BlogPost` - Blog articles with SEO metadata, view tracking
+- `BlogCategory` - Hierarchical blog categories
+- `BlogTag` - Tags for blog posts
+- `BlogComment` - Nested comments with moderation
+- `BlogReaction` - User reactions/likes on posts
+
 ### Key Relationships
 - Course → Teacher (instructor_id)
 - Course → CourseCategory (category_id)
 - Course → CourseModule → CourseLesson (hierarchical content)
 - Student ↔ Course (many-to-many via CourseEnrollment)
 - Student → LessonProgress → Lesson (progress tracking)
+- BlogPost → BlogCategory, User (author)
+- BlogPost ↔ BlogTag (many-to-many)
+- BlogComment → BlogPost, User (hierarchical comments)
+- BlogReaction → BlogPost, User/Session (guest support)
 
 ### Frontend Architecture
 
 **Pages Structure:**
 - `Frontend/` - Public-facing pages (Vue components)
+- `Frontend/Blog/` - Blog pages (Index, Show, Category, Tag)
 - `auth/` - Authentication pages
 - `Errors/` - Error handling pages
 
@@ -102,12 +114,16 @@ php artisan db:seed --class=CourseSeeder
 - `CourseCard.vue` - Course display component
 - `CourseProgressBar.vue` - Progress visualization
 - `PrimaryButton.vue` - Consistent button styling
+- `BlogCard.vue` - Blog post display component
+- `BlogComments.vue` - Comment section component
+- `BlogSidebar.vue` - Blog sidebar with categories/tags
 - UI components in `components/ui/` (shadcn-vue style)
 
 **Routing:**
 - `routes/frontend.php` - Public routes (courses, payment, learning)
 - `routes/auth.php` - Authentication routes
 - `routes/web.php` - Main web routes
+- `routes/blog.php` - Blog routes (posts, categories, tags, comments)
 
 ### Admin Panel (Filament)
 
@@ -118,7 +134,10 @@ app/Filament/Resources/
 ├── Students/StudentResource.php  
 ├── Teachers/TeacherResource.php
 ├── Payments/PaymentResource.php
-└── Donations/DonationResource.php
+├── Donations/DonationResource.php
+├── BlogPosts/BlogPostResource.php
+├── BlogCategories/BlogCategoryResource.php
+└── BlogTags/BlogTagResource.php
 ```
 
 Each resource includes:
@@ -139,6 +158,14 @@ Each resource includes:
 **Enrollment System:**
 - Tracks enrollment date, progress percentage, completion status
 - Links students to courses with pivot data
+
+**Blog System:**
+- Full-featured blog with categories, tags, and comments
+- SEO metadata (title, description, keywords)
+- View tracking and reading time calculation
+- Hierarchical categories and tag cloud
+- Comment moderation with spam detection
+- Guest reactions using session tracking
 
 ## Configuration Notes
 
@@ -166,6 +193,13 @@ Each resource includes:
 4. Add frontend components for display
 5. Update progress tracking if needed
 
+### Blog System Features
+1. **Content Management**: Rich text editor, featured images, SEO metadata
+2. **Categorization**: Hierarchical categories, tags for cross-referencing
+3. **User Engagement**: Comments with moderation, like/helpful reactions
+4. **SEO Optimization**: Meta tags, reading time, view tracking
+5. **Admin Features**: Draft/publish workflow, featured posts, sticky posts
+
 ### Payment Integration
 - Multiple payment methods: bKash, Nagad, Rocket
 - Manual transaction ID verification workflow
@@ -177,6 +211,13 @@ Each resource includes:
 - Payment workflow testing
 - Admin panel functionality testing
 
+### Adding Blog Content
+1. Create blog post via admin panel
+2. Assign categories and tags
+3. Set SEO metadata and featured image
+4. Moderate comments through admin interface
+5. Track engagement via view counts and reactions
+
 ## Important Implementation Details
 
 - **Bangla Text Handling**: Proper UTF-8 support for Bengali content
@@ -184,3 +225,10 @@ Each resource includes:
 - **Performance**: Database indexes on frequently queried columns
 - **Security**: Proper middleware for student/admin access control
 - **SEO**: Meta tags and structured data for course pages
+- **Blog Features**: 
+  - Automatic reading time calculation based on content length
+  - Related posts algorithm using tags and categories
+  - RSS feed support for blog posts
+  - Sticky posts and featured posts functionality
+  - Comment threading with nested replies
+  - Spam detection for comments using keywords
