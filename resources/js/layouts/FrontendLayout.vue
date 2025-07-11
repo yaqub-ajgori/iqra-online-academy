@@ -56,7 +56,7 @@
                 class="text-gray-700 hover:text-[#5f5fcd] px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-50 relative group"
                 :class="{ 'text-[#5f5fcd] bg-gray-100 shadow-sm': $page.component?.startsWith('Frontend/Blog/') }"
               >
-                ব্লগ
+                ম্যাগাজিন
                 <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] transition-all duration-200 group-hover:w-3/4"></div>
               </Link>
               <Link 
@@ -219,7 +219,7 @@
                 :class="{ 'text-[#5f5fcd] bg-gray-100': $page.component?.startsWith('Frontend/Blog/') }"
               >
                 <MessageCircleIcon class="w-5 h-5 mr-3" />
-                ব্লগ
+                ম্যাগাজিন
               </Link>
               <Link 
                 :href="route('frontend.about')" 
