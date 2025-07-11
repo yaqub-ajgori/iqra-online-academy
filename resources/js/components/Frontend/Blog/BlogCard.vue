@@ -109,21 +109,7 @@
       </div>
 
       <!-- Actions -->
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-4 text-sm text-muted">
-          <button 
-            class="flex items-center hover:text-[#5f5fcd] transition-colors"
-            :class="{ 'text-[#5f5fcd]': post.user_liked }"
-          >
-            <HeartIcon class="w-4 h-4 mr-1" :class="{ 'fill-current': post.user_liked }" />
-            {{ post.likes_count || 0 }}
-          </button>
-          <span class="flex items-center">
-            <MessageCircleIcon class="w-4 h-4 mr-1" />
-            {{ post.comments_count || 0 }}
-          </span>
-        </div>
-        
+      <div class="flex items-center justify-center border-t border-neutral-200 pt-4 mt-4">
         <Link 
           :href="postUrl"
           class="text-[#5f5fcd] hover:text-[#4a4aa6] font-medium text-sm flex items-center transition-colors"
