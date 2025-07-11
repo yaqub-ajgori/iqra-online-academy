@@ -22,7 +22,7 @@ export default defineConfig({
         }),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['favicon.svg', 'robots.txt', 'apple-touch-icon.svg'],
+            includeAssets: ['icons/icon-192x192.svg', 'icons/icon-512x512.svg', 'robots.txt'],
             manifest: {
                 name: 'ইকরা অনলাইন একাডেমি',
                 short_name: 'ইকরা',
