@@ -114,32 +114,6 @@
       </div>
     </div>
 
-    <!-- Newsletter Subscription -->
-    <div class="bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-2xl p-6 text-white">
-      <h3 class="text-lg font-semibold mb-2 flex items-center">
-        <BellIcon class="w-5 h-5 mr-2" />
-        নিউজলেটার
-      </h3>
-      <p class="text-sm mb-4 opacity-90">
-        নতুন পোস্টের আপডেট পেতে সাবস্ক্রাইব করুন
-      </p>
-      <form @submit.prevent="subscribeNewsletter" class="space-y-3">
-        <input
-          v-model="newsletterEmail"
-          type="email"
-          placeholder="আপনার ইমেইল ঠিকানা"
-          class="w-full px-4 py-3 rounded-lg text-primary border-0 focus:ring-2 focus:ring-white/20"
-          required
-        />
-        <button
-          type="submit"
-          class="w-full bg-white text-[#5f5fcd] font-semibold py-3 rounded-lg hover:bg-neutral-100 transition-colors"
-          :disabled="subscribing"
-        >
-          {{ subscribing ? 'সাবস্ক্রাইব করা হচ্ছে...' : 'সাবস্ক্রাইব করুন' }}
-        </button>
-      </form>
-    </div>
   </aside>
 </template>
 
@@ -151,7 +125,6 @@ import {
   Tag as TagIcon,
   Hash as HashtagIcon,
   Clock as ClockIcon,
-  Bell as BellIcon,
   X as XMarkIcon,
   Calendar as CalendarIcon,
   Newspaper as NewspaperIcon
@@ -191,8 +164,6 @@ interface Props {
 defineProps<Props>()
 
 const searchQuery = ref('')
-const newsletterEmail = ref('')
-const subscribing = ref(false)
 
 const performSearch = () => {
   if (searchQuery.value.trim()) {
@@ -206,19 +177,6 @@ const clearSearch = () => {
   searchQuery.value = ''
 }
 
-const subscribeNewsletter = async () => {
-  subscribing.value = true
-  try {
-    // Implement newsletter subscription logic
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-    newsletterEmail.value = ''
-    // Show success message
-  } catch (error) {
-    // Handle error
-  } finally {
-    subscribing.value = false
-  }
-}
 
 const formatDate = (date: string) => {
   const d = new Date(date)
