@@ -104,6 +104,14 @@ class BlogController extends Controller
                 });
         });
 
+        // Support for infinite scroll with merge
+        if ($request->has('merge') && $request->boolean('merge')) {
+            return Inertia::merge([
+                'posts' => $posts->items(),
+                'hasMorePosts' => $posts->hasMorePages(),
+            ]);
+        }
+
         return Inertia::render('Frontend/Blog/BlogIndex', [
             'posts' => $posts->items(),
             'featuredPosts' => $featuredPosts,

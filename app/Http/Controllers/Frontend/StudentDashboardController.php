@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 
 class StudentDashboardController extends Controller
 {
@@ -34,49 +35,6 @@ class StudentDashboardController extends Controller
         ->where('student_id', $student->id)
         ->latest('enrolled_at')
         ->get();
-
-        // Get enrollment IDs for querying lesson progress
-        $enrollmentIds = $enrollments->pluck('id');
-
-        // Calculate statistics
-        $stats = [
-            'total_enrollments' => $enrollments->count(),
-            'active_enrollments' => $enrollments->where('is_active', true)->count(),
-            'completed_courses' => $enrollments->where('is_completed', true)->count(),
-            'total_lessons_completed' => LessonProgress::whereIn('enrollment_id', $enrollmentIds)
-                ->where('is_completed', true)
-                ->count(),
-            'total_study_hours' => $this->calculateStudyHours($enrollmentIds),
-            'average_progress' => $this->calculateAverageProgress($enrollments),
-        ];
-
-        // Get recent activities
-        $recentActivities = LessonProgress::with(['lesson.module.course', 'enrollment'])
-            ->whereIn('enrollment_id', $enrollmentIds)
-            ->where('is_completed', true)
-            ->latest('completed_at')
-            ->take(10)
-            ->get()
-            ->map(function ($progress) {
-                return [
-                    'id' => $progress->id,
-                    'title' => $progress->lesson->title,
-                    'course' => $progress->lesson->module->course->title,
-                    'date' => $progress->completed_at->diffForHumans(),
-                    'type' => 'lesson_completed'
-                ];
-            });
-
-        // Get certificates (completed courses)
-        $certificates = $enrollments->where('is_completed', true)
-            ->map(function ($enrollment) {
-                return [
-                    'id' => $enrollment->id,
-                    'course' => $enrollment->course->title,
-                    'date' => $enrollment->updated_at->format('d M Y'),
-                    'course_slug' => $enrollment->course->slug,
-                ];
-            });
 
         return Inertia::render('Frontend/StudentDashboard', [
             'student' => [
@@ -113,9 +71,10 @@ class StudentDashboardController extends Controller
                     'is_active' => $enrollment->is_active,
                 ];
             }),
-            'stats' => $stats,
-            'recentActivities' => $recentActivities,
-            'certificates' => $certificates,
+            // Defer heavy computations
+            'stats' => Inertia::defer(fn() => $this->getStudentStats($student, $enrollments)),
+            'recentActivities' => Inertia::defer(fn() => $this->getRecentActivities($student, $enrollments)),
+            'certificates' => Inertia::defer(fn() => $this->getCertificates($enrollments)),
         ]);
     }
 
@@ -173,6 +132,69 @@ class StudentDashboardController extends Controller
         ]);
 
         return back()->with('success', 'Password changed successfully.');
+    }
+
+    /**
+     * Get student statistics with caching
+     */
+    private function getStudentStats($student, $enrollments): array
+    {
+        return Cache::remember("student_stats_{$student->id}", 600, function() use ($student, $enrollments) {
+            $enrollmentIds = $enrollments->pluck('id');
+            
+            return [
+                'total_enrollments' => $enrollments->count(),
+                'active_enrollments' => $enrollments->where('is_active', true)->count(),
+                'completed_courses' => $enrollments->where('is_completed', true)->count(),
+                'total_lessons_completed' => LessonProgress::whereIn('enrollment_id', $enrollmentIds)
+                    ->where('is_completed', true)
+                    ->count(),
+                'total_study_hours' => $this->calculateStudyHours($enrollmentIds),
+                'average_progress' => $this->calculateAverageProgress($enrollments),
+            ];
+        });
+    }
+
+    /**
+     * Get recent activities with caching
+     */
+    private function getRecentActivities($student, $enrollments): array
+    {
+        return Cache::remember("student_activities_{$student->id}", 300, function() use ($enrollments) {
+            $enrollmentIds = $enrollments->pluck('id');
+            
+            return LessonProgress::with(['lesson.module.course', 'enrollment'])
+                ->whereIn('enrollment_id', $enrollmentIds)
+                ->where('is_completed', true)
+                ->latest('completed_at')
+                ->take(10)
+                ->get()
+                ->map(function ($progress) {
+                    return [
+                        'id' => $progress->id,
+                        'title' => $progress->lesson->title,
+                        'course' => $progress->lesson->module->course->title,
+                        'date' => $progress->completed_at->diffForHumans(),
+                        'type' => 'lesson_completed'
+                    ];
+                })->toArray();
+        });
+    }
+
+    /**
+     * Get certificates data
+     */
+    private function getCertificates($enrollments): array
+    {
+        return $enrollments->where('is_completed', true)
+            ->map(function ($enrollment) {
+                return [
+                    'id' => $enrollment->id,
+                    'course' => $enrollment->course->title,
+                    'date' => $enrollment->updated_at->format('d M Y'),
+                    'course_slug' => $enrollment->course->slug,
+                ];
+            })->toArray();
     }
 
     /**

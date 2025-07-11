@@ -6,6 +6,7 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
+use Illuminate\Support\Facades\Cache;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,21 +38,25 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
-
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'quote' => ['message' => trim($message), 'author' => trim($author)],
+            // Remove unnecessary quote generation - it's not critical for UX
             'auth' => [
-                'user' => $request->user() ? $request->user()->load('roles') : null,
+                'user' => $request->user() ? 
+                    Cache::remember(
+                        "user_with_roles_{$request->user()->id}", 
+                        3600, // 1 hour
+                        fn() => $request->user()->load('roles')
+                    ) : null,
             ],
             'ziggy' => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            // Move sidebar state to client-side management instead of server-side
             'error' => fn () => $request->session()->get('error'),
+            'success' => fn () => $request->session()->get('success'),
         ];
     }
 }

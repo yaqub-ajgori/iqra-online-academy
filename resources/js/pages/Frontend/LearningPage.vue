@@ -288,8 +288,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { router, Head, usePage } from '@inertiajs/vue3'
+import { useIntervalFn } from '@vueuse/core'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
 import {
   ArrowLeftIcon,
@@ -551,6 +552,57 @@ watch(courseSlug, () => {
   if (courseSlug.value) {
     loadCourseData()
   }
+})
+
+// Track if user is actively learning (watching videos, reading content)
+const isActiveLearning = ref(false)
+const lastActivity = ref(Date.now())
+
+// Set active learning state when user interacts with content
+const updateActivity = () => {
+  isActiveLearning.value = true
+  lastActivity.value = Date.now()
+}
+
+// Stop active learning after 5 minutes of inactivity
+const checkInactivity = () => {
+  if (Date.now() - lastActivity.value > 300000) { // 5 minutes
+    isActiveLearning.value = false
+  }
+}
+
+// Poll lesson progress every 60 seconds during active learning
+const { pause: pauseProgressPolling, resume: resumeProgressPolling } = useIntervalFn(() => {
+  if (isActiveLearning.value && courseSlug.value) {
+    router.reload({ only: ['enrollment'] })
+  }
+  checkInactivity()
+}, 60000, { immediate: false })
+
+// Start polling when user becomes active
+watch(isActiveLearning, (active) => {
+  if (active) {
+    resumeProgressPolling()
+  } else {
+    pauseProgressPolling()
+  }
+})
+
+// Add event listeners to track user activity
+onMounted(() => {
+  const events = ['click', 'scroll', 'keydown', 'mousemove']
+  events.forEach(event => {
+    document.addEventListener(event, updateActivity)
+  })
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  pauseProgressPolling()
+  const events = ['click', 'scroll', 'keydown', 'mousemove']
+  events.forEach(event => {
+    document.removeEventListener(event, updateActivity)
+  })
 })
 </script>
 

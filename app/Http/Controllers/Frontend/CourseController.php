@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class CourseController extends Controller
 {
@@ -19,6 +20,7 @@ class CourseController extends Controller
     public function index(Request $request): Response
     {
         $query = Course::with(['category', 'teacher'])
+            ->withCount('enrollments')
             ->where('status', 'published');
 
         // Robust search filter with full-text search
@@ -53,7 +55,7 @@ class CourseController extends Controller
                 'discount_expires_at' => $course->discount_expires_at,
                 'is_free' => $course->is_free,
                 'duration' => $course->duration,
-                'students_count' => $course->enrollments()->count(),
+                'students_count' => $course->enrollments_count, // Use withCount result
                 'rating' => 0, // Default rating since we removed average_rating
                 'instructor' => [
                     'name' => $course->teacher->full_name ?? 'Unknown Instructor',
@@ -66,13 +68,25 @@ class CourseController extends Controller
             ];
         });
 
+        // Cache stats since they don't change frequently
+        $stats = Cache::remember('course_page_stats', 900, function() {
+            return [
+                'total_courses' => Course::where('status', 'published')->count(),
+                'total_categories' => CourseCategory::count(),
+            ];
+        });
+
+        // Support for infinite scroll with merge
+        if ($request->has('merge') && $request->boolean('merge')) {
+            return Inertia::merge([
+                'courses' => $courses
+            ]);
+        }
+
         return Inertia::render('Frontend/CoursesPage', [
             'courses' => $courses,
             'search' => $search,
-            'stats' => [
-                'total_courses' => Course::where('status', 'published')->count(),
-                'total_categories' => CourseCategory::count(),
-            ]
+            'stats' => $stats
         ]);
     }
 
@@ -85,7 +99,7 @@ class CourseController extends Controller
             abort(404);
         }
 
-        // Load course relationships with only active lessons
+        // Load course relationships with only active lessons and counts
         $course->load([
             'teacher', 
             'category',
@@ -96,6 +110,9 @@ class CourseController extends Controller
                 $query->where('is_active', true)->orderBy('sort_order');
             }
         ]);
+        
+        // Load enrollment count efficiently
+        $course->loadCount('enrollments');
 
         $user = Auth::user();
         $isAuthenticated = $user !== null;

@@ -376,6 +376,12 @@
                     আমাদের সম্পর্কে
                   </Link>
                 </li>
+                <li>
+                  <Link :href="route('frontend.blog.index')" class="text-gray-300 hover:text-white transition-colors flex items-center group">
+                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
+                    ম্যাগাজিন
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -397,6 +403,12 @@
                     <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
                     ড্যাশবোর্ড
                   </Link>
+                </li>
+                <li>
+                  <a href="#donation" class="text-gray-300 hover:text-white transition-colors flex items-center group">
+                    <ArrowRightIcon class="w-3 h-3 mr-2 group-hover:translate-x-1 transition-transform" />
+                    ডোনেশন
+                  </a>
                 </li>
               </ul>
             </div>

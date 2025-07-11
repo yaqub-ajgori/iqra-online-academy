@@ -128,7 +128,7 @@
             </div>
 
             <!-- Reactions -->
-            <div class="mb-8 p-6 bg-neutral-50 rounded-2xl">
+            <div class="mb-8 bg-neutral-50 rounded-2xl">
               <h3 class="text-lg font-semibold text-primary mb-4">এই পোস্টটি কেমন লাগল?</h3>
               
               <div class="flex space-x-4">
@@ -278,8 +278,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Head, Link, usePage, useForm, router } from '@inertiajs/vue3'
+import { useIntervalFn } from '@vueuse/core'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import BlogComments from '@/components/Frontend/Blog/BlogComments.vue'
 import {
@@ -494,6 +495,52 @@ const handleCommentAdded = (comment: any) => {
 
 onMounted(() => {
   generateTableOfContents()
+})
+
+// Poll for live reaction updates every 2 minutes
+const { pause: pauseReactionPolling, resume: resumeReactionPolling } = useIntervalFn(() => {
+  // Only poll if the page is visible to avoid unnecessary requests
+  if (!document.hidden) {
+    router.reload({ 
+      only: ['post', 'userReactions'],
+      onSuccess: (page) => {
+        // Update reaction counts with fresh data
+        const freshPost = page.props.post as any
+        if (freshPost) {
+          reactionCounts.value = {
+            likes_count: freshPost.likes_count || 0,
+            helpful_count: freshPost.helpful_count || 0,
+            like_active: page.props.userReactions?.like || false,
+            helpful_active: page.props.userReactions?.helpful || false
+          }
+        }
+      }
+    })
+  }
+}, 120000, { immediate: false }) // Poll every 2 minutes
+
+// Start polling when component mounts
+onMounted(() => {
+  resumeReactionPolling()
+})
+
+// Pause polling when page is hidden, resume when visible
+const handleVisibilityChange = () => {
+  if (document.hidden) {
+    pauseReactionPolling()
+  } else {
+    resumeReactionPolling()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('visibilitychange', handleVisibilityChange)
+})
+
+// Cleanup on unmount
+onUnmounted(() => {
+  pauseReactionPolling()
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 </script>
 

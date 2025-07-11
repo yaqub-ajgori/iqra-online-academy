@@ -52,11 +52,15 @@
       </div>
 
       <!-- Enhanced Course Title -->
-      <a :href="courseUrl" class="block focus:outline-none">
+      <Link 
+        :href="courseUrl" 
+        prefetch="hover"
+        class="block focus:outline-none"
+      >
         <h3 class="text-lg font-bold text-gray-900 mb-3 group-hover:text-[#5f5fcd] transition-colors duration-200 line-clamp-2 leading-tight">
           {{ course.title }}
         </h3>
-      </a>
+      </Link>
 
       <!-- Price Section (add after course title/description, before action buttons) -->
       <div class="mb-4">
@@ -117,30 +121,38 @@
 
       <!-- Enhanced Action Buttons -->
       <div class="space-y-3">
-        <PrimaryButton 
+        <Link 
           :href="courseUrl"
-          tag="a"
-          variant="primary"
-          size="sm"
-          full-width
-          :icon="BookOpenIcon"
-          class="hover:scale-105 transition-transform duration-200"
+          prefetch="hover"
+          class="block"
         >
-          {{ course.price === 0 ? 'ফ্রি এনরোল' : 'এনরোল করুন' }}
-        </PrimaryButton>
+          <PrimaryButton 
+            variant="primary"
+            size="sm"
+            full-width
+            :icon="BookOpenIcon"
+            class="hover:scale-105 transition-transform duration-200"
+          >
+            {{ course.price === 0 ? 'ফ্রি এনরোল' : 'এনরোল করুন' }}
+          </PrimaryButton>
+        </Link>
 
-        <PrimaryButton 
+        <Link 
           v-if="course.enrolled"
           :href="continueUrl"
-          tag="a"
-          variant="secondary"
-          size="sm"
-          full-width
-          :icon="PlayIcon"
-          class="hover:scale-105 transition-transform duration-200"
+          prefetch="hover"
+          class="block"
         >
-          শেখা চালিয়ে যান
-        </PrimaryButton>
+          <PrimaryButton
+            variant="secondary"
+            size="sm"
+            full-width
+            :icon="PlayIcon"
+            class="hover:scale-105 transition-transform duration-200"
+          >
+            শেখা চালিয়ে যান
+          </PrimaryButton>
+        </Link>
       </div>
     </div>
 
@@ -153,6 +165,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { Link } from '@inertiajs/vue3'
 import { 
   ClockIcon, 
   UsersIcon, 

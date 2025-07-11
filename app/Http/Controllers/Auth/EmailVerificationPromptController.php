@@ -20,6 +20,6 @@ class EmailVerificationPromptController extends Controller
                     : Inertia::render('auth/VerifyEmail', [
                         'status' => $request->session()->get('status'),
                         'error' => $request->session()->get('error'),
-                    ]);
+                    ])->encryptHistory();
     }
 }

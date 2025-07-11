@@ -34,7 +34,7 @@ class PaymentController extends Controller
                 'description' => 'Complete your enrollment for ' . $courseModel->title,
                 'keywords' => 'payment, enrollment, ইসলামিক কোর্স, অনলাইন পেমেন্ট'
             ]
-        ]);
+        ])->encryptHistory();
     }
 
     /**

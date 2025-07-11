@@ -33,36 +33,19 @@
     <!-- Course Grid -->
     <section class="py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Loading State -->
-        <div v-if="loading" class="text-center py-16">
-          Loading...
-        </div>
-
-        <!-- Error State -->
-        <div v-else-if="error" class="text-center py-16">
-          <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <AlertCircleIcon class="w-10 h-10 text-red-500" />
-          </div>
-          <h3 class="text-xl font-semibold text-gray-900 mb-4">কোর্স লোড করতে সমস্যা হয়েছে</h3>
-          <p class="text-gray-600 mb-6">{{ error }}</p>
-          <PrimaryButton @click="loadCourses" variant="outline">
-            আবার চেষ্টা করুন
-          </PrimaryButton>
-        </div>
-
         <!-- Results -->
-        <div v-else>
+        <div>
           <!-- Results Summary -->
           <div class="mb-8">
             <p class="text-gray-600">
-              <span class="font-semibold text-gray-900">{{ filteredCourses.length }}</span> টি কোর্স পাওয়া গেছে
+              <span class="font-semibold text-gray-900">{{ totalCourses }}</span> টি কোর্স পাওয়া গেছে
             </p>
           </div>
 
           <!-- Course Grid -->
-          <div v-if="filteredCourses.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div v-if="allCourses.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <CourseCard 
-              v-for="course in filteredCourses"
+              v-for="course in allCourses"
               :key="course.id"
               :course="course"
               @enroll="handleCourseEnroll"
@@ -70,7 +53,7 @@
           </div>
 
           <!-- Empty State -->
-          <div v-else class="text-center py-16">
+          <div v-else-if="allCourses.length === 0" class="text-center py-16">
             <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <BookOpenIcon class="w-10 h-10 text-gray-400" />
             </div>
@@ -78,11 +61,24 @@
             <p class="text-gray-600 mb-6">দুঃখিত, বর্তমানে কোনো কোর্স উপলব্ধ নেই</p>
           </div>
 
-          <!-- Load More -->
-          <div v-if="hasMoreCourses && filteredCourses.length > 0" class="text-center mt-12">
+          <!-- Infinite Scroll Trigger -->
+          <div v-if="hasMoreCourses && allCourses.length > 0" class="mt-12">
+            <!-- Loading indicator -->
+            <div v-if="isLoading" class="text-center py-8">
+              <div class="inline-flex items-center space-x-2 text-gray-600">
+                <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-[#5f5fcd]"></div>
+                <span>আরো কোর্স লোড হচ্ছে...</span>
+              </div>
+            </div>
+            <!-- Invisible trigger element -->
+            <div ref="loadMoreTrigger" class="h-20 w-full"></div>
+          </div>
+          
+          <!-- Manual load more button (fallback) -->
+          <div v-else-if="hasMoreCourses && allCourses.length > 0" class="text-center mt-12">
             <PrimaryButton 
               @click="loadMoreCourses"
-              :loading="loadingMore"
+              :loading="isLoading"
               size="lg"
               variant="outline"
             >
@@ -98,22 +94,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { router, usePage, Head } from '@inertiajs/vue3'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { router, Head } from '@inertiajs/vue3'
+import { useIntersectionObserver } from '@vueuse/core'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import CourseCard from '@/components/Frontend/CourseCard.vue'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
 import { BookOpenIcon, AlertCircleIcon } from 'lucide-vue-next'
 
-// State
-const loading = ref(false)
-const loadingMore = ref(false)
-const error = ref('')
-const hasMoreCourses = ref(true)
+// Props
+interface Props {
+  courses: {
+    data: Course[]
+    links: any[]
+    next_page_url: string | null
+    prev_page_url: string | null
+    current_page: number
+    last_page: number
+    total: number
+  }
+  search?: string
+  stats?: {
+    total_courses: number
+    total_categories: number
+  }
+}
 
-// Data
-const courses = ref<Course[]>([])
-const currentPage = ref(1)
+const props = defineProps<Props>()
 
 // Type definitions
 interface Course {
@@ -135,76 +142,67 @@ interface Course {
   isNew?: boolean
   enrolled?: boolean
   progress?: number
-  created_at?: string // for sorting by newest
+  created_at?: string
 }
+
+// State for infinite scroll
+const allCourses = ref<Course[]>([])
+const isLoading = ref(false)
+const loadMoreTrigger = ref<HTMLElement>()
 
 // Computed properties
-const filteredCourses = computed(() => {
-  return courses.value
-})
+const hasMoreCourses = computed(() => props.courses?.next_page_url !== null)
+const totalCourses = computed(() => props.courses?.total || 0)
 
-// Methods
-const loadCourses = async () => {
-  loading.value = true
-  error.value = ''
-  
-  try {
-    await router.get(route('frontend.courses.index'), {
-      page: currentPage.value
-    }, {
-      preserveScroll: true,
-      only: ['courses']
-    })
-    // Data will be updated via Inertia page props
-  } catch (err) {
-    error.value = 'কোর্স লোড করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।'
-    console.error('Error loading courses:', err)
-  } finally {
-    loading.value = false
-  }
+// Initialize courses from props
+if (props.courses?.data) {
+  allCourses.value = [...props.courses.data]
 }
 
-const loadMoreCourses = async () => {
-  loadingMore.value = true
-  currentPage.value++
+// Setup intersection observer for infinite scroll
+const { stop } = useIntersectionObserver(
+  loadMoreTrigger,
+  ([{ isIntersecting }]) => {
+    if (isIntersecting && hasMoreCourses.value && !isLoading.value) {
+      loadMoreCourses()
+    }
+  },
+  {
+    threshold: 0.1,
+    rootMargin: '100px'
+  }
+)
+
+// Methods
+const loadMoreCourses = () => {
+  if (!props.courses?.next_page_url || isLoading.value) return
   
-  try {
-    await router.get(route('frontend.courses.index'), {
-      page: currentPage.value
-    }, {
+  isLoading.value = true
+  
+  router.get(props.courses.next_page_url, 
+    { merge: true }, 
+    {
       preserveState: true,
       preserveScroll: true,
-      only: ['courses']
-    })
-    // Data will be updated via Inertia page props
-  } catch (err) {
-    console.error('Error loading more courses:', err)
-  } finally {
-    loadingMore.value = false
-  }
+      onSuccess: (page) => {
+        // Append new courses to existing list
+        const newCourses = page.props.courses?.data || []
+        allCourses.value = [...allCourses.value, ...newCourses]
+      },
+      onFinish: () => {
+        isLoading.value = false
+      }
+    }
+  )
 }
 
 const handleCourseEnroll = (course: Course) => {
-  // Redirect to payment page for enrollment
   router.visit(route('frontend.payment.checkout', { course: course.slug }))
 }
 
-// Watch for page props changes
-const page = usePage()
-watch(() => page.props.courses, (newCourses) => {
-  if (newCourses && typeof newCourses === 'object' && 'data' in newCourses) {
-    courses.value = (newCourses as any).data || []
-  } else {
-    courses.value = []
-  }
-}, { immediate: true })
-
-// Initialize on mount
-onMounted(() => {
-  // Always load courses on initial page load to ensure we have data
-  if (courses.value.length === 0) {
-    loadCourses()
-  }
+// Cleanup intersection observer on unmount
+onUnmounted(() => {
+  stop()
 })
 </script>
 

@@ -48,7 +48,7 @@
             </p>
 
             <!-- Enhanced Stats with Counter Animation -->
-            <div class="grid grid-cols-3 gap-8 mb-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
               <div class="text-center group animate-stat-in" style="animation-delay:0s;">
                 <div class="text-3xl lg:text-4xl font-bold text-[#5f5fcd] mb-2">{{ toBanglaNumber(displayCourses) }}+</div>
                 <div class="text-sm text-gray-600">কোর্স</div>
@@ -58,8 +58,12 @@
                 <div class="text-sm text-gray-600">শিক্ষার্থী</div>
               </div>
               <div class="text-center group animate-stat-in" style="animation-delay:0.2s;">
-                <div class="text-3xl lg:text-4xl font-bold text-[#d4a574] mb-2">{{ toBanglaNumber(displaySatisfaction) }}+</div>
-                <div class="text-sm text-gray-600">সন্তুষ্টি</div>
+                <div class="text-3xl lg:text-4xl font-bold text-[#d4a574] mb-2">{{ toBanglaNumber(displayHappyStudents) }}+</div>
+                <div class="text-sm text-gray-600">সন্তুষ্ট শিক্ষার্থী</div>
+              </div>
+              <div class="text-center group animate-stat-in" style="animation-delay:0.3s;">
+                <div class="text-3xl lg:text-4xl font-bold text-[#d4a574] mb-2">{{ displayRating.toFixed(1) }}</div>
+                <div class="text-sm text-gray-600">রেটিং</div>
               </div>
             </div>
 
@@ -96,7 +100,7 @@
                   <img class="w-6 h-6 rounded-full border border-white" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=24&h=24&fit=crop&crop=face" alt="">
                   <img class="w-6 h-6 rounded-full border border-white" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=24&h=24&fit=crop&crop=face" alt="">
                 </div>
-                <span>৫০০০+ সন্তুষ্ট শিক্ষার্থী</span>
+                <span>{{ toBanglaNumber(displayHappyStudents) }}+ সন্তুষ্ট শিক্ষার্থী</span>
               </div>
               <div class="flex items-center space-x-1">
                 <div class="flex space-x-1 text-[#d4a574]">
@@ -106,7 +110,7 @@
                   <StarIcon class="w-4 h-4 fill-current" />
                   <StarIcon class="w-4 h-4 fill-current" />
                 </div>
-                <span>৪.৯ রেটিং</span>
+                <span>{{ displayRating.toFixed(1) }} রেটিং</span>
               </div>
             </div>
           </div>
@@ -138,12 +142,6 @@
             </div>
 
             <!-- Enhanced Achievement Cards -->
-            <div class="absolute top-8 -right-6 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-gray-100 hover:scale-110 transition-transform duration-300">
-              <div class="text-center">
-                <div class="text-lg font-bold text-[#2d5a27]">৪.৯★</div>
-                <div class="text-xs text-gray-500">রেটিং</div>
-              </div>
-            </div>
             
             <div class="absolute bottom-8 -left-6 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-gray-100 hover:scale-110 transition-transform duration-300">
               <div class="text-center">
@@ -199,53 +197,56 @@
     </section>
 
     <!-- Enhanced Testimonials Section -->
-    <section class="py-20 bg-gradient-to-br from-white via-blue-50/20 to-slate-50 relative overflow-hidden">
-      <!-- Subtle Background Pattern -->
-      <div class="absolute inset-0 bg-gradient-to-br from-[#2d5a27]/2 via-transparent to-[#d4a574]/3"></div>
-      
-      <!-- Floating Elements -->
-      <div class="absolute top-32 left-32 w-24 h-24 bg-gradient-to-br from-[#5f5fcd]/8 to-transparent rounded-full blur-2xl animate-float"></div>
-      <div class="absolute bottom-32 right-32 w-36 h-36 bg-gradient-to-tl from-[#2d5a27]/6 to-transparent rounded-full blur-2xl animate-float-delayed"></div>
+    <WhenVisible>
+      <section class="py-20 bg-gradient-to-br from-white via-blue-50/20 to-slate-50 relative overflow-hidden">
+        <!-- Subtle Background Pattern -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#2d5a27]/2 via-transparent to-[#d4a574]/3"></div>
+        
+        <!-- Floating Elements -->
+        <div class="absolute top-32 left-32 w-24 h-24 bg-gradient-to-br from-[#5f5fcd]/8 to-transparent rounded-full blur-2xl animate-float"></div>
+        <div class="absolute bottom-32 right-32 w-36 h-36 bg-gradient-to-tl from-[#2d5a27]/6 to-transparent rounded-full blur-2xl animate-float-delayed"></div>
 
-      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader 
-          title="শিক্ষার্থীদের মতামত"
-          subtitle="আমাদের সন্তুষ্ট শিক্ষার্থীদের অভিজ্ঞতা"
-          description="ইকরা অনলাইন একাডেমিতে শিক্ষা গ্রহণ করে কতজন শিক্ষার্থী তাদের জীবনে ইতিবাচক পরিবর্তন দেখেছেন।"
-          variant="default"
-          size="lg"
-        />
-
-        <!-- Testimonials Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-          <TestimonialItem
-            v-for="testimonial in testimonials"
-            :key="testimonial.id"
-            :testimonial="testimonial"
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader 
+            title="শিক্ষার্থীদের মতামত"
+            subtitle="আমাদের সন্তুষ্ট শিক্ষার্থীদের অভিজ্ঞতা"
+            description="ইকরা অনলাইন একাডেমিতে শিক্ষা গ্রহণ করে কতজন শিক্ষার্থী তাদের জীবনে ইতিবাচক পরিবর্তন দেখেছেন।"
+            variant="default"
+            size="lg"
           />
+
+          <!-- Testimonials Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+            <TestimonialItem
+              v-for="testimonial in testimonials"
+              :key="testimonial.id"
+              :testimonial="testimonial"
+            />
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </WhenVisible>
 
     <!-- Enhanced Why Choose Us Section -->
-    <section class="py-20 bg-gradient-to-br from-slate-50 via-white to-gray-50 relative overflow-hidden">
-      <!-- Subtle Background Pattern -->
-      <div class="absolute inset-0 bg-gradient-to-br from-[#d4a574]/3 via-transparent to-[#5f5fcd]/2"></div>
-      
-      <!-- Floating Elements -->
-      <div class="absolute top-24 right-24 w-28 h-28 bg-gradient-to-br from-[#2d5a27]/8 to-transparent rounded-full blur-2xl animate-float"></div>
-      <div class="absolute bottom-24 left-24 w-32 h-32 bg-gradient-to-tl from-[#d4a574]/6 to-transparent rounded-full blur-2xl animate-float-delayed"></div>
+    <WhenVisible>
+      <section class="py-20 bg-gradient-to-br from-slate-50 via-white to-gray-50 relative overflow-hidden">
+        <!-- Subtle Background Pattern -->
+        <div class="absolute inset-0 bg-gradient-to-br from-[#d4a574]/3 via-transparent to-[#5f5fcd]/2"></div>
+        
+        <!-- Floating Elements -->
+        <div class="absolute top-24 right-24 w-28 h-28 bg-gradient-to-br from-[#2d5a27]/8 to-transparent rounded-full blur-2xl animate-float"></div>
+        <div class="absolute bottom-24 left-24 w-32 h-32 bg-gradient-to-tl from-[#d4a574]/6 to-transparent rounded-full blur-2xl animate-float-delayed"></div>
 
-      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SectionHeader 
-          title="কেন আমাদের বেছে নেবেন?"
-          subtitle="ইসলামিক শিক্ষায় আমাদের বিশেষত্ব"
-          description="অভিজ্ঞ শিক্ষক, আধুনিক প্রযুক্তি এবং ইসলামিক মূল্যবোধের সমন্বয়ে আমরা প্রদান করি সর্বোচ্চ মানের শিক্ষা।"
-          variant="default"
-          size="lg"
-        />
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeader 
+            title="কেন আমাদের বেছে নেবেন?"
+            subtitle="ইসলামিক শিক্ষায় আমাদের বিশেষত্ব"
+            description="অভিজ্ঞ শিক্ষক, আধুনিক প্রযুক্তি এবং ইসলামিক মূল্যবোধের সমন্বয়ে আমরা প্রদান করি সর্বোচ্চ মানের শিক্ষা।"
+            variant="default"
+            size="lg"
+          />
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <!-- Feature 1 -->
           <div class="group relative bg-white rounded-2xl p-8 shadow-islamic hover:shadow-islamic-lg transition-all duration-300 border border-gray-100 overflow-hidden text-center">
             <div class="relative mb-6 flex justify-center">
@@ -315,9 +316,11 @@
         </div>
       </div>
     </section>
+    </WhenVisible>
 
     <!-- Simplified CTA Section -->
-    <section class="py-12 lg:py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden" id="donation" :class="{ 'donation-highlight': donationHighlight }">
+    <WhenVisible>
+      <section class="py-12 lg:py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden" id="donation" :class="{ 'donation-highlight': donationHighlight }">
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center lg:items-start">
           <!-- Left: Heading and Description -->
@@ -403,19 +406,21 @@
           </div>
         </div>
       </div>
-    </section>
+      </section>
+    </WhenVisible>
   </FrontendLayout>
 </template>
 
 <script setup lang="ts">
 // Enhanced HomePage component - Islamic LMS frontend
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { Head, usePage, router, useForm } from '@inertiajs/vue3'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import SectionHeader from '@/components/Frontend/SectionHeader.vue'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
 import CourseCard from '@/components/Frontend/CourseCard.vue'
 import TestimonialItem from '@/components/Frontend/TestimonialItem.vue'
+import WhenVisible from '@/components/Frontend/WhenVisible.vue'
 import {
   BookOpenIcon,
   InfoIcon,
@@ -435,12 +440,30 @@ import { useToast } from '@/composables/useToast'
 // Get data from backend
 const page = usePage()
 const featuredCourses = ref<any[]>((page.props.featured_courses as any[]) || [])
-const stats = ref<any>((page.props.stats as any) || {
+
+// Stats will be loaded via deferred props
+const stats = ref<any>({
   total_courses: 0,
   total_students: 0,
   satisfaction_rate: 0,
   total_instructors: 0,
   total_enrollments: 0
+})
+
+// Testimonials will be loaded via deferred props
+const testimonials = ref<any[]>([])
+
+// Watch for deferred props updates
+watch(() => page.props.stats, (newStats) => {
+  if (newStats) {
+    stats.value = newStats
+  }
+})
+
+watch(() => page.props.testimonials, (newTestimonials) => {
+  if (newTestimonials) {
+    testimonials.value = newTestimonials
+  }
 })
 
 // Type definitions for better TypeScript support
@@ -480,11 +503,14 @@ function toBanglaNumber(num: number): string {
 // Animated stat values
 const displayCourses = ref(0)
 const displayStudents = ref(0)
-const displaySatisfaction = ref(0)
+const displayHappyStudents = ref(0)
+const displayRating = ref(0)
 
-const targetCourses = 10
-const targetStudents = 100
-const targetSatisfaction = 99
+// Update stat targets
+const targetCourses = 15
+const targetStudents = 1000
+const targetHappyStudents = 5000
+const targetRating = 4.9
 
 function animateStat(refValue: any, target: number, duration = 700) {
   const start = 0
@@ -509,7 +535,8 @@ let highlightTimeout: NodeJS.Timeout | null = null
 onMounted(() => {
   animateStat(displayCourses, targetCourses)
   setTimeout(() => animateStat(displayStudents, targetStudents), 200)
-  setTimeout(() => animateStat(displaySatisfaction, targetSatisfaction), 400)
+  setTimeout(() => animateStat(displayHappyStudents, targetHappyStudents), 400)
+  setTimeout(() => animateStat(displayRating, targetRating, 700), 600)
   
   // Smooth scroll to donation if coming from menu
   const urlParams = new URLSearchParams(window.location.search)
@@ -528,61 +555,7 @@ onMounted(() => {
   }
 })
 
-// Cleanup on unmount
-import { onUnmounted } from 'vue'
-
-onUnmounted(() => {
-  if (highlightTimeout) {
-    clearTimeout(highlightTimeout)
-    highlightTimeout = null
-  }
-})
-
-// Testimonials Section
-const testimonials = ref([
-  {
-    id: 1,
-    content: 'এই একাডেমির কোর্সগুলো খুবই মানসম্মত। শিক্ষকরা আন্তরিক এবং সহায়ক। আমি অনেক কিছু শিখেছি।',
-    rating: 5,
-    rating_bn: '৫',
-    student: {
-      name: 'মাহমুদুল হাসান',
-      title: 'বিশ্ববিদ্যালয় শিক্ষার্থী',
-      avatar: UserCircleIcon,
-      location: 'ঢাকা, বাংলাদেশ'
-    },
-    verified: true,
-    created_at: '2024-06-01'
-  },
-  {
-    id: 2,
-    content: 'ইকরা একাডেমির মাধ্যমে আমি ইসলামিক জ্ঞান সহজে ও সুন্দরভাবে পেয়েছি। ধন্যবাদ!',
-    rating: 5,
-    rating_bn: '৫',
-    student: {
-      name: 'সাবরিনা আক্তার',
-      title: 'স্কুল শিক্ষিকা',
-      avatar: UserIcon,
-      location: 'চট্টগ্রাম, বাংলাদেশ'
-    },
-    verified: true,
-    created_at: '2024-05-20'
-  },
-  {
-    id: 3,
-    content: 'অনলাইন প্ল্যাটফর্ম হিসেবে ইকরা একাডেমি অসাধারণ। কোর্স কনটেন্ট ও সাপোর্ট টিম খুবই ভালো।',
-    rating: 4,
-    rating_bn: '৪',
-    student: {
-      name: 'রাশেদুল ইসলাম',
-      title: 'ফ্রিল্যান্সার',
-      avatar: UserSquareIcon,
-      location: 'রাজশাহী, বাংলাদেশ'
-    },
-    verified: true,
-    created_at: '2024-04-15'
-  }
-])
+// Testimonials will be loaded from deferred props - initialized above
 
 const toast = useToast()
 const form = useForm({

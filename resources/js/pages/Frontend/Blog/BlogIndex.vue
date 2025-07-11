@@ -78,27 +78,30 @@
             <!-- Posts Grid -->
             <BlogGrid :posts="filteredPosts" :loading="loading" />
 
-            <!-- Load More / Pagination -->
-            <div v-if="hasMorePosts" class="mt-12 text-center">
-              <button
-                @click="loadMorePosts"
-                :disabled="loadingMore"
-                class="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] hover:from-[#4a4aa6] hover:to-[#1f3e1b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5f5fcd] transition-all duration-200 disabled:opacity-50"
-              >
-                <Loader2Icon v-if="loadingMore" class="w-5 h-5 mr-2 animate-spin" />
-                {{ loadingMore ? 'লোড হচ্ছে...' : 'আরও পোস্ট দেখুন' }}
-              </button>
+            <!-- Infinite Scroll Trigger -->
+            <div v-if="props.hasMorePosts" class="mt-12">
+              <!-- Loading indicator -->
+              <div v-if="loadingMore" class="text-center py-8">
+                <div class="inline-flex items-center space-x-2 text-gray-600">
+                  <Loader2Icon class="w-6 h-6 animate-spin" />
+                  <span>আরও পোস্ট লোড হচ্ছে...</span>
+                </div>
+              </div>
+              <!-- Invisible trigger element -->
+              <div ref="loadMoreTrigger" class="h-20 w-full"></div>
             </div>
           </div>
 
           <!-- Sidebar -->
           <div class="lg:col-span-1">
-            <BlogSidebar 
-              :categories="categories"
-              :popular-tags="popularTags"
-              :recent-posts="recentPosts"
-              :active-category="activeCategory"
-            />
+            <WhenVisible>
+              <BlogSidebar 
+                :categories="categories"
+                :popular-tags="popularTags"
+                :recent-posts="recentPosts"
+                :active-category="activeCategory"
+              />
+            </WhenVisible>
           </div>
         </div>
       </div>
@@ -107,12 +110,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { Head, usePage } from '@inertiajs/vue3'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { Head, usePage, router } from '@inertiajs/vue3'
+import { useIntersectionObserver } from '@vueuse/core'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import BlogGrid from '@/components/Frontend/Blog/BlogGrid.vue'
 import BlogCard from '@/components/Frontend/Blog/BlogCard.vue'
 import BlogSidebar from '@/components/Frontend/Blog/BlogSidebar.vue'
+import WhenVisible from '@/components/Frontend/WhenVisible.vue'
 import { Star as StarIcon, Loader2 as Loader2Icon, BookOpen as BookOpenIcon } from 'lucide-vue-next'
 
 interface BlogPost {
@@ -182,6 +187,22 @@ const activeFilter = ref('all')
 const loading = ref(false)
 const loadingMore = ref(false)
 const allPosts = ref([...props.posts])
+const loadMoreTrigger = ref<HTMLElement>()
+const page = usePage()
+
+// Setup intersection observer for infinite scroll
+const { stop } = useIntersectionObserver(
+  loadMoreTrigger,
+  ([{ isIntersecting }]) => {
+    if (isIntersecting && props.hasMorePosts && !loadingMore.value) {
+      loadMorePosts()
+    }
+  },
+  {
+    threshold: 0.1,
+    rootMargin: '100px'
+  }
+)
 
 const filters = [
   { key: 'all', label: 'সব পোস্ট', count: allPosts.value.length },
@@ -204,16 +225,36 @@ const filteredPosts = computed(() => {
 })
 
 const loadMorePosts = async () => {
+  if (!props.hasMorePosts || loadingMore.value) return
+  
   loadingMore.value = true
+  
   try {
-    // Implement load more logic using Inertia
-    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
+    const currentUrl = new URL(window.location.href)
+    const nextPage = (parseInt(currentUrl.searchParams.get('page') || '1') + 1).toString()
+    
+    currentUrl.searchParams.set('page', nextPage)
+    currentUrl.searchParams.set('merge', 'true')
+    
+    await router.get(currentUrl.toString(), {}, {
+      preserveState: true,
+      preserveScroll: true,
+      onSuccess: (page) => {
+        const newPosts = page.props.posts || []
+        allPosts.value = [...allPosts.value, ...newPosts]
+      }
+    })
   } catch (error) {
     console.error('Error loading more posts:', error)
   } finally {
     loadingMore.value = false
   }
 }
+
+// Cleanup intersection observer on unmount
+onUnmounted(() => {
+  stop()
+})
 
 function isRecent(publishedAt: string): boolean {
   const publishDate = new Date(publishedAt)

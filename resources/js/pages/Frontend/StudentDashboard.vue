@@ -462,8 +462,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { router, Head, useForm } from '@inertiajs/vue3'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { router, Head, useForm, usePage } from '@inertiajs/vue3'
+import { useIntervalFn } from '@vueuse/core'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue'
 import CoursePlaceholder from '@/components/Frontend/CoursePlaceholder.vue'
@@ -529,15 +530,59 @@ interface Props {
     date: string
     course_slug: string
   }>
+  stats?: {
+    total_enrollments: number
+    active_enrollments: number
+    completed_courses: number
+    total_lessons_completed: number
+    total_study_hours: number
+    average_progress: number
+  }
 }
 
 const props = defineProps<Props>()
+
+// Get page for deferred props
+const page = usePage()
 
 // Toast composable
 const { success, error } = useToast()
 
 // Active section
 const activeSection = ref('courses')
+
+// Reactive stats that will be updated via deferred props
+const stats = ref({
+  total_enrollments: 0,
+  active_enrollments: 0,
+  completed_courses: 0,
+  total_lessons_completed: 0,
+  total_study_hours: 0,
+  average_progress: 0
+})
+
+// Reactive activities and certificates
+const recentActivities = ref<any[]>([])
+const certificates = ref<any[]>([])
+
+// Watch for deferred props updates
+watch(() => page.props.stats, (newStats) => {
+  if (newStats) {
+    stats.value = newStats as any
+  }
+})
+
+watch(() => page.props.recentActivities, (newActivities) => {
+  if (newActivities) {
+    recentActivities.value = newActivities as any[]
+  }
+})
+
+watch(() => page.props.certificates, (newCertificates) => {
+  if (newCertificates) {
+    certificates.value = newCertificates as any[]
+  }
+})
 
 // Navigation items
 const navigationItems = [
@@ -564,8 +609,6 @@ const student = computed(() => props.student || {
 })
 
 const enrollments = computed(() => props.enrollments || [])
-const recentActivities = computed(() => props.recentActivities || [])
-const certificates = computed(() => props.certificates || [])
 
 // Profile form
 const profileForm = useForm({
@@ -641,4 +684,33 @@ const handlePendingCourseAccess = (enrollment: any) => {
 const isValidImage = (src: string | undefined | null): boolean => {
   return !!src && typeof src === 'string' && src.trim() !== ''
 }
+
+// Polling for payment status updates
+const hasPendingPayments = computed(() => {
+  return enrollments.value.some(enrollment => 
+    enrollment.payment_status === 'pending' || 
+    enrollment.payment_status === 'processing'
+  )
+})
+
+// Poll payment status every 30 seconds if there are pending payments
+const { pause: pausePolling, resume: resumePolling } = useIntervalFn(() => {
+  if (hasPendingPayments.value) {
+    router.reload({ only: ['enrollments'] })
+  }
+}, 30000, { immediate: false })
+
+// Start/stop polling based on pending payments
+watch(hasPendingPayments, (hasPending) => {
+  if (hasPending) {
+    resumePolling()
+  } else {
+    pausePolling()
+  }
+}, { immediate: true })
+
+// Cleanup polling on unmount
+onUnmounted(() => {
+  pausePolling()
+})
 </script> 
