@@ -508,7 +508,7 @@ const displayRating = ref(0)
 
 // Update stat targets
 const targetCourses = 15
-const targetStudents = 1000
+const targetStudents = 5000
 const targetHappyStudents = 5000
 const targetRating = 4.9
 

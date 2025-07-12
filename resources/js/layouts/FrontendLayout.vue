@@ -27,8 +27,6 @@
                   <div class="w-12 h-12 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-xl flex items-center justify-center shadow-islamic group-hover:shadow-islamic-lg transition-all duration-300 transform group-hover:scale-105">
                     <span class="text-white font-bold text-xl">ই</span>
                   </div>
-                  <div class="absolute -top-1 -right-1 w-4 h-4 bg-[#d4a574] rounded-full animate-pulse shadow-lg"></div>
-                  <div class="absolute -bottom-1 -left-1 w-2 h-2 bg-[#2d5a27] rounded-full animate-ping"></div>
                 </div>
               </Link>
             </div>
@@ -332,7 +330,6 @@
                   <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-xl flex items-center justify-center shadow-islamic-lg">
                     <span class="text-white font-bold text-lg sm:text-2xl">ই</span>
                   </div>
-                  <div class="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-6 sm:h-6 bg-[#d4a574] rounded-full animate-pulse shadow-lg"></div>
                 </div>
               </div>
               <p class="text-gray-300 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base lg:text-lg">
