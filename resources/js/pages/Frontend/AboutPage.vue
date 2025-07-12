@@ -135,16 +135,17 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div v-for="member in aboutData?.team_members" :key="member.id" class="bg-white p-6 rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 text-center group">
-              <div v-if="member.avatar" class="relative">
+              <div class="relative">
                 <img 
+                  v-if="member.avatar && !member.avatarError"
                   :src="member.avatar" 
                   :alt="member.name"
                   class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-[#d4a574] group-hover:scale-105 transition-transform duration-300 object-cover"
-                  @error="(e) => e.target.style.display = 'none'"
+                  @error="handleAvatarError(member)"
                 />
-              </div>
-              <div v-else class="w-24 h-24 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-full mx-auto mb-4 border-4 border-[#d4a574] group-hover:scale-105 transition-transform duration-300 flex items-center justify-center">
-                <span class="text-white font-bold text-3xl">{{ getInitials(member.name) }}</span>
+                <div v-else class="w-24 h-24 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-full mx-auto mb-4 border-4 border-[#d4a574] group-hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+                  <span class="text-white font-bold text-3xl">{{ getInitials(member.name) }}</span>
+                </div>
               </div>
               <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ member.name }}</h3>
               <p class="text-[#5f5fcd] font-medium mb-2">{{ member.position }}</p>
@@ -243,6 +244,7 @@ interface AboutData {
     position: string
     experience: string
     avatar: string
+    avatarError?: boolean
   }>
 }
 
@@ -309,6 +311,11 @@ const handleImageError = (event: Event) => {
   const target = event.target as HTMLImageElement
   // Hide the image and let the CSS fallback show
   target.style.display = 'none'
+}
+
+const handleAvatarError = (member: any) => {
+  // Mark this member's avatar as having an error so the fallback shows
+  member.avatarError = true
 }
 
 // Initialize on mount
