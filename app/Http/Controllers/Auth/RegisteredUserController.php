@@ -26,7 +26,10 @@ class RegisteredUserController extends Controller
         if ($request->has('intended')) {
             $request->session()->put('url.intended', $request->query('intended'));
         }
-        return Inertia::render('auth/Register')->encryptHistory();
+        
+        Inertia::encryptHistory();
+        
+        return Inertia::render('auth/Register');
     }
 
     /**

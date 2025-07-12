@@ -16,9 +16,11 @@ class PasswordResetLinkController extends Controller
      */
     public function create(Request $request): Response
     {
+        Inertia::encryptHistory();
+        
         return Inertia::render('auth/ForgotPassword', [
             'status' => $request->session()->get('status'),
-        ])->encryptHistory();
+        ]);
     }
 
     /**

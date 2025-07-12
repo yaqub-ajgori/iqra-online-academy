@@ -21,11 +21,14 @@ class AuthenticatedSessionController extends Controller
         if ($request->has('intended')) {
             $request->session()->put('url.intended', $request->query('intended'));
         }
+        
+        Inertia::encryptHistory();
+        
         return Inertia::render('auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'status' => $request->session()->get('status'),
             'error' => $request->session()->get('error'),
-        ])->encryptHistory();
+        ]);
     }
 
     /**

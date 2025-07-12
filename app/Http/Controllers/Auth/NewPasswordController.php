@@ -21,10 +21,12 @@ class NewPasswordController extends Controller
      */
     public function create(Request $request): Response
     {
+        Inertia::encryptHistory();
+        
         return Inertia::render('auth/ResetPassword', [
             'email' => $request->email,
             'token' => $request->route('token'),
-        ])->encryptHistory();
+        ]);
     }
 
     /**

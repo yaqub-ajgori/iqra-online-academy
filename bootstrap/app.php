@@ -3,6 +3,7 @@
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\StudentMiddleware;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\PreventCaching;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -27,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register custom middleware
         $middleware->alias([
             'student' => StudentMiddleware::class,
+            'no-cache' => PreventCaching::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -26,6 +26,8 @@ class PaymentController extends Controller
             abort(404, 'Course not found');
         }
 
+        Inertia::encryptHistory();
+        
         return Inertia::render('Frontend/PaymentPage', [
             'title' => 'পেমেন্ট - ' . $courseModel->title,
             'course' => $courseModel,
@@ -34,7 +36,7 @@ class PaymentController extends Controller
                 'description' => 'Complete your enrollment for ' . $courseModel->title,
                 'keywords' => 'payment, enrollment, ইসলামিক কোর্স, অনলাইন পেমেন্ট'
             ]
-        ])->encryptHistory();
+        ]);
     }
 
     /**
