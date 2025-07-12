@@ -116,7 +116,7 @@ class AboutController extends Controller
                         'name' => $teacher->full_name,
                         'position' => $teacher->speciality ?? 'ইসলামিক শিক্ষক',
                         'experience' => $teacher->experience ?? '৫+ বছরের অভিজ্ঞতা',
-                        'avatar' => $teacher->profile_picture ?? null
+                        'avatar' => $teacher->profile_picture_url
                     ];
                 })
                 ->toArray()
