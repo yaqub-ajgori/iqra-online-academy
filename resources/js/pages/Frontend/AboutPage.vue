@@ -61,12 +61,22 @@
 
             <!-- Image -->
             <div class="relative">
-              <img 
-                :src="aboutData?.mission_image || 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&h=400&fit=crop&crop=center'" 
-                :alt="aboutData?.mission_image_alt || 'ইসলামিক শিক্ষা'"
-                class="w-full h-auto rounded-2xl shadow-islamic-lg"
-                @error="handleImageError"
-              />
+              <div v-if="aboutData?.mission_image">
+                <img 
+                  :src="aboutData.mission_image" 
+                  :alt="aboutData?.mission_image_alt || 'ইসলামিক শিক্ষা'"
+                  class="w-full h-auto rounded-2xl shadow-islamic-lg"
+                  @error="handleImageError"
+                />
+              </div>
+              <div v-else class="w-full h-[400px] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10 rounded-2xl shadow-islamic-lg flex items-center justify-center">
+                <div class="text-center">
+                  <div class="w-32 h-32 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <span class="text-white font-bold text-5xl">ই</span>
+                  </div>
+                  <p class="text-gray-500 text-lg">ইকরা অনলাইন একাডেমি</p>
+                </div>
+              </div>
               
               <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-br from-[#5f5fcd]/20 to-[#2d5a27]/20 rounded-2xl"></div>
               <div class="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-[#d4a574]/30 to-transparent rounded-full"></div>
@@ -125,12 +135,17 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div v-for="member in aboutData?.team_members" :key="member.id" class="bg-white p-6 rounded-2xl shadow-islamic hover:shadow-islamic-lg transition-all duration-300 text-center group">
-              <img 
-                :src="member.avatar || getDefaultAvatar(member.name)" 
-                :alt="member.name"
-                class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-[#d4a574] group-hover:scale-105 transition-transform duration-300"
-                @error="handleImageError"
-              />
+              <div v-if="member.avatar" class="relative">
+                <img 
+                  :src="member.avatar" 
+                  :alt="member.name"
+                  class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-[#d4a574] group-hover:scale-105 transition-transform duration-300 object-cover"
+                  @error="(e) => e.target.style.display = 'none'"
+                />
+              </div>
+              <div v-else class="w-24 h-24 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-full mx-auto mb-4 border-4 border-[#d4a574] group-hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+                <span class="text-white font-bold text-3xl">{{ getInitials(member.name) }}</span>
+              </div>
               <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ member.name }}</h3>
               <p class="text-[#5f5fcd] font-medium mb-2">{{ member.position }}</p>
               <p class="text-gray-600 text-sm">{{ member.experience }}</p>
@@ -281,15 +296,19 @@ const getValueIcon = (iconName: string) => {
   return icons[iconName] || BookOpenIcon
 }
 
-const getDefaultAvatar = (name: string) => {
-  // Generate a placeholder avatar based on name
-  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase()
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=5f5fcd&color=fff&size=150`
+const getInitials = (name: string) => {
+  // Get first letter of first and last name
+  const parts = name.split(' ')
+  if (parts.length >= 2) {
+    return parts[0][0] + parts[parts.length - 1][0]
+  }
+  return parts[0][0] || 'ই'
 }
 
 const handleImageError = (event: Event) => {
   const target = event.target as HTMLImageElement
-  target.src = 'https://via.placeholder.com/400x300/f3f4f6/6b7280?text=ইমেজ+লোড+হয়নি'
+  // Hide the image and let the CSS fallback show
+  target.style.display = 'none'
 }
 
 // Initialize on mount
