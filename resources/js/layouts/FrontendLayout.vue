@@ -23,11 +23,7 @@
             <!-- Enhanced Logo -->
             <div class="flex items-center">
               <Link :href="route('frontend.home')" class="flex items-center group">
-                <div class="relative">
-                  <div class="w-12 h-12 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-xl flex items-center justify-center shadow-islamic group-hover:shadow-islamic-lg transition-all duration-300 transform group-hover:scale-105">
-                    <span class="text-white font-bold text-xl">ই</span>
-                  </div>
-                </div>
+                <AppLogoIcon class="w-16 h-16" />
               </Link>
             </div>
 
@@ -71,14 +67,6 @@
                 যোগাযোগ
                 <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] transition-all duration-200 group-hover:w-3/4"></div>
               </Link>
-              <a 
-                href="#donation"
-                class="text-gray-700 hover:text-[#5f5fcd] px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-50 relative group"
-                @click.prevent="scrollToDonation"
-              >
-                ডোনেশন
-                <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] transition-all duration-200 group-hover:w-3/4"></div>
-              </a>
             </div>
 
             <!-- Course Search Form (Desktop) -->
@@ -233,14 +221,6 @@
                 <MessageCircleIcon class="w-5 h-5 mr-3" />
                 যোগাযোগ
               </Link>
-              <a 
-                href="#donation"
-                class="flex items-center px-4 py-3 text-gray-700 hover:text-[#5f5fcd] hover:bg-gray-50 rounded-lg transition-colors"
-                @click.prevent="scrollToDonation"
-              >
-                <HeartIcon class="w-5 h-5 mr-3" />
-                ডোনেশন
-              </a>
               
               <div class="border-t border-gray-200 pt-4 mt-4">
                 <template v-if="$page.props.auth && $page.props.auth.user">
@@ -325,12 +305,8 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-6 sm:gap-8 lg:gap-12">
             <!-- Enhanced Brand Section -->
             <div class="sm:col-span-2 lg:col-span-2">
-              <div class="flex items-center mb-4 sm:mb-6">
-                <div class="relative">
-                  <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-xl flex items-center justify-center shadow-islamic-lg">
-                    <span class="text-white font-bold text-lg sm:text-2xl">ই</span>
-                  </div>
-                </div>
+              <div class="mb-4 sm:mb-6">
+                <AppLogoIcon class="w-16 h-16" />
               </div>
               <p class="text-gray-300 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base lg:text-lg">
                 ইসলামিক শিক্ষায় আধুনিক প্রযুক্তির সমন্বয়ে গড়ে উঠেছে ইকরা অনলাইন একাডেমি। 
@@ -498,6 +474,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
+import AppLogoIcon from '@/components/AppLogoIcon.vue'
 import {
   MenuIcon,
   XIcon,
