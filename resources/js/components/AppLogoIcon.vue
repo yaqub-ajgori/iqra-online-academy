@@ -40,5 +40,5 @@ defineProps<Props>();
       fill="#fff"
       direction="rtl"
     >ٱقۡرَأۡ</text>
-  </svg>
+    </svg>
 </template>

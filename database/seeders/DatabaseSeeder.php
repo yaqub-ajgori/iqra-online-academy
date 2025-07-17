@@ -30,12 +30,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            // CourseCategorySeeder::class,
+            CourseCategorySeeder::class,
             BlogSeeder::class,
-            // TeacherSeeder::class,
-            // CourseSeeder::class,
-            // StudentSeeder::class,
-            // DonationSeeder::class,
+            TeacherSeeder::class,
+            CourseSeeder::class,
+            StudentSeeder::class,
+            DonationSeeder::class,
         ]);
     }
 }

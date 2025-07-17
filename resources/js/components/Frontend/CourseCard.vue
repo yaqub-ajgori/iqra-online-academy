@@ -251,9 +251,9 @@ const discountExpiresIn = computed(() => {
   const now = dayjs()
   if (expires.isBefore(now)) return ''
   const days = expires.diff(now, 'day')
-  if (days > 0) return `ছাড় শেষ ${days} দিনে`
+  if (days > 0) return `ছাড় চলবে আর ${days} দিন`
   const hours = expires.diff(now, 'hour')
-  if (hours > 0) return `ছাড় শেষ আজ`
+  if (hours > 0) return `ছাড় চলবে আজ পর্যন্ত`
   return ''
 })
 </script>
