@@ -1217,6 +1217,13 @@ const loadSearchHistory = () => {
 
 // Topic-Based Study Functions
 const selectTopic = async (topic) => {
+    // If clicking the same topic, reset/clear it
+    if (selectedTopic.value?.id === topic.id) {
+        selectedTopic.value = null;
+        topicResults.value = [];
+        return;
+    }
+
     selectedTopic.value = topic;
 
     // Check cache first
