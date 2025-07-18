@@ -1,6 +1,6 @@
+import { cva } from 'class-variance-authority';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { cva } from 'class-variance-authority';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -41,7 +41,7 @@ export function formatDateTime(datetime: string | Date | null | undefined): stri
         day: '2-digit',
         hour: '2-digit',
         minute: '2-digit',
-        hour12: false
+        hour12: false,
     }).format(dateObj);
 }
 
@@ -147,9 +147,7 @@ export function getPaymentStatusClass(status: string): string {
 export function capitalizeWords(text: string): string {
     if (!text) return '';
 
-    return text.replace(/\w\S*/g, (txt) =>
-        txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-    );
+    return text.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 }
 
 /**
@@ -163,16 +161,13 @@ export function generateId(): string {
  * Sleep utility for async operations
  */
 export function sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
  * Debounce function for search inputs
  */
-export function debounce<T extends (...args: any[]) => any>(
-    func: T,
-    wait: number
-): (...args: Parameters<T>) => void {
+export function debounce<T extends (...args: any[]) => any>(func: T, wait: number): (...args: Parameters<T>) => void {
     let timeout: NodeJS.Timeout | null = null;
 
     return (...args: Parameters<T>) => {
@@ -188,7 +183,8 @@ export const buttonVariants = cva(
         variants: {
             variant: {
                 default: 'bg-primary text-primary-foreground shadow hover:bg-primary/90 active:scale-[0.98]',
-                primary: 'bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] text-white shadow-lg shadow-[#5f5fcd]/25 hover:shadow-xl hover:shadow-[#5f5fcd]/30 active:scale-[0.98] font-semibold',
+                primary:
+                    'bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] text-white shadow-lg shadow-[#5f5fcd]/25 hover:shadow-xl hover:shadow-[#5f5fcd]/30 active:scale-[0.98] font-semibold',
                 secondary: 'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
                 destructive: 'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
                 outline: 'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
@@ -213,5 +209,5 @@ export const buttonVariants = cva(
             variant: 'default',
             size: 'default',
         },
-    }
-)
+    },
+);

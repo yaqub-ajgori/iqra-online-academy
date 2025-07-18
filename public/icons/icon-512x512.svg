@@ -5,6 +5,6 @@
       <stop offset="100%" stop-color="#2d5a27"/>
     </linearGradient>
   </defs>
-  <circle cx="256" cy="256" r="232" fill="url(#iqraLogoGradient512)" />
+  <circle cx="256" cy="256" r="256" fill="url(#iqraLogoGradient512)" />
   <text x="256" y="330" text-anchor="middle" dominant-baseline="middle" font-family="'Amiri', 'Scheherazade', 'Noto Naskh Arabic', serif" font-size="220" font-weight="bold" fill="#fff" direction="rtl">ٱقۡرَأۡ</text>
 </svg> 

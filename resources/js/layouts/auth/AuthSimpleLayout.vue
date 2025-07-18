@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { Link } from '@inertiajs/vue3';
 
 defineProps<{
@@ -15,12 +14,14 @@ defineProps<{
                 <div class="flex flex-col items-center gap-4">
                     <Link :href="route('frontend.home')" class="flex flex-col items-center gap-2 font-medium">
                         <div class="relative mb-1">
-                            <div class="w-12 h-12 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-lg flex items-center justify-center shadow-lg">
-                              <span class="text-white font-bold text-xl">ই</span>
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] shadow-lg"
+                            >
+                                <span class="text-xl font-bold text-white">ই</span>
                             </div>
-                            <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#d4a574] rounded-full animate-pulse"></div>
+                            <div class="absolute -top-1 -right-1 h-3 w-3 animate-pulse rounded-full bg-[#d4a574]"></div>
                         </div>
-                        <span class="text-lg font-bold text-gradient-islamic">ইকরা</span>
+                        <span class="text-gradient-islamic text-lg font-bold">ইকরা</span>
                     </Link>
                     <div class="space-y-2 text-center">
                         <h1 class="text-xl font-medium">{{ title }}</h1>

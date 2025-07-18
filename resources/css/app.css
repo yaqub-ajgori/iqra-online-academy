@@ -10,7 +10,9 @@
 
 @theme inline {
     /* Islamic-inspired font system */
-    --font-sans: 'Noto Sans Bengali', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans:
+        'Noto Sans Bengali', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
     --font-bangla: 'Noto Sans Bengali', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
 
     /* Islamic design system - Border radius */
@@ -113,7 +115,6 @@
   looks the same as it did with Tailwind CSS v3.
 */
 @layer base {
-
     *,
     ::after,
     ::before,
@@ -124,51 +125,116 @@
 }
 
 @layer utilities {
-
     body,
     html {
         --font-sans: 'Noto Sans Bengali', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
     }
 
     /* Custom text colors to replace gray utilities */
-    .text-neutral-50 { color: var(--color-iqra-neutral-50); }
-    .text-neutral-100 { color: var(--color-iqra-neutral-100); }
-    .text-neutral-200 { color: var(--color-iqra-neutral-200); }
-    .text-neutral-300 { color: var(--color-iqra-neutral-300); }
-    .text-neutral-400 { color: var(--color-iqra-neutral-400); }
-    .text-neutral-500 { color: var(--color-iqra-neutral-500); }
-    .text-neutral-600 { color: var(--color-iqra-neutral-600); }
-    .text-neutral-700 { color: var(--color-iqra-neutral-700); }
-    .text-neutral-800 { color: var(--color-iqra-neutral-800); }
-    .text-neutral-900 { color: var(--color-iqra-neutral-900); }
-    
-    .text-primary { color: var(--color-iqra-text-primary); }
-    .text-secondary { color: var(--color-iqra-text-secondary); }
-    .text-muted { color: var(--color-iqra-text-muted); }
+    .text-neutral-50 {
+        color: var(--color-iqra-neutral-50);
+    }
+    .text-neutral-100 {
+        color: var(--color-iqra-neutral-100);
+    }
+    .text-neutral-200 {
+        color: var(--color-iqra-neutral-200);
+    }
+    .text-neutral-300 {
+        color: var(--color-iqra-neutral-300);
+    }
+    .text-neutral-400 {
+        color: var(--color-iqra-neutral-400);
+    }
+    .text-neutral-500 {
+        color: var(--color-iqra-neutral-500);
+    }
+    .text-neutral-600 {
+        color: var(--color-iqra-neutral-600);
+    }
+    .text-neutral-700 {
+        color: var(--color-iqra-neutral-700);
+    }
+    .text-neutral-800 {
+        color: var(--color-iqra-neutral-800);
+    }
+    .text-neutral-900 {
+        color: var(--color-iqra-neutral-900);
+    }
+
+    .text-primary {
+        color: var(--color-iqra-text-primary);
+    }
+    .text-secondary {
+        color: var(--color-iqra-text-secondary);
+    }
+    .text-muted {
+        color: var(--color-iqra-text-muted);
+    }
 
     /* Custom background colors */
-    .bg-neutral-50 { background-color: var(--color-iqra-neutral-50); }
-    .bg-neutral-100 { background-color: var(--color-iqra-neutral-100); }
-    .bg-neutral-200 { background-color: var(--color-iqra-neutral-200); }
-    .bg-neutral-300 { background-color: var(--color-iqra-neutral-300); }
-    .bg-neutral-400 { background-color: var(--color-iqra-neutral-400); }
-    .bg-neutral-500 { background-color: var(--color-iqra-neutral-500); }
-    .bg-neutral-600 { background-color: var(--color-iqra-neutral-600); }
-    .bg-neutral-700 { background-color: var(--color-iqra-neutral-700); }
-    .bg-neutral-800 { background-color: var(--color-iqra-neutral-800); }
-    .bg-neutral-900 { background-color: var(--color-iqra-neutral-900); }
+    .bg-neutral-50 {
+        background-color: var(--color-iqra-neutral-50);
+    }
+    .bg-neutral-100 {
+        background-color: var(--color-iqra-neutral-100);
+    }
+    .bg-neutral-200 {
+        background-color: var(--color-iqra-neutral-200);
+    }
+    .bg-neutral-300 {
+        background-color: var(--color-iqra-neutral-300);
+    }
+    .bg-neutral-400 {
+        background-color: var(--color-iqra-neutral-400);
+    }
+    .bg-neutral-500 {
+        background-color: var(--color-iqra-neutral-500);
+    }
+    .bg-neutral-600 {
+        background-color: var(--color-iqra-neutral-600);
+    }
+    .bg-neutral-700 {
+        background-color: var(--color-iqra-neutral-700);
+    }
+    .bg-neutral-800 {
+        background-color: var(--color-iqra-neutral-800);
+    }
+    .bg-neutral-900 {
+        background-color: var(--color-iqra-neutral-900);
+    }
 
     /* Custom border colors */
-    .border-neutral-50 { border-color: var(--color-iqra-neutral-50); }
-    .border-neutral-100 { border-color: var(--color-iqra-neutral-100); }
-    .border-neutral-200 { border-color: var(--color-iqra-neutral-200); }
-    .border-neutral-300 { border-color: var(--color-iqra-neutral-300); }
-    .border-neutral-400 { border-color: var(--color-iqra-neutral-400); }
-    .border-neutral-500 { border-color: var(--color-iqra-neutral-500); }
-    .border-neutral-600 { border-color: var(--color-iqra-neutral-600); }
-    .border-neutral-700 { border-color: var(--color-iqra-neutral-700); }
-    .border-neutral-800 { border-color: var(--color-iqra-neutral-800); }
-    .border-neutral-900 { border-color: var(--color-iqra-neutral-900); }
+    .border-neutral-50 {
+        border-color: var(--color-iqra-neutral-50);
+    }
+    .border-neutral-100 {
+        border-color: var(--color-iqra-neutral-100);
+    }
+    .border-neutral-200 {
+        border-color: var(--color-iqra-neutral-200);
+    }
+    .border-neutral-300 {
+        border-color: var(--color-iqra-neutral-300);
+    }
+    .border-neutral-400 {
+        border-color: var(--color-iqra-neutral-400);
+    }
+    .border-neutral-500 {
+        border-color: var(--color-iqra-neutral-500);
+    }
+    .border-neutral-600 {
+        border-color: var(--color-iqra-neutral-600);
+    }
+    .border-neutral-700 {
+        border-color: var(--color-iqra-neutral-700);
+    }
+    .border-neutral-800 {
+        border-color: var(--color-iqra-neutral-800);
+    }
+    .border-neutral-900 {
+        border-color: var(--color-iqra-neutral-900);
+    }
 
     /* Islamic geometric pattern utilities */
     .pattern-dots {
@@ -185,7 +251,14 @@
 
     /* Islamic divider styles */
     .divider-islamic {
-        background: linear-gradient(90deg, transparent 0%, var(--color-iqra-accent) 20%, var(--color-iqra-primary) 50%, var(--color-iqra-accent) 80%, transparent 100%);
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            var(--color-iqra-accent) 20%,
+            var(--color-iqra-primary) 50%,
+            var(--color-iqra-accent) 80%,
+            transparent 100%
+        );
         height: 2px;
         border-radius: 1px;
     }
@@ -200,11 +273,15 @@
 
     /* Custom shadows for cards */
     .shadow-islamic {
-        box-shadow: 0 4px 12px rgba(95, 95, 205, 0.1), 0 2px 4px rgba(45, 90, 39, 0.05);
+        box-shadow:
+            0 4px 12px rgba(95, 95, 205, 0.1),
+            0 2px 4px rgba(45, 90, 39, 0.05);
     }
 
     .shadow-islamic-lg {
-        box-shadow: 0 8px 25px rgba(95, 95, 205, 0.15), 0 4px 8px rgba(45, 90, 39, 0.1);
+        box-shadow:
+            0 8px 25px rgba(95, 95, 205, 0.15),
+            0 4px 8px rgba(45, 90, 39, 0.1);
     }
 }
 
@@ -246,7 +323,7 @@
 }
 
 .admin-card {
-    @apply bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200;
+    @apply border border-gray-200 bg-white shadow-sm transition-shadow duration-200 hover:shadow-md;
 }
 
 /* Button styles have been moved to component-based system */
@@ -257,7 +334,7 @@
     }
 
     body {
-        @apply bg-background text-foreground font-sans;
+        @apply bg-background font-sans text-foreground;
     }
 
     /* Islamic typography hierarchy */
@@ -267,7 +344,7 @@
     h4,
     h5,
     h6 {
-        @apply font-semibold leading-tight;
+        @apply leading-tight font-semibold;
     }
 
     h1 {
@@ -334,7 +411,6 @@
 }
 
 @keyframes gradientShift {
-
     0%,
     100% {
         background-position: 0% 50%;
@@ -430,7 +506,9 @@
 
 /* Enhanced hover effects for modern UI */
 .hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 .hover-lift:hover {

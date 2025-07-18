@@ -24,6 +24,12 @@ Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
 // Static Pages
 Route::get('/about', [AboutController::class, 'index'])->name('frontend.about');
 Route::get('/contact', [ContactController::class, 'index'])->name('frontend.contact');
+Route::get('/daily-verse', function () {
+    return inertia('Frontend/DailyVerse');
+})->name('frontend.daily-verse');
+Route::get('/quran', function () {
+    return inertia('Frontend/QuranReader');
+})->name('frontend.quran');
 Route::post('/contact', [ContactController::class, 'submit'])
     ->middleware('throttle:5,15') // 5 attempts per 15 minutes
     ->name('frontend.contact.submit');

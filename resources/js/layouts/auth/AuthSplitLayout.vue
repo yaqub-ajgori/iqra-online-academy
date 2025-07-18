@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
@@ -17,15 +16,15 @@ defineProps<{
         <div class="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
             <div class="absolute inset-0 bg-zinc-900" />
             <Link :href="route('frontend.home')" class="relative z-20 flex items-center space-x-3">
-              <div class="relative">
-                <div class="w-10 h-10 bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] rounded-lg flex items-center justify-center shadow-lg">
-                  <span class="text-white font-bold text-lg">ই</span>
+                <div class="relative">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] shadow-lg">
+                        <span class="text-lg font-bold text-white">ই</span>
+                    </div>
+                    <div class="absolute -top-1 -right-1 h-3 w-3 animate-pulse rounded-full bg-[#d4a574]"></div>
                 </div>
-                <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#d4a574] rounded-full animate-pulse"></div>
-              </div>
-              <div>
-                <h1 class="text-xl font-bold text-white">{{ name }}</h1>
-              </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white">{{ name }}</h1>
+                </div>
             </Link>
             <div v-if="quote" class="relative z-20 mt-auto">
                 <blockquote class="space-y-2">

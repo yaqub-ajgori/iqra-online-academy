@@ -14,7 +14,15 @@
       "Bash(python3:*)",
       "Bash(node:*)",
       "Bash(mv:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "WebFetch(domain:alquran.cloud)",
+      "WebFetch(domain:api.alquran.cloud)",
+      "Bash(sed:*)",
+      "Bash(npm run dev:*)",
+      "Bash(pkill:*)",
+      "Bash(awk:*)",
+      "Bash(npm run format:*)",
+      "Bash(npm run lint)"
     ],
     "deny": []
   }
