@@ -650,7 +650,6 @@
                                     >
                                         {{ ayah.surah.englishName }}
                                     </span>
-                                    <span class="font-bold text-[#5f5fcd]">আয়াত {{ ayah.numberInSurah }}</span>
                                 </div>
                                 <div v-if="currentJuz" class="text-xs text-gray-500">
                                     {{ ayah.surah.revelationType === 'Meccan' ? 'মক্কী' : 'মাদানী' }}
@@ -746,12 +745,9 @@ const isPlaying = ref(false);
 const audioElement = ref(null);
 const selectedReciter = ref('afs');
 const availableReciters = ref([
-    { code: 'afs', name: 'আল-আফাসি', server: 'server8.mp3quran.net/afs' },
-    { code: 'thubti', name: 'সাউদ আশ-শুরাইম', server: 'server6.mp3quran.net/thubti' },
-    { code: 'minsh', name: 'মিশারি আল-আফাসি', server: 'server10.mp3quran.net/minsh' },
-    { code: 'husary', name: 'মাহমুদ খলিল আল-হুসারি', server: 'server13.mp3quran.net/husr' },
-    { code: 'maher', name: 'মাহের আল-মুয়াইকলি', server: 'server12.mp3quran.net/maher' },
-    { code: 'ayyoub', name: 'মুহাম্মদ আইয়ুব', server: 'server8.mp3quran.net/ayyub' },
+    { code: 'afs', name: 'আল-আফাসি', server: 'server8.mp3quran.net/afs', ayahServer: 'everyayah.com/data/Alafasy_128kbps' },
+    { code: 'thubti', name: 'সাউদ আশ-শুরাইম', server: 'server6.mp3quran.net/thubti', ayahServer: 'everyayah.com/data/Saood_ash-Shuraym_128kbps' },
+    { code: 'husary', name: 'মাহমুদ খলিল আল-হুসারি', server: 'server13.mp3quran.net/husr', ayahServer: 'everyayah.com/data/Husary_128kbps' },
 ]);
 
 const selectedTranslation = ref('bn.bengali');
@@ -1626,11 +1622,13 @@ const selectSurah = async () => {
     selectedJuz.value = null; // Clear juz dropdown
     selectedPage.value = null; // Clear page when selecting surah
 
-    // Stop any playing audio
+    // Stop any playing audio and reset states
     if (audioElement.value) {
         audioElement.value.pause();
         audioElement.value.src = '';
     }
+    isPlaying.value = false;
+    currentlyPlayingAyahIndex.value = -1;
 
     // Load Arabic text with selected style
     await loadSurahArabicText();
@@ -1652,13 +1650,16 @@ const selectJuz = async () => {
 
     currentJuz.value = juz;
     currentSurah.value = null; // Clear surah when selecting juz
+    currentSurahNumber.value = null; // Clear surah dropdown
     selectedPage.value = null; // Clear page when selecting juz
 
-    // Stop any playing audio
+    // Stop any playing audio and reset states
     if (audioElement.value) {
         audioElement.value.pause();
         audioElement.value.src = '';
     }
+    isPlaying.value = false;
+    currentlyPlayingAyahIndex.value = -1;
 
     // Load juz Arabic text with selected style
     await loadJuzArabicText();
@@ -1672,12 +1673,16 @@ const selectPage = async () => {
 
     currentSurah.value = null; // Clear surah when selecting page
     currentJuz.value = null; // Clear juz when selecting page
+    selectedJuz.value = null; // Clear juz dropdown
+    currentSurahNumber.value = null; // Clear surah dropdown
 
-    // Stop any playing audio
+    // Stop any playing audio and reset states
     if (audioElement.value) {
         audioElement.value.pause();
         audioElement.value.src = '';
     }
+    isPlaying.value = false;
+    currentlyPlayingAyahIndex.value = -1;
 
     // Load page Arabic text with selected style
     await loadPageArabicText();
@@ -1999,9 +2004,16 @@ const toggleAudio = async () => {
             const surahPadded = surahNumber.toString().padStart(3, '0');
             const ayahPadded = ayahNumber.toString().padStart(3, '0');
 
-            // For juz, we'll use individual ayah audio from everyayah.com
+            // Use the selected reciter's ayah server
+            const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
+            if (!currentReciter) {
+                console.error('Selected reciter not found:', selectedReciter.value);
+                return;
+            }
+
+            // For juz, we'll use individual ayah audio from the selected reciter
             // This ensures we start from the correct ayah even if it's in the middle of a surah
-            const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${surahPadded}${ayahPadded}.mp3`;
+            const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
 
             audioElement.value.src = audioUrl;
 
@@ -2024,9 +2036,16 @@ const toggleAudio = async () => {
             const surahPadded = surahNumber.toString().padStart(3, '0');
             const ayahPadded = ayahNumber.toString().padStart(3, '0');
 
-            // For page, we'll use individual ayah audio from everyayah.com
+            // Use the selected reciter's ayah server
+            const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
+            if (!currentReciter) {
+                console.error('Selected reciter not found:', selectedReciter.value);
+                return;
+            }
+
+            // For page, we'll use individual ayah audio from the selected reciter
             // This ensures we start from the correct ayah even if it's in the middle of a surah
-            const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${surahPadded}${ayahPadded}.mp3`;
+            const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
 
             audioElement.value.src = audioUrl;
 
@@ -2194,7 +2213,15 @@ const handleAudioEnded = async () => {
 
             const surahPadded = surahNumber.toString().padStart(3, '0');
             const ayahPadded = ayahNumber.toString().padStart(3, '0');
-            const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${surahPadded}${ayahPadded}.mp3`;
+            
+            // Use the selected reciter's ayah server
+            const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
+            if (!currentReciter) {
+                console.error('Selected reciter not found:', selectedReciter.value);
+                isPlaying.value = false;
+                return;
+            }
+            const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
 
             // Update dataset for next iteration
             audioElement.value.dataset.currentAyahIndex = nextIndex.toString();
@@ -2227,7 +2254,16 @@ const handleAudioEnded = async () => {
                     
                     const surahPadded = surahNumber.toString().padStart(3, '0');
                     const ayahPadded = ayahNumber.toString().padStart(3, '0');
-                    const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${surahPadded}${ayahPadded}.mp3`;
+                    
+                    // Use the selected reciter's ayah server
+                    const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
+                    if (!currentReciter) {
+                        console.error('Selected reciter not found:', selectedReciter.value);
+                        isPlaying.value = false;
+                        currentlyPlayingAyahIndex.value = -1;
+                        return;
+                    }
+                    const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
                     
                     audioElement.value.src = audioUrl;
                     try {
@@ -2257,7 +2293,15 @@ const handleAudioEnded = async () => {
 
             const surahPadded = surahNumber.toString().padStart(3, '0');
             const ayahPadded = ayahNumber.toString().padStart(3, '0');
-            const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${surahPadded}${ayahPadded}.mp3`;
+            
+            // Use the selected reciter's ayah server
+            const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
+            if (!currentReciter) {
+                console.error('Selected reciter not found:', selectedReciter.value);
+                isPlaying.value = false;
+                return;
+            }
+            const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
 
             // Update dataset for next iteration
             audioElement.value.dataset.currentAyahIndex = nextIndex.toString();
@@ -2290,7 +2334,16 @@ const handleAudioEnded = async () => {
                     
                     const surahPadded = surahNumber.toString().padStart(3, '0');
                     const ayahPadded = ayahNumber.toString().padStart(3, '0');
-                    const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${surahPadded}${ayahPadded}.mp3`;
+                    
+                    // Use the selected reciter's ayah server
+                    const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
+                    if (!currentReciter) {
+                        console.error('Selected reciter not found:', selectedReciter.value);
+                        isPlaying.value = false;
+                        currentlyPlayingAyahIndex.value = -1;
+                        return;
+                    }
+                    const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
                     
                     audioElement.value.src = audioUrl;
                     try {
