@@ -308,19 +308,10 @@
                                 <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base">
                                     {{ repeatMode ? 'রিপিট মোড চালু' : 'রিপিট মোড' }}
                                 </h4>
-                                <p class="text-xs text-gray-600">
-                                    {{
-                                        repeatMode && isPlaying && repeatCount > 0
-                                            ? `পুনরাবৃত্তি ${toBanglaNumber(repeatCount)}/৩`
-                                            : repeatMode
-                                              ? 'প্রতিটি আয়াত পুনরাবৃত্তি'
-                                              : 'আয়াত পুনরাবৃত্তি করুন'
-                                    }}
-                                </p>
                             </div>
                         </div>
                         <p class="text-xs leading-relaxed text-gray-700 sm:text-sm">
-                            {{ repeatMode ? 'প্রতিটি আয়াত ৩ বার পুনরাবৃত্তি হবে' : 'হিফয অনুশীলনের জন্য আয়াত পুনরাবৃত্তি' }}
+                            {{ repeatMode ? 'রিপিট মোড কার্যকর' : 'হিফয অনুশীলনের জন্য রিপিট মোড' }}
                         </p>
                     </div>
                 </div>
@@ -347,6 +338,7 @@
                             @change="selectSurah"
                             class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-gradient-to-r from-white to-[#5f5fcd]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-md focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 sm:px-3 sm:text-sm"
                         >
+                            <option :value="null">সূরা নির্বাচন করুন</option>
                             <option v-for="surah in surahs" :key="surah.number" :value="surah.number">
                                 {{ surah.number }}. {{ surah.banglaName }}
                             </option>
@@ -370,7 +362,7 @@
                             @change="selectJuz"
                             class="w-full rounded-lg border-2 border-[#2d5a27]/20 bg-gradient-to-r from-white to-[#2d5a27]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#2d5a27]/40 hover:shadow-md focus:border-[#2d5a27] focus:ring-2 focus:ring-[#2d5a27]/30 sm:px-3 sm:text-sm"
                         >
-                            <option :value="null">সূরা দিয়ে পড়ুন</option>
+                            <option :value="null">পারা নির্বাচন করুন</option>
                             <option v-for="juz in availableJuzs" :key="juz.number" :value="juz.number">
                                 {{ juz.name }}
                             </option>
@@ -482,7 +474,7 @@
                     >
                         <component :is="isPlaying ? PauseIcon : PlayIcon" class="mr-1 h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
                         <span class="hidden sm:inline">{{
-                            isPlaying ? 'থামান' : currentJuz ? 'পারা থেকে চালান' : selectedPage ? 'পৃষ্ঠা থেকে চালান' : 'তেলাওয়াত শুনুন'
+                            isPlaying ? 'থামান' : 'তেলাওয়াত শুনুন'
                         }}</span>
                         <span class="sm:hidden">{{ isPlaying ? 'থামান' : 'চালান' }}</span>
                     </button>
@@ -513,13 +505,6 @@
                     <span class="ml-2 text-xs text-gray-600"> {{ ayahs.length }} আয়াত </span>
                 </div>
 
-                <!-- Compact Bismillah -->
-                <div
-                    v-if="currentSurah && currentSurah.number !== 9"
-                    class="flex items-center rounded-full bg-gradient-to-r from-[#d4a574]/10 to-[#5f5fcd]/10 px-3 py-1.5"
-                >
-                    <span class="font-arabic text-sm text-[#5f5fcd]" dir="rtl"> بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ </span>
-                </div>
             </div>
 
             <!-- Topic Loading State -->
@@ -619,6 +604,14 @@
                 </div>
                 <p class="mt-4 text-lg font-medium text-[#2d5a27]">{{ selectedTopic.name }} এর আয়াত খুঁজে আনা হচ্ছে...</p>
                 <p class="mt-2 text-sm text-gray-600">অনুগ্রহ করে অপেক্ষা করুন</p>
+            </div>
+
+            <!-- Juz Boundary Fixing Indicator -->
+            <div v-if="juzBoundaryFixing && currentJuz" class="mb-4 text-center">
+                <div class="inline-flex items-center rounded-full border border-[#5f5fcd]/20 bg-gradient-to-r from-[#5f5fcd]/10 to-[#2d5a27]/10 px-4 py-2">
+                    <div class="mr-2 h-5 w-5 animate-spin rounded-full border-b-2 border-[#5f5fcd]"></div>
+                    <span class="font-semibold text-[#2d5a27]">পারা {{ currentJuz.number }} এর সঠিক সীমানা নির্ধারণ করা হচ্ছে...</span>
+                </div>
             </div>
 
             <!-- Premium Ayahs Display -->
@@ -746,9 +739,8 @@ import { Head } from '@inertiajs/vue3';
 import { PauseIcon, PlayIcon } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
-// Simple state
 const surahs = ref([]);
-const currentSurahNumber = ref(1);
+const currentSurahNumber = ref(null);
 const currentSurah = ref(null);
 const currentJuz = ref(null);
 const ayahs = ref([]);
@@ -768,6 +760,9 @@ const selectedTranslation = ref('bn.bengali');
 const availableTranslations = ref([
     { code: 'bn.bengali', name: 'মুহিউদ্দীন খান', author: 'Muhiuddin Khan' },
     { code: 'bn.hoque', name: 'জহুরুল হক', author: 'Jahorul Hoque' },
+    { code: 'en.sahih', name: 'Sahih International (English)', author: 'Sahih International' },
+    { code: 'en.pickthall', name: 'Pickthall (English)', author: 'Mohammed Marmaduke William Pickthall' },
+    { code: 'en.yusufali', name: 'Yusuf Ali (English)', author: 'Abdullah Yusuf Ali' },
 ]);
 
 const selectedTextStyle = ref('quran-uthmani');
@@ -779,6 +774,40 @@ const availableTextStyles = ref([
 ]);
 
 const selectedJuz = ref(null);
+// Juz boundaries with exact starting points (surah:ayah)
+const juzBoundaries = {
+    1: { startSurah: 1, startAyah: 1 },
+    2: { startSurah: 2, startAyah: 142 },
+    3: { startSurah: 2, startAyah: 253 },
+    4: { startSurah: 3, startAyah: 93 },
+    5: { startSurah: 4, startAyah: 24 },
+    6: { startSurah: 4, startAyah: 148 },
+    7: { startSurah: 5, startAyah: 82 },
+    8: { startSurah: 6, startAyah: 111 },
+    9: { startSurah: 7, startAyah: 88 },
+    10: { startSurah: 8, startAyah: 41 },
+    11: { startSurah: 9, startAyah: 93 },
+    12: { startSurah: 11, startAyah: 6 },
+    13: { startSurah: 12, startAyah: 53 },
+    14: { startSurah: 15, startAyah: 1 },
+    15: { startSurah: 17, startAyah: 1 },
+    16: { startSurah: 18, startAyah: 75 },
+    17: { startSurah: 21, startAyah: 1 },
+    18: { startSurah: 23, startAyah: 1 },
+    19: { startSurah: 25, startAyah: 21 },
+    20: { startSurah: 27, startAyah: 56 },
+    21: { startSurah: 29, startAyah: 46 },
+    22: { startSurah: 33, startAyah: 31 },
+    23: { startSurah: 36, startAyah: 28 },
+    24: { startSurah: 39, startAyah: 32 },
+    25: { startSurah: 41, startAyah: 47 },
+    26: { startSurah: 46, startAyah: 1 },
+    27: { startSurah: 51, startAyah: 31 },
+    28: { startSurah: 58, startAyah: 1 },
+    29: { startSurah: 67, startAyah: 1 },
+    30: { startSurah: 78, startAyah: 1 }
+};
+
 const availableJuzs = ref([
     { number: 1, name: '১ম পারা', arabicName: 'الۤمۤ' },
     { number: 2, name: '২য় পারা', arabicName: 'سَيَقُولُ' },
@@ -815,7 +844,6 @@ const availableJuzs = ref([
 const selectedPage = ref(null);
 const availablePages = ref([]);
 
-// Generate page numbers (1-604 for standard Quran mushaf)
 const generatePageNumbers = () => {
     const pages = [];
     for (let i = 1; i <= 604; i++) {
@@ -824,39 +852,32 @@ const generatePageNumbers = () => {
     return pages;
 };
 
-// Search functionality
+const juzBoundaryFixing = ref(false);
 const searchQuery = ref('');
 const searchResults = ref([]);
 const searchLoading = ref(false);
-const searchIn = ref('all'); // 'all' or 'current'
-const searchLanguage = ref('arabic'); // 'arabic' or 'bengali'
-
-// Topic-Based Study
+const searchIn = ref('all');
+const searchLanguage = ref('arabic');
 const showTopics = ref(false);
 const selectedTopic = ref(null);
 const topicResults = ref([]);
 const topicLoading = ref(false);
 
-// Cache for API results
 const apiCache = new Map();
-const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+const CACHE_DURATION = 30 * 60 * 1000;
 
-// Advanced Search & Discovery
 const conceptSuggestions = ref([]);
 const searchHistory = ref([]);
 const similarAyahs = ref([]);
 const showSimilarAyahs = ref(false);
-
-// Memorization Helper
 const showMemorizationHelper = ref(false);
 const progressiveMode = ref(false);
 const hideTranslation = ref(false);
 const repeatMode = ref(false);
 const currentAyahIndex = ref(0);
 const repeatCount = ref(0);
-const maxRepeats = ref(3);
+const collectionRepeatCount = ref(0); // For Para/Page level repeats
 
-// Topic Categories with search terms
 const topicCategories = ref([
     {
         id: 'salah',
@@ -977,7 +998,6 @@ const displayAyahs = computed(() => {
     return ayahsToShow;
 });
 
-// Search functions
 const performSearch = async () => {
     if (!searchQuery.value.trim()) return;
 
@@ -1126,7 +1146,6 @@ const clearSearch = () => {
     conceptSuggestions.value = [];
 };
 
-// Advanced Search & Discovery Functions
 const addToSearchHistory = (query) => {
     if (!searchHistory.value.includes(query)) {
         searchHistory.value.unshift(query);
@@ -1215,7 +1234,6 @@ const loadSearchHistory = () => {
     }
 };
 
-// Topic-Based Study Functions
 const selectTopic = async (topic) => {
     // If clicking the same topic, reset/clear it
     if (selectedTopic.value?.id === topic.id) {
@@ -1397,7 +1415,6 @@ const clearTopic = () => {
     showTopics.value = false;
 };
 
-// Memorization Helper Functions
 const toggleProgressiveMode = () => {
     progressiveMode.value = !progressiveMode.value;
     currentAyahIndex.value = 0;
@@ -1423,6 +1440,7 @@ const toggleTranslationVisibility = () => {
 const toggleRepeatMode = () => {
     repeatMode.value = !repeatMode.value;
     repeatCount.value = 0;
+    collectionRepeatCount.value = 0;
 
     if (repeatMode.value) {
         localStorage.setItem('iqra_repeat_mode', 'true');
@@ -1449,6 +1467,7 @@ const prevAyah = () => {
 const resetProgressive = () => {
     currentAyahIndex.value = 0;
     repeatCount.value = 0;
+    collectionRepeatCount.value = 0;
 };
 
 const loadMemorizationSettings = () => {
@@ -1600,7 +1619,6 @@ const loadSurahs = async () => {
     }));
 };
 
-// Select and load surah
 const selectSurah = async () => {
     const surah = surahs.value.find((s) => s.number === currentSurahNumber.value);
     if (!surah) return;
@@ -1623,7 +1641,6 @@ const selectSurah = async () => {
     await loadSurahTranslation();
 };
 
-// Select and load juz/para
 const selectJuz = async () => {
     if (!selectedJuz.value) {
         // "সূরা দিয়ে পড়ুন" selected, go back to surah mode
@@ -1652,7 +1669,6 @@ const selectJuz = async () => {
     await loadJuzTranslation();
 };
 
-// Select and load page
 const selectPage = async () => {
     if (!selectedPage.value) return;
 
@@ -1672,7 +1688,6 @@ const selectPage = async () => {
     await loadPageTranslation();
 };
 
-// Load Arabic text for current surah
 const loadSurahArabicText = async () => {
     if (!currentSurah.value) return;
 
@@ -1693,7 +1708,6 @@ const loadSurahArabicText = async () => {
     }
 };
 
-// Load translation for current surah
 const loadSurahTranslation = async () => {
     if (!currentSurah.value) return;
 
@@ -1724,41 +1738,146 @@ const loadSurahTranslation = async () => {
     }
 };
 
-// Load Arabic text for current juz
+const fixJuzBoundary = async (juzNumber, textStyle = 'quran-uthmani') => {
+    const boundary = juzBoundaries[juzNumber];
+    if (!boundary || ayahs.value.length === 0) return;
+    
+    const firstAyah = ayahs.value[0];
+    
+    // Check if the first ayah matches the expected boundary
+    if (firstAyah.surah.number === boundary.startSurah && firstAyah.numberInSurah === boundary.startAyah) {
+        return;
+    }
+    
+    juzBoundaryFixing.value = true;
+    
+    try {
+        // Check if we're missing ayahs at the beginning (same surah but later ayah)
+        if (firstAyah.surah.number === boundary.startSurah && firstAyah.numberInSurah > boundary.startAyah) {
+            const missingAyahs = [];
+            
+            // Fetch all missing ayahs
+            for (let ayahNum = boundary.startAyah; ayahNum < firstAyah.numberInSurah; ayahNum++) {
+                try {
+                    const response = await fetch(`https://api.alquran.cloud/v1/ayah/${boundary.startSurah}:${ayahNum}/${textStyle}`);
+                    const data = await response.json();
+                    
+                    if (data.data) {
+                        missingAyahs.push(data.data);
+                    }
+                } catch (error) {
+                    // Silent fail for individual ayah fetch
+                }
+            }
+            
+            // Add missing ayahs at the beginning
+            if (missingAyahs.length > 0) {
+                ayahs.value = [...missingAyahs, ...ayahs.value];
+            }
+        } 
+        // Check if API started from wrong surah or earlier ayah
+        else {
+            try {
+                const response = await fetch(`https://api.alquran.cloud/v1/ayah/${boundary.startSurah}:${boundary.startAyah}/${textStyle}`);
+                const data = await response.json();
+                
+                if (data.data) {
+                    // Check if this ayah already exists in our array
+                    const existingIndex = ayahs.value.findIndex(
+                        a => a.surah.number === data.data.surah.number && 
+                             a.numberInSurah === data.data.numberInSurah
+                    );
+                    
+                    if (existingIndex === -1) {
+                        ayahs.value.unshift(data.data);
+                    }
+                }
+            } catch (error) {
+                // Silent fail for boundary correction
+            }
+        }
+    } finally {
+        juzBoundaryFixing.value = false;
+    }
+};
+
 const loadJuzArabicText = async () => {
     if (!currentJuz.value) return;
 
+    const juzNumber = currentJuz.value.number;
+
     try {
-        const arabicResponse = await fetch(`https://api.alquran.cloud/v1/juz/${currentJuz.value.number}/${selectedTextStyle.value}`);
+        const arabicResponse = await fetch(`https://api.alquran.cloud/v1/juz/${juzNumber}/${selectedTextStyle.value}`);
         const arabicData = await arabicResponse.json();
-        ayahs.value = arabicData.data.ayahs;
+        
+        if (arabicData.data && arabicData.data.ayahs && arabicData.data.ayahs.length > 0) {
+            ayahs.value = arabicData.data.ayahs;
+            await fixJuzBoundary(juzNumber, selectedTextStyle.value);
+        } else {
+            throw new Error('No ayahs returned from API');
+        }
+        
     } catch (error) {
-        console.error('Error loading Juz Arabic text:', error);
         // Fallback to default text style
         try {
-            const fallbackResponse = await fetch(`https://api.alquran.cloud/v1/juz/${currentJuz.value.number}`);
+            const fallbackResponse = await fetch(`https://api.alquran.cloud/v1/juz/${juzNumber}`);
             const fallbackData = await fallbackResponse.json();
-            ayahs.value = fallbackData.data.ayahs;
+            
+            if (fallbackData.data && fallbackData.data.ayahs) {
+                ayahs.value = fallbackData.data.ayahs;
+                await fixJuzBoundary(juzNumber, 'quran-uthmani');
+            } else {
+                ayahs.value = [];
+            }
         } catch (fallbackError) {
-            console.error('Error loading fallback Juz Arabic text:', fallbackError);
+            ayahs.value = [];
         }
     }
 };
 
-// Load translation for current juz
 const loadJuzTranslation = async () => {
-    if (!currentJuz.value) return;
+    if (!currentJuz.value || !ayahs.value.length) return;
 
     try {
+        // First, try to get the entire Juz translation
         const translationResponse = await fetch(`https://api.alquran.cloud/v1/juz/${currentJuz.value.number}/${selectedTranslation.value}`);
         const translationData = await translationResponse.json();
 
         const translations = {};
+        
+        // Create a map of translations from the API response
+        const apiTranslations = {};
         translationData.data.ayahs.forEach((ayah) => {
-            // For juz, we need to use the absolute ayah number as key
-            translations[ayah.numberInSurah] = ayah.text;
+            const key = `${ayah.surah.number}:${ayah.numberInSurah}`;
+            apiTranslations[key] = ayah.text;
         });
+        
+        // Map translations to our displayed ayahs
+        ayahs.value.forEach((ayah) => {
+            const key = `${ayah.surah.number}:${ayah.numberInSurah}`;
+            if (apiTranslations[key]) {
+                translations[ayah.numberInSurah] = apiTranslations[key];
+            }
+        });
+        
         ayahTranslations.value = translations;
+        
+        // Fetch any missing translations individually
+        const missingAyahs = ayahs.value.filter(ayah => !translations[ayah.numberInSurah]);
+        if (missingAyahs.length > 0) {
+            for (const ayah of missingAyahs) {
+                try {
+                    const response = await fetch(`https://api.alquran.cloud/v1/ayah/${ayah.surah.number}:${ayah.numberInSurah}/${selectedTranslation.value}`);
+                    const data = await response.json();
+                    
+                    if (data.data) {
+                        ayahTranslations.value[ayah.numberInSurah] = data.data.text;
+                    }
+                } catch (error) {
+                    console.error(`Error loading translation for ayah ${ayah.surah.number}:${ayah.numberInSurah}:`, error);
+                }
+            }
+        }
     } catch (error) {
         console.error('Error loading Juz translation:', error);
         // Fallback to default translation
@@ -1767,9 +1886,22 @@ const loadJuzTranslation = async () => {
             const fallbackData = await fallbackResponse.json();
 
             const translations = {};
+            
+            // Create a map of translations from the API response
+            const apiTranslations = {};
             fallbackData.data.ayahs.forEach((ayah) => {
-                translations[ayah.numberInSurah] = ayah.text;
+                const key = `${ayah.surah.number}:${ayah.numberInSurah}`;
+                apiTranslations[key] = ayah.text;
             });
+            
+            // Map translations to our displayed ayahs
+            ayahs.value.forEach((ayah) => {
+                const key = `${ayah.surah.number}:${ayah.numberInSurah}`;
+                if (apiTranslations[key]) {
+                    translations[ayah.numberInSurah] = apiTranslations[key];
+                }
+            });
+            
             ayahTranslations.value = translations;
         } catch (fallbackError) {
             console.error('Error loading fallback Juz translation:', fallbackError);
@@ -1777,7 +1909,6 @@ const loadJuzTranslation = async () => {
     }
 };
 
-// Load Arabic text for current page
 const loadPageArabicText = async () => {
     if (!selectedPage.value) return;
 
@@ -1798,7 +1929,6 @@ const loadPageArabicText = async () => {
     }
 };
 
-// Load translation for current page
 const loadPageTranslation = async () => {
     if (!selectedPage.value) return;
 
@@ -1834,12 +1964,13 @@ const audioInitialized = ref(false);
 
 // Toggle audio playback
 const toggleAudio = async () => {
-    // Check if we have either surah or juz selected
-    if (!currentSurah.value && !currentJuz.value) return;
+    // Check if we have either surah, juz, or page selected
+    if (!currentSurah.value && !currentJuz.value && !selectedPage.value) return;
 
     if (isPlaying.value) {
         audioElement.value.pause();
         repeatCount.value = 0; // Reset repeat count when stopping
+        collectionRepeatCount.value = 0; // Reset collection repeat count
         currentlyPlayingAyahIndex.value = -1; // Reset playing index
         return;
     }
@@ -1854,8 +1985,9 @@ const toggleAudio = async () => {
         }
     }
 
-    // Reset repeat count when loading new audio
+    // Reset repeat counts when loading new audio
     repeatCount.value = 0;
+    collectionRepeatCount.value = 0;
 
     // For Juz/Para mode, we'll play the first ayah of the juz
     // Since juz can start in the middle of a surah, we can't play full surah audio
@@ -1878,6 +2010,31 @@ const toggleAudio = async () => {
             // Store current ayah info for continuous playback
             audioElement.value.dataset.currentAyahIndex = '0';
             audioElement.value.dataset.playMode = 'juz';
+            currentlyPlayingAyahIndex.value = 0;
+        } else {
+            return; // No ayahs to play
+        }
+    } else if (selectedPage.value) {
+        // For Page mode, we'll play the first ayah of the page
+        // Similar to juz mode, since pages can start in the middle of a surah
+        if (ayahs.value.length > 0) {
+            const firstAyah = ayahs.value[0];
+            const surahNumber = firstAyah.surah.number;
+            const ayahNumber = firstAyah.numberInSurah;
+
+            // Create padded numbers for the audio file
+            const surahPadded = surahNumber.toString().padStart(3, '0');
+            const ayahPadded = ayahNumber.toString().padStart(3, '0');
+
+            // For page, we'll use individual ayah audio from everyayah.com
+            // This ensures we start from the correct ayah even if it's in the middle of a surah
+            const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${surahPadded}${ayahPadded}.mp3`;
+
+            audioElement.value.src = audioUrl;
+
+            // Store current ayah info for continuous playback
+            audioElement.value.dataset.currentAyahIndex = '0';
+            audioElement.value.dataset.playMode = 'page';
             currentlyPlayingAyahIndex.value = 0;
         } else {
             return; // No ayahs to play
@@ -1964,6 +2121,8 @@ const updateTranslation = () => {
         loadSurahTranslation();
     } else if (currentJuz.value) {
         loadJuzTranslation();
+    } else if (selectedPage.value) {
+        loadPageTranslation();
     }
 };
 
@@ -1977,6 +2136,8 @@ const updateTextStyle = () => {
         loadSurahArabicText();
     } else if (currentJuz.value) {
         loadJuzArabicText();
+    } else if (selectedPage.value) {
+        loadPageArabicText();
     }
 };
 
@@ -1993,29 +2154,35 @@ const handleAudioEnded = async () => {
     const playMode = audioElement.value.dataset.playMode;
     const currentIndex = parseInt(audioElement.value.dataset.currentAyahIndex || '0');
 
-    // Handle repeat mode first
-    if (repeatMode.value && repeatCount.value < 2) {
-        repeatCount.value++;
-
-        // Small delay before repeating
-        setTimeout(async () => {
-            if (audioElement.value) {
-                audioElement.value.currentTime = 0;
-                try {
-                    await audioElement.value.play();
-                } catch (error) {
-                    console.error('Error repeating audio:', error);
-                    isPlaying.value = false;
+    // For Surah mode: repeat individual audio 3 times
+    if (playMode !== 'juz' && playMode !== 'page') {
+        if (repeatMode.value && repeatCount.value < 2) {
+            repeatCount.value++;
+            
+            setTimeout(async () => {
+                if (audioElement.value) {
+                    audioElement.value.currentTime = 0;
+                    try {
+                        await audioElement.value.play();
+                    } catch (error) {
+                        console.error('Error repeating audio:', error);
+                        isPlaying.value = false;
+                    }
                 }
-            }
-        }, 500); // 500ms delay between repeats
+            }, 500);
+            return;
+        }
+        
+        // Reset and stop for surah mode
+        if (repeatMode.value) {
+            repeatCount.value = 0;
+        }
+        isPlaying.value = false;
         return;
     }
 
-    // Reset repeat count after 3 plays
-    if (repeatMode.value) {
-        repeatCount.value = 0;
-    }
+    // Reset repeat count for current ayah (used for individual ayah repeats in collection modes)
+    repeatCount.value = 0;
 
     // Handle continuous playback for juz mode
     if (playMode === 'juz' && currentJuz.value) {
@@ -2047,9 +2214,101 @@ const handleAudioEnded = async () => {
                 }
             }, 1000); // 1 second delay between ayahs
         } else {
-            // Reached end of juz
-            isPlaying.value = false;
-            currentlyPlayingAyahIndex.value = -1;
+            // Reached end of juz - handle collection-level repeat
+            if (repeatMode.value && collectionRepeatCount.value < 2) {
+                collectionRepeatCount.value++;
+                
+                // Restart from first ayah of the juz
+                setTimeout(async () => {
+                    audioElement.value.dataset.currentAyahIndex = '0';
+                    currentlyPlayingAyahIndex.value = 0;
+                    
+                    const firstAyah = ayahs.value[0];
+                    const surahNumber = firstAyah.surah.number;
+                    const ayahNumber = firstAyah.numberInSurah;
+                    
+                    const surahPadded = surahNumber.toString().padStart(3, '0');
+                    const ayahPadded = ayahNumber.toString().padStart(3, '0');
+                    const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${surahPadded}${ayahPadded}.mp3`;
+                    
+                    audioElement.value.src = audioUrl;
+                    try {
+                        await audioElement.value.play();
+                    } catch (error) {
+                        console.error('Error repeating juz:', error);
+                        isPlaying.value = false;
+                        currentlyPlayingAyahIndex.value = -1;
+                    }
+                }, 1500); // 1.5 second delay before repeating collection
+            } else {
+                // Reset and stop
+                collectionRepeatCount.value = 0;
+                isPlaying.value = false;
+                currentlyPlayingAyahIndex.value = -1;
+            }
+        }
+    } else if (playMode === 'page' && selectedPage.value) {
+        // Handle continuous playback for page mode
+        const nextIndex = currentIndex + 1;
+
+        if (nextIndex < ayahs.value.length) {
+            // Play next ayah in the page
+            const nextAyah = ayahs.value[nextIndex];
+            const surahNumber = nextAyah.surah.number;
+            const ayahNumber = nextAyah.numberInSurah;
+
+            const surahPadded = surahNumber.toString().padStart(3, '0');
+            const ayahPadded = ayahNumber.toString().padStart(3, '0');
+            const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${surahPadded}${ayahPadded}.mp3`;
+
+            // Update dataset for next iteration
+            audioElement.value.dataset.currentAyahIndex = nextIndex.toString();
+            currentlyPlayingAyahIndex.value = nextIndex;
+
+            // Small delay before playing next ayah
+            setTimeout(async () => {
+                audioElement.value.src = audioUrl;
+                try {
+                    await audioElement.value.play();
+                } catch (error) {
+                    console.error('Error playing next ayah:', error);
+                    isPlaying.value = false;
+                    currentlyPlayingAyahIndex.value = -1;
+                }
+            }, 1000); // 1 second delay between ayahs
+        } else {
+            // Reached end of page - handle collection-level repeat
+            if (repeatMode.value && collectionRepeatCount.value < 2) {
+                collectionRepeatCount.value++;
+                
+                // Restart from first ayah of the page
+                setTimeout(async () => {
+                    audioElement.value.dataset.currentAyahIndex = '0';
+                    currentlyPlayingAyahIndex.value = 0;
+                    
+                    const firstAyah = ayahs.value[0];
+                    const surahNumber = firstAyah.surah.number;
+                    const ayahNumber = firstAyah.numberInSurah;
+                    
+                    const surahPadded = surahNumber.toString().padStart(3, '0');
+                    const ayahPadded = ayahNumber.toString().padStart(3, '0');
+                    const audioUrl = `https://everyayah.com/data/Alafasy_128kbps/${surahPadded}${ayahPadded}.mp3`;
+                    
+                    audioElement.value.src = audioUrl;
+                    try {
+                        await audioElement.value.play();
+                    } catch (error) {
+                        console.error('Error repeating page:', error);
+                        isPlaying.value = false;
+                        currentlyPlayingAyahIndex.value = -1;
+                    }
+                }, 1500); // 1.5 second delay before repeating collection
+            } else {
+                // Reset and stop
+                collectionRepeatCount.value = 0;
+                isPlaying.value = false;
+                currentlyPlayingAyahIndex.value = -1;
+            }
         }
     } else {
         // For surah mode or end of playback
@@ -2104,7 +2363,6 @@ const copyAyah = async (ayah, event) => {
     }
 };
 
-// Cache helper functions
 const getCachedData = (key) => {
     const cached = apiCache.get(key);
     if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {

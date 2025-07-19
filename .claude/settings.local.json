@@ -22,7 +22,10 @@
       "Bash(pkill:*)",
       "Bash(awk:*)",
       "Bash(npm run format:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "WebFetch(domain:127.0.0.1)",
+      "WebFetch(domain:quran411.com)",
+      "Bash(npm run lint:*)"
     ],
     "deny": []
   }
