@@ -253,7 +253,6 @@
                                 <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base">
                                     {{ progressiveMode ? 'প্রগ্রেসিভ মোড চালু' : 'প্রগ্রেসিভ মোড' }}
                                 </h4>
-                                <p class="text-xs text-gray-600">{{ progressiveMode ? 'একবারে একটি আয়াত' : 'একে একে আয়াত দেখুন' }}</p>
                             </div>
                         </div>
                         <p class="text-xs leading-relaxed text-gray-700 sm:text-sm">
@@ -281,7 +280,6 @@
                                 <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base">
                                     {{ hideTranslation ? 'অনুবাদ লুকানো' : 'অনুবাদ লুকান' }}
                                 </h4>
-                                <p class="text-xs text-gray-600">{{ hideTranslation ? 'শুধু আরবি দেখানো' : 'শুধু আরবি পড়ুন' }}</p>
                             </div>
                         </div>
                         <p class="text-xs leading-relaxed text-gray-700 sm:text-sm">
@@ -473,10 +471,9 @@
                         ]"
                     >
                         <component :is="isPlaying ? PauseIcon : PlayIcon" class="mr-1 h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
-                        <span class="hidden sm:inline">{{
+                        <span>{{
                             isPlaying ? 'থামান' : 'তেলাওয়াত শুনুন'
                         }}</span>
-                        <span class="sm:hidden">{{ isPlaying ? 'থামান' : 'চালান' }}</span>
                     </button>
                 </div>
             </div>
@@ -749,11 +746,12 @@ const isPlaying = ref(false);
 const audioElement = ref(null);
 const selectedReciter = ref('afs');
 const availableReciters = ref([
-    { code: 'afs', name: 'আল-আফাসি (Al-Afasy)', server: 'server8.mp3quran.net/afs' },
-    { code: 'thubti', name: 'সাউদ আশ-শুরাইম (As-Shuraim)', server: 'server6.mp3quran.net/thubti' },
-    { code: 'minsh', name: 'মিশারি আল-আফাসি (Mishary)', server: 'server10.mp3quran.net/minsh' },
-    { code: 'husary', name: 'মাহমুদ খলিল আল-হুসারি (Al-Husary)', server: 'server13.mp3quran.net/husr' },
-    { code: 'maher', name: 'মাহের আল-মুয়াইকলি (Maher Al-Muaiqly)', server: 'server12.mp3quran.net/maher' },
+    { code: 'afs', name: 'আল-আফাসি', server: 'server8.mp3quran.net/afs' },
+    { code: 'thubti', name: 'সাউদ আশ-শুরাইম', server: 'server6.mp3quran.net/thubti' },
+    { code: 'minsh', name: 'মিশারি আল-আফাসি', server: 'server10.mp3quran.net/minsh' },
+    { code: 'husary', name: 'মাহমুদ খলিল আল-হুসারি', server: 'server13.mp3quran.net/husr' },
+    { code: 'maher', name: 'মাহের আল-মুয়াইকলি', server: 'server12.mp3quran.net/maher' },
+    { code: 'ayyoub', name: 'মুহাম্মদ আইয়ুব', server: 'server8.mp3quran.net/ayyub' },
 ]);
 
 const selectedTranslation = ref('bn.bengali');

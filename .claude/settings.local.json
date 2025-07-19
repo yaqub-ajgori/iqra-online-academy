@@ -25,7 +25,9 @@
       "Bash(npm run lint)",
       "WebFetch(domain:127.0.0.1)",
       "WebFetch(domain:quran411.com)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "WebFetch(domain:www.mp3quran.net)",
+      "WebFetch(domain:verse.mp3quran.net)"
     ],
     "deny": []
   }

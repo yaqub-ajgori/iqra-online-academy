@@ -239,7 +239,7 @@
                     </div>
 
                     <!-- Enhanced Mobile Navigation -->
-                    <div v-show="mobileMenuOpen" class="border-t border-gray-200 bg-white/95 py-6 backdrop-blur-sm md:hidden">
+                    <div v-show="mobileMenuOpen" class="border-t border-gray-200 bg-white/95 backdrop-blur-sm md:hidden">
                         <div class="space-y-1">
                             <Link
                                 :href="route('frontend.home')"
@@ -775,6 +775,14 @@ function scrollToDonation() {
     100% {
         box-shadow: 0 0 0 0 #5f5fcd00;
     }
+}
+
+@media (max-width: 640px) {
+  header nav > div.flex {
+    height: 3.5rem !important; /* Override h-20 for mobile */
+    min-height: 3.5rem !important;
+    max-height: 3.5rem !important;
+  }
 }
 </style>
 
