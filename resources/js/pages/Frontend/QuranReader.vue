@@ -2356,8 +2356,13 @@ const copyAyah = async (ayah, event) => {
         }, 2000);
     } catch (error) {
         console.error('Failed to copy:', error);
-        // Fallback: show text in alert
-        alert('আয়াতটি কপি করতে সমস্যা হয়েছে');
+        // Fallback: update button text to show error
+        button.innerHTML = 'কপি করতে সমস্যা হয়েছে';
+        button.className = button.className.replace('bg-[#5f5fcd]', 'bg-red-500');
+        setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.className = button.className.replace('bg-red-500', 'bg-[#5f5fcd]');
+        }, 2000);
     }
 };
 
