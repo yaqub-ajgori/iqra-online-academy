@@ -333,10 +333,10 @@
                         </label>
                         <select
                             v-model="currentSurahNumber"
-                            @change="selectSurah"
+                            @change="selectSurah($event)"
                             class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-gradient-to-r from-white to-[#5f5fcd]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-md focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 sm:px-3 sm:text-sm"
                         >
-                            <option :value="null">সূরা নির্বাচন করুন</option>
+                            <option value="">সূরা নির্বাচন করুন</option>
                             <option v-for="surah in surahs" :key="surah.number" :value="surah.number">
                                 {{ surah.number }}. {{ surah.banglaName }}
                             </option>
@@ -357,10 +357,10 @@
                         </label>
                         <select
                             v-model="selectedJuz"
-                            @change="selectJuz"
+                            @change="selectJuz($event)"
                             class="w-full rounded-lg border-2 border-[#2d5a27]/20 bg-gradient-to-r from-white to-[#2d5a27]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#2d5a27]/40 hover:shadow-md focus:border-[#2d5a27] focus:ring-2 focus:ring-[#2d5a27]/30 sm:px-3 sm:text-sm"
                         >
-                            <option :value="null">পারা নির্বাচন করুন</option>
+                            <option value="">পারা নির্বাচন করুন</option>
                             <option v-for="juz in availableJuzs" :key="juz.number" :value="juz.number">
                                 {{ juz.name }}
                             </option>
@@ -450,10 +450,10 @@
                         </label>
                         <select
                             v-model="selectedPage"
-                            @change="selectPage"
+                            @change="selectPage($event)"
                             class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-gradient-to-r from-white to-[#5f5fcd]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-md focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 sm:px-3 sm:text-sm"
                         >
-                            <option :value="null">পৃষ্ঠা নির্বাচন করুন</option>
+                            <option value="">পৃষ্ঠা নির্বাচন করুন</option>
                             <option v-for="page in availablePages" :key="page.number" :value="page.number">পৃষ্ঠা {{ page.number }}</option>
                         </select>
                     </div>
@@ -736,7 +736,7 @@ import { PauseIcon, PlayIcon } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 
 const surahs = ref([]);
-const currentSurahNumber = ref(null);
+const currentSurahNumber = ref('');
 const currentSurah = ref(null);
 const currentJuz = ref(null);
 const ayahs = ref([]);
@@ -767,7 +767,7 @@ const availableTextStyles = ref([
     { code: 'quran-tajweed', name: 'তাজউইদ (রঙিন)', description: 'Colored for Tajweed rules' },
 ]);
 
-const selectedJuz = ref(null);
+const selectedJuz = ref('');
 // Juz boundaries with exact starting points (surah:ayah)
 const juzBoundaries = {
     1: { startSurah: 1, startAyah: 1 },
@@ -835,7 +835,7 @@ const availableJuzs = ref([
     { number: 30, name: '৩০ম পারা', arabicName: 'عَمَّ يَتَسَآءَلُونَ' },
 ]);
 
-const selectedPage = ref(null);
+const selectedPage = ref('');
 const availablePages = ref([]);
 
 const generatePageNumbers = () => {
@@ -1613,14 +1613,19 @@ const loadSurahs = async () => {
     }));
 };
 
-const selectSurah = async () => {
+const selectSurah = async (event) => {
+    // Prevent any default behavior
+    if (event && event.preventDefault) {
+        event.preventDefault();
+    }
+    
     const surah = surahs.value.find((s) => s.number === currentSurahNumber.value);
     if (!surah) return;
 
     currentSurah.value = surah;
     currentJuz.value = null; // Clear juz when selecting surah
-    selectedJuz.value = null; // Clear juz dropdown
-    selectedPage.value = null; // Clear page when selecting surah
+    selectedJuz.value = ''; // Clear juz dropdown
+    selectedPage.value = ''; // Clear page when selecting surah
 
     // Stop any playing audio and reset states
     if (audioElement.value) {
@@ -1637,11 +1642,15 @@ const selectSurah = async () => {
     await loadSurahTranslation();
 };
 
-const selectJuz = async () => {
-    if (!selectedJuz.value) {
-        // "সূরা দিয়ে পড়ুন" selected, go back to surah mode
+const selectJuz = async (event) => {
+    // Prevent any default behavior
+    if (event && event.preventDefault) {
+        event.preventDefault();
+    }
+    
+    if (!selectedJuz.value || selectedJuz.value === '') {
+        // "পারা নির্বাচন করুন" selected, just reset without navigation
         currentJuz.value = null;
-        await selectSurah();
         return;
     }
 
@@ -1650,8 +1659,8 @@ const selectJuz = async () => {
 
     currentJuz.value = juz;
     currentSurah.value = null; // Clear surah when selecting juz
-    currentSurahNumber.value = null; // Clear surah dropdown
-    selectedPage.value = null; // Clear page when selecting juz
+    currentSurahNumber.value = ''; // Clear surah dropdown
+    selectedPage.value = ''; // Clear page when selecting juz
 
     // Stop any playing audio and reset states
     if (audioElement.value) {
@@ -1668,13 +1677,18 @@ const selectJuz = async () => {
     await loadJuzTranslation();
 };
 
-const selectPage = async () => {
-    if (!selectedPage.value) return;
+const selectPage = async (event) => {
+    // Prevent any default behavior
+    if (event && event.preventDefault) {
+        event.preventDefault();
+    }
+    
+    if (!selectedPage.value || selectedPage.value === '') return;
 
     currentSurah.value = null; // Clear surah when selecting page
     currentJuz.value = null; // Clear juz when selecting page
-    selectedJuz.value = null; // Clear juz dropdown
-    currentSurahNumber.value = null; // Clear surah dropdown
+    selectedJuz.value = ''; // Clear juz dropdown
+    currentSurahNumber.value = ''; // Clear surah dropdown
 
     // Stop any playing audio and reset states
     if (audioElement.value) {
@@ -1913,7 +1927,7 @@ const loadJuzTranslation = async () => {
 };
 
 const loadPageArabicText = async () => {
-    if (!selectedPage.value) return;
+    if (!selectedPage.value || selectedPage.value === '') return;
 
     try {
         const arabicResponse = await fetch(`https://api.alquran.cloud/v1/page/${selectedPage.value}/${selectedTextStyle.value}`);
@@ -1933,7 +1947,7 @@ const loadPageArabicText = async () => {
 };
 
 const loadPageTranslation = async () => {
-    if (!selectedPage.value) return;
+    if (!selectedPage.value || selectedPage.value === '') return;
 
     try {
         const translationResponse = await fetch(`https://api.alquran.cloud/v1/page/${selectedPage.value}/${selectedTranslation.value}`);
