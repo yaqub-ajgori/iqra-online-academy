@@ -331,16 +331,22 @@
                             </svg>
                             সূরা
                         </label>
-                        <select
-                            v-model="currentSurahNumber"
-                            @change="selectSurah($event)"
-                            class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-gradient-to-r from-white to-[#5f5fcd]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-md focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 sm:px-3 sm:text-sm"
-                        >
-                            <option value="">সূরা নির্বাচন করুন</option>
-                            <option v-for="surah in surahs" :key="surah.number" :value="surah.number">
-                                {{ surah.number }}. {{ surah.banglaName }}
-                            </option>
-                        </select>
+                        <div class="relative">
+                            <select
+                                v-model="currentSurahNumber"
+                                @change="selectSurah($event)"
+                                :disabled="surahLoading"
+                                class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-gradient-to-r from-white to-[#5f5fcd]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-md focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 sm:px-3 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <option value="">সূরা নির্বাচন করুন</option>
+                                <option v-for="surah in surahs" :key="surah.number" :value="surah.number">
+                                    {{ surah.number }}. {{ surah.banglaName }}
+                                </option>
+                            </select>
+                            <div v-if="surahLoading" class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <div class="h-4 w-4 animate-spin rounded-full border-2 border-[#5f5fcd] border-t-transparent"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Juz/Para Selector -->
@@ -355,16 +361,22 @@
                             </svg>
                             পারা
                         </label>
-                        <select
-                            v-model="selectedJuz"
-                            @change="selectJuz($event)"
-                            class="w-full rounded-lg border-2 border-[#2d5a27]/20 bg-gradient-to-r from-white to-[#2d5a27]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#2d5a27]/40 hover:shadow-md focus:border-[#2d5a27] focus:ring-2 focus:ring-[#2d5a27]/30 sm:px-3 sm:text-sm"
-                        >
-                            <option value="">পারা নির্বাচন করুন</option>
-                            <option v-for="juz in availableJuzs" :key="juz.number" :value="juz.number">
-                                {{ juz.name }}
-                            </option>
-                        </select>
+                        <div class="relative">
+                            <select
+                                v-model="selectedJuz"
+                                @change="selectJuz($event)"
+                                :disabled="juzLoading"
+                                class="w-full rounded-lg border-2 border-[#2d5a27]/20 bg-gradient-to-r from-white to-[#2d5a27]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#2d5a27]/40 hover:shadow-md focus:border-[#2d5a27] focus:ring-2 focus:ring-[#2d5a27]/30 sm:px-3 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <option value="">পারা নির্বাচন করুন</option>
+                                <option v-for="juz in availableJuzs" :key="juz.number" :value="juz.number">
+                                    {{ juz.name }}
+                                </option>
+                            </select>
+                            <div v-if="juzLoading" class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <div class="h-4 w-4 animate-spin rounded-full border-2 border-[#2d5a27] border-t-transparent"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Reciter Selector -->
@@ -448,14 +460,20 @@
                             </svg>
                             পৃষ্ঠা
                         </label>
-                        <select
-                            v-model="selectedPage"
-                            @change="selectPage($event)"
-                            class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-gradient-to-r from-white to-[#5f5fcd]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-md focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 sm:px-3 sm:text-sm"
-                        >
-                            <option value="">পৃষ্ঠা নির্বাচন করুন</option>
-                            <option v-for="page in availablePages" :key="page.number" :value="page.number">পৃষ্ঠা {{ page.number }}</option>
-                        </select>
+                        <div class="relative">
+                            <select
+                                v-model="selectedPage"
+                                @change="selectPage($event)"
+                                :disabled="pageLoading"
+                                class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-gradient-to-r from-white to-[#5f5fcd]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-md focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 sm:px-3 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <option value="">পৃষ্ঠা নির্বাচন করুন</option>
+                                <option v-for="page in availablePages" :key="page.number" :value="page.number">পৃষ্ঠা {{ page.number }}</option>
+                            </select>
+                            <div v-if="pageLoading" class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <div class="h-4 w-4 animate-spin rounded-full border-2 border-[#5f5fcd] border-t-transparent"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -463,16 +481,19 @@
                 <div class="mt-3 flex flex-wrap items-center justify-center gap-2 sm:mt-4">
                     <button
                         @click="toggleAudio"
+                        :disabled="audioLoading"
                         :class="[
                             'flex items-center rounded-lg px-3 py-1.5 text-sm font-medium transition-all hover:shadow-md sm:px-4 sm:py-2',
                             isPlaying
                                 ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white'
                                 : 'bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] text-white',
+                            audioLoading && 'opacity-75 cursor-wait'
                         ]"
                     >
-                        <component :is="isPlaying ? PauseIcon : PlayIcon" class="mr-1 h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
+                        <div v-if="audioLoading" class="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent sm:mr-2 sm:h-4 sm:w-4"></div>
+                        <component v-else :is="isPlaying ? PauseIcon : PlayIcon" class="mr-1 h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
                         <span>{{
-                            isPlaying ? 'থামান' : 'তেলাওয়াত শুনুন'
+                            audioLoading ? 'লোড হচ্ছে...' : isPlaying ? 'থামান' : 'তেলাওয়াত শুনুন'
                         }}</span>
                     </button>
                 </div>
@@ -760,6 +781,31 @@
                 </template>
             </div>
 
+            <!-- Error Message Display -->
+            <div v-if="errorMessage && !surahLoading && !juzLoading && !pageLoading" class="mb-4 sm:mb-6">
+                <div class="mx-auto max-w-2xl rounded-xl border border-red-200 bg-red-50 p-4 sm:p-6">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-red-400 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h3 class="text-sm font-medium text-red-800 sm:text-base">
+                                {{ errorType === 'audio' ? 'অডিও ত্রুটি' : 'লোডিং ত্রুটি' }}
+                            </h3>
+                            <p class="mt-1 text-sm text-red-700">{{ errorMessage }}</p>
+                            <button 
+                                @click="clearError"
+                                class="mt-3 rounded-lg bg-red-100 px-3 py-1.5 text-sm font-medium text-red-800 hover:bg-red-200"
+                            >
+                                আবার চেষ্টা করুন
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Audio Element -->
             <audio
                 ref="audioElement"
@@ -767,7 +813,17 @@
                 @pause="isPlaying = false"
                 @ended="handleAudioEnded"
                 @error="handleAudioError"
+                @canplay="preloadNextAudio"
+                @loadstart="audioLoading = true"
+                @canplaythrough="audioLoading = false"
                 preload="metadata"
+                style="display: none"
+            ></audio>
+            
+            <!-- Pre-buffer Next Audio Element -->
+            <audio
+                ref="nextAudioElement"
+                preload="auto"
                 style="display: none"
             ></audio>
 
@@ -779,7 +835,7 @@
 import FrontendLayout from '@/layouts/FrontendLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { PauseIcon, PlayIcon } from 'lucide-vue-next';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 const surahs = ref([]);
 const currentSurahNumber = ref('');
@@ -788,10 +844,14 @@ const currentJuz = ref(null);
 const ayahs = ref([]);
 const ayahTranslations = ref({});
 const isPlaying = ref(false);
+const audioLoading = ref(false);
 const audioElement = ref(null);
+const nextAudioElement = ref(null); // Pre-buffer next audio
 const surahLoading = ref(false);
 const juzLoading = ref(false);
 const pageLoading = ref(false);
+const errorMessage = ref('');
+const errorType = ref(''); // 'surah', 'juz', 'page', 'search', 'audio'
 const selectedReciter = ref('afs');
 const availableReciters = ref([
     { code: 'afs', name: 'আল-আফাসি', server: 'server8.mp3quran.net/afs', ayahServer: 'everyayah.com/data/Alafasy_128kbps' },
@@ -908,6 +968,66 @@ const topicLoading = ref(false);
 
 const apiCache = new Map();
 const CACHE_DURATION = 30 * 60 * 1000;
+const LOCALSTORAGE_CACHE_KEY = 'iqra_quran_cache';
+const MAX_CACHE_SIZE = 50; // Maximum number of cached items
+
+// Get cache from localStorage
+const getLocalCache = () => {
+    try {
+        const cached = localStorage.getItem(LOCALSTORAGE_CACHE_KEY);
+        if (cached) {
+            const data = JSON.parse(cached);
+            // Clean expired entries
+            const now = Date.now();
+            const cleaned = {};
+            Object.keys(data).forEach(key => {
+                if (data[key].expires > now) {
+                    cleaned[key] = data[key];
+                }
+            });
+            return cleaned;
+        }
+    } catch (e) {
+        console.error('Error reading cache:', e);
+    }
+    return {};
+};
+
+// Set cache to localStorage
+const setLocalCache = (key, value) => {
+    try {
+        const cache = getLocalCache();
+        
+        // Add new entry
+        cache[key] = {
+            data: value,
+            expires: Date.now() + CACHE_DURATION
+        };
+        
+        // Limit cache size
+        const keys = Object.keys(cache);
+        if (keys.length > MAX_CACHE_SIZE) {
+            // Remove oldest entries
+            keys.sort((a, b) => cache[a].expires - cache[b].expires);
+            for (let i = 0; i < keys.length - MAX_CACHE_SIZE; i++) {
+                delete cache[keys[i]];
+            }
+        }
+        
+        localStorage.setItem(LOCALSTORAGE_CACHE_KEY, JSON.stringify(cache));
+    } catch (e) {
+        console.error('Error setting cache:', e);
+    }
+};
+
+// Get cached data
+const getCachedData = (key) => {
+    const cache = getLocalCache();
+    if (cache[key] && cache[key].expires > Date.now()) {
+        return cache[key].data;
+    }
+    return null;
+};
 
 const conceptSuggestions = ref([]);
 const searchHistory = ref([]);
@@ -1691,6 +1811,10 @@ const selectSurah = async (event) => {
     searchResults.value = []; // Clear search results
     topicResults.value = []; // Clear topic results
     
+    // Clear any previous errors
+    errorMessage.value = '';
+    errorType.value = '';
+    
     // Start loading indicator after setting currentSurah
     surahLoading.value = true;
     
@@ -1698,11 +1822,30 @@ const selectSurah = async (event) => {
         // Progressive loading: First load Arabic text
         const loadArabicText = async () => {
             try {
+                // Check cache first
+                const cacheKey = `surah_${currentSurah.value.number}_${selectedTextStyle.value}`;
+                const cachedData = getCachedData(cacheKey);
+                
+                if (cachedData) {
+                    // Use cached data
+                    ayahs.value = cachedData.ayahs;
+                    if (ayahs.value.length > 0) {
+                        surahLoading.value = false;
+                    }
+                    return;
+                }
+                
+                // If not cached, fetch from API
                 const arabicResponse = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.value.number}/${selectedTextStyle.value}`);
                 const arabicJson = await arabicResponse.json();
                 
                 // Progressive update: Add ayahs as they come
                 ayahs.value = arabicJson.data.ayahs;
+                
+                // Cache the successful response
+                if (arabicJson.data) {
+                    setLocalCache(cacheKey, arabicJson.data);
+                }
                 
                 // If we have ayahs, we can hide the skeleton loader
                 if (ayahs.value.length > 0) {
@@ -1721,6 +1864,8 @@ const selectSurah = async (event) => {
                 } catch (fallbackError) {
                     ayahs.value = [];
                     surahLoading.value = false;
+                    errorMessage.value = 'সূরা লোড করতে সমস্যা হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।';
+                    errorType.value = 'surah';
                 }
             }
         };
@@ -1728,6 +1873,20 @@ const selectSurah = async (event) => {
         // Load translations separately (don't wait for it)
         const loadTranslations = async () => {
             try {
+                // Check cache first
+                const cacheKey = `surah_trans_${currentSurah.value.number}_${selectedTranslation.value}`;
+                const cachedData = getCachedData(cacheKey);
+                
+                if (cachedData) {
+                    // Use cached data
+                    const translations = {};
+                    cachedData.ayahs.forEach((ayah) => {
+                        translations[ayah.numberInSurah] = ayah.text;
+                    });
+                    ayahTranslations.value = translations;
+                    return;
+                }
+                
                 const translationResponse = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.value.number}/${selectedTranslation.value}`);
                 const translationJson = await translationResponse.json();
                 const translations = {};
@@ -1735,6 +1894,11 @@ const selectSurah = async (event) => {
                     translations[ayah.numberInSurah] = ayah.text;
                 });
                 ayahTranslations.value = translations;
+                
+                // Cache the successful response
+                if (translationJson.data) {
+                    setLocalCache(cacheKey, translationJson.data);
+                }
             } catch (error) {
                 // Fallback to default translation
                 try {
@@ -1796,6 +1960,10 @@ const selectJuz = async (event) => {
     searchResults.value = []; // Clear search results
     topicResults.value = []; // Clear topic results
     
+    // Clear any previous errors
+    errorMessage.value = '';
+    errorType.value = '';
+    
     // Start loading indicator after setting currentJuz
     juzLoading.value = true;
 
@@ -1839,6 +2007,10 @@ const selectPage = async (event) => {
     ayahTranslations.value = {};
     searchResults.value = []; // Clear search results
     topicResults.value = []; // Clear topic results
+    
+    // Clear any previous errors
+    errorMessage.value = '';
+    errorType.value = '';
     
     // Start loading indicator
     pageLoading.value = true;
@@ -2009,6 +2181,8 @@ const loadJuzArabicText = async () => {
         } catch (fallbackError) {
             ayahs.value = [];
             juzLoading.value = false;
+            errorMessage.value = 'পারা লোড করতে সমস্যা হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।';
+            errorType.value = 'juz';
         }
     }
 };
@@ -2115,6 +2289,8 @@ const loadPageArabicText = async () => {
             console.error('Error loading fallback Page Arabic text:', fallbackError);
             ayahs.value = [];
             pageLoading.value = false;
+            errorMessage.value = 'পৃষ্ঠা লোড করতে সমস্যা হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।';
+            errorType.value = 'page';
         }
     }
 };
@@ -2348,6 +2524,9 @@ const updateTextStyle = () => {
 // Handle audio errors
 const handleAudioError = (event) => {
     isPlaying.value = false;
+    audioLoading.value = false;
+    errorMessage.value = 'অডিও চালাতে সমস্যা হয়েছে। দয়া করে অন্য একটি কারী নির্বাচন করুন অথবা পরে চেষ্টা করুন।';
+    errorType.value = 'audio';
 };
 
 // Track currently playing ayah for juz mode
@@ -2606,27 +2785,131 @@ const copyAyah = async (ayah, event) => {
     }
 };
 
-const getCachedData = (key) => {
-    const cached = apiCache.get(key);
-    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-        return cached.data;
+// Pre-load next ayah's audio
+const preloadNextAudio = () => {
+    if (!nextAudioElement.value || !selectedReciter.value) return;
+    
+    // Determine the next ayah to pre-load
+    let nextAyah = null;
+    
+    if (currentSurah.value && ayahs.value.length > 0) {
+        // For surah mode, get the next ayah
+        const currentIndex = parseInt(audioElement.value?.dataset.currentAyahIndex || '0');
+        if (currentIndex < ayahs.value.length - 1) {
+            nextAyah = ayahs.value[currentIndex + 1];
+        }
+    } else if ((currentJuz.value || selectedPage.value) && currentlyPlayingAyahIndex.value >= 0) {
+        // For juz/page mode
+        if (currentlyPlayingAyahIndex.value < ayahs.value.length - 1) {
+            nextAyah = ayahs.value[currentlyPlayingAyahIndex.value + 1];
+        }
     }
-    // Remove expired cache
-    if (cached) {
-        apiCache.delete(key);
+    
+    // Pre-load the audio if we have a next ayah
+    if (nextAyah) {
+        const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
+        if (currentReciter && currentReciter.ayahServer) {
+            const surahPadded = String(nextAyah.surah.number).padStart(3, '0');
+            const ayahPadded = String(nextAyah.numberInSurah).padStart(3, '0');
+            const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
+            
+            // Set the source but don't play
+            nextAudioElement.value.src = audioUrl;
+        }
     }
-    return null;
 };
 
-const setCachedData = (key, data) => {
-    apiCache.set(key, {
-        data: data,
-        timestamp: Date.now(),
-    });
+// Clear error message
+const clearError = () => {
+    errorMessage.value = '';
+    errorType.value = '';
+    
+    // Retry based on error type
+    if (errorType.value === 'surah' && currentSurah.value) {
+        selectSurah();
+    } else if (errorType.value === 'juz' && currentJuz.value) {
+        selectJuz();
+    } else if (errorType.value === 'page' && selectedPage.value) {
+        selectPage();
+    }
+};
+
+// Keyboard shortcuts handler
+const handleKeyboardShortcuts = (event) => {
+    // Don't trigger shortcuts when typing in input fields
+    if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+        return;
+    }
+    
+    switch(event.key) {
+        case ' ': // Spacebar
+            event.preventDefault();
+            toggleAudio();
+            break;
+            
+        case 'ArrowRight':
+            event.preventDefault();
+            if (progressiveMode.value) {
+                nextAyah();
+            } else if (currentlyPlayingAyahIndex.value >= 0 && currentlyPlayingAyahIndex.value < ayahs.value.length - 1) {
+                // Skip to next ayah in playlist
+                currentlyPlayingAyahIndex.value++;
+                playCurrentAyah();
+            }
+            break;
+            
+        case 'ArrowLeft':
+            event.preventDefault();
+            if (progressiveMode.value) {
+                prevAyah();
+            } else if (currentlyPlayingAyahIndex.value > 0) {
+                // Skip to previous ayah
+                currentlyPlayingAyahIndex.value--;
+                playCurrentAyah();
+            }
+            break;
+            
+        case 'Escape':
+            event.preventDefault();
+            // Stop audio
+            if (audioElement.value) {
+                audioElement.value.pause();
+                audioElement.value.currentTime = 0;
+                isPlaying.value = false;
+                currentlyPlayingAyahIndex.value = -1;
+            }
+            break;
+    }
+};
+
+// Play current ayah (helper for keyboard navigation)
+const playCurrentAyah = async () => {
+    if (!ayahs.value.length || currentlyPlayingAyahIndex.value < 0) return;
+    
+    const ayah = ayahs.value[currentlyPlayingAyahIndex.value];
+    const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
+    
+    if (currentReciter && currentReciter.ayahServer && ayah) {
+        const surahPadded = String(ayah.surah.number).padStart(3, '0');
+        const ayahPadded = String(ayah.numberInSurah).padStart(3, '0');
+        const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
+        
+        audioElement.value.src = audioUrl;
+        audioElement.value.dataset.currentAyahIndex = currentlyPlayingAyahIndex.value;
+        audioElement.value.dataset.playMode = currentJuz.value ? 'juz' : selectedPage.value ? 'page' : 'surah';
+        
+        try {
+            await audioElement.value.play();
+        } catch (error) {
+            console.error('Error playing audio:', error);
+        }
+    }
 };
 
 // Initialize
 onMounted(async () => {
+    // Add keyboard event listener
+    window.addEventListener('keydown', handleKeyboardShortcuts);
     // Load user's preferred reciter
     const savedReciter = localStorage.getItem('iqra_selected_reciter');
     if (savedReciter && availableReciters.value.find((r) => r.code === savedReciter)) {
@@ -2656,6 +2939,12 @@ onMounted(async () => {
 
     await loadSurahs();
     await selectSurah();
+});
+
+// Cleanup
+onUnmounted(() => {
+    // Remove keyboard event listener
+    window.removeEventListener('keydown', handleKeyboardShortcuts);
 });
 </script>
 
