@@ -67,72 +67,100 @@
                 </div>
 
                 <!-- Advanced Search Filters -->
-                <div v-if="searchQuery.trim()" class="mt-3 space-y-3 sm:mt-4">
-                    <!-- Primary Filters -->
-                    <div class="flex flex-wrap gap-2 sm:gap-3">
-                        <button
-                            @click="searchIn = 'all'"
-                            :class="[
-                                'rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200',
-                                searchIn === 'all' ? 'bg-[#5f5fcd] text-white' : 'bg-[#5f5fcd]/10 text-[#5f5fcd] hover:bg-[#5f5fcd]/20',
-                            ]"
-                        >
-                            সব সূরা
-                        </button>
-                        <button
-                            @click="searchIn = 'current'"
-                            :class="[
-                                'rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200',
-                                searchIn === 'current' ? 'bg-[#2d5a27] text-white' : 'bg-[#2d5a27]/10 text-[#2d5a27] hover:bg-[#2d5a27]/20',
-                            ]"
-                        >
-                            বর্তমান {{ currentSurah ? 'সূরা' : currentJuz ? 'পারা' : selectedPage ? 'পৃষ্ঠা' : 'নির্বাচন' }}
-                        </button>
-                        <button
-                            @click="searchLanguage = searchLanguage === 'arabic' ? 'bengali' : 'arabic'"
-                            :class="[
-                                'rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200',
-                                'bg-[#d4a574]/10 text-[#d4a574] hover:bg-[#d4a574]/20',
-                            ]"
-                        >
-                            {{ searchLanguage === 'arabic' ? 'আরবি' : 'বাংলা' }}
-                        </button>
-                        <button
-                            @click="autoSearch = !autoSearch"
-                            :class="[
-                                'rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200',
-                                autoSearch ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
-                            ]"
-                        >
-                            {{ autoSearch ? '⚡ অটো সার্চ চালু' : '⚡ অটো সার্চ বন্ধ' }}
-                        </button>
-                        <button
-                            v-if="searchResults.length > 0"
-                            @click="clearSearch"
-                            class="rounded-full bg-red-100 px-3 py-1.5 text-sm font-medium text-red-600 transition-all duration-200 hover:bg-red-200"
-                        >
-                            ✕ সাফ করুন
-                        </button>
+                <div v-if="searchQuery.trim()" class="mt-4 space-y-4 sm:mt-5">
+                    <!-- Search Controls Card -->
+                    <div class="rounded-xl border border-gray-200 bg-gradient-to-r from-gray-50 to-white p-4 shadow-sm">
+                        <!-- Search Scope & Language -->
+                        <div class="mb-3">
+                            <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">🎯 অনুসন্ধান পরিসর</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button
+                                    @click="searchIn = 'all'"
+                                    :class="[
+                                        'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 shadow-sm',
+                                        searchIn === 'all' ? 'bg-[#5f5fcd] text-white shadow-md' : 'bg-white border border-[#5f5fcd]/20 text-[#5f5fcd] hover:bg-[#5f5fcd]/5',
+                                    ]"
+                                >
+                                    📚 সব সূরা
+                                </button>
+                                <button
+                                    @click="searchIn = 'current'"
+                                    :class="[
+                                        'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 shadow-sm',
+                                        searchIn === 'current' ? 'bg-[#2d5a27] text-white shadow-md' : 'bg-white border border-[#2d5a27]/20 text-[#2d5a27] hover:bg-[#2d5a27]/5',
+                                    ]"
+                                >
+                                    📖 বর্তমান {{ currentSurah ? 'সূরা' : currentJuz ? 'পারা' : selectedPage ? 'পৃষ্ঠা' : 'নির্বাচন' }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Language & Auto-search Options -->
+                        <div class="border-t border-gray-100 pt-3">
+                            <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">⚙️ অনুসন্ধান অপশন</p>
+                            <div class="flex flex-wrap gap-2">
+                                <button
+                                    @click="searchLanguage = searchLanguage === 'arabic' ? 'bengali' : 'arabic'"
+                                    :class="[
+                                        'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 shadow-sm',
+                                        'bg-white border border-[#d4a574]/20 text-[#d4a574] hover:bg-[#d4a574]/5',
+                                    ]"
+                                >
+                                    🌐 {{ searchLanguage === 'arabic' ? 'আরবি' : 'বাংলা' }} অনুবাদ
+                                </button>
+                                <button
+                                    @click="autoSearch = !autoSearch"
+                                    :class="[
+                                        'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 shadow-sm',
+                                        autoSearch ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50',
+                                    ]"
+                                >
+                                    {{ autoSearch ? '⚡ অটো সার্চ চালু' : '⚡ অটো সার্চ বন্ধ' }}
+                                </button>
+                                <button
+                                    v-if="searchResults.length > 0"
+                                    @click="clearSearch"
+                                    class="rounded-lg bg-red-50 border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition-all duration-200 hover:bg-red-100 shadow-sm"
+                                >
+                                    🗑️ সাফ করুন
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Concept-Based Search Suggestions -->
-                    <div v-if="conceptSuggestions.length > 0" class="border-t border-gray-200 pt-3">
-                        <p class="mb-2 text-xs text-gray-600">💡 সংশ্লিষ্ট বিষয়:</p>
-                        <div class="flex flex-wrap gap-2">
+                    <div v-if="conceptSuggestions.length > 0" class="rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 p-4 shadow-sm">
+                        <div class="mb-3 flex items-center gap-2">
+                            <div class="rounded-full bg-blue-100 p-1">
+                                <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                            </div>
+                            <p class="text-sm font-semibold text-blue-700">সংশ্লিষ্ট বিষয়সমূহ</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
                             <button
                                 v-for="concept in conceptSuggestions.slice(0, 6)"
                                 :key="concept.id"
                                 @click="searchByConcept(concept)"
-                                class="rounded-full border border-[#5f5fcd]/20 bg-gradient-to-r from-[#5f5fcd]/5 to-[#2d5a27]/5 px-3 py-1.5 text-xs font-medium text-[#2d5a27] transition-all duration-200 hover:from-[#5f5fcd]/10 hover:to-[#2d5a27]/10"
+                                class="rounded-lg border border-blue-200/50 bg-white/60 px-3 py-2 text-left text-sm font-medium text-blue-800 transition-all duration-200 hover:bg-white hover:shadow-sm"
                             >
-                                {{ concept.icon }} {{ concept.name }}
+                                <span class="text-base">{{ concept.icon }}</span>
+                                <span class="ml-2">{{ concept.name }}</span>
                             </button>
                         </div>
                     </div>
 
                     <!-- Search History -->
-                    <div v-if="searchHistory.length > 0" class="border-t border-gray-200 pt-3">
-                        <p class="mb-2 text-xs text-gray-600">🕐 সাম্প্রতিক অনুসন্ধান:</p>
+                    <div v-if="searchHistory.length > 0" class="rounded-xl border border-amber-100 bg-gradient-to-r from-amber-50/50 to-orange-50/50 p-4 shadow-sm">
+                        <div class="mb-3 flex items-center gap-2">
+                            <div class="rounded-full bg-amber-100 p-1">
+                                <svg class="h-4 w-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <p class="text-sm font-semibold text-amber-700">সাম্প্রতিক অনুসন্ধান</p>
+                        </div>
                         <div class="flex flex-wrap gap-2">
                             <button
                                 v-for="term in searchHistory.slice(0, 5)"
@@ -141,7 +169,7 @@
                                     searchQuery = term;
                                     performSearch();
                                 "
-                                class="rounded-full bg-gray-100 px-3 py-1.5 text-xs text-gray-700 transition-all duration-200 hover:bg-gray-200"
+                                class="rounded-lg border border-amber-200/50 bg-white/60 px-3 py-1.5 text-sm text-amber-800 transition-all duration-200 hover:bg-white hover:shadow-sm"
                             >
                                 {{ term }}
                             </button>
