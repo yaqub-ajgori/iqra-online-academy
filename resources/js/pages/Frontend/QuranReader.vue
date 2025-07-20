@@ -42,6 +42,7 @@
                         <input
                             v-model="searchQuery"
                             @keyup.enter="performSearch"
+                            @input="debouncedSearch"
                             type="text"
                             placeholder="কুরআনে খুঁজুন... (আরবি অথবা বাংলা)"
                             class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-white py-3 pr-4 pl-10 font-medium text-gray-700 placeholder-gray-500 transition-all duration-300 focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30"
@@ -95,6 +96,15 @@
                             ]"
                         >
                             {{ searchLanguage === 'arabic' ? 'আরবি' : 'বাংলা' }}
+                        </button>
+                        <button
+                            @click="autoSearch = !autoSearch"
+                            :class="[
+                                'rounded-full px-3 py-1.5 text-sm font-medium transition-all duration-200',
+                                autoSearch ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+                            ]"
+                        >
+                            {{ autoSearch ? '⚡ অটো সার্চ চালু' : '⚡ অটো সার্চ বন্ধ' }}
                         </button>
                         <button
                             v-if="searchResults.length > 0"
@@ -623,8 +633,19 @@
                 </div>
             </div>
 
+            <!-- Search Error Message -->
+            <div v-if="searchError" class="mb-4 py-4 text-center">
+                <div class="rounded-xl border border-red-200 bg-gradient-to-r from-red-50 to-red-100 p-4 sm:p-6">
+                    <svg class="mx-auto mb-3 h-10 w-10 text-red-500 sm:h-12 sm:w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                    <h3 class="mb-2 text-lg font-semibold text-red-700 sm:text-xl">সমস্যা ঘটেছে</h3>
+                    <p class="text-sm text-red-600 sm:text-base">{{ searchError }}</p>
+                </div>
+            </div>
+
             <!-- No Search Results -->
-            <div v-if="searchQuery.trim() && searchResults.length === 0 && !searchLoading" class="py-8 text-center sm:py-12">
+            <div v-if="searchQuery.trim() && searchResults.length === 0 && !searchLoading && !searchError" class="py-8 text-center sm:py-12">
                 <div class="rounded-xl border border-[#d4a574]/20 bg-gradient-to-r from-[#d4a574]/10 to-[#5f5fcd]/10 p-6 sm:p-8">
                     <svg class="mx-auto mb-4 h-12 w-12 text-[#d4a574] sm:h-16 sm:w-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -1029,6 +1050,9 @@ const juzBoundaryFixing = ref(false);
 const searchQuery = ref('');
 const searchResults = ref([]);
 const searchLoading = ref(false);
+const searchError = ref(null);
+const searchTimeout = ref(null);
+const autoSearch = ref(false);
 const searchIn = ref('all');
 const searchLanguage = ref('arabic');
 const showTopics = ref(false);
@@ -1236,6 +1260,7 @@ const performSearch = async () => {
 
     searchLoading.value = true;
     searchResults.value = [];
+    searchError.value = null;
 
     try {
         const query = searchQuery.value.trim();
@@ -1295,9 +1320,16 @@ const performSearch = async () => {
         }
     } catch (error) {
         console.error('Search error:', error);
+        searchError.value = 'অনুসন্ধানে সমস্যা হয়েছে। আবার চেষ্টা করুন।';
         searchResults.value = [];
     } finally {
         searchLoading.value = false;
+        // Clear error after 5 seconds
+        if (searchError.value) {
+            setTimeout(() => {
+                searchError.value = null;
+            }, 5000);
+        }
     }
 };
 
@@ -1374,9 +1406,26 @@ const loadTranslationsForSearchResults = async (matches) => {
 const clearSearch = () => {
     searchQuery.value = '';
     searchResults.value = [];
+    searchError.value = null;
     searchIn.value = 'all';
     searchLanguage.value = 'arabic';
     conceptSuggestions.value = [];
+    if (searchTimeout.value) {
+        clearTimeout(searchTimeout.value);
+        searchTimeout.value = null;
+    }
+};
+
+const debouncedSearch = () => {
+    if (searchTimeout.value) {
+        clearTimeout(searchTimeout.value);
+    }
+    
+    searchTimeout.value = setTimeout(() => {
+        if (autoSearch.value && searchQuery.value.trim().length >= 3) {
+            performSearch();
+        }
+    }, 800);
 };
 
 const addToSearchHistory = (query) => {
