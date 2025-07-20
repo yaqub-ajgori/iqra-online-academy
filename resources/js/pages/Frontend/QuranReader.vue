@@ -236,81 +236,141 @@
                     <!-- Progressive Revelation Mode -->
                     <div
                         @click="toggleProgressiveMode"
-                        class="group cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:scale-105 hover:transform sm:p-4"
+                        class="group relative cursor-pointer overflow-hidden rounded-xl border p-3 transition-all duration-300 hover:scale-105 hover:transform sm:p-4"
                         :class="{
-                            'border-[#5f5fcd] bg-gradient-to-br from-[#5f5fcd]/20 to-[#2d5a27]/20 shadow-lg': progressiveMode,
+                            'border-[#5f5fcd] bg-gradient-to-br from-[#5f5fcd]/20 to-[#2d5a27]/20 shadow-xl ring-2 ring-[#5f5fcd]/30': progressiveMode,
                             'border-[#5f5fcd]/20 bg-gradient-to-br from-white to-[#f8f9ff] hover:border-[#5f5fcd]/40 hover:shadow-md':
                                 !progressiveMode,
                         }"
                     >
-                        <div class="mb-2 flex items-center">
+                        <!-- Active indicator pulse -->
+                        <div v-if="progressiveMode" class="absolute top-2 right-2">
+                            <div class="relative">
+                                <div class="h-3 w-3 rounded-full bg-green-500"></div>
+                                <div class="absolute inset-0 h-3 w-3 animate-ping rounded-full bg-green-400 opacity-75"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Background pattern -->
+                        <div class="absolute inset-0 opacity-5">
+                            <div class="h-full w-full bg-gradient-to-br from-[#5f5fcd] to-transparent"></div>
+                        </div>
+                        
+                        <div class="relative z-10 mb-2 flex items-center">
                             <div
-                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] sm:h-10 sm:w-10"
+                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] shadow-lg sm:h-10 sm:w-10 transition-transform duration-300"
+                                :class="{ 'scale-110 shadow-xl': progressiveMode }"
                             >
-                                <span class="text-lg sm:text-xl">👁️</span>
+                                <span class="text-lg sm:text-xl transition-transform duration-300" :class="{ 'animate-pulse': progressiveMode }">👁️</span>
                             </div>
                             <div class="flex-1">
-                                <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base">
+                                <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base flex items-center">
                                     {{ progressiveMode ? 'প্রগ্রেসিভ মোড চালু' : 'প্রগ্রেসিভ মোড' }}
+                                    <span v-if="progressiveMode" class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">সক্রিয়</span>
                                 </h4>
                             </div>
                         </div>
-                        <p class="text-xs leading-relaxed text-gray-700 sm:text-sm">
+                        <p class="relative z-10 text-xs leading-relaxed text-gray-700 sm:text-sm">
                             {{ progressiveMode ? 'সকল আয়াত একসাথে দেখানো হবে' : 'হিফয অনুশীলনের জন্য একে একে আয়াত প্রদর্শন' }}
                         </p>
+                        
+                        <!-- Shine effect on hover -->
+                        <div class="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                            <div class="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-700"></div>
+                        </div>
                     </div>
 
                     <!-- Hide Translation Mode -->
                     <div
                         @click="toggleTranslationVisibility"
-                        class="group cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:scale-105 hover:transform sm:p-4"
+                        class="group relative cursor-pointer overflow-hidden rounded-xl border p-3 transition-all duration-300 hover:scale-105 hover:transform sm:p-4"
                         :class="{
-                            'border-[#d4a574] bg-gradient-to-br from-[#d4a574]/20 to-[#5f5fcd]/20 shadow-lg': hideTranslation,
+                            'border-[#d4a574] bg-gradient-to-br from-[#d4a574]/20 to-[#5f5fcd]/20 shadow-xl ring-2 ring-[#d4a574]/30': hideTranslation,
                             'border-[#d4a574]/20 bg-gradient-to-br from-white to-[#f8f9ff] hover:border-[#d4a574]/40 hover:shadow-md':
                                 !hideTranslation,
                         }"
                     >
-                        <div class="mb-2 flex items-center">
+                        <!-- Active indicator pulse -->
+                        <div v-if="hideTranslation" class="absolute top-2 right-2">
+                            <div class="relative">
+                                <div class="h-3 w-3 rounded-full bg-orange-500"></div>
+                                <div class="absolute inset-0 h-3 w-3 animate-ping rounded-full bg-orange-400 opacity-75"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Background pattern -->
+                        <div class="absolute inset-0 opacity-5">
+                            <div class="h-full w-full bg-gradient-to-br from-[#d4a574] to-transparent"></div>
+                        </div>
+                        
+                        <div class="relative z-10 mb-2 flex items-center">
                             <div
-                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#d4a574] to-[#5f5fcd] sm:h-10 sm:w-10"
+                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#d4a574] to-[#5f5fcd] shadow-lg sm:h-10 sm:w-10 transition-transform duration-300"
+                                :class="{ 'scale-110 shadow-xl': hideTranslation }"
                             >
-                                <span class="text-lg sm:text-xl">🔤</span>
+                                <span class="text-lg sm:text-xl transition-transform duration-300" :class="{ 'animate-pulse': hideTranslation }">{{ hideTranslation ? '🙈' : '🔤' }}</span>
                             </div>
                             <div class="flex-1">
-                                <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base">
+                                <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base flex items-center">
                                     {{ hideTranslation ? 'অনুবাদ লুকানো' : 'অনুবাদ লুকান' }}
+                                    <span v-if="hideTranslation" class="ml-2 text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full">সক্রিয়</span>
                                 </h4>
                             </div>
                         </div>
-                        <p class="text-xs leading-relaxed text-gray-700 sm:text-sm">
+                        <p class="relative z-10 text-xs leading-relaxed text-gray-700 sm:text-sm">
                             {{ hideTranslation ? 'অনুবাদ আবার দেখানো হবে' : 'হিফয অনুশীলনের জন্য অনুবাদ লুকিয়ে রাখুন' }}
                         </p>
+                        
+                        <!-- Shine effect on hover -->
+                        <div class="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                            <div class="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-700"></div>
+                        </div>
                     </div>
 
                     <!-- Repeat Mode -->
                     <div
                         @click="toggleRepeatMode"
-                        class="group cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:scale-105 hover:transform sm:p-4"
+                        class="group relative cursor-pointer overflow-hidden rounded-xl border p-3 transition-all duration-300 hover:scale-105 hover:transform sm:p-4"
                         :class="{
-                            'border-[#2d5a27] bg-gradient-to-br from-[#2d5a27]/20 to-[#d4a574]/20 shadow-lg': repeatMode,
+                            'border-[#2d5a27] bg-gradient-to-br from-[#2d5a27]/20 to-[#d4a574]/20 shadow-xl ring-2 ring-[#2d5a27]/30': repeatMode,
                             'border-[#2d5a27]/20 bg-gradient-to-br from-white to-[#f8f9ff] hover:border-[#2d5a27]/40 hover:shadow-md': !repeatMode,
                         }"
                     >
-                        <div class="mb-2 flex items-center">
+                        <!-- Active indicator pulse -->
+                        <div v-if="repeatMode" class="absolute top-2 right-2">
+                            <div class="relative">
+                                <div class="h-3 w-3 rounded-full bg-blue-500"></div>
+                                <div class="absolute inset-0 h-3 w-3 animate-ping rounded-full bg-blue-400 opacity-75"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Background pattern -->
+                        <div class="absolute inset-0 opacity-5">
+                            <div class="h-full w-full bg-gradient-to-br from-[#2d5a27] to-transparent"></div>
+                        </div>
+                        
+                        <div class="relative z-10 mb-2 flex items-center">
                             <div
-                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#2d5a27] to-[#d4a574] sm:h-10 sm:w-10"
+                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#2d5a27] to-[#d4a574] shadow-lg sm:h-10 sm:w-10 transition-transform duration-300"
+                                :class="{ 'scale-110 shadow-xl': repeatMode }"
                             >
-                                <span class="text-lg sm:text-xl">🔄</span>
+                                <span class="text-lg sm:text-xl transition-transform duration-300" :class="{ 'animate-spin': repeatMode }">🔄</span>
                             </div>
                             <div class="flex-1">
-                                <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base">
+                                <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base flex items-center">
                                     {{ repeatMode ? 'রিপিট মোড চালু' : 'রিপিট মোড' }}
+                                    <span v-if="repeatMode" class="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">সক্রিয়</span>
                                 </h4>
                             </div>
                         </div>
-                        <p class="text-xs leading-relaxed text-gray-700 sm:text-sm">
+                        <p class="relative z-10 text-xs leading-relaxed text-gray-700 sm:text-sm">
                             {{ repeatMode ? 'রিপিট মোড কার্যকর' : 'হিফয অনুশীলনের জন্য রিপিট মোড' }}
                         </p>
+                        
+                        <!-- Shine effect on hover -->
+                        <div class="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                            <div class="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-700"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -710,13 +770,17 @@
                             <div class="space-y-1">
                                 <div class="flex items-center space-x-2 text-sm sm:text-base">
                                     <span
-                                        v-if="currentJuz"
+                                        v-if="currentJuz || selectedTopic"
                                         class="rounded-full bg-[#2d5a27]/10 px-2 py-1 text-xs font-semibold text-[#2d5a27] sm:text-sm"
                                     >
                                         {{ ayah.surah.englishName }}
                                     </span>
+                                    <span v-if="selectedTopic" class="rounded-full bg-[#d4a574]/10 px-2 py-1 text-xs font-semibold text-[#d4a574] sm:text-sm flex items-center">
+                                        <span class="mr-1">{{ selectedTopic.icon }}</span>
+                                        {{ selectedTopic.name }}
+                                    </span>
                                 </div>
-                                <div v-if="currentJuz" class="text-xs text-gray-500">
+                                <div v-if="currentJuz || selectedTopic" class="text-xs text-gray-500">
                                     {{ ayah.surah.revelationType === 'Meccan' ? 'মক্কী' : 'মাদানী' }}
                                 </div>
                             </div>
@@ -768,6 +832,12 @@
                             <div
                                 class="text-base leading-relaxed font-medium text-gray-700 selection:bg-[#d4a574]/20 selection:text-gray-800 sm:text-lg"
                             >
+                                <!-- Show search match context for topic results -->
+                                <div v-if="selectedTopic && ayah.text && ayah.text !== (ayah.translationText || ayahTranslations[ayah.numberInSurah])" class="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <div class="text-xs font-semibold text-blue-700 mb-1">ইংরেজি অনুবাদে পাওয়া গেছে:</div>
+                                    <div class="text-sm text-blue-600 italic">{{ ayah.text }}</div>
+                                </div>
+                                
                                 <span class="text-lg text-[#d4a574] sm:text-xl">"</span>
                                 {{ ayah.translationText || ayahTranslations[ayah.numberInSurah] }}
                                 <span class="text-lg text-[#d4a574] sm:text-xl">"</span>
@@ -1398,6 +1468,10 @@ const loadSearchHistory = () => {
 };
 
 const selectTopic = async (topic) => {
+    // Clear any previous errors
+    errorMessage.value = '';
+    errorType.value = '';
+    
     // If clicking the same topic, reset/clear it
     if (selectedTopic.value?.id === topic.id) {
         selectedTopic.value = null;
@@ -1458,7 +1532,7 @@ const selectTopic = async (topic) => {
                     const url = `https://api.alquran.cloud/v1/search/${encodeURIComponent(term)}/all/en`;
                     const response = await fetch(url);
                     data = await response.json();
-                    setCachedData(searchCacheKey, data);
+                    setLocalCache(searchCacheKey, data);
                 }
 
                 return { term, data };
@@ -1498,10 +1572,12 @@ const selectTopic = async (topic) => {
         await loadTranslationsForTopicResults(allResults);
 
         // Cache the results
-        setCachedData(cacheKey, topicResults.value);
+        setLocalCache(cacheKey, topicResults.value);
     } catch (error) {
         console.error('Error loading topic results:', error);
         topicResults.value = [];
+        errorMessage.value = `"${topic.name}" এর আয়াত লোড করতে সমস্যা হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।`;
+        errorType.value = 'topic';
     } finally {
         topicLoading.value = false;
     }
@@ -1530,7 +1606,7 @@ const loadTranslationsForTopicResults = async (results) => {
                         if (!data) {
                             const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${selectedTextStyle.value}`);
                             data = await response.json();
-                            setCachedData(arabicCacheKey, data);
+                            setLocalCache(arabicCacheKey, data);
                         }
                         return data;
                     })(),
@@ -1541,7 +1617,7 @@ const loadTranslationsForTopicResults = async (results) => {
                         if (!data) {
                             const response = await fetch(`https://api.alquran.cloud/v1/surah/${surahNumber}/${selectedTranslation.value}`);
                             data = await response.json();
-                            setCachedData(bengaliCacheKey, data);
+                            setLocalCache(bengaliCacheKey, data);
                         }
                         return data;
                     })(),
@@ -1553,10 +1629,10 @@ const loadTranslationsForTopicResults = async (results) => {
                         const arabicAyah = arabicData.data.ayahs.find((ayah) => ayah.numberInSurah === result.numberInSurah);
                         const bengaliAyah = bengaliData.data.ayahs.find((ayah) => ayah.numberInSurah === result.numberInSurah);
                         if (arabicAyah) {
-                            result.text = arabicAyah.text;
+                            result.arabicText = arabicAyah.text; // Store Arabic text separately
                         }
                         if (bengaliAyah) {
-                            result.translationText = bengaliAyah.text;
+                            result.translationText = bengaliAyah.text; // Store Bengali translation
                         }
                     });
                 }
@@ -2831,6 +2907,8 @@ const clearError = () => {
         selectJuz();
     } else if (errorType.value === 'page' && selectedPage.value) {
         selectPage();
+    } else if (errorType.value === 'topic' && selectedTopic.value) {
+        selectTopic(selectedTopic.value);
     }
 };
 
