@@ -950,7 +950,7 @@
     </FrontendLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import FrontendLayout from '@/layouts/FrontendLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { PauseIcon, PlayIcon } from 'lucide-vue-next';
@@ -1088,7 +1088,7 @@ const selectedTopic = ref(null);
 const topicResults = ref([]);
 const topicLoading = ref(false);
 
-const apiCache = new Map();
+// const apiCache = new Map(); // Unused - using localStorage instead
 const CACHE_DURATION = 30 * 60 * 1000;
 const LOCALSTORAGE_CACHE_KEY = 'iqra_quran_cache';
 const MAX_CACHE_SIZE = 50; // Maximum number of cached items
@@ -1153,8 +1153,8 @@ const getCachedData = (key) => {
 
 const conceptSuggestions = ref([]);
 const searchHistory = ref([]);
-const similarAyahs = ref([]);
-const showSimilarAyahs = ref(false);
+// const similarAyahs = ref([]); // Future feature
+// const showSimilarAyahs = ref(false); // Future feature
 const showMemorizationHelper = ref(false);
 const progressiveMode = ref(false);
 const hideTranslation = ref(false);
