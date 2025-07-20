@@ -612,7 +612,51 @@
             </div>
 
             <!-- Premium Ayahs Display -->
-            <div v-if="displayAyahs.length > 0 && !topicLoading" class="space-y-4 sm:space-y-6">
+            <div v-if="(ayahs.length > 0 || surahLoading || juzLoading || pageLoading || searchResults.length > 0 || topicResults.length > 0) && !topicLoading" class="space-y-4 sm:space-y-6">
+                <!-- Skeleton Loaders for Ayahs -->
+                <template v-if="(surahLoading && currentSurah) || (juzLoading && currentJuz) || (pageLoading && selectedPage)">
+                    <div
+                        v-for="i in currentSurah ? Math.min(currentSurah.numberOfAyahs || 5, 10) : 10"
+                        :key="`skeleton-${i}`"
+                        class="group relative overflow-hidden rounded-2xl border border-[#5f5fcd]/10 bg-gradient-to-br from-white via-[#f8f9ff] to-[#f0f7f0] p-4 shadow-lg sm:rounded-3xl sm:p-6 animate-pulse"
+                    >
+                        <!-- Header Skeleton -->
+                        <div class="relative z-10 mb-4 flex items-center justify-between sm:mb-6">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
+                                <!-- Ayah Number Skeleton -->
+                                <div class="h-8 w-8 rounded-full bg-gray-200 sm:h-10 sm:w-10"></div>
+                                <!-- Info Skeleton -->
+                                <div class="space-y-2">
+                                    <div class="h-4 w-24 rounded bg-gray-200"></div>
+                                    <div class="h-3 w-16 rounded bg-gray-200"></div>
+                                </div>
+                            </div>
+                            <!-- Copy Button Skeleton -->
+                            <div class="h-9 w-20 rounded-xl bg-gray-200 sm:h-10 sm:w-24"></div>
+                        </div>
+
+                        <!-- Arabic Text Skeleton -->
+                        <div class="relative z-10 mb-4 rounded-2xl border border-[#5f5fcd]/20 bg-gradient-to-br from-[#5f5fcd]/8 via-white to-[#2d5a27]/8 p-5 sm:mb-6 sm:p-8">
+                            <div class="space-y-3 text-center">
+                                <div class="mx-auto h-6 w-3/4 rounded bg-gray-200 sm:h-8"></div>
+                                <div class="mx-auto h-6 w-full rounded bg-gray-200 sm:h-8"></div>
+                                <div class="mx-auto h-6 w-5/6 rounded bg-gray-200 sm:h-8"></div>
+                            </div>
+                        </div>
+
+                        <!-- Translation Skeleton -->
+                        <div class="text-center">
+                            <div class="space-y-2">
+                                <div class="mx-auto h-4 w-full rounded bg-gray-200"></div>
+                                <div class="mx-auto h-4 w-5/6 rounded bg-gray-200"></div>
+                                <div class="mx-auto h-4 w-4/5 rounded bg-gray-200"></div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Actual Ayahs Display -->
+                <template v-else-if="displayAyahs.length > 0">
                 <div
                     v-for="ayah in displayAyahs"
                     :key="ayah.numberInSurah"
@@ -713,6 +757,7 @@
                         </div>
                     </div>
                 </div>
+                </template>
             </div>
 
             <!-- Audio Element -->
@@ -725,6 +770,7 @@
                 preload="metadata"
                 style="display: none"
             ></audio>
+
         </div>
     </FrontendLayout>
 </template>
@@ -743,6 +789,9 @@ const ayahs = ref([]);
 const ayahTranslations = ref({});
 const isPlaying = ref(false);
 const audioElement = ref(null);
+const surahLoading = ref(false);
+const juzLoading = ref(false);
+const pageLoading = ref(false);
 const selectedReciter = ref('afs');
 const availableReciters = ref([
     { code: 'afs', name: 'আল-আফাসি', server: 'server8.mp3quran.net/afs', ayahServer: 'everyayah.com/data/Alafasy_128kbps' },
@@ -1622,6 +1671,7 @@ const selectSurah = async (event) => {
     const surah = surahs.value.find((s) => s.number === currentSurahNumber.value);
     if (!surah) return;
 
+    // Update surah info immediately for instant feedback
     currentSurah.value = surah;
     currentJuz.value = null; // Clear juz when selecting surah
     selectedJuz.value = ''; // Clear juz dropdown
@@ -1635,11 +1685,80 @@ const selectSurah = async (event) => {
     isPlaying.value = false;
     currentlyPlayingAyahIndex.value = -1;
 
-    // Load Arabic text with selected style
-    await loadSurahArabicText();
-
-    // Load translation with selected translation
-    await loadSurahTranslation();
+    // Clear previous ayahs but show loading state
+    ayahs.value = [];
+    ayahTranslations.value = {};
+    searchResults.value = []; // Clear search results
+    topicResults.value = []; // Clear topic results
+    
+    // Start loading indicator after setting currentSurah
+    surahLoading.value = true;
+    
+    try {
+        // Progressive loading: First load Arabic text
+        const loadArabicText = async () => {
+            try {
+                const arabicResponse = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.value.number}/${selectedTextStyle.value}`);
+                const arabicJson = await arabicResponse.json();
+                
+                // Progressive update: Add ayahs as they come
+                ayahs.value = arabicJson.data.ayahs;
+                
+                // If we have ayahs, we can hide the skeleton loader
+                if (ayahs.value.length > 0) {
+                    surahLoading.value = false;
+                }
+            } catch (error) {
+                // Fallback to default text style
+                try {
+                    const fallbackResponse = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.value.number}`);
+                    const fallbackJson = await fallbackResponse.json();
+                    ayahs.value = fallbackJson.data.ayahs;
+                    
+                    if (ayahs.value.length > 0) {
+                        surahLoading.value = false;
+                    }
+                } catch (fallbackError) {
+                    ayahs.value = [];
+                    surahLoading.value = false;
+                }
+            }
+        };
+        
+        // Load translations separately (don't wait for it)
+        const loadTranslations = async () => {
+            try {
+                const translationResponse = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.value.number}/${selectedTranslation.value}`);
+                const translationJson = await translationResponse.json();
+                const translations = {};
+                translationJson.data.ayahs.forEach((ayah) => {
+                    translations[ayah.numberInSurah] = ayah.text;
+                });
+                ayahTranslations.value = translations;
+            } catch (error) {
+                // Fallback to default translation
+                try {
+                    const fallbackResponse = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.value.number}/bn.bengali`);
+                    const fallbackJson = await fallbackResponse.json();
+                    const translations = {};
+                    fallbackJson.data.ayahs.forEach((ayah) => {
+                        translations[ayah.numberInSurah] = ayah.text;
+                    });
+                    ayahTranslations.value = translations;
+                } catch (fallbackError) {
+                    ayahTranslations.value = {};
+                }
+            }
+        };
+        
+        // Start both but don't wait for translations
+        await loadArabicText();
+        loadTranslations(); // Fire and forget for progressive loading
+        
+    } catch (error) {
+        console.error('Error loading surah:', error);
+        surahLoading.value = false;
+    }
 };
 
 const selectJuz = async (event) => {
@@ -1657,6 +1776,7 @@ const selectJuz = async (event) => {
     const juz = availableJuzs.value.find((j) => j.number === selectedJuz.value);
     if (!juz) return;
 
+    // Update juz info immediately for instant feedback
     currentJuz.value = juz;
     currentSurah.value = null; // Clear surah when selecting juz
     currentSurahNumber.value = ''; // Clear surah dropdown
@@ -1670,11 +1790,26 @@ const selectJuz = async (event) => {
     isPlaying.value = false;
     currentlyPlayingAyahIndex.value = -1;
 
-    // Load juz Arabic text with selected style
-    await loadJuzArabicText();
+    // Clear previous ayahs but show loading state
+    ayahs.value = [];
+    ayahTranslations.value = {};
+    searchResults.value = []; // Clear search results
+    topicResults.value = []; // Clear topic results
+    
+    // Start loading indicator after setting currentJuz
+    juzLoading.value = true;
 
-    // Load juz translation with selected translation
-    await loadJuzTranslation();
+    try {
+        // Progressive loading: First load Arabic text
+        await loadJuzArabicText();
+        
+        // Load translations separately (don't wait for it)
+        loadJuzTranslation(); // Fire and forget for progressive loading
+        
+    } catch (error) {
+        console.error('Error loading juz:', error);
+        juzLoading.value = false;
+    }
 };
 
 const selectPage = async (event) => {
@@ -1685,6 +1820,7 @@ const selectPage = async (event) => {
     
     if (!selectedPage.value || selectedPage.value === '') return;
 
+    // Note: Page doesn't need to be cleared since it's the selected value
     currentSurah.value = null; // Clear surah when selecting page
     currentJuz.value = null; // Clear juz when selecting page
     selectedJuz.value = ''; // Clear juz dropdown
@@ -1698,11 +1834,26 @@ const selectPage = async (event) => {
     isPlaying.value = false;
     currentlyPlayingAyahIndex.value = -1;
 
-    // Load page Arabic text with selected style
-    await loadPageArabicText();
+    // Clear previous ayahs but show loading state
+    ayahs.value = [];
+    ayahTranslations.value = {};
+    searchResults.value = []; // Clear search results
+    topicResults.value = []; // Clear topic results
+    
+    // Start loading indicator
+    pageLoading.value = true;
 
-    // Load page translation with selected translation
-    await loadPageTranslation();
+    try {
+        // Progressive loading: First load Arabic text
+        await loadPageArabicText();
+        
+        // Load translations separately (don't wait for it)
+        loadPageTranslation(); // Fire and forget for progressive loading
+        
+    } catch (error) {
+        console.error('Error loading page:', error);
+        pageLoading.value = false;
+    }
 };
 
 const loadSurahArabicText = async () => {
@@ -1829,6 +1980,10 @@ const loadJuzArabicText = async () => {
         
         if (arabicData.data && arabicData.data.ayahs && arabicData.data.ayahs.length > 0) {
             ayahs.value = arabicData.data.ayahs;
+            
+            // Hide skeleton loader once we have ayahs
+            juzLoading.value = false;
+            
             await fixJuzBoundary(juzNumber, selectedTextStyle.value);
         } else {
             throw new Error('No ayahs returned from API');
@@ -1842,12 +1997,18 @@ const loadJuzArabicText = async () => {
             
             if (fallbackData.data && fallbackData.data.ayahs) {
                 ayahs.value = fallbackData.data.ayahs;
+                
+                // Hide skeleton loader once we have ayahs
+                juzLoading.value = false;
+                
                 await fixJuzBoundary(juzNumber, 'quran-uthmani');
             } else {
                 ayahs.value = [];
+                juzLoading.value = false;
             }
         } catch (fallbackError) {
             ayahs.value = [];
+            juzLoading.value = false;
         }
     }
 };
@@ -1933,6 +2094,11 @@ const loadPageArabicText = async () => {
         const arabicResponse = await fetch(`https://api.alquran.cloud/v1/page/${selectedPage.value}/${selectedTextStyle.value}`);
         const arabicData = await arabicResponse.json();
         ayahs.value = arabicData.data.ayahs;
+        
+        // Hide skeleton loader once we have ayahs
+        if (ayahs.value.length > 0) {
+            pageLoading.value = false;
+        }
     } catch (error) {
         console.error('Error loading Page Arabic text:', error);
         // Fallback to default text style
@@ -1940,8 +2106,15 @@ const loadPageArabicText = async () => {
             const fallbackResponse = await fetch(`https://api.alquran.cloud/v1/page/${selectedPage.value}`);
             const fallbackData = await fallbackResponse.json();
             ayahs.value = fallbackData.data.ayahs;
+            
+            // Hide skeleton loader once we have ayahs
+            if (ayahs.value.length > 0) {
+                pageLoading.value = false;
+            }
         } catch (fallbackError) {
             console.error('Error loading fallback Page Arabic text:', fallbackError);
+            ayahs.value = [];
+            pageLoading.value = false;
         }
     }
 };
