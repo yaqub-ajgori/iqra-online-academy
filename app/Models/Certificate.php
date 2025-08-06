@@ -156,19 +156,33 @@ class Certificate extends Model
     /**
      * Generate unique certificate number.
      */
-    protected static function generateCertificateNumber(): string
+    public static function generateCertificateNumber(): string
     {
-        do {
-            $number = 'IOA-' . date('Y') . '-' . strtoupper(Str::random(8));
-        } while (self::where('certificate_number', $number)->exists());
+        $year = date('Y');
+        $prefix = "IOA-{$year}-";
         
-        return $number;
+        // Get the highest existing certificate number for this year
+        $lastCertificate = self::where('certificate_number', 'LIKE', $prefix . '%')
+            ->orderByRaw("CAST(SUBSTRING(certificate_number, LENGTH('{$prefix}') + 1) AS UNSIGNED) DESC")
+            ->first();
+            
+        if ($lastCertificate) {
+            // Extract the number part and increment
+            $lastNumber = (int) substr($lastCertificate->certificate_number, strlen($prefix));
+            $nextNumber = $lastNumber + 1;
+        } else {
+            // First certificate of the year
+            $nextNumber = 1;
+        }
+        
+        // Format with leading zeros (3 digits)
+        return $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
     }
 
     /**
      * Generate unique verification code.
      */
-    protected static function generateVerificationCode(): string
+    public static function generateVerificationCode(): string
     {
         do {
             $code = strtoupper(Str::random(12));

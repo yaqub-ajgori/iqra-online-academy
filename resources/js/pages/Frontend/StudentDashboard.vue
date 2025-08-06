@@ -357,7 +357,18 @@
 
                         <!-- Certificates Section -->
                         <div v-if="activeSection === 'certificates'" class="space-y-8">
-                            <h2 class="text-2xl font-bold text-gray-900">Certificates</h2>
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-2xl font-bold text-gray-900">Certificates</h2>
+                                <PrimaryButton 
+                                    v-if="certificates.length > 0"
+                                    @click="goToCertificatesPage" 
+                                    variant="outline" 
+                                    size="md" 
+                                    :icon="AwardIcon"
+                                > 
+                                    View All Certificates 
+                                </PrimaryButton>
+                            </div>
 
                             <div v-if="certificates.length === 0" class="py-12 text-center">
                                 <div class="flex flex-col items-center justify-center space-y-4">
@@ -380,6 +391,7 @@
                                         <div>
                                             <h3 class="text-lg font-semibold text-gray-900">{{ certificate.course }}</h3>
                                             <p class="text-gray-600">{{ certificate.date }}</p>
+                                            <p v-if="certificate.certificate_number" class="text-sm text-gray-500">{{ certificate.certificate_number }}</p>
                                         </div>
                                     </div>
 
@@ -495,9 +507,12 @@ interface Props {
     }>;
     certificates?: Array<{
         id: number;
+        certificate_number?: string;
         course: string;
         date: string;
         course_slug: string;
+        verification_code?: string;
+        download_url?: string;
     }>;
     stats?: {
         total_enrollments: number;
@@ -622,6 +637,10 @@ const goToCourseDetails = (courseSlug: string) => {
     router.visit(`/courses/${courseSlug}`);
 };
 
+const goToCertificatesPage = () => {
+    router.visit(route('certificates.my-certificates'));
+};
+
 const updateProfile = () => {
     profileForm.patch(route('frontend.student.profile.update'), {
         preserveScroll: true,
@@ -648,7 +667,19 @@ const changePassword = () => {
 };
 
 const downloadCertificate = (certificate: any) => {
-    // Implement certificate download functionality
+    if (certificate.download_url) {
+        // Create a temporary link and trigger download
+        const link = document.createElement('a');
+        link.href = certificate.download_url;
+        link.download = `Certificate_${certificate.certificate_number || certificate.id}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        success('Certificate download started!');
+    } else {
+        error('Certificate download URL not available. Please contact support.');
+    }
 };
 
 const handlePendingCourseAccess = (enrollment: any) => {

@@ -30,7 +30,9 @@
       "WebFetch(domain:verse.mp3quran.net)",
       "Bash(composer dev:*)",
       "WebFetch(domain:everyayah.com)",
-      "Bash(vendor/bin/pest:*)"
+      "Bash(vendor/bin/pest:*)",
+      "Bash(php -l:*)",
+      "Bash(composer test:*)"
     ],
     "deny": []
   }

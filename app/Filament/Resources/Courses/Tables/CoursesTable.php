@@ -6,7 +6,9 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use App\Services\CertificateService;
 
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -80,6 +82,34 @@ class CoursesTable
             ->recordActions([
                 EditAction::make()
                     ->icon('heroicon-o-pencil'),
+                    
+                Action::make('generate_certificates')
+                    ->label('Generate Certificates')
+                    ->icon('heroicon-o-academic-cap')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Generate Certificates')
+                    ->modalDescription('This will generate certificates for all eligible students who have completed this course.')
+                    ->modalSubmitActionLabel('Generate')
+                    ->action(function ($record) {
+                        $certificateService = app(CertificateService::class);
+                        $generatedCount = $certificateService->autoGenerateCertificates($record);
+                        
+                        if ($generatedCount > 0) {
+                            Notification::make()
+                                ->title('Certificates Generated')
+                                ->body("Successfully generated {$generatedCount} certificate(s) for completed students.")
+                                ->success()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('No Certificates Generated')
+                                ->body('No eligible students found. Students must complete the course to receive certificates.')
+                                ->warning()
+                                ->send();
+                        }
+                    })
+                    ->visible(fn ($record) => auth()->user()->isAdmin() || auth()->user()->isTeacher()),
                     
                 DeleteAction::make()
                     ->icon('heroicon-o-trash')

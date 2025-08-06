@@ -161,7 +161,7 @@
 <script setup>
 import { computed } from 'vue'
 import { router } from '@inertiajs/vue3'
-import FrontendLayout from '@/Layouts/FrontendLayout.vue'
+import FrontendLayout from '@/layouts/FrontendLayout.vue'
 
 const props = defineProps({
   attempt: Object,

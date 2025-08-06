@@ -25,7 +25,6 @@ class LessonForm
                             ->schema([
                                 TextInput::make('title')
                                     ->label('Lesson Title')
-                                    ->required()
                                     ->maxLength(255)
                                     ->columnSpanFull(),
 
@@ -46,8 +45,8 @@ class LessonForm
                                         'live' => 'Live Session',
                                         'mixed' => 'Mixed Content'
                                     ])
-                                    ->default('video')
-                                    ->required()
+                                    ->placeholder('Select lesson type')
+                                    ->helperText('Mixed Content allows video, text, files, and attachments')
                                     ->live()
                                     ->columnSpan(1),
 
@@ -95,7 +94,7 @@ class LessonForm
                                     ->columnSpan(1),
                             ])
                             ->columns(2)
-                            ->visible(fn ($get) => in_array($get('lesson_type'), ['video', 'mixed'])),
+                            ->visible(fn ($get) => in_array($get('lesson_type'), ['video', 'mixed', 'live']) || !$get('lesson_type')),
 
                         Section::make('File Content')
                             ->schema([
@@ -113,12 +112,11 @@ class LessonForm
                                     ->schema([
                                         TextInput::make('name')
                                             ->label('File Name')
-                                            ->required()
+                                            ->placeholder('Enter file name')
                                             ->columnSpan(1),
 
                                         FileUpload::make('path')
                                             ->label('File')
-                                            ->required()
                                             ->disk('public')
                                             ->directory('course-attachments')
                                             ->maxSize(25 * 1024) // 25MB
@@ -133,7 +131,7 @@ class LessonForm
                                                 'image' => 'Image',
                                                 'other' => 'Other'
                                             ])
-                                            ->required()
+                                            ->placeholder('Select file type')
                                             ->columnSpan(1),
                                     ])
                                     ->columns(3)
@@ -146,13 +144,13 @@ class LessonForm
                                     ->schema([
                                         TextInput::make('title')
                                             ->label('Resource Title')
-                                            ->required()
+                                            ->placeholder('Enter resource title')
                                             ->columnSpan(1),
 
                                         TextInput::make('url')
                                             ->label('URL')
                                             ->url()
-                                            ->required()
+                                            ->placeholder('Enter resource URL')
                                             ->columnSpan(1),
 
                                         Select::make('type')
@@ -165,7 +163,7 @@ class LessonForm
                                                 'tool' => 'Tool',
                                                 'other' => 'Other'
                                             ])
-                                            ->required()
+                                            ->placeholder('Select resource type')
                                             ->columnSpan(1),
                                     ])
                                     ->columns(3)
@@ -173,7 +171,7 @@ class LessonForm
                                     ->collapsible()
                                     ->columnSpanFull(),
                             ])
-                            ->visible(fn ($get) => in_array($get('lesson_type'), ['pdf', 'text', 'mixed'])),
+                            ->visible(fn ($get) => in_array($get('lesson_type'), ['pdf', 'text', 'mixed', 'assignment', 'quiz']) || !$get('lesson_type')),
 
                         Section::make('Lesson Media')
                             ->schema([
@@ -185,7 +183,7 @@ class LessonForm
                                     ->helperText('Optional thumbnail for the lesson'),
                             ]),
                     ])
-                    ->columnSpan(['lg' => 2]),
+                    ->columnSpan(['lg' => 2, 'xl' => 2]),
 
                 Group::make()
                     ->schema([
@@ -220,8 +218,12 @@ class LessonForm
                             ])
                             ->visible(fn ($get) => $get('requires_completion')),
                     ])
-                    ->columnSpan(['lg' => 1]),
+                    ->columnSpan(['lg' => 1, 'xl' => 1]),
             ])
-            ->columns(3);
+            ->columns([
+                'sm' => 1,
+                'md' => 2,
+                'lg' => 3,
+            ]);
     }
 }

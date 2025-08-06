@@ -47,7 +47,6 @@ class CertificateController extends Controller
                 'course_title' => $certificate->course_title,
                 'completion_date' => $certificate->completion_date->format('d M Y'),
                 'issue_date' => $certificate->issue_date->format('d M Y'),
-                'final_score' => $certificate->final_score,
                 'instructors' => $certificate->instructors,
                 'is_valid' => true,
             ]
@@ -96,8 +95,7 @@ class CertificateController extends Controller
                     'course_title' => $certificate->course_title,
                     'completion_date' => $certificate->completion_date->format('d M Y'),
                     'issue_date' => $certificate->issue_date->format('d M Y'),
-                    'final_score' => $certificate->final_score,
-                    'verification_code' => $certificate->verification_code,
+                        'verification_code' => $certificate->verification_code,
                     'download_url' => route('certificates.download', $certificate),
                 ];
             });
@@ -132,11 +130,7 @@ class CertificateController extends Controller
             ->where('course_id', $course->id)
             ->first();
 
-        $certificate = $this->certificateService->generateCertificate(
-            $student, 
-            $course, 
-            $enrollment->final_score ?? null
-        );
+        $certificate = $this->certificateService->generateCertificate($student, $course);
 
         return redirect()->route('certificates.download', $certificate)
             ->with('success', 'Certificate generated successfully!');
@@ -161,7 +155,6 @@ class CertificateController extends Controller
                 'course_description' => $certificate->course_description,
                 'completion_date' => $certificate->completion_date->format('d M Y'),
                 'issue_date' => $certificate->issue_date->format('d M Y'),
-                'final_score' => $certificate->final_score,
                 'instructors' => $certificate->instructors,
                 'verification_code' => $certificate->verification_code,
             ]
@@ -175,13 +168,12 @@ class CertificateController extends Controller
     {
         // Create a sample certificate object for preview
         $certificate = (object) [
-            'certificate_number' => 'IOA-2025-SAMPLE01',
+            'certificate_number' => 'IOA-2025-001',
             'verification_code' => 'PREV12345678',
             'student_name' => 'John Ahmed Abdullah',
             'course_title' => 'Comprehensive Quranic Studies & Tajweed Fundamentals',
             'course_description' => 'This comprehensive course covers the fundamental principles of Quranic recitation, Tajweed rules, Arabic pronunciation, and Islamic studies. Students learn proper articulation points (Makhraj), characteristics of letters (Sifaat), and various Tajweed regulations essential for correct Quranic recitation.',
             'instructors' => ['Dr. Muhammad Ibrahim', 'Ustadha Sarah Khan', 'Sheikh Abdullah Al-Mansouri'],
-            'final_score' => 95.5,
             'completion_date' => now()->subDays(5),
             'issue_date' => now(),
             'expiry_date' => null,

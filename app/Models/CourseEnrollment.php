@@ -139,6 +139,22 @@ class CourseEnrollment extends Model
             'completed_at' => now(),
             'progress_percentage' => 100,
         ]);
+        
+        // Automatically generate certificate if eligible
+        $certificateService = app(\App\Services\CertificateService::class);
+        if ($certificateService->isEligibleForCertificate($this->student, $this->course)) {
+            try {
+                $certificateService->generateCertificate($this->student, $this->course);
+            } catch (\Exception $e) {
+                // Log error but don't fail the completion process
+                logger()->error('Failed to auto-generate certificate', [
+                    'enrollment_id' => $this->id,
+                    'student_id' => $this->student_id,
+                    'course_id' => $this->course_id,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
     }
 
     protected static function booted()

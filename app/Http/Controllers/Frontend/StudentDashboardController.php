@@ -186,15 +186,31 @@ class StudentDashboardController extends Controller
      */
     private function getCertificates($enrollments): array
     {
-        return $enrollments->where('is_completed', true)
-            ->map(function ($enrollment) {
-                return [
-                    'id' => $enrollment->id,
-                    'course' => $enrollment->course->title,
-                    'date' => $enrollment->updated_at->format('d M Y'),
-                    'course_slug' => $enrollment->course->slug,
-                ];
-            })->toArray();
+        // Get student ID from first enrollment or return empty if none
+        if ($enrollments->isEmpty()) {
+            return [];
+        }
+        
+        $studentId = $enrollments->first()->student_id;
+        
+        // Fetch actual certificates from database
+        $certificates = \App\Models\Certificate::where('student_id', $studentId)
+            ->where('is_revoked', false)
+            ->with('course')
+            ->orderBy('issue_date', 'desc')
+            ->get();
+        
+        return $certificates->map(function ($certificate) {
+            return [
+                'id' => $certificate->id,
+                'certificate_number' => $certificate->certificate_number,
+                'course' => $certificate->course_title,
+                'date' => $certificate->issue_date->format('d M Y'),
+                'course_slug' => $certificate->course->slug ?? '',
+                'verification_code' => $certificate->verification_code,
+                'download_url' => route('certificates.download', $certificate),
+            ];
+        })->toArray();
     }
 
     /**

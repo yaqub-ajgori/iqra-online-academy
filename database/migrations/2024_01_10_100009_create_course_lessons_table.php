@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('module_id')->constrained('course_modules')->onDelete('cascade');
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
-            $table->string('title');
+            $table->string('title')->nullable();
             $table->longText('content')->nullable();
             $table->longText('description')->nullable(); // Additional lesson description
-            $table->enum('lesson_type', ['video', 'text', 'quiz', 'assignment', 'live', 'pdf', 'mixed'])->default('video');
+            $table->enum('lesson_type', ['video', 'text', 'quiz', 'assignment', 'live', 'pdf', 'mixed'])->nullable();
             
             // Video Content
             $table->string('video_url', 500)->nullable();

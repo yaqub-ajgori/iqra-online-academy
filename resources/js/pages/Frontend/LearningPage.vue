@@ -283,11 +283,83 @@
                         </div>
                         <!-- PDF Content -->
                         <div
-                            v-else-if="currentLesson?.type === 'pdf' && currentLesson.pdf_url"
+                            v-else-if="currentLesson?.type === 'pdf' && currentLesson.primary_file_url"
                             class="h-full w-full rounded-none border-none shadow-none"
                             style="height: 70vh"
                         >
-                            <iframe :src="currentLesson.pdf_url" class="h-full w-full rounded-xl" frameborder="0" title="Lesson PDF"></iframe>
+                            <iframe :src="currentLesson.primary_file_url" class="h-full w-full rounded-xl" frameborder="0" title="Lesson PDF"></iframe>
+                        </div>
+                        <!-- Mixed Content -->
+                        <div v-else-if="currentLesson?.type === 'mixed' || !currentLesson?.type" class="h-full w-full overflow-y-auto bg-white">
+                            <!-- Video Section (if available) -->
+                            <div v-if="currentLesson.video_url" class="relative mb-6">
+                                <div class="aspect-video w-full bg-black">
+                                    <iframe
+                                        :src="getEmbedUrl(currentLesson.video_url)"
+                                        class="h-full w-full"
+                                        frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen
+                                        title="Lesson Video"
+                                    ></iframe>
+                                </div>
+                            </div>
+                            
+                            <!-- Content Section -->
+                            <div class="px-4 sm:px-8">
+                                <h1 class="mb-6 text-xl leading-tight font-extrabold text-gray-900 sm:text-3xl">
+                                    {{ currentLesson.title || 'Untitled Lesson' }}
+                                </h1>
+                                
+                                <!-- Text Content -->
+                                <div v-if="currentLesson.content" class="prose prose-lg max-w-none leading-relaxed text-gray-800 mb-8" v-html="sanitizeHtml(currentLesson.content)"></div>
+                                
+                                <!-- Primary File Download -->
+                                <div v-if="currentLesson.primary_file_url" class="mb-6">
+                                    <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                                        <h3 class="mb-3 font-semibold text-gray-900">প্রধান ফাইল</h3>
+                                        <a :href="currentLesson.primary_file_url" download class="inline-flex items-center space-x-2 text-[#5f5fcd] hover:text-[#4a4ab8]">
+                                            <DownloadIcon class="h-4 w-4" />
+                                            <span>{{ getFileTypeDisplay(currentLesson.primary_file_type) }} ডাউনলোড করুন</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Additional Attachments -->
+                                <div v-if="currentLesson.attachments && currentLesson.attachments.length > 0" class="mb-6">
+                                    <h3 class="mb-3 font-semibold text-gray-900">অতিরিক্ত সংযুক্তি</h3>
+                                    <div class="space-y-2">
+                                        <div v-for="attachment in currentLesson.attachments" :key="attachment.name" class="rounded border border-gray-200 bg-gray-50 p-3">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <p class="font-medium text-gray-900">{{ attachment.name }}</p>
+                                                    <p v-if="attachment.formatted_size" class="text-sm text-gray-500">{{ attachment.formatted_size }}</p>
+                                                </div>
+                                                <a :href="attachment.url" download class="text-[#5f5fcd] hover:text-[#4a4ab8]">
+                                                    <DownloadIcon class="h-4 w-4" />
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- External Resources -->
+                                <div v-if="currentLesson.resources && currentLesson.resources.length > 0" class="mb-6">
+                                    <h3 class="mb-3 font-semibold text-gray-900">বাহ্যিক রিসোর্স</h3>
+                                    <div class="space-y-2">
+                                        <a v-for="resource in currentLesson.resources" :key="resource.url" :href="resource.url" target="_blank" 
+                                           class="block rounded border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <p class="font-medium text-gray-900">{{ resource.title }}</p>
+                                                    <p class="text-sm text-gray-500">{{ resource.type }}</p>
+                                                </div>
+                                                <ExternalLinkIcon class="h-4 w-4 text-[#5f5fcd]" />
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <!-- Audio Content -->
                         <div
@@ -367,6 +439,8 @@ import {
     ChevronLeftIcon,
     ChevronRightIcon,
     ClockIcon,
+    DownloadIcon,
+    ExternalLinkIcon,
     FileIcon,
     FileTextIcon,
     HeadphonesIcon,
@@ -385,10 +459,22 @@ interface Lesson {
     order: number;
     title: string;
     duration: string;
-    type: 'video' | 'text' | 'quiz' | 'pdf' | 'audio';
+    type: 'video' | 'text' | 'quiz' | 'pdf' | 'audio' | 'mixed';
     video_url?: string;
     content?: string;
-    pdf_url?: string;
+    primary_file_url?: string;
+    primary_file_type?: string;
+    attachments?: Array<{
+        name: string;
+        url: string;
+        formatted_size?: string;
+    }>;
+    resources?: Array<{
+        title: string;
+        url: string;
+        type: string;
+    }>;
+    pdf_url?: string; // Keep for backward compatibility
     audio_url?: string;
     completed: boolean;
     module_id: number;
@@ -646,6 +732,35 @@ const getBestScore = (attempts: QuizAttempt[]): number => {
 
 const startQuiz = (quizId: number) => {
     router.visit(route('quiz.show', quizId));
+};
+
+// File type display helper
+const getFileTypeDisplay = (fileType: string | null): string => {
+    if (!fileType) return 'ফাইল';
+    
+    switch (fileType.toLowerCase()) {
+        case 'pdf':
+            return 'পিডিএফ';
+        case 'doc':
+        case 'docx':
+            return 'ওয়ার্ড ডকুমেন্ট';
+        case 'ppt':
+        case 'pptx':
+            return 'প্রেজেন্টেশন';
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif':
+            return 'ছবি';
+        case 'mp3':
+        case 'wav':
+            return 'অডিও';
+        case 'mp4':
+        case 'avi':
+            return 'ভিডিও';
+        default:
+            return 'ফাইল';
+    }
 };
 
 // Initialize on mount

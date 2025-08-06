@@ -13,7 +13,7 @@ class CertificateService
     /**
      * Generate certificate for a student who completed a course.
      */
-    public function generateCertificate(Student $student, Course $course, float $finalScore = null): Certificate
+    public function generateCertificate(Student $student, Course $course): Certificate
     {
         // Get all instructors (primary + additional)
         $instructors = collect();
@@ -39,7 +39,6 @@ class CertificateService
             'course_title' => $course->title,
             'course_description' => $course->full_description,
             'instructors' => $instructors->toArray(),
-            'final_score' => $finalScore,
             'completion_date' => now(),
         ]);
 
@@ -66,9 +65,17 @@ class CertificateService
                   ->setPaper('a4', 'landscape')
                   ->setOptions([
                       'isPhpEnabled' => true,
-                      'isRemoteEnabled' => true,
+                      'isRemoteEnabled' => false,
                       'defaultFont' => 'DejaVu Sans',
-                      'dpi' => 150,
+                      'dpi' => 96,
+                      'fontSubsetting' => false,
+                      'debugKeepTemp' => false,
+                      'debugCss' => false,
+                      'debugLayout' => false,
+                      'debugLayoutLines' => false,
+                      'debugLayoutBlocks' => false,
+                      'debugLayoutInline' => false,
+                      'debugLayoutPaddingBox' => false,
                   ]);
     }
 
@@ -161,7 +168,7 @@ class CertificateService
             $student = $enrollment->student;
             
             if ($this->isEligibleForCertificate($student, $course)) {
-                $this->generateCertificate($student, $course, $enrollment->final_score ?? null);
+                $this->generateCertificate($student, $course);
                 $generated++;
             }
         }

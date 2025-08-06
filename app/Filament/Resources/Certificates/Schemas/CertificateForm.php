@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Certificates\Schemas;
 
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -28,6 +27,15 @@ class CertificateForm
                                     ->required()
                                     ->searchable()
                                     ->preload()
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        if ($state) {
+                                            $student = \App\Models\Student::find($state);
+                                            if ($student) {
+                                                $set('student_name', $student->full_name);
+                                            }
+                                        }
+                                    })
                                     ->columnSpan(1),
 
                                 Select::make('course_id')
@@ -36,6 +44,16 @@ class CertificateForm
                                     ->required()
                                     ->searchable()
                                     ->preload()
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        if ($state) {
+                                            $course = \App\Models\Course::find($state);
+                                            if ($course) {
+                                                $set('course_title', $course->title);
+                                                $set('course_description', $course->full_description);
+                                            }
+                                        }
+                                    })
                                     ->columnSpan(1),
 
                                 TextInput::make('certificate_number')
@@ -46,6 +64,9 @@ class CertificateForm
                                     ->disabled()
                                     ->dehydrated()
                                     ->helperText('Auto-generated')
+                                    ->default(function () {
+                                        return \App\Models\Certificate::generateCertificateNumber();
+                                    })
                                     ->columnSpan(1),
 
                                 TextInput::make('verification_code')
@@ -56,6 +77,9 @@ class CertificateForm
                                     ->disabled()
                                     ->dehydrated()
                                     ->helperText('Auto-generated')
+                                    ->default(function () {
+                                        return \App\Models\Certificate::generateVerificationCode();
+                                    })
                                     ->columnSpan(1),
 
                                 TextInput::make('student_name')
@@ -75,34 +99,10 @@ class CertificateForm
                                     ->rows(3)
                                     ->columnSpanFull(),
 
-                                TextInput::make('final_score')
-                                    ->label('Final Score (%)')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->maxValue(100)
-                                    ->suffix('%')
-                                    ->columnSpan(1),
 
-                                TextInput::make('template_used')
-                                    ->label('Template')
-                                    ->default('default')
-                                    ->disabled()
-                                    ->dehydrated()
-                                    ->helperText('Using default Islamic template')
-                                    ->columnSpan(1),
                             ])
                             ->columns(2),
 
-                        Section::make('Certificate File')
-                            ->schema([
-                                FileUpload::make('certificate_path')
-                                    ->label('Certificate PDF')
-                                    ->acceptedFileTypes(['application/pdf'])
-                                    ->disk('public')
-                                    ->directory('certificates')
-                                    ->visibility('public')
-                                    ->helperText('Upload the generated certificate PDF'),
-                            ]),
                     ])
                     ->columnSpan(['lg' => 2]),
 

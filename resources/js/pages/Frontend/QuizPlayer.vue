@@ -185,7 +185,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { router } from '@inertiajs/vue3'
-import FrontendLayout from '@/Layouts/FrontendLayout.vue'
+import FrontendLayout from '@/layouts/FrontendLayout.vue'
 
 const props = defineProps({
   quiz: Object,

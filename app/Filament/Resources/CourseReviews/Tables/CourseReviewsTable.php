@@ -20,33 +20,28 @@ class CourseReviewsTable
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('course.title')
-                    ->label('Course')
-                    ->searchable()
-                    ->sortable()
-                    ->limit(30),
-
                 Tables\Columns\TextColumn::make('student.full_name')
                     ->label('Student')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('title')
-                    ->label('Review Title')
+                Tables\Columns\TextColumn::make('course.title')
+                    ->label('Course')
                     ->searchable()
-                    ->limit(25)
-                    ->toggleable(),
+                    ->sortable()
+                    ->limit(25),
 
                 Tables\Columns\TextColumn::make('review_text')
                     ->label('Review')
-                    ->limit(50)
+                    ->limit(40)
                     ->searchable()
                     ->tooltip(fn ($record) => $record->review_text),
 
                 Tables\Columns\TextColumn::make('rating')
                     ->label('Rating')
                     ->formatStateUsing(fn ($state) => str_repeat('⭐', $state))
-                    ->sortable(),
+                    ->sortable()
+                    ->alignCenter(),
 
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Status')
@@ -63,27 +58,40 @@ class CourseReviewsTable
                     ->boolean()
                     ->sortable(),
 
+                // Toggleable columns (hidden by default to save space)
+                Tables\Columns\TextColumn::make('title')
+                    ->label('Review Title')
+                    ->searchable()
+                    ->limit(25)
+                    ->toggleable()
+                    ->toggledHiddenByDefault(),
+
                 Tables\Columns\IconColumn::make('is_verified_purchase')
                     ->label('Verified')
                     ->boolean()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable()
+                    ->toggledHiddenByDefault(),
 
                 Tables\Columns\TextColumn::make('helpful_count')
                     ->label('Helpful')
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->toggledHiddenByDefault(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Submitted')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->toggledHiddenByDefault(),
 
                 Tables\Columns\TextColumn::make('approved_at')
                     ->label('Approved')
                     ->dateTime()
                     ->sortable()
                     ->toggleable()
+                    ->toggledHiddenByDefault()
                     ->placeholder('Not approved'),
             ])
             ->filters([

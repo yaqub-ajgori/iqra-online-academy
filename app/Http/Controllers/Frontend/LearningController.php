@@ -78,13 +78,16 @@ class LearningController extends Controller
                             return [
                                 'id' => $lesson->id,
                                 'order' => $lesson->sort_order,
-                                'title' => $lesson->title,
+                                'title' => $lesson->title ?: 'Untitled Lesson',
                                 'duration' => $lesson->formatted_duration ? $lesson->formatted_duration : ($lesson->video_duration ? gmdate('H:i:s', $lesson->video_duration) : '0 min'),
-                                'type' => $lesson->lesson_type,
+                                'type' => $lesson->lesson_type ?: 'mixed',
                                 'video_url' => $lesson->video_url,
                                 'content' => $lesson->content,
-                                'pdf_url' => null, // This field doesn't exist in the current schema
-                                'audio_url' => null, // This field doesn't exist in the current schema
+                                'primary_file_url' => $lesson->primary_file_url,
+                                'primary_file_type' => $lesson->primary_file_type,
+                                'attachments' => $lesson->downloadable_files,
+                                'resources' => $lesson->resources,
+                                'thumbnail_url' => $lesson->thumbnail_url,
                                 'completed' => $lesson->completed,
                                 'module_id' => $lesson->module_id,
                             ];
@@ -215,12 +218,15 @@ class LearningController extends Controller
             ],
             'current_lesson' => [
                 'id' => $lesson->id,
-                'title' => $lesson->title,
-                'type' => $lesson->lesson_type,
+                'title' => $lesson->title ?: 'Untitled Lesson',
+                'type' => $lesson->lesson_type ?: 'mixed',
                 'video_url' => $lesson->video_url,
                 'content' => $lesson->content,
-                'pdf_url' => null, // This field doesn't exist in the current schema
-                'audio_url' => null, // This field doesn't exist in the current schema
+                'primary_file_url' => $lesson->primary_file_url,
+                'primary_file_type' => $lesson->primary_file_type,
+                'attachments' => $lesson->downloadable_files,
+                'resources' => $lesson->resources,
+                'thumbnail_url' => $lesson->thumbnail_url,
                 'completed' => $isCompleted,
             ],
             'course_slug' => $course->slug,

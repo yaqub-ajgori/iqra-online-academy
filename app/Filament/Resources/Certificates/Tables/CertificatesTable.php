@@ -38,11 +38,6 @@ class CertificatesTable
                     ->sortable()
                     ->limit(30),
 
-                TextColumn::make('final_score')
-                    ->label('Score')
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => $state ? "{$state}%" : 'N/A')
-                    ->color(fn ($state) => $state >= 80 ? 'success' : ($state >= 60 ? 'warning' : 'danger')),
 
                 BadgeColumn::make('status')
                     ->label('Status')
