@@ -14,9 +14,12 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
+use App\Filament\Traits\AdminOnlyResource;
 
 class CourseCategoryResource extends Resource
 {
+    use AdminOnlyResource;
+    
     protected static ?string $model = CourseCategory::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;

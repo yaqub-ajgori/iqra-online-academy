@@ -15,13 +15,13 @@ class VerifyEmailController extends Controller
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('login'));
+            return redirect()->intended('/dashboard?verified=1');
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return redirect()->route('login')->with('status', 'Your email has been successfully verified! You can now log in.');
+        return redirect()->intended('/dashboard?verified=1');
     }
 }

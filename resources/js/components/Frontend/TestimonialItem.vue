@@ -9,9 +9,31 @@
             </div>
         </div>
 
+        <!-- Review Title (if exists) -->
+        <h3 v-if="testimonial.title" class="text-lg font-semibold text-gray-900 mb-3">{{ testimonial.title }}</h3>
+
         <!-- Testimonial Content -->
-        <div class="relative mb-6">
-            <p class="text-lg leading-relaxed text-gray-700 italic">"{{ testimonial.content }}"</p>
+        <div class="relative mb-4">
+            <p class="text-lg leading-relaxed text-gray-700 italic">"{{ testimonial.comment }}"</p>
+        </div>
+
+        <!-- See More Button (for long reviews) -->
+        <div v-if="testimonial.is_long" class="mb-4">
+            <button
+                @click="showModal = true"
+                class="inline-flex items-center text-sm text-[#5f5fcd] hover:text-[#2d5a27] transition-colors duration-200 font-medium"
+            >
+                বিস্তারিত দেখুন
+                <ChevronRightIcon class="ml-1 h-4 w-4" />
+            </button>
+        </div>
+
+        <!-- Course Name -->
+        <div class="mb-4">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#5f5fcd]/10 text-[#5f5fcd]">
+                <BookOpenIcon class="mr-1 h-3 w-3" />
+                {{ testimonial.course }}
+            </span>
         </div>
 
         <!-- Rating Stars -->
@@ -21,47 +43,36 @@
                 :key="star"
                 :class="['h-5 w-5 transition-colors duration-200', star <= testimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300']"
             />
-            <span class="ml-2 text-sm text-gray-500">({{ testimonial.rating_bn || testimonial.rating }}/৫)</span>
+            <span class="ml-2 text-sm text-gray-500">({{ testimonial.rating }}/৫)</span>
         </div>
 
         <!-- Student Information -->
-        <div class="flex items-center space-x-4">
-            <!-- Avatar -->
-            <div class="relative">
-                <div
-                    class="flex h-14 w-14 items-center justify-center rounded-full border-3 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10"
-                >
-                    <component v-if="testimonial.student.avatar" :is="testimonial.student.avatar" class="h-8 w-8 text-[#5f5fcd]" />
-                    <span v-else class="text-lg font-semibold text-white">
-                        {{ getInitials(testimonial.student.name) }}
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <!-- Enhanced Avatar -->
+                <div class="flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/20 to-[#2d5a27]/20 shadow-sm">
+                    <span class="text-base font-bold text-[#5f5fcd]">
+                        {{ getInitials(testimonial.name) }}
                     </span>
                 </div>
 
-                <!-- Verified Badge -->
-                <div v-if="testimonial.verified" class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#2d5a27]">
-                    <CheckIcon class="h-3 w-3 text-white" />
+                <!-- Enhanced Student Details -->
+                <div>
+                    <h4 class="font-bold text-gray-900 transition-colors duration-200 group-hover:text-[#5f5fcd] text-base">
+                        {{ testimonial.name }}
+                    </h4>
+                    <p class="text-sm text-gray-600 font-medium">ইকরা একাডেমি শিক্ষার্থী</p>
+                    <time class="text-xs text-[#d4a574] font-medium">{{ testimonial.date }}</time>
                 </div>
             </div>
 
-            <!-- Student Details -->
-            <div class="flex-1">
-                <h4 class="font-semibold text-gray-900 transition-colors duration-200 group-hover:text-[#5f5fcd]">
-                    {{ testimonial.student.name }}
-                </h4>
-                <p class="text-sm text-gray-500">
-                    {{ testimonial.student.title || 'শিক্ষার্থী' }}
-                </p>
-                <div v-if="testimonial.student.location" class="mt-1 flex items-center text-xs text-gray-400">
-                    <MapPinIcon class="mr-1 h-3 w-3" />
-                    {{ testimonial.student.location }}
+            <!-- Enhanced Helpful Count -->
+            <div v-if="testimonial.helpful_count > 0" class="text-right">
+                <div class="flex items-center space-x-1 px-3 py-1 rounded-full bg-gradient-to-r from-red-50 to-pink-50 border border-red-100">
+                    <HeartIcon class="h-4 w-4 text-red-500 fill-current" />
+                    <span class="text-sm font-medium text-red-600">{{ testimonial.helpful_count }}</span>
                 </div>
-            </div>
-
-            <!-- Date -->
-            <div class="text-right">
-                <time class="text-xs text-gray-400" :datetime="testimonial.created_at">
-                    {{ formatDate(testimonial.created_at) }}
-                </time>
+                <p class="text-xs text-gray-400 mt-1">সহায়ক</p>
             </div>
         </div>
 
@@ -70,27 +81,101 @@
             class="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-transparent via-[#d4a574] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         ></div>
     </div>
+
+    <!-- Review Details Modal -->
+    <Teleport to="body">
+        <div
+            v-show="showModal"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            @click="showModal = false"
+        >
+            <div
+                class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                @click.stop
+            >
+                <div class="p-8">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900">বিস্তারিত রিভিউ</h2>
+                        <button
+                            @click="showModal = false"
+                            class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                        >
+                            <XIcon class="h-6 w-6" />
+                        </button>
+                    </div>
+
+                    <!-- Review Details -->
+                    <div class="space-y-6">
+                        <!-- Course Info -->
+                        <div class="flex items-center space-x-3">
+                            <BookOpenIcon class="h-5 w-5 text-[#5f5fcd]" />
+                            <span class="font-medium text-gray-900">{{ testimonial.course }}</span>
+                        </div>
+
+                        <!-- Student Info -->
+                        <div class="flex items-center space-x-3">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10">
+                                <span class="text-sm font-semibold text-[#5f5fcd]">
+                                    {{ getInitials(testimonial.name) }}
+                                </span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    {{ testimonial.name }}
+                                    <CheckIcon v-if="testimonial.verified" class="ml-2 h-4 w-4 text-[#2d5a27]" />
+                                </h4>
+                                <p class="text-sm text-gray-500">{{ testimonial.date }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Rating -->
+                        <div class="flex items-center space-x-2">
+                            <StarIcon
+                                v-for="star in 5"
+                                :key="star"
+                                :class="['h-6 w-6 transition-colors duration-200', star <= testimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300']"
+                            />
+                            <span class="ml-2 text-lg font-medium text-gray-700">({{ testimonial.rating }}/৫)</span>
+                        </div>
+
+                        <!-- Review Title -->
+                        <h3 v-if="testimonial.title" class="text-xl font-semibold text-gray-900">{{ testimonial.title }}</h3>
+
+                        <!-- Full Review Text -->
+                        <div class="prose prose-lg max-w-none">
+                            <p class="text-gray-700 leading-relaxed">"{{ testimonial.full_review }}"</p>
+                        </div>
+
+                        <!-- Helpful Count -->
+                        <div v-if="testimonial.helpful_count > 0" class="flex items-center text-gray-600">
+                            <HeartIcon class="h-5 w-5 mr-2 fill-current text-red-500" />
+                            <span>{{ testimonial.helpful_count }} জন এই রিভিউটি সহায়ক মনে করেছেন</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Teleport>
 </template>
 
 <script setup lang="ts">
-import { CheckIcon, MapPinIcon, QuoteIcon, StarIcon } from 'lucide-vue-next';
-import type { Component } from 'vue';
-
-interface Student {
-    name: string;
-    avatar?: Component;
-    title?: string;
-    location?: string;
-}
+import { ref } from 'vue';
+import { CheckIcon, QuoteIcon, StarIcon, ChevronRightIcon, BookOpenIcon, HeartIcon, XIcon } from 'lucide-vue-next';
 
 interface Testimonial {
-    id: number;
-    content: string;
+    id: number | string;
+    name: string;
+    course: string;
     rating: number;
-    rating_bn?: string;
-    student: Student;
+    title?: string;
+    comment: string;
+    full_review: string;
+    avatar?: string;
     verified: boolean;
-    created_at: string;
+    date: string;
+    helpful_count?: number;
+    is_long: boolean;
 }
 
 interface Props {
@@ -102,6 +187,8 @@ const props = withDefaults(defineProps<Props>(), {
     variant: 'default',
 });
 
+const showModal = ref(false);
+
 const getInitials = (name: string): string => {
     return name
         .split(' ')
@@ -109,17 +196,6 @@ const getInitials = (name: string): string => {
         .join('')
         .toUpperCase()
         .slice(0, 2);
-};
-
-const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const months = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
-
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-
-    return `${day} ${month}, ${year}`;
 };
 </script>
 

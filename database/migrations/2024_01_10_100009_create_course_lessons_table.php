@@ -17,15 +17,28 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->longText('content')->nullable();
-            $table->enum('lesson_type', ['video', 'text', 'quiz', 'assignment', 'live'])->default('video');
+            $table->longText('description')->nullable(); // Additional lesson description
+            $table->enum('lesson_type', ['video', 'text', 'quiz', 'assignment', 'live', 'pdf', 'mixed'])->default('video');
             
             // Video Content
             $table->string('video_url', 500)->nullable();
             $table->integer('video_duration')->nullable(); // Duration in seconds
+            
+            // File Content (PDFs, documents, etc.)
+            $table->json('attachments')->nullable(); // Multiple file attachments
+            $table->json('resources')->nullable(); // Additional resources/links
+            $table->string('primary_file_path')->nullable(); // Main lesson file
+            $table->string('primary_file_type')->nullable(); // pdf, doc, etc.
+            $table->bigInteger('primary_file_size')->nullable(); // File size in bytes
+            $table->string('thumbnail')->nullable(); // Lesson thumbnail
     
             // Access Control
             $table->boolean('is_preview')->default(false); // Can be viewed without enrollment
             $table->boolean('is_mandatory')->default(true);
+            
+            // Completion Requirements
+            $table->boolean('requires_completion')->default(false);
+            $table->integer('minimum_time_seconds')->nullable(); // Minimum time to spend on lesson
             
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);

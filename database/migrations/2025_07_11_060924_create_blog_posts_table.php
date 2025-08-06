@@ -40,7 +40,11 @@ return new class extends Migration
             $table->index('is_sticky');
             $table->index('published_at');
             $table->index('views_count');
-            $table->fullText(['title', 'content', 'excerpt']);
+            
+            // Fulltext index (MySQL only)
+            if (config('database.default') === 'mysql') {
+                $table->fullText(['title', 'content', 'excerpt']);
+            }
         });
     }
 

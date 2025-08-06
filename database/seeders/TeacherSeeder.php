@@ -2,58 +2,33 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Teacher;
+use Illuminate\Database\Seeder;
 
 class TeacherSeeder extends Seeder
 {
     public function run(): void
     {
-        $teachers = [
-            [
-                'full_name' => 'Md Yaqub Ajgori',
-                'speciality' => 'Web Development',
-                'experience' => '5 years',
-                'profile_picture' => null,
-                'phone' => '01710000001',
-                'is_active' => true,
-            ],
-            [
-                'full_name' => 'Md Saeedul Mostafa',
-                'speciality' => 'Mathematics',
-                'experience' => '8 years',
-                'profile_picture' => null,
-                'phone' => '01710000002',
-                'is_active' => true,
-            ],
-            [
-                'full_name' => 'Md Ayub Ajgori',
-                'speciality' => 'Physics',
-                'experience' => '6 years',
-                'profile_picture' => null,
-                'phone' => '01710000003',
-                'is_active' => true,
-            ],
-            [
-                'full_name' => 'Md Ismail',
-                'speciality' => 'English Language',
-                'experience' => '4 years',
-                'profile_picture' => null,
-                'phone' => '01710000004',
-                'is_active' => true,
-            ],
-            [
-                'full_name' => 'Karim Ullah',
-                'speciality' => 'Business Studies',
-                'experience' => '7 years',
-                'profile_picture' => null,
-                'phone' => '01710000005',
-                'is_active' => true,
-            ],
-        ];
+        // Create specific teachers
+        Teacher::create([
+            'full_name' => 'উস্তাদ আবু বকর সিদ্দিক',
+            'speciality' => 'কুরআন তিলাওয়াত ও তাজবীদ',
+            'experience' => '২০ বছরের শিক্ষকতার অভিজ্ঞতা',
+            'profile_picture' => 'teachers/default-avatar.jpg',
+            'phone' => '01711234567',
+            'is_active' => true,
+        ]);
 
-        foreach ($teachers as $teacher) {
-            Teacher::create($teacher);
-        }
+        Teacher::create([
+            'full_name' => 'হাফেজ মুহাম্মদ ইব্রাহিম',
+            'speciality' => 'হাদিস শরীফ',
+            'experience' => '১৫ বছর ইসলামী শিক্ষায় অভিজ্ঞতা',
+            'profile_picture' => 'teachers/default-avatar.jpg',
+            'phone' => '01811234567',
+            'is_active' => true,
+        ]);
+
+        // Create additional teachers using factory
+        Teacher::factory()->count(15)->create();
     }
-} 
+}

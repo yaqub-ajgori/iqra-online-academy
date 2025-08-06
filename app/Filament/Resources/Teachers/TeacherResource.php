@@ -14,13 +14,20 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
+use App\Filament\Traits\AdminOnlyResource;
 
 class TeacherResource extends Resource
 {
+    use AdminOnlyResource;
+    
     protected static ?string $model = Teacher::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPresentationChartBar;
-    protected static UnitEnum|string|null $navigationGroup = 'Setting';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
+    protected static UnitEnum|string|null $navigationGroup = 'Users';
+    protected static ?string $navigationLabel = 'Teachers';
+    protected static ?string $modelLabel = 'Teacher';
+    protected static ?string $pluralModelLabel = 'Teachers';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

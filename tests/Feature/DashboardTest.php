@@ -9,10 +9,10 @@ test('guests are redirected to the login page', function () {
     $response->assertRedirect('/login');
 });
 
-test('authenticated users can visit the dashboard', function () {
+test('authenticated users are redirected from dashboard based on role', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
     $response = $this->get('/dashboard');
-    $response->assertStatus(200);
+    $response->assertRedirect(); // Dashboard should redirect based on user role
 });

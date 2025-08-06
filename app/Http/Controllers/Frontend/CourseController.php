@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use App\Models\CourseCategory;
+use App\Models\CourseReview;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -114,12 +115,23 @@ class CourseController extends Controller
         // Load enrollment count efficiently
         $course->loadCount('enrollments');
 
+        // Load course reviews with relationships
+        $reviews = CourseReview::where('course_id', $course->id)
+            ->approved() // Only approved reviews
+            ->with(['student', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         $user = Auth::user();
         $isAuthenticated = $user !== null;
         $isEnrolled = false;
         if ($isAuthenticated) {
             $isEnrolled = $course->enrollments()->where('student_id', $user->id)->exists();
         }
+
+        // Calculate review statistics
+        $reviewCount = $reviews->count();
+        $averageRating = $reviewCount > 0 ? round($reviews->avg('rating'), 1) : 0;
 
         $courseData = [
             'id' => $course->id,
@@ -135,7 +147,8 @@ class CourseController extends Controller
             'duration' => $course->duration,
             'total_lessons' => $course->total_lessons_count,
             'students_count' => $course->enrollments_count ?? 0,
-            'rating' => 0, // Default rating since we removed average_rating
+            'rating' => $averageRating,
+            'reviews_count' => $reviewCount,
             'instructor' => [
                 'name' => $course->teacher->full_name ?? 'অজানা শিক্ষক',
                 'avatar' => $course->teacher->profile_picture_url ?? null,
@@ -157,6 +170,26 @@ class CourseController extends Controller
                             'duration' => $lesson->formatted_duration ?? '0:00',
                         ];
                     }),
+                ];
+            }),
+            'reviews' => $reviews->map(function ($review) {
+                $fullText = $review->title ? $review->title . ' - ' . $review->review_text : $review->review_text;
+                $shortText = mb_strlen($fullText) > 120 ? mb_substr($fullText, 0, 120) . '...' : $fullText;
+                
+                return [
+                    'id' => $review->id,
+                    'student' => [
+                        'name' => $review->student->full_name,
+                        'avatar' => null, // Add avatar support later if needed
+                    ],
+                    'rating' => $review->rating,
+                    'title' => $review->title,
+                    'comment' => $shortText, // Truncated for display
+                    'full_review' => $fullText, // Full text for modal
+                    'date' => $review->bengali_date,
+                    'helpful_count' => $review->helpful_count,
+                    'is_long' => mb_strlen($fullText) > 120, // Show "See More" if longer than 120 chars
+                    'is_verified_purchase' => $review->is_verified_purchase,
                 ];
             }),
             'created_at' => $course->created_at->format('Y-m-d'),

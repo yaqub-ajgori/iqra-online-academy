@@ -3,10 +3,12 @@
 namespace App\Filament\Resources\Courses\Pages;
 
 use App\Filament\Resources\Courses\CourseResource;
+use App\Services\CertificateService;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
 
 class EditCourse extends EditRecord
 {
@@ -21,6 +23,24 @@ class EditCourse extends EditRecord
                 ->color('info')
                 ->url(fn () => route('frontend.courses.show', $this->record->slug))
                 ->openUrlInNewTab()
+                ->visible(fn () => $this->record->status === 'published'),
+
+            Action::make('generate_certificates')
+                ->label('Generate Certificates')
+                ->icon('heroicon-o-academic-cap')
+                ->color('success')
+                ->requiresConfirmation()
+                ->modalHeading('Generate Certificates')
+                ->modalDescription('This will generate certificates for all eligible students who have completed this course.')
+                ->action(function (CertificateService $certificateService) {
+                    $generated = $certificateService->autoGenerateCertificates($this->record);
+                    
+                    Notification::make()
+                        ->title('Certificates Generated')
+                        ->body("Successfully generated {$generated} certificates.")
+                        ->success()
+                        ->send();
+                })
                 ->visible(fn () => $this->record->status === 'published'),
 
             DeleteAction::make(),

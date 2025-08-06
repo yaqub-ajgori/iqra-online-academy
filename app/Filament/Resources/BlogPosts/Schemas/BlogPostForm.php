@@ -132,7 +132,6 @@ class BlogPostForm
                                     ->label('Tags')
                                     ->relationship('tags', 'name')
                                     ->multiple()
-                                    ->searchable()
                                     ->createOptionForm([
                                         TextInput::make('name')
                                             ->required()

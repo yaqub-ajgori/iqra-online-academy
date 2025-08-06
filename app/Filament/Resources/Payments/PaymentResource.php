@@ -7,6 +7,7 @@ use App\Filament\Resources\Payments\Pages\EditPayment;
 use App\Filament\Resources\Payments\Pages\ListPayments;
 use App\Filament\Resources\Payments\Schemas\PaymentForm;
 use App\Filament\Resources\Payments\Tables\PaymentsTable;
+use App\Filament\Traits\AdminOnlyResource;
 use App\Models\Payment;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -17,10 +18,16 @@ use UnitEnum;
 
 class PaymentResource extends Resource
 {
+    use AdminOnlyResource;
+    
     protected static ?string $model = Payment::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
-    protected static UnitEnum|string|null $navigationGroup = 'Admission';
+    protected static UnitEnum|string|null $navigationGroup = 'Financial';
+    protected static ?string $navigationLabel = 'Payments';
+    protected static ?string $modelLabel = 'Payment';
+    protected static ?string $pluralModelLabel = 'Payments';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

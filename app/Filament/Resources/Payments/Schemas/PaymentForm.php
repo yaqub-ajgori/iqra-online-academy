@@ -11,19 +11,16 @@ class PaymentForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(4)
-            ->components([
-                // Student and Course Selection (Full Width)
+            ->schema([
                 Select::make('student_id')
                     ->label('Student')
-                    ->relationship('student', 'name', function ($query) {
+                    ->relationship('student', 'full_name', function ($query) {
                         return $query->with('user');
                     })
-                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->user->name ?? $record->name)
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->user->name ?? $record->full_name)
                     ->required()
                     ->searchable()
-                    ->preload()
-                    ->columnSpan(2),
+                    ->preload(),
                     
                 Select::make('course_id')
                     ->label('Course')
@@ -31,8 +28,7 @@ class PaymentForm
                     ->required()
                     ->searchable()
                     ->preload()
-                    ->columnSpan(2)
-                    ->reactive()
+                    ->live()
                     ->afterStateUpdated(function ($state, callable $set) {
                         if ($state) {
                             $course = \App\Models\Course::find($state);
@@ -42,31 +38,30 @@ class PaymentForm
                         }
                     }),
                     
-                // Payment Details
                 TextInput::make('amount')
                     ->label('Payment Amount')
                     ->required()
                     ->numeric()
                     ->prefix('৳')
                     ->minValue(0)
-                    ->columnSpan(1)
                     ->readOnly(fn ($record) => $record !== null),
                     
                 Select::make('payment_method')
                     ->label('Payment Method')
                     ->options([
-                        'bkash' => 'Bkash',
+                        'bkash' => 'bKash',
                         'nagad' => 'Nagad',
                         'rocket' => 'Rocket',
                         'bank_transfer' => 'Bank Transfer',
-                        'card' => 'Card',
+                        'card' => 'Credit/Debit Card',
+                        'cash' => 'Cash',
                     ])
                     ->required()
-                    ->columnSpan(1),
+                    ->live(),
                     
                 TextInput::make('transaction_id')
                     ->label('Transaction ID')
-                    ->columnSpan(2),
+                    ->maxLength(255),
                     
                 Select::make('status')
                     ->label('Payment Status')
@@ -79,38 +74,40 @@ class PaymentForm
                         'refunded' => 'Refunded',
                     ])
                     ->default('pending')
-                    ->required()
-                    ->columnSpanFull(),
+                    ->required(),
                     
-                // Mobile Banking Details (conditionally visible)
                 TextInput::make('sender_number')
-                    ->label('Sender Number')
+                    ->label('Sender Mobile Number')
                     ->tel()
-                    ->columnSpan(2),
+                    ->maxLength(20)
+                    ->visible(fn ($get) => in_array($get('payment_method'), ['bkash', 'nagad', 'rocket'])),
                     
                 TextInput::make('receiver_number')
-                    ->label('Receiver Number')
+                    ->label('Receiver Mobile Number')
                     ->tel()
-                    ->columnSpan(2),
+                    ->maxLength(20)
+                    ->visible(fn ($get) => in_array($get('payment_method'), ['bkash', 'nagad', 'rocket'])),
                     
-                // Bank Details (conditionally visible)
                 TextInput::make('bank_name')
                     ->label('Bank Name')
-                    ->columnSpan(2),
+                    ->maxLength(255)
+                    ->visible(fn ($get) => $get('payment_method') === 'bank_transfer'),
                     
                 TextInput::make('account_number')
                     ->label('Account Number')
-                    ->columnSpan(1),
+                    ->maxLength(255)
+                    ->visible(fn ($get) => $get('payment_method') === 'bank_transfer'),
                     
                 TextInput::make('branch_name')
                     ->label('Branch Name')
-                    ->columnSpan(1),
+                    ->maxLength(255)
+                    ->visible(fn ($get) => $get('payment_method') === 'bank_transfer'),
                     
-                // Hidden currency field
                 TextInput::make('currency')
                     ->required()
                     ->default('BDT')
                     ->hidden(),
-            ]);
+            ])
+            ->columns(2);
     }
 }

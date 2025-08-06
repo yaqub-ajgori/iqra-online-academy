@@ -2,13 +2,7 @@
 
 namespace App\Filament\Resources\Payments\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables;
 use Filament\Tables\Table;
 
 class PaymentsTable
@@ -17,51 +11,84 @@ class PaymentsTable
     {
         return $table
             ->columns([
-                TextColumn::make('student.user.name')
+                Tables\Columns\TextColumn::make('student.user.name')
                     ->label('Student')
                     ->searchable()
                     ->sortable()
                     ->description(fn ($record) => $record->student->user->email ?? ''),
                     
-                TextColumn::make('course.title')
+                Tables\Columns\TextColumn::make('course.title')
                     ->label('Course')
                     ->searchable()
                     ->sortable()
+                    ->limit(30)
                     ->description(fn ($record) => $record->course->category->name ?? ''),
                     
-                TextColumn::make('amount')
+                Tables\Columns\TextColumn::make('amount')
                     ->label('Amount')
-                    ->formatStateUsing(fn ($state) => '৳' . number_format($state, 2))
+                    ->money('BDT')
                     ->sortable(),
                     
-                BadgeColumn::make('payment_method')
+                Tables\Columns\TextColumn::make('payment_method')
                     ->label('Method')
-                    ->colors([
-                        'success' => 'bkash',
-                        'info' => 'nagad',
-                        'warning' => 'rocket',
-                        'primary' => 'bank_transfer',
-                        'gray' => 'card',
-                    ]),
+                    ->badge()
+                    ->color(fn (string $state): string => match($state) {
+                        'bkash' => 'success',
+                        'nagad' => 'warning',
+                        'rocket' => 'info',
+                        'bank_transfer' => 'primary',
+                        'card' => 'secondary',
+                        'cash' => 'gray',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn ($state) => match($state) {
+                        'bkash' => 'bKash',
+                        'nagad' => 'Nagad',
+                        'rocket' => 'Rocket',
+                        'bank_transfer' => 'Bank Transfer',
+                        'card' => 'Card',
+                        'cash' => 'Cash',
+                        default => ucfirst($state),
+                    }),
                     
-                BadgeColumn::make('status')
+                Tables\Columns\TextColumn::make('status')
                     ->label('Status')
-                    ->colors([
-                        'warning' => 'pending',
-                        'info' => 'processing',
-                        'success' => 'completed',
-                        'danger' => 'failed',
-                        'gray' => 'cancelled',
-                        'purple' => 'refunded',
-                    ]),
+                    ->badge()
+                    ->color(fn (string $state): string => match($state) {
+                        'pending' => 'warning',
+                        'processing' => 'info',
+                        'completed' => 'success',
+                        'failed' => 'danger',
+                        'cancelled' => 'gray',
+                        'refunded' => 'purple',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn ($state) => ucfirst($state)),
                     
-                TextColumn::make('transaction_id')
+                Tables\Columns\TextColumn::make('transaction_id')
                     ->label('Transaction ID')
                     ->searchable()
+                    ->toggleable()
+                    ->copyable(),
+                    
+                Tables\Columns\TextColumn::make('sender_number')
+                    ->label('Sender Mobile')
+                    ->toggleable()
+                    ->placeholder('N/A'),
+                    
+                Tables\Columns\TextColumn::make('bank_name')
+                    ->label('Bank')
+                    ->toggleable()
+                    ->placeholder('N/A'),
+                    
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Payment Date')
+                    ->dateTime()
+                    ->sortable()
                     ->toggleable(),
             ])
             ->filters([
-                SelectFilter::make('status')
+                Tables\Filters\SelectFilter::make('status')
                     ->options([
                         'pending' => 'Pending',
                         'processing' => 'Processing',
@@ -71,32 +98,46 @@ class PaymentsTable
                         'refunded' => 'Refunded',
                     ]),
                     
-                SelectFilter::make('payment_method')
+                Tables\Filters\SelectFilter::make('payment_method')
                     ->label('Payment Method')
                     ->options([
-                        'bkash' => 'Bkash',
+                        'bkash' => 'bKash',
                         'nagad' => 'Nagad',
                         'rocket' => 'Rocket',
                         'bank_transfer' => 'Bank Transfer',
-                        'card' => 'Card',
+                        'card' => 'Credit/Debit Card',
+                        'cash' => 'Cash',
                     ]),
-            ])
-            ->recordActions([
-                EditAction::make()
-                    ->icon('heroicon-o-pencil'),
                     
-                DeleteAction::make()
-                    ->icon('heroicon-o-trash'),
+                Tables\Filters\Filter::make('amount_range')
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('amount_from')
+                            ->label('Amount From')
+                            ->numeric()
+                            ->prefix('৳'),
+                        \Filament\Forms\Components\TextInput::make('amount_to')
+                            ->label('Amount To')
+                            ->numeric()
+                            ->prefix('৳'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when($data['amount_from'], fn ($q) => $q->where('amount', '>=', $data['amount_from']))
+                            ->when($data['amount_to'], fn ($q) => $q->where('amount', '<=', $data['amount_to']));
+                    }),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+            ->actions([
+                \Filament\Actions\EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')
-            ->striped()
             ->emptyStateHeading('No payments yet')
-            ->emptyStateDescription('Payments will appear here once students make course purchases.')
+            ->emptyStateDescription('Payment records will appear here once students make course purchases.')
             ->emptyStateIcon('heroicon-o-credit-card');
     }
 }

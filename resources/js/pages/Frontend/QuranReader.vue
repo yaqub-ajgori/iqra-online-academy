@@ -2580,7 +2580,7 @@ const toggleAudio = async () => {
         const surahPadded = surahNumber < 10 ? '00' + surahNumber : surahNumber < 100 ? '0' + surahNumber : surahNumber.toString();
 
         // Use the selected reciter's server
-        const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
+        let currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
         if (!currentReciter) {
             // Fallback to default reciter if not found
             selectedReciter.value = 'afs';

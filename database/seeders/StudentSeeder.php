@@ -2,109 +2,40 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Student;
-use Carbon\Carbon;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class StudentSeeder extends Seeder
 {
     public function run(): void
     {
-        $students = [
-            [
-                'user_id' => 1,
-                'full_name' => 'Ayesha Rahman',
-                'phone' => '01720000001',
-                'date_of_birth' => Carbon::parse('2000-01-15'),
-                'gender' => 'female',
-                'address' => '123 Main Street',
-                'city' => 'Dhaka',
-                'district' => 'Dhaka',
-                'country' => 'Bangladesh',
-                'postal_code' => '1207',
-                'profile_picture' => null,
-                'bio' => 'Enthusiastic learner.',
-                'occupation' => 'Student',
-                'education_level' => 'Undergraduate',
-                'is_active' => true,
-                'is_verified' => true,
-            ],
-            [
-                'user_id' => 2,
-                'full_name' => 'Imran Hossain',
-                'phone' => '01720000002',
-                'date_of_birth' => Carbon::parse('1998-05-22'),
+        // Create specific student
+        $studentUser = User::where('email', 'student@iqra.academy')->first();
+        
+        if ($studentUser) {
+            Student::create([
+                'user_id' => $studentUser->id,
+                'full_name' => 'আবদুল্লাহ রহমান',
+                'phone' => '01987654321',
+                'date_of_birth' => '1995-05-15',
                 'gender' => 'male',
-                'address' => '456 College Road',
-                'city' => 'Chittagong',
-                'district' => 'Chittagong',
-                'country' => 'Bangladesh',
-                'postal_code' => '4000',
-                'profile_picture' => null,
-                'bio' => 'Math lover.',
-                'occupation' => 'Student',
-                'education_level' => 'Graduate',
+                'address' => 'ধানমন্ডি, ঢাকা-১২০৫',
+                'city' => 'ঢাকা',
+                'country' => 'বাংলাদেশ',
+                'education_level' => 'bachelors',
+                'occupation' => 'সফটওয়্যার ইঞ্জিনিয়ার',
                 'is_active' => true,
-                'is_verified' => false,
-            ],
-            [
-                'user_id' => 3,
-                'full_name' => 'Sadia Karim',
-                'phone' => '01720000003',
-                'date_of_birth' => Carbon::parse('2002-09-10'),
-                'gender' => 'female',
-                'address' => '789 School Lane',
-                'city' => 'Rajshahi',
-                'district' => 'Rajshahi',
-                'country' => 'Bangladesh',
-                'postal_code' => '6000',
-                'profile_picture' => null,
-                'bio' => 'Aspiring scientist.',
-                'occupation' => 'Student',
-                'education_level' => 'HSC',
-                'is_active' => true,
-                'is_verified' => true,
-            ],
-            [
-                'user_id' => 4,
-                'full_name' => 'Tanvir Ahmed',
-                'phone' => '01720000004',
-                'date_of_birth' => Carbon::parse('1999-12-01'),
-                'gender' => 'male',
-                'address' => '321 University Ave',
-                'city' => 'Khulna',
-                'district' => 'Khulna',
-                'country' => 'Bangladesh',
-                'postal_code' => '9000',
-                'profile_picture' => null,
-                'bio' => 'Business enthusiast.',
-                'occupation' => 'Student',
-                'education_level' => 'Undergraduate',
-                'is_active' => false,
-                'is_verified' => false,
-            ],
-            [
-                'user_id' => 5,
-                'full_name' => 'Mitu Sultana',
-                'phone' => '01720000005',
-                'date_of_birth' => Carbon::parse('2001-03-18'),
-                'gender' => 'female',
-                'address' => '654 College Road',
-                'city' => 'Sylhet',
-                'district' => 'Sylhet',
-                'country' => 'Bangladesh',
-                'postal_code' => '3100',
-                'profile_picture' => null,
-                'bio' => 'Language lover.',
-                'occupation' => 'Student',
-                'education_level' => 'Graduate',
-                'is_active' => true,
-                'is_verified' => true,
-            ],
-        ];
+            ]);
+        }
 
-        foreach ($students as $student) {
-            Student::create($student);
+        // Create additional students from remaining users
+        $users = User::whereNotIn('email', ['admin@iqra.academy', 'student@iqra.academy', 'teacher@iqra.academy'])
+                     ->take(15)  // Reduced number for simpler testing
+                     ->get();
+
+        foreach ($users as $user) {
+            Student::factory()->create(['user_id' => $user->id]);
         }
     }
-} 
+}

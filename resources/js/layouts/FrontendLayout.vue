@@ -446,6 +446,15 @@
                                         ম্যাগাজিন
                                     </Link>
                                 </li>
+                                <li>
+                                    <Link
+                                        :href="route('certificates.verify')"
+                                        class="group flex items-center text-gray-300 transition-colors hover:text-white"
+                                    >
+                                        <ArrowRightIcon class="mr-2 h-3 w-3 transition-transform group-hover:translate-x-1" />
+                                        সার্টিফিকেট যাচাই
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
 

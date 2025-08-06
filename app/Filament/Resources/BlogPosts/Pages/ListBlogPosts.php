@@ -16,11 +16,4 @@ class ListBlogPosts extends ListRecords
             CreateAction::make(),
         ];
     }
-
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            BlogPostResource::getWidgets()[0],
-        ];
-    }
 }

@@ -2,18 +2,8 @@
 
 namespace App\Filament\Resources\BlogPosts\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Support\Colors\Color;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class BlogPostsTable
 {
@@ -21,39 +11,35 @@ class BlogPostsTable
     {
         return $table
             ->columns([
-                ImageColumn::make('featured_image')
+                Tables\Columns\ImageColumn::make('featured_image')
                     ->label('Image')
                     ->circular()
                     ->defaultImageUrl(url('https://ui-avatars.com/api/?name=Blog+Post'))
+                    ->size(40)
                     ->toggleable(),
-                TextColumn::make('title')
+                    
+                Tables\Columns\TextColumn::make('title')
                     ->label('Title')
                     ->searchable()
                     ->sortable()
-                    ->limit(50)
-                    ->tooltip(function (TextColumn $column): ?string {
-                        $state = $column->getState();
-                        return strlen($state) > 50 ? $state : null;
-                    }),
-                TextColumn::make('author.name')
+                    ->limit(40)
+                    ->tooltip(fn ($record) => $record->title),
+                    
+                Tables\Columns\TextColumn::make('author.name')
                     ->label('Author')
                     ->searchable()
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('category.name')
+                    
+                Tables\Columns\TextColumn::make('category.name')
                     ->label('Category')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'কুরআন শিক্ষা' => 'primary',
-                        'হাদিস' => 'success',
-                        'ইসলামিক জীবনযাত্রা' => 'warning',
-                        'ইসলামের ইতিহাস' => 'info',
-                        'ফিকহ ও মাসআলা' => 'danger',
-                        default => 'gray',
-                    })
+                    ->color('primary')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('status')
+                    
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'draft' => 'gray',
@@ -62,87 +48,101 @@ class BlogPostsTable
                         'archived' => 'danger',
                         default => 'gray',
                     })
+                    ->formatStateUsing(fn ($state) => ucfirst($state))
                     ->sortable(),
-                IconColumn::make('is_featured')
+                    
+                Tables\Columns\IconColumn::make('is_featured')
                     ->label('Featured')
                     ->boolean()
                     ->trueIcon('heroicon-o-star')
                     ->falseIcon('heroicon-o-star')
-                    ->trueColor(Color::Yellow)
-                    ->falseColor(Color::Gray)
+                    ->trueColor('warning')
+                    ->falseColor('gray')
                     ->toggleable(),
-                IconColumn::make('is_sticky')
+                    
+                Tables\Columns\IconColumn::make('is_sticky')
                     ->label('Sticky')
                     ->boolean()
                     ->trueIcon('heroicon-o-bookmark')
                     ->falseIcon('heroicon-o-bookmark')
-                    ->trueColor(Color::Blue)
-                    ->falseColor(Color::Gray)
+                    ->trueColor('info')
+                    ->falseColor('gray')
                     ->toggleable(),
-                TextColumn::make('published_at')
+                    
+                Tables\Columns\TextColumn::make('published_at')
                     ->label('Published')
                     ->dateTime('M j, Y')
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('views_count')
+                    
+                Tables\Columns\TextColumn::make('views_count')
                     ->label('Views')
                     ->numeric()
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('reading_time')
-                    ->label('Reading')
+                    
+                Tables\Columns\TextColumn::make('reading_time')
+                    ->label('Reading Time')
                     ->suffix(' min')
                     ->numeric()
                     ->sortable()
                     ->toggleable(),
-                TextColumn::make('tags.name')
+                    
+                Tables\Columns\TextColumn::make('tags.name')
                     ->label('Tags')
                     ->badge()
                     ->separator(',')
                     ->limit(3)
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
+                    
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('status')
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
                     ->options([
                         'draft' => 'Draft',
                         'review' => 'Review',
                         'published' => 'Published',
                         'archived' => 'Archived',
                     ]),
-                SelectFilter::make('category')
+                Tables\Filters\SelectFilter::make('category')
+                    ->label('Category')
                     ->relationship('category', 'name')
                     ->searchable()
                     ->preload(),
-                SelectFilter::make('author')
+                Tables\Filters\SelectFilter::make('author')
+                    ->label('Author')
                     ->relationship('author', 'name')
                     ->searchable()
                     ->preload(),
-                Filter::make('is_featured')
-                    ->label('Featured only')
-                    ->query(fn (Builder $query): Builder => $query->where('is_featured', true)),
-                Filter::make('is_sticky')
-                    ->label('Sticky only')
-                    ->query(fn (Builder $query): Builder => $query->where('is_sticky', true)),
+                Tables\Filters\TernaryFilter::make('is_featured')
+                    ->label('Featured Posts')
+                    ->placeholder('All Posts')
+                    ->trueLabel('Featured Only')
+                    ->falseLabel('Not Featured'),
+                Tables\Filters\TernaryFilter::make('is_sticky')
+                    ->label('Sticky Posts')
+                    ->placeholder('All Posts')
+                    ->trueLabel('Sticky Only')
+                    ->falseLabel('Not Sticky'),
             ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+            ->actions([
+                \Filament\Actions\ViewAction::make(),
+                \Filament\Actions\EditAction::make(),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+            ->bulkActions([
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')
-            ->poll('60s');
+            ->emptyStateHeading('No blog posts yet')
+            ->emptyStateDescription('Create your first blog post to get started.')
+            ->emptyStateIcon('heroicon-o-document-text');
     }
 }

@@ -53,6 +53,14 @@ class Student extends Model
     }
 
     /**
+     * Get the student's course enrollments (alias for service compatibility).
+     */
+    public function courseEnrollments(): HasMany
+    {
+        return $this->hasMany(CourseEnrollment::class);
+    }
+
+    /**
      * Get the student's payments.
      */
     public function payments(): HasMany

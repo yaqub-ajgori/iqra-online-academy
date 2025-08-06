@@ -49,13 +49,12 @@ class Course extends Model
     }
 
     /**
-     * Get the course's instructor.
+     * Get the course's primary instructor (backward compatibility).
      */
     public function instructor(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'instructor_id');
     }
-
 
     /**
      * Get the course's teacher (alias for instructor).
@@ -63,6 +62,26 @@ class Course extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(Teacher::class, 'instructor_id');
+    }
+
+    /**
+     * Get all instructors for this course (many-to-many).
+     */
+    public function instructors()
+    {
+        return $this->belongsToMany(Teacher::class, 'course_instructors')
+                    ->withPivot(['role', 'bio', 'sort_order', 'is_active'])
+                    ->wherePivot('is_active', true)
+                    ->orderByPivot('sort_order')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Get primary instructors only.
+     */
+    public function primaryInstructors()
+    {
+        return $this->instructors()->wherePivot('role', 'primary');
     }
 
     /**
@@ -79,6 +98,22 @@ class Course extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Get the course's reviews.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(CourseReview::class);
+    }
+
+    /**
+     * Get only approved reviews.
+     */
+    public function approvedReviews(): HasMany
+    {
+        return $this->hasMany(CourseReview::class)->approved();
     }
 
     /**
@@ -124,6 +159,22 @@ class Course extends Model
     }
 
     /**
+     * Get the course's quizzes.
+     */
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class);
+    }
+
+    /**
+     * Get the course's certificates.
+     */
+    public function certificates(): HasMany
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    /**
      * Scope to get only published courses.
      */
     public function scopePublished($query)
@@ -163,6 +214,34 @@ class Course extends Model
     public function getTotalLessonsCountAttribute(): int
     {
         return $this->lessons()->count();
+    }
+
+    /**
+     * Get average rating for the course.
+     */
+    public function getAverageRatingAttribute(): float
+    {
+        return (float) $this->approvedReviews()->avg('rating') ?: 0;
+    }
+
+    /**
+     * Get total reviews count.
+     */
+    public function getTotalReviewsAttribute(): int
+    {
+        return $this->approvedReviews()->count();
+    }
+
+    /**
+     * Get rating distribution.
+     */
+    public function getRatingDistributionAttribute(): array
+    {
+        $distribution = [];
+        for ($i = 5; $i >= 1; $i--) {
+            $distribution[$i] = $this->approvedReviews()->where('rating', $i)->count();
+        }
+        return $distribution;
     }
 
     /**

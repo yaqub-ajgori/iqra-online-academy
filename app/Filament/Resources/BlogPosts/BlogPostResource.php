@@ -7,7 +7,6 @@ use App\Filament\Resources\BlogPosts\Pages\EditBlogPost;
 use App\Filament\Resources\BlogPosts\Pages\ListBlogPosts;
 use App\Filament\Resources\BlogPosts\Schemas\BlogPostForm;
 use App\Filament\Resources\BlogPosts\Tables\BlogPostsTable;
-use App\Filament\Resources\BlogPosts\Widgets;
 use App\Models\BlogPost;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -15,13 +14,19 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
+use App\Filament\Traits\AdminOnlyResource;
 
 class BlogPostResource extends Resource
 {
+    use AdminOnlyResource;
+    
     protected static ?string $model = BlogPost::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
-    protected static UnitEnum|string|null $navigationGroup = 'Blog Management';
+    protected static UnitEnum|string|null $navigationGroup = 'Blog';
+    protected static ?string $navigationLabel = 'Blog Posts';
+    protected static ?string $modelLabel = 'Blog Post';
+    protected static ?string $pluralModelLabel = 'Blog Posts';
     protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
@@ -47,13 +52,6 @@ class BlogPostResource extends Resource
             'index' => ListBlogPosts::route('/'),
             'create' => CreateBlogPost::route('/create'),
             'edit' => EditBlogPost::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getWidgets(): array
-    {
-        return [
-            Widgets\BlogStatsWidget::class,
         ];
     }
 }

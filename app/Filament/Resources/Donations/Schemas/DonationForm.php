@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\Donations\Schemas;
 
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
 
 class DonationForm
@@ -9,42 +12,52 @@ class DonationForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(2)
-            ->components([
-                \Filament\Forms\Components\TextInput::make('name')
+            ->schema([
+                TextInput::make('name')
                     ->label('Donor Name')
                     ->required()
                     ->maxLength(255),
-                \Filament\Forms\Components\TextInput::make('email')
+                    
+                TextInput::make('email')
                     ->label('Email Address')
                     ->email()
                     ->required()
                     ->maxLength(255),
-                \Filament\Forms\Components\TextInput::make('phone')
+                    
+                TextInput::make('phone')
                     ->label('Phone Number')
                     ->tel()
                     ->required()
                     ->maxLength(255),
-                \Filament\Forms\Components\TextInput::make('amount')
-                    ->label('Donation Amount (৳)')
+                    
+                TextInput::make('amount')
+                    ->label('Donation Amount')
                     ->numeric()
                     ->required()
-                    ->minValue(1),
-                \Filament\Forms\Components\Select::make('payment_method')
+                    ->minValue(1)
+                    ->prefix('৳'),
+                    
+                Select::make('payment_method')
                     ->label('Payment Method')
                     ->options([
                         'bkash' => 'bKash',
                         'nagad' => 'Nagad',
                         'rocket' => 'Rocket',
+                        'bank' => 'Bank Transfer',
+                        'cash' => 'Cash',
                     ])
                     ->required(),
-                \Filament\Forms\Components\TextInput::make('transaction_id')
+                    
+                TextInput::make('transaction_id')
                     ->label('Transaction ID')
                     ->required()
                     ->maxLength(255),
-                \Filament\Forms\Components\TextInput::make('reason')
+                    
+                Textarea::make('reason')
                     ->label('Donation Reason')
-                    ->maxLength(255),
-            ]);
+                    ->rows(3)
+                    ->maxLength(500),
+            ])
+            ->columns(2);
     }
 }

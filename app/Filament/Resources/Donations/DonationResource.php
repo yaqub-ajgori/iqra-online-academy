@@ -9,6 +9,7 @@ use App\Filament\Resources\Donations\Pages\ViewDonation;
 use App\Filament\Resources\Donations\Schemas\DonationForm;
 use App\Filament\Resources\Donations\Schemas\DonationInfolist;
 use App\Filament\Resources\Donations\Tables\DonationsTable;
+use App\Filament\Traits\AdminOnlyResource;
 use App\Models\Donation;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -19,10 +20,16 @@ use Filament\Tables\Table;
 
 class DonationResource extends Resource
 {
+    use AdminOnlyResource;
+    
     protected static ?string $model = Donation::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedHeart;
-    protected static string|\UnitEnum|null $navigationGroup = 'Donations';
+    protected static string|\UnitEnum|null $navigationGroup = 'Financial';
+    protected static ?string $navigationLabel = 'Donations';
+    protected static ?string $modelLabel = 'Donation';
+    protected static ?string $pluralModelLabel = 'Donations';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {

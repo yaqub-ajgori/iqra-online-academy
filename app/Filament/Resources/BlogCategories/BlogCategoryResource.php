@@ -14,13 +14,19 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
+use App\Filament\Traits\AdminOnlyResource;
 
 class BlogCategoryResource extends Resource
 {
+    use AdminOnlyResource;
+    
     protected static ?string $model = BlogCategory::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
-    protected static UnitEnum|string|null $navigationGroup = 'Blog Management';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFolder;
+    protected static UnitEnum|string|null $navigationGroup = 'Blog';
+    protected static ?string $navigationLabel = 'Blog Categories';
+    protected static ?string $modelLabel = 'Blog Category';
+    protected static ?string $pluralModelLabel = 'Blog Categories';
     protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema

@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
@@ -81,11 +82,62 @@ class CoursesTable
                     ->icon('heroicon-o-pencil'),
                     
                 DeleteAction::make()
-                    ->icon('heroicon-o-trash'),
+                    ->icon('heroicon-o-trash')
+                    ->before(function (DeleteAction $action, $record) {
+                        // Check if course has enrollments, modules, lessons, or reviews
+                        $enrollmentsCount = $record->enrollments()->count();
+                        $modulesCount = $record->modules()->count();
+                        $reviewsCount = $record->reviews()->count();
+                        
+                        $constraints = [];
+                        if ($enrollmentsCount > 0) $constraints[] = "{$enrollmentsCount} enrollment(s)";
+                        if ($modulesCount > 0) $constraints[] = "{$modulesCount} module(s)";
+                        if ($reviewsCount > 0) $constraints[] = "{$reviewsCount} review(s)";
+                        
+                        if (!empty($constraints)) {
+                            Notification::make()
+                                ->title('Cannot Delete Course')
+                                ->body("This course has " . implode(', ', $constraints) . ". Please remove these first.")
+                                ->danger()
+                                ->persistent()
+                                ->send();
+                            
+                            $action->cancel();
+                        }
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->before(function (DeleteBulkAction $action, $records) {
+                            $blockedCourses = [];
+                            
+                            foreach ($records as $record) {
+                                $enrollmentsCount = $record->enrollments()->count();
+                                $modulesCount = $record->modules()->count();
+                                $reviewsCount = $record->reviews()->count();
+                                
+                                if ($enrollmentsCount > 0 || $modulesCount > 0 || $reviewsCount > 0) {
+                                    $constraints = [];
+                                    if ($enrollmentsCount > 0) $constraints[] = "{$enrollmentsCount} enrollments";
+                                    if ($modulesCount > 0) $constraints[] = "{$modulesCount} modules";
+                                    if ($reviewsCount > 0) $constraints[] = "{$reviewsCount} reviews";
+                                    
+                                    $blockedCourses[] = "{$record->title} (" . implode(', ', $constraints) . ")";
+                                }
+                            }
+                            
+                            if (!empty($blockedCourses)) {
+                                Notification::make()
+                                    ->title('Cannot Delete Courses')
+                                    ->body('The following courses have related data: ' . implode('; ', $blockedCourses) . '. Please clean up the related data first.')
+                                    ->danger()
+                                    ->persistent()
+                                    ->send();
+                                
+                                $action->cancel();
+                            }
+                        }),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')

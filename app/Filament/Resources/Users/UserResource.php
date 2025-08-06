@@ -7,6 +7,7 @@ use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Filament\Resources\Users\Tables\UsersTable;
+use App\Filament\Traits\AdminOnlyResource;
 use App\Models\User;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -17,10 +18,16 @@ use UnitEnum;
 
 class UserResource extends Resource
 {
+    use AdminOnlyResource;
+    
     protected static ?string $model = User::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
-    protected static UnitEnum|string|null $navigationGroup = 'Setting';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
+    protected static UnitEnum|string|null $navigationGroup = 'Users';
+    protected static ?string $navigationLabel = 'Users';
+    protected static ?string $modelLabel = 'User';
+    protected static ?string $pluralModelLabel = 'Users';
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

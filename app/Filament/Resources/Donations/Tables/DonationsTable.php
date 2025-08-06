@@ -2,13 +2,8 @@
 
 namespace App\Filament\Resources\Donations\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 
 class DonationsTable
 {
@@ -16,22 +11,76 @@ class DonationsTable
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Donor Name')->searchable(),
-                TextColumn::make('amount')->label('Amount (৳)')->money('BDT'),
-                TextColumn::make('reason')->label('Reason')->limit(20),
-                TextColumn::make('payment_method')->label('Payment Method')->badge(),
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Donor Name')
+                    ->searchable()
+                    ->sortable(),
+                    
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->sortable(),
+                    
+                Tables\Columns\TextColumn::make('phone')
+                    ->label('Phone')
+                    ->searchable(),
+                    
+                Tables\Columns\TextColumn::make('amount')
+                    ->label('Amount')
+                    ->money('BDT')
+                    ->sortable(),
+                    
+                Tables\Columns\TextColumn::make('payment_method')
+                    ->label('Payment Method')
+                    ->badge()
+                    ->color(fn (string $state): string => match($state) {
+                        'bkash' => 'success',
+                        'nagad' => 'warning', 
+                        'rocket' => 'info',
+                        'bank' => 'primary',
+                        'cash' => 'gray',
+                        default => 'gray',
+                    }),
+                    
+                Tables\Columns\TextColumn::make('transaction_id')
+                    ->label('Transaction ID')
+                    ->searchable()
+                    ->toggleable(),
+                    
+                Tables\Columns\TextColumn::make('reason')
+                    ->label('Reason')
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->reason)
+                    ->toggleable(),
+                    
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Donated At')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('payment_method')
+                    ->options([
+                        'bkash' => 'bKash',
+                        'nagad' => 'Nagad',
+                        'rocket' => 'Rocket',
+                        'bank' => 'Bank Transfer',
+                        'cash' => 'Cash',
+                    ]),
             ])
-            ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+            ->actions([
+                \Filament\Actions\EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+            ->bulkActions([
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc')
+            ->emptyStateHeading('No donations yet')
+            ->emptyStateDescription('Donation records will appear here once received.')
+            ->emptyStateIcon('heroicon-o-heart');
     }
 }

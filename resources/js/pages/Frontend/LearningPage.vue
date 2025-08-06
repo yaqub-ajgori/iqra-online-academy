@@ -208,7 +208,78 @@
                         <!-- Quiz Content -->
                         <div v-else-if="currentLesson?.type === 'quiz'" class="h-full w-full overflow-y-auto bg-white p-4 sm:p-8">
                             <h1 class="mb-6 text-lg leading-tight font-bold text-gray-900 sm:text-2xl">{{ currentLesson.title }}</h1>
-                            <div class="rounded-lg bg-[#f5f6fd] p-6 text-base text-gray-600">কুইজ কনটেন্ট এখানে আসবে...</div>
+                            
+                            <!-- Course Quizzes -->
+                            <div v-if="course?.quizzes && course.quizzes.length > 0" class="space-y-4">
+                                <div v-for="quiz in course.quizzes" :key="quiz.id" 
+                                     class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ quiz.title }}</h3>
+                                            <p v-if="quiz.description" class="text-gray-600 mb-4">{{ quiz.description }}</p>
+                                            
+                                            <div class="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+                                                <span class="flex items-center">
+                                                    <HelpCircleIcon class="h-4 w-4 mr-1" />
+                                                    {{ quiz.total_questions }} প্রশ্ন
+                                                </span>
+                                                <span v-if="quiz.time_limit_minutes" class="flex items-center">
+                                                    <ClockIcon class="h-4 w-4 mr-1" />
+                                                    {{ quiz.time_limit_minutes }} মিনিট
+                                                </span>
+                                                <span class="flex items-center">
+                                                    <CheckCircleIcon class="h-4 w-4 mr-1" />
+                                                    পাশ: {{ quiz.passing_score }}%
+                                                </span>
+                                                <span class="flex items-center">
+                                                    <RotateCcwIcon class="h-4 w-4 mr-1" />
+                                                    সর্বোচ্চ {{ quiz.max_attempts }} বার চেষ্টা
+                                                </span>
+                                            </div>
+                                            
+                                            <!-- Quiz Status -->
+                                            <div v-if="quiz.attempts && quiz.attempts.length > 0" class="mb-4">
+                                                <div class="text-sm text-gray-600 mb-2">আপনার সর্বোচ্চ স্কোর:</div>
+                                                <div class="flex items-center space-x-2">
+                                                    <div class="text-lg font-bold" 
+                                                         :class="getBestScore(quiz.attempts) >= quiz.passing_score ? 'text-green-600' : 'text-red-600'">
+                                                        {{ getBestScore(quiz.attempts) }}%
+                                                    </div>
+                                                    <div v-if="getBestScore(quiz.attempts) >= quiz.passing_score" 
+                                                         class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                                        পাশ
+                                                    </div>
+                                                </div>
+                                                <div class="text-sm text-gray-500 mt-1">
+                                                    {{ quiz.attempts.length }}/{{ quiz.max_attempts }} চেষ্টা ব্যবহৃত
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="ml-4">
+                                            <PrimaryButton
+                                                v-if="!quiz.attempts || quiz.attempts.length < quiz.max_attempts"
+                                                @click="startQuiz(quiz.id)"
+                                                variant="primary"
+                                                size="sm"
+                                                class="border-[#5f5fcd] bg-[#5f5fcd] text-white hover:bg-[#4a4ab8]"
+                                            >
+                                                {{ quiz.attempts && quiz.attempts.length > 0 ? 'পুনরায় চেষ্টা' : 'কুইজ শুরু করুন' }}
+                                            </PrimaryButton>
+                                            <div v-else class="text-sm text-gray-500 text-center">
+                                                সর্বোচ্চ চেষ্টা সম্পন্ন
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- No Quizzes Available -->
+                            <div v-else class="rounded-lg bg-[#f5f6fd] p-6 text-center">
+                                <HelpCircleIcon class="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">কোনো কুইজ নেই</h3>
+                                <p class="text-gray-600">এই কোর্সের জন্য এখনো কোনো কুইজ যোগ করা হয়নি।</p>
+                            </div>
                         </div>
                         <!-- PDF Content -->
                         <div
@@ -295,6 +366,7 @@ import {
     ChevronDownIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
+    ClockIcon,
     FileIcon,
     FileTextIcon,
     HeadphonesIcon,
@@ -302,6 +374,7 @@ import {
     PanelLeftIcon,
     PanelRightIcon,
     PlayIcon,
+    RotateCcwIcon,
     VideoIcon,
 } from 'lucide-vue-next';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
@@ -328,6 +401,25 @@ interface Module {
     lessons: Lesson[];
 }
 
+interface Quiz {
+    id: number;
+    title: string;
+    description?: string;
+    type: string;
+    time_limit_minutes?: number;
+    max_attempts: number;
+    passing_score: number;
+    total_questions: number;
+    attempts?: QuizAttempt[];
+}
+
+interface QuizAttempt {
+    id: number;
+    score: number;
+    is_passed: boolean;
+    completed_at: string;
+}
+
 interface Course {
     id: number;
     title: string;
@@ -335,6 +427,7 @@ interface Course {
     modules: Module[];
     total_lessons: number;
     completed_lessons: number;
+    quizzes?: Quiz[];
 }
 
 // Get data from props
@@ -543,6 +636,16 @@ const sanitizeHtml = (html: string): string => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     return doc.body.innerHTML || '';
+};
+
+// Quiz helper methods
+const getBestScore = (attempts: QuizAttempt[]): number => {
+    if (!attempts || attempts.length === 0) return 0;
+    return Math.max(...attempts.map(attempt => attempt.score));
+};
+
+const startQuiz = (quizId: number) => {
+    router.visit(route('quiz.show', quizId));
 };
 
 // Initialize on mount

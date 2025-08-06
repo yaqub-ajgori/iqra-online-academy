@@ -136,8 +136,7 @@ app/Filament/Resources/
 ├── Payments/PaymentResource.php
 ├── Donations/DonationResource.php
 ├── BlogPosts/BlogPostResource.php
-├── BlogCategories/BlogCategoryResource.php
-└── BlogTags/BlogTagResource.php
+└── BlogCategories/BlogCategoryResource.php
 ```
 
 Each resource includes:

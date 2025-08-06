@@ -6,6 +6,9 @@ use App\Http\Controllers\Frontend\StudentDashboardController;
 use App\Http\Controllers\Frontend\LearningController;
 use App\Http\Controllers\Frontend\AboutController;
 use App\Http\Controllers\Frontend\ContactController;
+use App\Http\Controllers\Frontend\QuizController;
+use App\Http\Controllers\Frontend\CertificateController;
+use App\Http\Controllers\Frontend\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +42,25 @@ Route::prefix('courses')->name('frontend.courses.')->group(function () {
     Route::get('/', [App\Http\Controllers\Frontend\CourseController::class, 'index'])->name('index');
     
     Route::get('/{course:slug}', [App\Http\Controllers\Frontend\CourseController::class, 'show'])->name('show');
+    
+    // Review Routes
+    Route::get('/{course:slug}/reviews', [ReviewController::class, 'index'])->name('reviews');
+    
+    // Protected review routes (requires student authentication)
+    Route::middleware(['auth', 'student', 'verified'])->group(function () {
+        Route::post('/{course:slug}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+        Route::put('/{course:slug}/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
+    });
+    
+    // Review helpful votes (both authenticated and guest)
+    Route::post('/reviews/{review}/helpful', [ReviewController::class, 'markHelpful'])
+        ->middleware('throttle:10,60') // 10 votes per minute
+        ->name('reviews.helpful');
+    
+    // Review reporting
+    Route::post('/reviews/{review}/report', [ReviewController::class, 'report'])
+        ->middleware('throttle:5,60') // 5 reports per minute
+        ->name('reviews.report');
 });
 
 // Payment Routes with rate limiting
@@ -61,6 +83,33 @@ Route::middleware(['auth', 'student', 'verified'])->prefix('learning')->name('fr
     Route::get('/{course:slug}', [LearningController::class, 'show'])->name('show');
     Route::post('/complete-lesson', [LearningController::class, 'completeLesson'])->name('complete-lesson');
     Route::get('/{course:slug}/lesson/{lesson}', [LearningController::class, 'lesson'])->name('lesson');
+});
+
+// Quiz Routes (Protected - requires student authentication)
+Route::middleware(['auth', 'student', 'verified'])->prefix('quiz')->name('quiz.')->group(function () {
+    Route::get('/{quiz}', [QuizController::class, 'show'])->name('show');
+    Route::post('/{quiz}/submit', [QuizController::class, 'submit'])->name('submit');
+    Route::get('/results/{attempt}', [QuizController::class, 'results'])->name('results');
+});
+
+// Certificate Routes
+Route::prefix('certificates')->name('certificates.')->group(function () {
+    // Public certificate verification
+    Route::get('/verify', [CertificateController::class, 'verify'])->name('verify');
+    Route::post('/verify', [CertificateController::class, 'checkVerification'])->name('check');
+    Route::get('/view/{verificationCode}', [CertificateController::class, 'show'])->name('view');
+    
+    // Protected certificate routes (requires student authentication)
+    Route::middleware(['auth', 'student', 'verified'])->group(function () {
+        Route::get('/my-certificates', [CertificateController::class, 'myCertificates'])->name('my-certificates');
+        Route::get('/download/{certificate}', [CertificateController::class, 'download'])->name('download');
+        Route::post('/generate', [CertificateController::class, 'generate'])->name('generate');
+    });
+});
+
+// API Routes for AJAX requests
+Route::prefix('api')->name('api.')->group(function () {
+    Route::get('/testimonials', [ReviewController::class, 'getFeaturedReviews'])->name('testimonials');
 });
 
 // Authenticated Routes (for later when we add real authentication)

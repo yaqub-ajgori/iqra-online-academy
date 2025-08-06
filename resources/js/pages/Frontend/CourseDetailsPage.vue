@@ -147,34 +147,78 @@
                             </div>
 
                             <div v-if="activeTab === 'reviews'" class="space-y-6">
-                                <div v-for="review in reviews" :key="review.id" class="border-b border-gray-200 pb-6">
+                                <!-- Reviews Header -->
+                                <div v-if="course.reviews && course.reviews.length > 0" class="mb-6">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">শিক্ষার্থীদের রিভিউ</h3>
+                                    <div class="flex items-center space-x-4 text-sm text-gray-600">
+                                        <div class="flex items-center space-x-1">
+                                            <StarIcon class="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                            <span class="font-medium">{{ course.rating }}/৫</span>
+                                        </div>
+                                        <span>{{ course.reviews_count }} টি রিভিউ</span>
+                                    </div>
+                                </div>
+
+                                <!-- Reviews List -->
+                                <div v-for="review in course.reviews" :key="review.id" class="border-b border-gray-200 pb-6">
                                     <div class="flex items-start space-x-4">
-                                        <div>
-                                            <div
-                                                class="flex h-12 w-12 items-center justify-center rounded-full border-4 border-white bg-[#5f5fcd]/10 shadow-lg"
-                                            >
-                                                <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <circle cx="28" cy="28" r="28" fill="#5f5fcd" />
-                                                    <path
-                                                        d="M28 29c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7 3.582 7 8 7zm0 2c-5.33 0-16 2.686-16 8v3a1 1 0 001 1h30a1 1 0 001-1v-3c0-5.314-10.67-8-16-8z"
-                                                        fill="#fff"
-                                                    />
-                                                </svg>
-                                            </div>
+                                        <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10">
+                                            <span class="text-sm font-semibold text-[#5f5fcd]">
+                                                {{ getInitials(review.student.name) }}
+                                            </span>
                                         </div>
                                         <div class="flex-1">
-                                            <div class="mb-2 flex items-center justify-between">
-                                                <h4 class="font-semibold text-gray-900">{{ review.student.name }}</h4>
-                                                <div class="flex items-center space-x-1">
-                                                    <div class="flex space-x-1 text-[#d4a574]">
-                                                        <StarIcon v-for="i in review.rating" :key="i" class="h-4 w-4 fill-current" />
-                                                    </div>
-                                                    <span class="ml-2 text-sm text-gray-500">{{ review.date }}</span>
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div class="flex items-center space-x-3">
+                                                    <h5 class="font-semibold text-gray-900">{{ review.student.name }}</h5>
+                                                    <CheckIcon v-if="review.is_verified_purchase" class="h-4 w-4 text-[#2d5a27]" title="যাচাইকৃত ক্রয়" />
                                                 </div>
+                                                <span class="text-sm text-gray-500">{{ review.date }}</span>
                                             </div>
-                                            <p class="leading-relaxed text-gray-600">{{ review.comment }}</p>
+                                            
+                                            <!-- Rating -->
+                                            <div class="mb-3 flex items-center space-x-1">
+                                                <StarIcon
+                                                    v-for="star in 5"
+                                                    :key="star"
+                                                    :class="[
+                                                        'h-4 w-4',
+                                                        star <= review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300',
+                                                    ]"
+                                                />
+                                            </div>
+
+                                            <!-- Review Title -->
+                                            <h4 v-if="review.title" class="font-medium text-gray-900 mb-2">{{ review.title }}</h4>
+
+                                            <!-- Review Content -->
+                                            <p class="text-gray-700 mb-3">{{ review.comment }}</p>
+
+                                            <!-- See More Button -->
+                                            <div v-if="review.is_long" class="mb-3">
+                                                <button
+                                                    @click="showReviewModal(review)"
+                                                    class="inline-flex items-center text-sm text-[#5f5fcd] hover:text-[#2d5a27] transition-colors duration-200 font-medium"
+                                                >
+                                                    বিস্তারিত দেখুন
+                                                    <ChevronDownIcon class="ml-1 h-4 w-4" />
+                                                </button>
+                                            </div>
+
+                                            <!-- Helpful Count -->
+                                            <div v-if="review.helpful_count > 0" class="flex items-center text-xs text-gray-500">
+                                                <HeartIcon class="h-3 w-3 mr-1 fill-current text-red-500" />
+                                                {{ review.helpful_count }} জন সহায়ক মনে করেছেন
+                                            </div>
                                         </div>
                                     </div>
+                                </div>
+
+                                <!-- No reviews message -->
+                                <div v-if="!course.reviews || course.reviews.length === 0" class="py-12 text-center">
+                                    <StarIcon class="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                                    <h3 class="mb-2 text-lg font-medium text-gray-900">এখনো কোনো রিভিউ নেই</h3>
+                                    <p class="text-gray-500">এই কোর্সের জন্য প্রথম রিভিউটি লিখুন।</p>
                                 </div>
                             </div>
                         </div>
@@ -294,13 +338,89 @@
       </div>
     </section> -->
     </FrontendLayout>
+
+    <!-- Review Details Modal -->
+    <Teleport to="body">
+        <div
+            v-show="showModalState"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            @click="closeReviewModal"
+        >
+            <div
+                class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                @click.stop
+            >
+                <div class="p-8" v-if="selectedReview">
+                    <!-- Modal Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-gray-900">বিস্তারিত রিভিউ</h2>
+                        <button
+                            @click="closeReviewModal"
+                            class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                        >
+                            <XIcon class="h-6 w-6" />
+                        </button>
+                    </div>
+
+                    <!-- Review Details -->
+                    <div class="space-y-6">
+                        <!-- Course Info -->
+                        <div class="flex items-center space-x-3">
+                            <BookOpenIcon class="h-5 w-5 text-[#5f5fcd]" />
+                            <span class="font-medium text-gray-900">{{ course.title }}</span>
+                        </div>
+
+                        <!-- Student Info -->
+                        <div class="flex items-center space-x-3">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10">
+                                <span class="text-sm font-semibold text-[#5f5fcd]">
+                                    {{ getInitials(selectedReview.student.name) }}
+                                </span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                    {{ selectedReview.student.name }}
+                                    <CheckIcon v-if="selectedReview.is_verified_purchase" class="ml-2 h-4 w-4 text-[#2d5a27]" />
+                                </h4>
+                                <p class="text-sm text-gray-500">{{ selectedReview.date }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Rating -->
+                        <div class="flex items-center space-x-2">
+                            <StarIcon
+                                v-for="star in 5"
+                                :key="star"
+                                :class="['h-6 w-6 transition-colors duration-200', star <= selectedReview.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300']"
+                            />
+                            <span class="ml-2 text-lg font-medium text-gray-700">({{ selectedReview.rating }}/৫)</span>
+                        </div>
+
+                        <!-- Review Title -->
+                        <h3 v-if="selectedReview.title" class="text-xl font-semibold text-gray-900">{{ selectedReview.title }}</h3>
+
+                        <!-- Full Review Text -->
+                        <div class="prose prose-lg max-w-none">
+                            <p class="text-gray-700 leading-relaxed">"{{ selectedReview.full_review }}"</p>
+                        </div>
+
+                        <!-- Helpful Count -->
+                        <div v-if="selectedReview.helpful_count > 0" class="flex items-center text-gray-600">
+                            <HeartIcon class="h-5 w-5 mr-2 fill-current text-red-500" />
+                            <span>{{ selectedReview.helpful_count }} জন এই রিভিউটি সহায়ক মনে করেছেন</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Teleport>
 </template>
 
 <script setup lang="ts">
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue';
 import FrontendLayout from '@/layouts/FrontendLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
-import { BookOpenIcon, CheckIcon, ChevronDownIcon, ClockIcon, ImageIcon, StarIcon, UsersIcon } from 'lucide-vue-next';
+import { BookOpenIcon, CheckIcon, ChevronDownIcon, HeartIcon, ClockIcon, ImageIcon, StarIcon, UsersIcon, XIcon } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 // @ts-ignore
 import dayjs from 'dayjs';
@@ -397,129 +517,23 @@ onMounted(() => {
     }
 });
 
-// Dummy data for reviews (replace with actual data)
-const reviews = ref([
-    {
-        id: 1,
-        student: {
-            name: 'মাহমুদুল হাসান',
-            avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-        },
-        rating: 5,
-        date: '১ দিন আগে',
-        comment: 'এই কোর্সটি অসাধারণ! শিক্ষক খুবই সহানুভূতিশীল এবং বিষয়বস্তু সহজবোধ্য।',
-    },
-    {
-        id: 2,
-        student: {
-            name: 'সাবরিনা আক্তার',
-            avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-        },
-        rating: 5,
-        date: '২ দিন আগে',
-        comment: 'আমি অনেক কিছু শিখেছি। ভিডিও গুলো খুবই পরিষ্কার এবং গঠনমূলক।',
-    },
-    {
-        id: 3,
-        student: {
-            name: 'রাশেদুল ইসলাম',
-            avatar: 'https://randomuser.me/api/portraits/men/45.jpg',
-        },
-        rating: 5,
-        date: '৩ দিন আগে',
-        comment: 'কোর্সের কনটেন্ট আপডেটেড এবং প্রাসঙ্গিক। ধন্যবাদ ইকরা একাডেমি!',
-    },
-    {
-        id: 4,
-        student: {
-            name: 'নাজমুল হোসেন',
-            avatar: 'https://randomuser.me/api/portraits/men/46.jpg',
-        },
-        rating: 5,
-        date: '৪ দিন আগে',
-        comment: 'শেখার জন্য খুবই ভালো একটি প্ল্যাটফর্ম। সকলের জন্য সুপারিশ করছি।',
-    },
-    {
-        id: 5,
-        student: {
-            name: 'তানজিলা রহমান',
-            avatar: 'https://randomuser.me/api/portraits/women/47.jpg',
-        },
-        rating: 5,
-        date: '৫ দিন আগে',
-        comment: 'ইনস্ট্রাক্টর খুবই দক্ষ এবং সহানুভূতিশীল। কোর্সটি উপভোগ করেছি।',
-    },
-    {
-        id: 6,
-        student: {
-            name: 'মো. সাইফুল ইসলাম',
-            avatar: 'https://randomuser.me/api/portraits/men/48.jpg',
-        },
-        rating: 5,
-        date: '৬ দিন আগে',
-        comment: 'কোর্সের প্রতিটি মডিউল খুব সুন্দরভাবে সাজানো। শেখার জন্য আদর্শ।',
-    },
-    {
-        id: 7,
-        student: {
-            name: 'শারমিন আক্তার',
-            avatar: 'https://randomuser.me/api/portraits/women/49.jpg',
-        },
-        rating: 5,
-        date: '১ সপ্তাহ আগে',
-        comment: 'প্র্যাকটিক্যাল উদাহরণগুলো খুবই সহায়ক ছিল। ধন্যবাদ।',
-    },
-    {
-        id: 8,
-        student: {
-            name: 'জুবায়ের আহমেদ',
-            avatar: 'https://randomuser.me/api/portraits/men/50.jpg',
-        },
-        rating: 5,
-        date: '১ সপ্তাহ আগে',
-        comment: 'কোর্সটি আমার ক্যারিয়ারে অনেক সাহায্য করেছে। highly recommended!',
-    },
-    {
-        id: 9,
-        student: {
-            name: 'রিমা খাতুন',
-            avatar: 'https://randomuser.me/api/portraits/women/51.jpg',
-        },
-        rating: 5,
-        date: '১ সপ্তাহ আগে',
-        comment: 'কোর্সের কনটেন্ট খুবই মানসম্মত এবং সহজবোধ্য।',
-    },
-    {
-        id: 10,
-        student: {
-            name: 'মো. আব্দুল্লাহ',
-            avatar: 'https://randomuser.me/api/portraits/men/52.jpg',
-        },
-        rating: 5,
-        date: '২ সপ্তাহ আগে',
-        comment: 'ইন্টারেক্টিভ কুইজ ও অ্যাসাইনমেন্টগুলো খুবই উপকারী ছিল।',
-    },
-    {
-        id: 11,
-        student: {
-            name: 'সাদিয়া ইসলাম',
-            avatar: 'https://randomuser.me/api/portraits/women/53.jpg',
-        },
-        rating: 5,
-        date: '২ সপ্তাহ আগে',
-        comment: 'আমি কোর্সটি সম্পূর্ণ করেছি এবং অনেক আত্মবিশ্বাস পেয়েছি।',
-    },
-    {
-        id: 12,
-        student: {
-            name: 'আরিফুল ইসলাম',
-            avatar: 'https://randomuser.me/api/portraits/men/54.jpg',
-        },
-        rating: 5,
-        date: '৩ সপ্তাহ আগে',
-        comment: 'তাজবীদের নিয়মগুলো এত সুন্দরভাবে বুঝিয়েছেন যে মনে রাখা খুবই সহজ হয়েছে। ধন্যবাদ উস্তাদকে।',
-    },
-]);
+// Modal state for review details
+const selectedReview = ref(null);
+const showModalState = ref(false);
+
+// Reviews functionality - now uses course.reviews from props
+const showReviewModal = (review) => {
+    selectedReview.value = review;
+    showModalState.value = true;
+};
+
+const closeReviewModal = () => {
+    showModalState.value = false;
+    selectedReview.value = null;
+};
+
+// Keep compatibility with existing computed properties
+const reviews = computed(() => props.course.reviews || []);
 
 const reviewRating = computed(() => {
     if (!reviews.value || reviews.value.length === 0) return '0.0';
@@ -528,6 +542,11 @@ const reviewRating = computed(() => {
 });
 
 const reviewCount = computed(() => (reviews.value ? reviews.value.length : 0));
+
+// Helper function for getting initials from name
+const getInitials = (name: string): string => {
+    return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase().substring(0, 2);
+};
 
 const showDiscount = computed(() => {
     return props.course.discount_price && props.course.discount_expires_at && dayjs(props.course.discount_expires_at).isAfter(dayjs());

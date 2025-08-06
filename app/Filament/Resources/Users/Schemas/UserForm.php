@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
 class UserForm
@@ -11,25 +13,65 @@ class UserForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(4)
-            ->components([
+            ->schema([
                 TextInput::make('name')
-                    ->label('Name')
+                    ->label('Full Name')
                     ->required()
-                    ->columnSpan(2),
+                    ->maxLength(255),
+                    
                 TextInput::make('email')
-                    ->label('Email')
+                    ->label('Email Address')
                     ->email()
                     ->required()
-                    ->columnSpan(2),
-                DateTimePicker::make('email_verified_at')
-                    ->label('Email Verified At')
-                    ->columnSpan(2),
+                    ->unique(ignoreRecord: true)
+                    ->maxLength(255),
+                    
                 TextInput::make('password')
                     ->label('Password')
                     ->password()
-                    ->required()
-                    ->columnSpan(2),
-            ]);
+                    ->required(fn ($record) => $record === null)
+                    ->minLength(8)
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->dehydrateStateUsing(fn ($state) => bcrypt($state)),
+                    
+                TextInput::make('password_confirmation')
+                    ->label('Confirm Password')
+                    ->password()
+                    ->required(fn ($record) => $record === null)
+                    ->same('password')
+                    ->dehydrated(false),
+                    
+                DateTimePicker::make('email_verified_at')
+                    ->label('Email Verified At')
+                    ->nullable()
+                    ->displayFormat('Y-m-d H:i'),
+                    
+                Select::make('roles')
+                    ->label('User Roles')
+                    ->multiple()
+                    ->options([
+                        'admin' => 'Administrator',
+                        'teacher' => 'Teacher',
+                        'student' => 'Student',
+                    ])
+                    ->preload()
+                    ->relationship('roles', 'role_type')
+                    ->createOptionForm([
+                        Select::make('role_type')
+                            ->label('Role Type')
+                            ->options([
+                                'admin' => 'Administrator',
+                                'teacher' => 'Teacher', 
+                                'student' => 'Student',
+                            ])
+                            ->required(),
+                    ]),
+                    
+                Toggle::make('is_active')
+                    ->label('Active User')
+                    ->default(true)
+                    ->visible(false), // Not in fillable, but can be added later
+            ])
+            ->columns(2);
     }
 }
