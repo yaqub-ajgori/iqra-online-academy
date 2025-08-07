@@ -77,13 +77,6 @@ class CourseController extends Controller
             ];
         });
 
-        // Support for infinite scroll with merge
-        if ($request->has('merge') && $request->boolean('merge')) {
-            return Inertia::merge([
-                'courses' => $courses
-            ]);
-        }
-
         return Inertia::render('Frontend/CoursesPage', [
             'courses' => $courses,
             'search' => $search,

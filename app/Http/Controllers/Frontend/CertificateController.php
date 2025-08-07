@@ -168,17 +168,27 @@ class CertificateController extends Controller
     {
         // Create a sample certificate object for preview
         $certificate = (object) [
-            'certificate_number' => 'IOA-2025-001',
-            'verification_code' => 'PREV12345678',
-            'student_name' => 'John Ahmed Abdullah',
+            'certificate_number' => 'IOA-' . now()->format('Y') . '-PREVIEW-001',
+            'verification_code' => 'PREV' . strtoupper(\Illuminate\Support\Str::random(8)),
+            'student_name' => 'Muhammad Abdullah Ahmed',
             'course_title' => 'Comprehensive Quranic Studies & Tajweed Fundamentals',
             'course_description' => 'This comprehensive course covers the fundamental principles of Quranic recitation, Tajweed rules, Arabic pronunciation, and Islamic studies. Students learn proper articulation points (Makhraj), characteristics of letters (Sifaat), and various Tajweed regulations essential for correct Quranic recitation.',
-            'instructors' => ['Dr. Muhammad Ibrahim', 'Ustadha Sarah Khan', 'Sheikh Abdullah Al-Mansouri'],
-            'completion_date' => now()->subDays(5),
+            'instructors' => ['Dr. Muhammad Ibrahim Al-Hafiz', 'Ustadha Sarah Khan', 'Sheikh Abdullah Al-Mansouri'],
+            'completion_date' => now()->subDays(7),
             'issue_date' => now(),
             'expiry_date' => null,
         ];
 
         return view('certificates.template', compact('certificate'));
+    }
+
+    /**
+     * Download preview certificate as PDF.
+     */
+    public function previewDownload()
+    {
+        $pdf = $this->certificateService->createPreviewCertificate();
+        
+        return $pdf->download('certificate-preview.pdf');
     }
 }

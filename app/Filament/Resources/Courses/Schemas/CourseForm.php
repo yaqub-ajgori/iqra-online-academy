@@ -74,13 +74,15 @@ class CourseForm
                             
                         FileUpload::make('thumbnail_image')
                             ->label('Course Thumbnail')
+                            ->helperText('Recommended: 1200×675 pixels (16:9 ratio). Images will be automatically resized and cropped.')
                             ->image()
                             ->directory('courses/thumbnails')
                             ->disk('public')
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('16:9')
-                            ->imageResizeTargetWidth('800')
-                            ->imageResizeTargetHeight('450'),
+                            ->imageResizeTargetWidth('1200')
+                            ->imageResizeTargetHeight('675')
+                            ->maxSize(5120), // 5MB max
                     ]),
                     
                 Section::make('Instructors')

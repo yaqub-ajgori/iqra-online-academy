@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\Course;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class CertificateService
 {
@@ -57,26 +58,56 @@ class CertificateService
     }
 
     /**
-     * Create PDF from certificate data.
+     * Create optimized PDF from certificate data using dompdf.
      */
     private function createPDF(Certificate $certificate)
     {
-        return Pdf::loadView('certificates.template', compact('certificate'))
-                  ->setPaper('a4', 'landscape')
-                  ->setOptions([
-                      'isPhpEnabled' => true,
-                      'isRemoteEnabled' => false,
-                      'defaultFont' => 'DejaVu Sans',
-                      'dpi' => 96,
-                      'fontSubsetting' => false,
-                      'debugKeepTemp' => false,
-                      'debugCss' => false,
-                      'debugLayout' => false,
-                      'debugLayoutLines' => false,
-                      'debugLayoutBlocks' => false,
-                      'debugLayoutInline' => false,
-                      'debugLayoutPaddingBox' => false,
-                  ]);
+        // Create PDF with optimized settings for certificate generation
+        $pdf = Pdf::loadView('certificates.template', compact('certificate'));
+        
+        // Set paper size and orientation
+        $pdf->setPaper('a4', 'landscape');
+        
+        // Apply dompdf-specific options for better rendering
+        $pdf->setOptions([
+            // Security settings
+            'isPhpEnabled' => false,
+            'isRemoteEnabled' => false,
+            
+            // Font settings
+            'defaultFont' => 'DejaVu Sans',
+            'fontSubsetting' => true,
+            'isFontSubsettingEnabled' => true,
+            'fontHeightRatio' => 1.1,
+            
+            // Quality settings
+            'dpi' => 300,
+            'defaultMediaType' => 'print',
+            
+            // Paper settings
+            'defaultPaperSize' => 'a4',
+            'defaultPaperOrientation' => 'landscape',
+            
+            // Parser settings
+            'isHtml5ParserEnabled' => true,
+            'enable_html5_parser' => true,
+            
+            // Additional optimization
+            'debugKeepTemp' => false,
+            'debugCss' => false,
+            'debugLayout' => false,
+            'debugLayoutLines' => false,
+            'debugLayoutBlocks' => false,
+            'debugLayoutInline' => false,
+            'debugLayoutPaddingBox' => false,
+            
+            // Rendering optimization
+            'enable_font_subsetting' => true,
+            'pdf_backend' => 'CPDF',
+            'convert_entities' => true,
+        ]);
+        
+        return $pdf;
     }
 
     /**
@@ -174,5 +205,26 @@ class CertificateService
         }
 
         return $generated;
+    }
+
+    /**
+     * Create a preview certificate for testing purposes.
+     */
+    public function createPreviewCertificate()
+    {
+        // Create a mock certificate object for preview
+        $certificate = (object) [
+            'certificate_number' => 'IOA-' . now()->format('Y') . '-PREVIEW-001',
+            'verification_code' => 'PREV' . strtoupper(Str::random(8)),
+            'student_name' => 'Muhammad Abdullah Ahmed',
+            'course_title' => 'Comprehensive Quranic Studies & Tajweed Fundamentals',
+            'course_description' => 'This comprehensive course covers the fundamental principles of Quranic recitation, Tajweed rules, Arabic pronunciation, and Islamic studies. Students learn proper articulation points (Makhraj), characteristics of letters (Sifaat), and various Tajweed regulations essential for correct Quranic recitation.',
+            'instructors' => ['Dr. Muhammad Ibrahim Al-Hafiz', 'Ustadha Sarah Khan', 'Sheikh Abdullah Al-Mansouri'],
+            'completion_date' => now()->subDays(7),
+            'issue_date' => now(),
+            'expiry_date' => null,
+        ];
+
+        return $this->createPDF($certificate);
     }
 }

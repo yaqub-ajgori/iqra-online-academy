@@ -49,20 +49,27 @@ class QuestionsRelationManager extends RelationManager
 
                         Components\Repeater::make('options')
                             ->label('Answer Options')
-                            ->schema([
+                            ->simple(
                                 Components\TextInput::make('option')
                                     ->label('Option')
-                                    ->required(),
-                            ])
+                                    ->required()
+                            )
                             ->minItems(2)
                             ->maxItems(6)
                             ->defaultItems(4)
+                            ->visible(fn ($get) => $get('type') === 'multiple_choice')
                             ->columnSpanFull(),
 
                         Components\TagsInput::make('correct_answers')
                             ->label('Correct Answer(s)')
                             ->placeholder('Enter correct answer(s)')
                             ->required()
+                            ->helperText(fn ($get) => match($get('type')) {
+                                'multiple_choice' => 'Enter the index of correct option (0 for first, 1 for second, etc.)',
+                                'true_false' => 'Enter "সত্য" or "মিথ্যা"',
+                                'short_answer' => 'Enter all acceptable answers',
+                                default => 'Enter the correct answer(s)'
+                            })
                             ->columnSpanFull(),
 
                         Components\Textarea::make('explanation')

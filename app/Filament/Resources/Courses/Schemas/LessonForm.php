@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Courses\Schemas;
 
+use App\Models\Quiz;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -48,6 +49,25 @@ class LessonForm
                                     ->placeholder('Select lesson type')
                                     ->helperText('Mixed Content allows video, text, files, and attachments')
                                     ->live()
+                                    ->columnSpan(1),
+
+                                Select::make('quiz_id')
+                                    ->label('Select Quiz')
+                                    ->options(function (callable $get) {
+                                        $courseId = $get('../../course_id') ?? $get('../course_id') ?? $get('course_id');
+                                        if (!$courseId) {
+                                            return [];
+                                        }
+                                        return Quiz::where('course_id', $courseId)
+                                            ->where('is_active', true)
+                                            ->pluck('title', 'id')
+                                            ->toArray();
+                                    })
+                                    ->placeholder('Choose a quiz for this lesson')
+                                    ->helperText('Select an existing quiz or create one first')
+                                    ->searchable()
+                                    ->preload()
+                                    ->visible(fn ($get) => $get('lesson_type') === 'quiz')
                                     ->columnSpan(1),
 
                                 TextInput::make('sort_order')

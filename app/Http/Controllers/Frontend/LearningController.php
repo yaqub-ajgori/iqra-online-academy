@@ -41,6 +41,12 @@ class LearningController extends Controller
             },
             'modules.lessons' => function ($query) {
                 $query->orderBy('sort_order');
+            },
+            'modules.lessons.quiz' => function ($query) {
+                $query->where('is_active', true);
+            },
+            'modules.lessons.quiz.questions' => function ($query) {
+                $query->active()->orderBy('sort_order');
             }
         ]);
 
@@ -90,6 +96,25 @@ class LearningController extends Controller
                                 'thumbnail_url' => $lesson->thumbnail_url,
                                 'completed' => $lesson->completed,
                                 'module_id' => $lesson->module_id,
+                                'quiz' => $lesson->quiz ? [
+                                    'id' => $lesson->quiz->id,
+                                    'title' => $lesson->quiz->title,
+                                    'description' => $lesson->quiz->description,
+                                    'time_limit_minutes' => $lesson->quiz->time_limit_minutes,
+                                    'passing_score' => $lesson->quiz->passing_score,
+                                    'total_questions' => $lesson->quiz->questions->count(),
+                                    'questions' => $lesson->quiz->questions->map(function ($question) {
+                                        return [
+                                            'id' => $question->id,
+                                            'question' => $question->question,
+                                            'type' => $question->type,
+                                            'options' => $question->options,
+                                            'formatted_options' => $question->formatted_options,
+                                            'points' => $question->points,
+                                            'sort_order' => $question->sort_order,
+                                        ];
+                                    }),
+                                ] : null,
                             ];
                         })
                     ];
@@ -204,6 +229,15 @@ class LearningController extends Controller
             abort(404);
         }
 
+        // Load quiz relationship if it's a quiz lesson
+        if ($lesson->lesson_type === 'quiz' && $lesson->quiz_id) {
+            $lesson->load(['quiz' => function ($query) {
+                $query->where('is_active', true);
+            }, 'quiz.questions' => function ($query) {
+                $query->active()->orderBy('sort_order');
+            }]);
+        }
+
         // Check if lesson is completed
         $isCompleted = LessonProgress::where('enrollment_id', $enrollment->id)
             ->where('lesson_id', $lesson->id)
@@ -228,6 +262,25 @@ class LearningController extends Controller
                 'resources' => $lesson->resources,
                 'thumbnail_url' => $lesson->thumbnail_url,
                 'completed' => $isCompleted,
+                'quiz' => $lesson->quiz ? [
+                    'id' => $lesson->quiz->id,
+                    'title' => $lesson->quiz->title,
+                    'description' => $lesson->quiz->description,
+                    'time_limit_minutes' => $lesson->quiz->time_limit_minutes,
+                    'passing_score' => $lesson->quiz->passing_score,
+                    'total_questions' => $lesson->quiz->questions->count(),
+                    'questions' => $lesson->quiz->questions->map(function ($question) {
+                        return [
+                            'id' => $question->id,
+                            'question' => $question->question,
+                            'type' => $question->type,
+                            'options' => $question->options,
+                            'formatted_options' => $question->formatted_options,
+                            'points' => $question->points,
+                            'sort_order' => $question->sort_order,
+                        ];
+                    }),
+                ] : null,
             ],
             'course_slug' => $course->slug,
         ]);

@@ -315,14 +315,10 @@
                                                 <button
                                                     v-else
                                                     @click="submitQuiz"
-                                                    :disabled="submittingQuiz"
-                                                    class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-md hover:bg-green-700 transition-all duration-200"
-                                                >
+                                                    class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-md hover:bg-green-700 transition-all duration-200">
                                                     <CheckIcon class="h-3 w-3 mr-1" />
-                                                    <span v-if="submittingQuiz">জমা দিচ্ছে...</span>
-                                                    <span v-else>জমা দিন</span>
+                                                    জমা দিন
                                                 </button>
-                                                <div v-if="quizError" class="text-red-600 mt-2">{{ quizError }}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -797,8 +793,6 @@ const currentQuestionIndex = ref(0);
 const quizAnswers = ref<Record<number, any>>({});
 const quizResults = ref<any>(null);
 const quizStartTime = ref<Date | null>(null);
-const submittingQuiz = ref(false);
-const quizError = ref(null);
 
 // Computed properties
 const allLessons = computed(() => {
@@ -1011,35 +1005,23 @@ const previousQuestion = () => {
 };
 
 const submitQuiz = () => {
+    console.log('Submit button clicked!');
+    
     if (!currentQuiz.value) {
         alert('কুইজ লোড হয়নি। দয়া করে পুনরায় চেষ্টা করুন।');
         return;
     }
-    submittingQuiz.value = true;
-    quizError.value = null;
-
-    router.post(
-        route('quiz.submit', currentQuiz.value.id),
-        {
-            answers: quizAnswers.value, // associative array (object)
-            started_at: quizStartTime.value?.toISOString(),
-        },
-        {
-            preserveScroll: true,
-            onSuccess: (page) => {
-                if (page.props.flash?.quiz_results) {
-                    quizResults.value = page.props.flash.quiz_results;
-                    quizCompleted.value = true;
-                    quizStarted.value = false;
-                }
-                submittingQuiz.value = false;
-            },
-            onError: (errors) => {
-                quizError.value = errors?.answers || 'কুইজ জমা দিতে সমস্যা হয়েছে।';
-                submittingQuiz.value = false;
-            },
-        }
-    );
+    
+    console.log('Submitting quiz with data:', {
+        quiz_id: currentQuiz.value.id,
+        answers: quizAnswers.value,
+        started_at: quizStartTime.value?.toISOString(),
+    });
+    
+    router.post(route('quiz.submit', currentQuiz.value.id), {
+        answers: quizAnswers.value,
+        started_at: quizStartTime.value?.toISOString(),
+    });
 };
 
 const resetQuiz = () => {

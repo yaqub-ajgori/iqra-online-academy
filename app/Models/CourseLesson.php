@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CourseLesson extends Model
 {
+    use HasFactory;
     /**
      * The attributes that are mass assignable.
      *
@@ -16,6 +18,7 @@ class CourseLesson extends Model
     protected $fillable = [
         'module_id',
         'course_id',
+        'quiz_id',
         'title',
         'content',
         'description',
@@ -68,6 +71,14 @@ class CourseLesson extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'course_id');
+    }
+
+    /**
+     * Get the quiz that belongs to the lesson.
+     */
+    public function quiz(): BelongsTo
+    {
+        return $this->belongsTo(Quiz::class, 'quiz_id');
     }
 
     /**
@@ -202,20 +213,19 @@ class CourseLesson extends Model
             ];
         }
         
-        // Add attachments
-        if ($this->attachments) {
+        // Add attachments - ensure it's an array
+        if ($this->attachments && is_array($this->attachments)) {
             foreach ($this->attachments as $attachment) {
-                $files[] = [
-                    'name' => $attachment['name'] ?? basename($attachment['path']),
-                    'url' => str_starts_with($attachment['path'], 'http') 
-                        ? $attachment['path'] 
-                        : asset('storage/' . $attachment['path']),
-                    'type' => $attachment['type'] ?? null,
-                    'size' => $attachment['size'] ?? null,
-                    'formatted_size' => isset($attachment['size']) 
-                        ? $this->formatBytes($attachment['size']) 
-                        : null,
-                ];
+                // Ensure attachment is an array
+                if (is_array($attachment)) {
+                    $files[] = [
+                        'name' => $attachment['name'] ?? basename($attachment['url'] ?? ''),
+                        'url' => $attachment['url'] ?? '#',
+                        'type' => $attachment['type'] ?? null,
+                        'size' => $attachment['size'] ?? null,
+                        'formatted_size' => $attachment['formatted_size'] ?? null,
+                    ];
+                }
             }
         }
         

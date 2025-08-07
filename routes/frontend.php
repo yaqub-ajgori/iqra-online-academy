@@ -89,7 +89,6 @@ Route::middleware(['auth', 'student', 'verified'])->prefix('learning')->name('fr
 Route::middleware(['auth', 'student', 'verified'])->prefix('quiz')->name('quiz.')->group(function () {
     Route::get('/{quiz}', [QuizController::class, 'show'])->name('show');
     Route::post('/{quiz}/submit', [QuizController::class, 'submit'])->name('submit');
-    Route::get('/results/{attempt}', [QuizController::class, 'results'])->name('results');
 });
 
 // Certificate Routes
@@ -98,6 +97,10 @@ Route::prefix('certificates')->name('certificates.')->group(function () {
     Route::get('/verify', [CertificateController::class, 'verify'])->name('verify');
     Route::post('/verify', [CertificateController::class, 'checkVerification'])->name('check');
     Route::get('/view/{verificationCode}', [CertificateController::class, 'show'])->name('view');
+    
+    // Preview routes (for development/testing)
+    Route::get('/preview', [CertificateController::class, 'preview'])->name('preview');
+    Route::get('/preview/download', [CertificateController::class, 'previewDownload'])->name('preview.download');
     
     // Protected certificate routes (requires student authentication)
     Route::middleware(['auth', 'student', 'verified'])->group(function () {

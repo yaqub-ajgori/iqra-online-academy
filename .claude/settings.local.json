@@ -32,7 +32,8 @@
       "WebFetch(domain:everyayah.com)",
       "Bash(vendor/bin/pest:*)",
       "Bash(php -l:*)",
-      "Bash(composer test:*)"
+      "Bash(composer test:*)",
+      "Bash(php:*)"
     ],
     "deny": []
   }

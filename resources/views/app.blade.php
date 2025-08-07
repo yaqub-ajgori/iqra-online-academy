@@ -14,6 +14,9 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- Favicon -->
     <link rel="icon" href="/icons/icon-192x192.svg" type="image/svg+xml">
     <link rel="icon" href="/icons/icon-192x192.svg" sizes="192x192" type="image/svg+xml">

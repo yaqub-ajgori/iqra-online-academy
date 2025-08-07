@@ -120,7 +120,6 @@ class CourseEnrollment extends Model
         $this->update([
             'progress_percentage' => $totalLessons > 0 ? ($completedLessons / $totalLessons) * 100 : 0,
             'lessons_completed' => $completedLessons,
-            'last_accessed_at' => now(),
         ]);
 
         // Check if course is completed
@@ -136,7 +135,6 @@ class CourseEnrollment extends Model
     {
         $this->update([
             'is_completed' => true,
-            'completed_at' => now(),
             'progress_percentage' => 100,
         ]);
         

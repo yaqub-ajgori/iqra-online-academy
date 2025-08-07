@@ -176,6 +176,7 @@ import CoursePlaceholder from './CoursePlaceholder.vue';
 import PrimaryButton from './PrimaryButton.vue';
 // @ts-ignore
 import dayjs from 'dayjs';
+import { route } from 'ziggy-js';
 
 interface Course {
     id: number;
@@ -209,7 +210,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const courseUrl = computed(() => `/courses/${props.course.slug}`);
-const continueUrl = computed(() => `/courses/${props.course.slug}/learn`);
+const continueUrl = computed(() => route('frontend.learning.show', props.course.slug));
 
 const formatPrice = (price: number) => {
     return new Intl.NumberFormat('bn-BD').format(price);

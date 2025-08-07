@@ -15,6 +15,7 @@ class Quiz extends Model
         'course_id',
         'lesson_id',
         'title',
+        'slug',
         'description',
         'type',
         'time_limit_minutes',
@@ -78,6 +79,7 @@ class Quiz extends Model
     {
         return $query->where('is_active', true);
     }
+
 
     /**
      * Scope: Available quizzes (within time range).
