@@ -205,11 +205,6 @@
                                                 </button>
                                             </div>
 
-                                            <!-- Helpful Count -->
-                                            <div v-if="review.helpful_count > 0" class="flex items-center text-xs text-gray-500">
-                                                <HeartIcon class="h-3 w-3 mr-1 fill-current text-red-500" />
-                                                {{ review.helpful_count }} জন সহায়ক মনে করেছেন
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -228,6 +223,16 @@
                     <div class="lg:col-span-1">
                         <div class="sticky top-8">
                             <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl">
+                                <!-- Course Image -->
+                                <div v-if="course.image" class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+                                    <img
+                                        :src="course.image"
+                                        :alt="course.title"
+                                        class="h-64 w-full object-cover object-center"
+                                        loading="lazy"
+                                    />
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+                                </div>
                                 <!-- Price Section -->
                                 <div class="border-b border-gray-200 p-8 text-center">
                                     <template v-if="course.is_free">
@@ -364,12 +369,6 @@
 
                     <!-- Review Details -->
                     <div class="space-y-6">
-                        <!-- Course Info -->
-                        <div class="flex items-center space-x-3">
-                            <BookOpenIcon class="h-5 w-5 text-[#5f5fcd]" />
-                            <span class="font-medium text-gray-900">{{ course.title }}</span>
-                        </div>
-
                         <!-- Student Info -->
                         <div class="flex items-center space-x-3">
                             <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10">
@@ -404,11 +403,6 @@
                             <p class="text-gray-700 leading-relaxed">"{{ selectedReview.full_review }}"</p>
                         </div>
 
-                        <!-- Helpful Count -->
-                        <div v-if="selectedReview.helpful_count > 0" class="flex items-center text-gray-600">
-                            <HeartIcon class="h-5 w-5 mr-2 fill-current text-red-500" />
-                            <span>{{ selectedReview.helpful_count }} জন এই রিভিউটি সহায়ক মনে করেছেন</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -420,7 +414,7 @@
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue';
 import FrontendLayout from '@/layouts/FrontendLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
-import { BookOpenIcon, CheckIcon, ChevronDownIcon, HeartIcon, ClockIcon, ImageIcon, StarIcon, UsersIcon, XIcon } from 'lucide-vue-next';
+import { BookOpenIcon, CheckIcon, ChevronDownIcon, ClockIcon, ImageIcon, StarIcon, UsersIcon, XIcon } from 'lucide-vue-next';
 import { computed, onMounted, ref } from 'vue';
 // @ts-ignore
 import dayjs from 'dayjs';
@@ -467,11 +461,15 @@ interface Course {
         id: number;
         student: {
             name: string;
-            avatar: string;
+            avatar?: string;
         };
         rating: number;
+        title?: string;
         date: string;
         comment: string;
+        full_review: string;
+        is_long: boolean;
+        is_verified_purchase: boolean;
     }>;
 }
 

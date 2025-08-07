@@ -28,13 +28,6 @@
             </button>
         </div>
 
-        <!-- Course Name -->
-        <div class="mb-4">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-[#5f5fcd]/10 text-[#5f5fcd]">
-                <BookOpenIcon class="mr-1 h-3 w-3" />
-                {{ testimonial.course }}
-            </span>
-        </div>
 
         <!-- Rating Stars -->
         <div class="mb-6 flex items-center space-x-1">
@@ -66,14 +59,6 @@
                 </div>
             </div>
 
-            <!-- Enhanced Helpful Count -->
-            <div v-if="testimonial.helpful_count > 0" class="text-right">
-                <div class="flex items-center space-x-1 px-3 py-1 rounded-full bg-gradient-to-r from-red-50 to-pink-50 border border-red-100">
-                    <HeartIcon class="h-4 w-4 text-red-500 fill-current" />
-                    <span class="text-sm font-medium text-red-600">{{ testimonial.helpful_count }}</span>
-                </div>
-                <p class="text-xs text-gray-400 mt-1">সহায়ক</p>
-            </div>
         </div>
 
         <!-- Islamic Decorative Element -->
@@ -107,11 +92,6 @@
 
                     <!-- Review Details -->
                     <div class="space-y-6">
-                        <!-- Course Info -->
-                        <div class="flex items-center space-x-3">
-                            <BookOpenIcon class="h-5 w-5 text-[#5f5fcd]" />
-                            <span class="font-medium text-gray-900">{{ testimonial.course }}</span>
-                        </div>
 
                         <!-- Student Info -->
                         <div class="flex items-center space-x-3">
@@ -147,11 +127,6 @@
                             <p class="text-gray-700 leading-relaxed">"{{ testimonial.full_review }}"</p>
                         </div>
 
-                        <!-- Helpful Count -->
-                        <div v-if="testimonial.helpful_count > 0" class="flex items-center text-gray-600">
-                            <HeartIcon class="h-5 w-5 mr-2 fill-current text-red-500" />
-                            <span>{{ testimonial.helpful_count }} জন এই রিভিউটি সহায়ক মনে করেছেন</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -161,12 +136,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { CheckIcon, QuoteIcon, StarIcon, ChevronRightIcon, BookOpenIcon, HeartIcon, XIcon } from 'lucide-vue-next';
+import { CheckIcon, QuoteIcon, StarIcon, ChevronRightIcon, XIcon } from 'lucide-vue-next';
 
 interface Testimonial {
     id: number | string;
     name: string;
-    course: string;
     rating: number;
     title?: string;
     comment: string;
@@ -174,7 +148,6 @@ interface Testimonial {
     avatar?: string;
     verified: boolean;
     date: string;
-    helpful_count?: number;
     is_long: boolean;
 }
 

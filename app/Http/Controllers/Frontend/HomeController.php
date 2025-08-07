@@ -89,6 +89,7 @@ class HomeController extends Controller
                     'title' => $course->title,
                     'full_description' => $course->full_description,
                     'image' => $course->thumbnail,
+                    'description' => $course->full_description,
                     'category' => $course->category->name ?? 'Uncategorized',
                     'level' => $course->level,
                     'price' => $course->price,
@@ -156,7 +157,6 @@ class HomeController extends Controller
                     [
                         'id' => 'mock_1',
                         'name' => 'আবু বকর সিদ্দিক',
-                        'course' => 'কুরআন তিলাওয়াত কোর্স',
                         'rating' => 5,
                         'title' => 'অসাধারণ ইসলামিক শিক্ষা',
                         'comment' => 'মাশাআল্লাহ! এই কোর্সটি আমার ইসলামিক জ্ঞানে অনেক সমৃদ্ধি এনেছে। শিক্ষকের পদ্ধতি খুবই কার্যকর এবং বোধগম্য।',  
@@ -164,13 +164,11 @@ class HomeController extends Controller
                         'avatar' => null,
                         'verified' => true,
                         'date' => '১৫ জুলাই, ২০২৪',
-                        'helpful_count' => 12,
                         'is_long' => true,
                     ],
                     [
                         'id' => 'mock_2',
                         'name' => 'ফাতিমা খাতুন',
-                        'course' => 'হাদিস অধ্যয়ন',
                         'rating' => 5,
                         'title' => 'জীবন পরিবর্তনকারী কোর্স',
                         'comment' => 'আলহামদুলিল্লাহ! এই কোর্সের মাধ্যমে কুরআনের গভীর অর্থ বুঝতে পেরেছি।',
@@ -178,13 +176,11 @@ class HomeController extends Controller
                         'avatar' => null,
                         'verified' => true,  
                         'date' => '১০ জুলাই, ২০২৪',
-                        'helpful_count' => 8,
                         'is_long' => false,
                     ],
                     [
                         'id' => 'mock_3',
                         'name' => 'উমর ইবনে খাত্তাব',
-                        'course' => 'ফিকহ শাস্ত্র',
                         'rating' => 5,
                         'title' => 'ব্যতিক্রমী ফিকহ শিক্ষা',
                         'comment' => 'দৈনন্দিন জীবনের ইসলামী আইনকানুন এত সহজভাবে শেখানো হয়েছে।',
@@ -192,7 +188,6 @@ class HomeController extends Controller
                         'avatar' => null,
                         'verified' => true,
                         'date' => '৫ জুলাই, ২০২৪', 
-                        'helpful_count' => 15,
                         'is_long' => false,
                     ]
                 ];
@@ -205,7 +200,6 @@ class HomeController extends Controller
                 return [
                     'id' => $review->id,
                     'name' => $review->student->full_name,
-                    'course' => $review->course->title,
                     'rating' => $review->rating,
                     'title' => $review->title,
                     'comment' => $shortText, // Truncated for display
@@ -213,7 +207,6 @@ class HomeController extends Controller
                     'avatar' => null, // Add avatar support later if needed
                     'verified' => $review->is_verified_purchase,
                     'date' => $review->bengali_date,
-                    'helpful_count' => $review->helpful_count,
                     'is_long' => mb_strlen($fullText) > 120, // Show "See More" if longer than 120 chars
                 ];
             })->toArray();

@@ -2,10 +2,7 @@
 
 namespace App\Filament\Resources\Certificates;
 
-use App\Filament\Resources\Certificates\Pages\CreateCertificate;
-use App\Filament\Resources\Certificates\Pages\EditCertificate;
 use App\Filament\Resources\Certificates\Pages\ListCertificates;
-use App\Filament\Resources\Certificates\Schemas\CertificateForm;
 use App\Filament\Resources\Certificates\Tables\CertificatesTable;
 use App\Filament\Traits\AdminOnlyResource;
 use App\Models\Certificate;
@@ -25,10 +22,12 @@ class CertificateResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
     protected static UnitEnum|string|null $navigationGroup = 'Academy';
     protected static ?int $navigationSort = 4;
+    protected static ?string $navigationLabel = 'Certificate Monitoring';
 
     public static function form(Schema $schema): Schema
     {
-        return CertificateForm::configure($schema);
+        // Read-only resource - no form needed
+        return $schema;
     }
 
     public static function table(Table $table): Table
@@ -47,8 +46,6 @@ class CertificateResource extends Resource
     {
         return [
             'index' => ListCertificates::route('/'),
-            'create' => CreateCertificate::route('/create'),
-            'edit' => EditCertificate::route('/{record}/edit'),
         ];
     }
 

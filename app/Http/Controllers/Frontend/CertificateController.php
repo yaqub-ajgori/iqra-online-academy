@@ -166,8 +166,8 @@ class CertificateController extends Controller
      */
     public function preview()
     {
-        // Create a sample certificate object for preview
-        $certificate = (object) [
+        // Create a sample certificate object for preview (without saving to database)
+        $certificate = new Certificate([
             'certificate_number' => 'IOA-' . now()->format('Y') . '-PREVIEW-001',
             'verification_code' => 'PREV' . strtoupper(\Illuminate\Support\Str::random(8)),
             'student_name' => 'Muhammad Abdullah Ahmed',
@@ -177,7 +177,9 @@ class CertificateController extends Controller
             'completion_date' => now()->subDays(7),
             'issue_date' => now(),
             'expiry_date' => null,
-        ];
+            'is_verified' => true,
+            'is_revoked' => false,
+        ]);
 
         return view('certificates.template', compact('certificate'));
     }

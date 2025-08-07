@@ -212,8 +212,8 @@ class CertificateService
      */
     public function createPreviewCertificate()
     {
-        // Create a mock certificate object for preview
-        $certificate = (object) [
+        // Create a mock certificate object for preview (without saving to database)
+        $certificate = new Certificate([
             'certificate_number' => 'IOA-' . now()->format('Y') . '-PREVIEW-001',
             'verification_code' => 'PREV' . strtoupper(Str::random(8)),
             'student_name' => 'Muhammad Abdullah Ahmed',
@@ -223,7 +223,9 @@ class CertificateService
             'completion_date' => now()->subDays(7),
             'issue_date' => now(),
             'expiry_date' => null,
-        ];
+            'is_verified' => true,
+            'is_revoked' => false,
+        ]);
 
         return $this->createPDF($certificate);
     }

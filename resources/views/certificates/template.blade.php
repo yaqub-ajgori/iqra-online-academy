@@ -18,15 +18,15 @@
         }
 
         body {
-            font-family: 'DejaVu Sans', 'Arial Unicode MS', Arial, sans-serif;
+            font-family: 'Georgia', 'Times New Roman', 'DejaVu Serif', serif;
             background: #ffffff;
-            color: #2d3748;
+            color: #2c2c2c;
             width: 297mm;
             height: 210mm;
             margin: 0;
             padding: 0;
             font-size: 14px;
-            line-height: 1.4;
+            line-height: 1.5;
             overflow: hidden;
         }
 
@@ -34,354 +34,363 @@
             width: 297mm;
             height: 210mm;
             position: relative;
-            background: #ffffff;
-            border: 8px solid transparent;
-            background-image: 
-                linear-gradient(white, white),
-                linear-gradient(135deg, #047857 0%, #1e40af 25%, #d97706 50%, #1e40af 75%, #047857 100%);
-            background-origin: padding-box, border-box;
-            background-clip: padding-box, border-box;
+            background: 
+                radial-gradient(ellipse at center, #ffffff 0%, #faf9f7 100%);
             margin: 0;
-            padding: 15mm;
-            box-shadow: 
-                0 4px 15px rgba(0, 0, 0, 0.1),
-                inset 0 0 0 1px rgba(4, 120, 87, 0.2);
+            padding: 0;
+            overflow: hidden;
         }
 
-        /* Modern Border Details - Subtle corner markers */
-        .border-marker {
+        /* Classic multi-layer border frame */
+        .border-frame {
             position: absolute;
-            width: 12mm;
-            height: 1mm;
-            background: rgba(4, 120, 87, 0.3);
-            z-index: 1;
+            top: 5mm;
+            left: 5mm;
+            right: 5mm;
+            bottom: 5mm;
+            border: 3px solid #8B7355;
+            background: transparent;
         }
 
-        .border-marker.top-left {
+        .inner-border {
+            position: absolute;
+            top: 8mm;
+            left: 8mm;
+            right: 8mm;
+            bottom: 8mm;
+            border: 1px solid #C4A57B;
+        }
+
+        .decorative-border {
+            position: absolute;
+            top: 10mm;
+            left: 10mm;
+            right: 10mm;
+            bottom: 10mm;
+            border: 1px solid #8B7355;
+            border-style: dotted;
+        }
+
+        /* Classic corner flourishes */
+        .corner-flourish {
+            position: absolute;
+            width: 30mm;
+            height: 30mm;
+            border: 2px solid #C4A57B;
+        }
+
+        .corner-flourish.top-left {
             top: 12mm;
             left: 12mm;
-            border-radius: 0.5mm;
+            border-right: none;
+            border-bottom: none;
         }
 
-        .border-marker.top-right {
+        .corner-flourish.top-right {
             top: 12mm;
             right: 12mm;
-            border-radius: 0.5mm;
+            border-left: none;
+            border-bottom: none;
         }
 
-        .border-marker.bottom-left {
+        .corner-flourish.bottom-left {
             bottom: 12mm;
             left: 12mm;
-            border-radius: 0.5mm;
+            border-right: none;
+            border-top: none;
         }
 
-        .border-marker.bottom-right {
+        .corner-flourish.bottom-right {
             bottom: 12mm;
             right: 12mm;
-            border-radius: 0.5mm;
+            border-left: none;
+            border-top: none;
         }
 
-        /* Islamic pattern overlay */
-        .islamic-pattern {
+
+        /* Content wrapper */
+        .content-wrapper {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0.05;
-            background-image: 
-                radial-gradient(circle at 25% 25%, #047857 1.5px, transparent 1.5px),
-                radial-gradient(circle at 75% 75%, #1e40af 1.5px, transparent 1.5px),
-                linear-gradient(45deg, transparent 48%, rgba(217, 119, 6, 0.02) 49%, rgba(217, 119, 6, 0.02) 51%, transparent 52%);
-            background-size: 35px 35px, 35px 35px, 70px 70px;
-            background-position: 0 0, 17.5px 17.5px, 0 0;
+            top: 15mm;
+            left: 15mm;
+            right: 15mm;
+            bottom: 15mm;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        /* Islamic geometric pattern */
-        .geometric-pattern {
-            position: absolute;
-            top: 50%;
-            left: 20mm;
-            right: 20mm;
-            height: 3px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(4, 120, 87, 0.3) 10%, 
-                rgba(30, 64, 175, 0.4) 25%, 
-                rgba(217, 119, 6, 0.6) 40%, 
-                rgba(217, 119, 6, 0.8) 50%, 
-                rgba(217, 119, 6, 0.6) 60%, 
-                rgba(30, 64, 175, 0.4) 75%, 
-                rgba(4, 120, 87, 0.3) 90%, 
-                transparent 100%);
-            transform: translateY(-50%);
-            border-radius: 2px;
-            box-shadow: 
-                0 1px 3px rgba(0, 0, 0, 0.1),
-                0 -1px 1px rgba(255, 255, 255, 0.5);
-        }
-
-        /* HEADER SECTION */
+        /* Header Section */
         .header-section {
             text-align: center;
-            margin-bottom: 10mm;
+            padding-top: 2mm;
         }
 
         .bismillah {
             font-size: 14px;
-            color: #1e40af;
-            margin-bottom: 4mm;
-            font-weight: 900;
-            letter-spacing: 1px;
-            text-shadow: 
-                0 1px 2px rgba(30, 64, 175, 0.4),
-                0 0 10px rgba(30, 64, 175, 0.1);
-            filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+            color: #5C4033;
+            margin-bottom: 3mm;
+            font-weight: normal;
+            letter-spacing: 2px;
+            font-family: 'DejaVu Sans', Arial, sans-serif;
+        }
+
+        .institute-wrapper {
+            position: relative;
+            margin-bottom: 3mm;
         }
 
         .institute-name {
-            font-size: 24px;
-            font-weight: 900;
-            color: #1e3a8a;
-            margin-bottom: 3mm;
-            letter-spacing: 3px;
+            font-size: 26px;
+            font-weight: normal;
+            color: #2c2c2c;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            text-shadow: 
-                0 2px 4px rgba(30, 58, 138, 0.3),
-                0 0 20px rgba(30, 58, 138, 0.1);
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1e3a8a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+            font-family: 'Georgia', serif;
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Decorative underline for institute */
+        .institute-underline {
+            height: 1px;
+            background: linear-gradient(to right, 
+                transparent 0%, 
+                #C4A57B 25%, 
+                #8B7355 50%, 
+                #C4A57B 75%, 
+                transparent 100%);
+            margin: 2mm auto 3mm;
+            width: 60%;
         }
 
         .certificate-title {
-            font-size: 28px;
-            font-weight: 900;
-            color: #047857;
+            font-size: 32px;
+            font-weight: normal;
+            color: #8B7355;
             letter-spacing: 2px;
-            text-shadow: 
-                0 2px 4px rgba(4, 120, 87, 0.3),
-                0 0 15px rgba(4, 120, 87, 0.1);
-            background: linear-gradient(135deg, #047857 0%, #059669 50%, #047857 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+            font-family: 'Georgia', serif;
+            text-transform: uppercase;
+            margin-bottom: 1mm;
         }
 
-        /* MAIN CONTENT SECTION */
+        .certificate-subtitle {
+            font-size: 12px;
+            color: #5C4033;
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+
+        /* Ornamental divider */
+        .ornamental-divider {
+            text-align: center;
+            margin: 3mm 0;
+            color: #C4A57B;
+            font-size: 16px;
+            letter-spacing: 10px;
+        }
+
+        /* Main Content */
         .main-content {
             text-align: center;
-            margin-bottom: 10mm;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2mm 0;
         }
 
-        .awarded-text {
-            font-size: 12px;
-            color: #374151;
-            margin-bottom: 4mm;
+        .presented-to {
+            font-size: 14px;
+            color: #5C4033;
+            margin-bottom: 3mm;
             font-style: italic;
-            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .recipient-wrapper {
+            position: relative;
+            margin: 5mm 0;
         }
 
         .recipient-name {
             font-size: 30px;
-            font-weight: 900;
-            color: #1e3a8a;
-            margin: 4mm 0 6mm 0;
-            padding: 6mm 15mm;
-            border-top: 4px solid;
-            border-bottom: 4px solid;
-            border-image: linear-gradient(90deg, transparent 0%, #d97706 20%, #b45309 50%, #d97706 80%, transparent 100%) 1;
-            background: linear-gradient(135deg, 
-                transparent 0%, 
-                rgba(217, 119, 6, 0.05) 15%, 
-                rgba(4, 120, 87, 0.05) 30%, 
-                rgba(30, 64, 175, 0.03) 50%, 
-                rgba(4, 120, 87, 0.05) 70%, 
-                rgba(217, 119, 6, 0.05) 85%, 
-                transparent 100%);
-            display: inline-block;
-            min-width: 160mm;
-            text-shadow: 
-                0 2px 4px rgba(30, 58, 138, 0.3),
-                0 0 20px rgba(30, 58, 138, 0.08);
-            border-radius: 6px;
-            box-shadow: 
-                0 4px 12px rgba(0, 0, 0, 0.1),
-                0 1px 3px rgba(0, 0, 0, 0.1),
-                inset 0 1px 2px rgba(255, 255, 255, 0.2);
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1e3a8a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-weight: bold;
+            color: #2c2c2c;
+            font-family: 'Georgia', serif;
+            letter-spacing: 1px;
             position: relative;
+            display: inline-block;
+            padding: 0 8mm;
         }
 
-        .recipient-name::before {
-            content: '';
+        .recipient-underline {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, 
-                transparent 0%, 
-                rgba(217, 119, 6, 0.08) 15%, 
-                rgba(4, 120, 87, 0.08) 30%, 
-                rgba(30, 64, 175, 0.05) 50%, 
-                rgba(4, 120, 87, 0.08) 70%, 
-                rgba(217, 119, 6, 0.08) 85%, 
-                transparent 100%);
-            border-radius: 6px;
-            z-index: -1;
+            bottom: -2mm;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: #8B7355;
+            border-bottom: 1px solid #C4A57B;
         }
 
-        .achievement-description {
-            font-size: 11px;
-            color: #374151;
-            line-height: 1.4;
-            margin: 4mm auto 6mm auto;
-            max-width: 180mm;
-            font-weight: 400;
+        .achievement-text {
+            font-size: 12px;
+            color: #2c2c2c;
+            line-height: 1.6;
+            margin: 3mm auto;
+            max-width: 190mm;
+            text-align: center;
+        }
+
+        .course-section {
+            margin: 4mm 0;
+        }
+
+        .course-intro {
+            font-size: 12px;
+            color: #5C4033;
+            font-style: italic;
+            margin-bottom: 2mm;
         }
 
         .course-name {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            color: #1e3a8a;
-            border-left: 5px solid #d97706;
-            padding-left: 6mm;
-            display: inline-block;
-            max-width: 180mm;
-            text-shadow: 0 1px 2px rgba(30, 58, 138, 0.2);
+            color: #8B7355;
+            font-family: 'Georgia', serif;
+            letter-spacing: 0.5px;
+            margin: 2mm 0;
         }
 
         .completion-date {
-            font-weight: bold;
-            color: #047857;
-            font-size: 11px;
+            font-size: 13px;
+            color: #2c2c2c;
+            margin-top: 3mm;
         }
 
-        /* FOOTER SECTION */
+        .date-value {
+            font-weight: bold;
+            color: #5C4033;
+            border-bottom: 1px solid #C4A57B;
+            padding: 0 2mm;
+        }
+
+        /* Footer Section */
         .footer-section {
-            margin-top: 8mm;
-        }
-
-        /* Metadata */
-        .metadata-section {
-            background: linear-gradient(135deg, rgba(30, 64, 175, 0.12) 0%, rgba(4, 120, 87, 0.12) 50%, rgba(217, 119, 6, 0.08) 100%);
-            border: 1px solid rgba(4, 120, 87, 0.2);
-            border-radius: 3mm;
-            padding: 2mm;
-            margin-bottom: 5mm;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .metadata-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .metadata-cell {
-            text-align: center;
-            padding: 0.5mm 1mm;
-            font-size: 8px;
-        }
-
-        .metadata-label {
-            font-weight: bold;
-            color: #1e3a8a;
-            text-transform: uppercase;
-            font-size: 7px;
-            display: block;
-            margin-bottom: 0.5mm;
-        }
-
-        .metadata-value {
-            color: #374151;
-            font-size: 8px;
-            font-weight: 600;
+            padding-top: 0;
+            padding-bottom: 2mm;
         }
 
         /* Signatures */
         .signatures-container {
-            margin-bottom: 4mm;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin: 2mm 20mm;
         }
 
-        .signatures-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .signature-cell {
-            width: 50%;
+        .signature-block {
             text-align: center;
-            vertical-align: bottom;
-            padding: 0 5mm;
+            width: 70mm;
+            position: relative;
         }
 
         .signature-line {
-            width: 50mm;
-            height: 2px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(217, 119, 6, 0.6) 15%, 
-                rgba(4, 120, 87, 0.8) 35%, 
-                rgba(30, 64, 175, 0.6) 50%, 
-                rgba(4, 120, 87, 0.8) 65%, 
-                rgba(217, 119, 6, 0.6) 85%, 
-                transparent 100%);
-            margin: 0 auto 2mm auto;
-            border-radius: 2px;
-            box-shadow: 
-                0 1px 2px rgba(0, 0, 0, 0.1),
-                0 -0.5px 1px rgba(255, 255, 255, 0.3);
+            width: 60mm;
+            height: 0.5px;
+            background: #5C4033;
+            margin: 0 auto 1mm auto;
+            position: relative;
         }
 
         .signature-name {
-            font-size: 10px;
-            font-weight: 800;
-            color: #1e3a8a;
+            font-size: 12px;
+            font-weight: normal;
+            color: #2c2c2c;
             margin-bottom: 0.5mm;
-            line-height: 1.1;
-            text-shadow: 
-                0 1px 2px rgba(30, 58, 138, 0.3),
-                0 0 8px rgba(30, 58, 138, 0.1);
-            filter: drop-shadow(0 0.5px 0.5px rgba(0, 0, 0, 0.1));
+            font-family: 'Georgia', serif;
+            letter-spacing: 0.5px;
         }
 
         .signature-title {
-            font-size: 8px;
-            color: #6b7280;
+            font-size: 10px;
+            color: #5C4033;
             font-style: italic;
-            line-height: 1.1;
-            font-weight: 600;
-            text-shadow: 0 0.5px 1px rgba(107, 114, 128, 0.3);
+            font-family: 'Georgia', serif;
         }
 
-        /* Verification at the very bottom */
-        .verification-section {
+        /* Certificate details */
+        .certificate-details {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2mm;
+            padding-top: 1mm;
+            border-top: 1px solid #C4A57B;
+        }
+
+        .detail-item {
+            margin: 0 5mm;
             text-align: center;
-            padding: 1.5mm;
-            background: linear-gradient(135deg, rgba(4, 120, 87, 0.08) 0%, rgba(30, 64, 175, 0.08) 100%);
-            border: 1px solid rgba(4, 120, 87, 0.15);
-            border-radius: 2mm;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .detail-label {
+            font-size: 8px;
+            color: #5C4033;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5mm;
+        }
+
+        .detail-value {
+            font-size: 9px;
+            color: #2c2c2c;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+
+        /* Background watermark pattern */
+        .watermark-pattern {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150mm;
+            height: 150mm;
+            border: 15px double rgba(196, 165, 123, 0.05);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .watermark-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 100px;
+            color: rgba(196, 165, 123, 0.04);
+            font-weight: bold;
+            font-family: 'Georgia', serif;
+            letter-spacing: 20px;
+            pointer-events: none;
+        }
+
+        /* Verification */
+        .verification-footer {
+            position: absolute;
+            bottom: 13mm;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
         }
 
         .verification-text {
             font-size: 7px;
-            color: #4b5563;
-            line-height: 1.1;
-            font-weight: 500;
-        }
-
-        .verification-url {
-            font-weight: bold;
-            color: #1e3a8a;
+            color: #8B7355;
+            font-style: italic;
         }
 
         /* Print optimization */
@@ -391,96 +400,111 @@
                 -webkit-print-color-adjust: exact;
                 color-adjust: exact;
             }
-            
-            .certificate-container {
-                box-shadow: none;
-            }
         }
     </style>
 </head>
 <body>
     <div class="certificate-container">
-        <!-- Modern Border Markers -->
-        <div class="border-marker top-left"></div>
-        <div class="border-marker top-right"></div>
-        <div class="border-marker bottom-left"></div>
-        <div class="border-marker bottom-right"></div>
+        <!-- Multi-layer border frames -->
+        <div class="border-frame"></div>
+        <div class="inner-border"></div>
+        <div class="decorative-border"></div>
         
-        <!-- Islamic pattern overlay -->
-        <div class="islamic-pattern"></div>
+        <!-- Corner flourishes -->
+        <div class="corner-flourish top-left"></div>
+        <div class="corner-flourish top-right"></div>
+        <div class="corner-flourish bottom-left"></div>
+        <div class="corner-flourish bottom-right"></div>
         
-        <!-- Geometric pattern -->
-        <div class="geometric-pattern"></div>
-            
-            <!-- HEADER SECTION -->
+        <!-- Background watermark -->
+        <div class="watermark-pattern"></div>
+        <div class="watermark-text">IQRA</div>
+        
+        <!-- Main content -->
+        <div class="content-wrapper">
+            <!-- Header -->
             <div class="header-section">
                 <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
-                <div class="institute-name">IQRA ONLINE ACADEMY</div>
-                <div class="certificate-title">Certificate of Achievement</div>
+                <div class="institute-wrapper">
+                    <div class="institute-name">Iqra Online Academy</div>
+                    <div class="institute-underline"></div>
+                </div>
+                <div class="certificate-title">Certificate of Completion</div>
+                <div class="certificate-subtitle">This certificate is awarded in recognition of outstanding achievement</div>
             </div>
             
-            <!-- MAIN CONTENT SECTION -->
+            <div class="ornamental-divider">◆ ◆ ◆</div>
+            
+            <!-- Main content -->
             <div class="main-content">
-                <div class="awarded-text">This certificate is proudly presented to</div>
+                <div class="presented-to">This is to certify that</div>
                 
-                <div class="recipient-name">{{ $certificate->student_name }}</div>
-                
-                <div class="achievement-description">
-                    in recognition of successfully completing all course requirements and demonstrating 
-                    exceptional commitment to Islamic education and learning. Completed on 
-                    <span class="completion-date">{{ $certificate->completion_date->format('d F Y') }}</span>
+                <div class="recipient-wrapper">
+                    <div class="recipient-name">{{ $certificate->student_name }}</div>
+                    <div class="recipient-underline"></div>
                 </div>
                 
-                <div class="course-name">{{ $certificate->course_title }}</div>
+                <div class="achievement-text">
+                    has successfully completed all prescribed requirements with distinction and 
+                    has demonstrated exceptional dedication to Islamic education and scholarly pursuit. 
+                    This achievement stands as testimony to the recipient's commitment to knowledge and learning.
+                </div>
+                
+                <div class="course-section">
+                    <div class="course-intro">in completion of the course</div>
+                    <div class="course-name">{{ $certificate->course_title }}</div>
+                </div>
+                
+                <div class="completion-date">
+                    Awarded on this <span class="date-value">{{ $certificate->completion_date->format('jS') }}</span> 
+                    day of <span class="date-value">{{ $certificate->completion_date->format('F') }}</span>, 
+                    <span class="date-value">{{ $certificate->completion_date->format('Y') }}</span>
+                </div>
             </div>
             
-            <!-- FOOTER SECTION -->
+            <div class="ornamental-divider">◆ ◆ ◆</div>
+            
+            <!-- Footer -->
             <div class="footer-section">
-                <!-- Metadata -->
-                <div class="metadata-section">
-                    <table class="metadata-table">
-                        <tr>
-                            <td class="metadata-cell">
-                                <span class="metadata-label">Certificate Number</span>
-                                <span class="metadata-value">{{ $certificate->certificate_number }}</span>
-                            </td>
-                            <td class="metadata-cell">
-                                <span class="metadata-label">Issue Date</span>
-                                <span class="metadata-value">{{ $certificate->issue_date->format('d F Y') }}</span>
-                            </td>
-                            <td class="metadata-cell">
-                                <span class="metadata-label">Verification Code</span>
-                                <span class="metadata-value">{{ $certificate->verification_code }}</span>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                
                 <!-- Signatures -->
                 <div class="signatures-container">
-                    <table class="signatures-table">
-                        <tr>
-                            <td class="signature-cell">
-                                <div class="signature-line"></div>
-                                <div class="signature-name">Md Saeedul Mostafa</div>
-                                <div class="signature-title">Director & Founder</div>
-                            </td>
-                            <td class="signature-cell">
-                                <div class="signature-line"></div>
-                                <div class="signature-name">Dr. Muhammad Ibrahim Al-Hafiz</div>
-                                <div class="signature-title">Lead Instructor</div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                
-                <!-- Verification at the very bottom -->
-                <div class="verification-section">
-                    <div class="verification-text">
-                        Verify authenticity at: <span class="verification-url">{{ config('app.url') }}/certificates/verify</span>
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-name">Md Saeedul Mostafa</div>
+                        <div class="signature-title">Director & Founder</div>
+                    </div>
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-name">Dr. Muhammad Ibrahim Al-Hafiz</div>
+                        <div class="signature-title">Chief Academic Officer</div>
                     </div>
                 </div>
+                
+                <!-- Certificate details -->
+                <div class="certificate-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Certificate No.</div>
+                        <div class="detail-value">{{ $certificate->certificate_number }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Issue Date</div>
+                        <div class="detail-value">{{ $certificate->issue_date->format('d/m/Y') }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Verification Code</div>
+                        <div class="detail-value">{{ $certificate->verification_code }}</div>
+                    </div>
+                </div>
+                
             </div>
+        </div>
+        
+        <!-- Verification footer at bottom -->
+        <div style="position: absolute; bottom: 6mm; left: 50%; transform: translateX(-50%); text-align: center; z-index: 10; background: rgba(255,255,255,0.9); padding: 1mm 3mm; border-radius: 1mm;">
+            <div style="font-size: 9px; color: #5C4033; font-weight: bold;">
+                Verify this certificate at: https://iqraoa.com/certificates/verify
+            </div>
+        </div>
     </div>
 </body>
 </html>

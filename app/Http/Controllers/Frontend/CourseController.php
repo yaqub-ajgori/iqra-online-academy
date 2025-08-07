@@ -180,7 +180,6 @@ class CourseController extends Controller
                     'comment' => $shortText, // Truncated for display
                     'full_review' => $fullText, // Full text for modal
                     'date' => $review->bengali_date,
-                    'helpful_count' => $review->helpful_count,
                     'is_long' => mb_strlen($fullText) > 120, // Show "See More" if longer than 120 chars
                     'is_verified_purchase' => $review->is_verified_purchase,
                 ];

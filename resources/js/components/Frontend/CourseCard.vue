@@ -2,15 +2,19 @@
     <div
         class="group shadow-islamic hover:shadow-islamic-lg relative transform overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all duration-500 hover:-translate-y-2 hover:border-[#5f5fcd]/20"
     >
-        <!-- Course Image with Enhanced Placeholder -->
-        <div class="relative overflow-hidden">
-            <img
-                v-if="isValidImage(course.image)"
-                :src="course.image"
-                :alt="course.title"
-                class="h-48 w-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <CoursePlaceholder v-else class="h-48 w-full" :text="course.category" />
+        <!-- Course Image with Enhanced Placeholder - Optimized for 600x600px -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+            <div class="course-image-container">
+                <img
+                    v-if="isValidImage(course.image)"
+                    :src="course.image"
+                    :alt="course.title"
+                    class="h-full w-full object-cover object-center transition-all duration-700 group-hover:scale-105 group-hover:brightness-110"
+                    loading="lazy"
+                    decoding="async"
+                />
+                <CoursePlaceholder v-else class="h-full w-full" :text="course.category" />
+            </div>
 
             <!-- Badges Container -->
             <div class="absolute top-3 left-3 flex flex-col space-y-2">
@@ -237,7 +241,15 @@ const getInitials = (name: string): string => {
 
 // Utility function to check for a valid image
 const isValidImage = (src: string | undefined | null): boolean => {
-    return !!src && typeof src === 'string' && src.trim() !== '' && !src.includes('undefined');
+    if (!src || typeof src !== 'string' || src.trim() === '') {
+        return false;
+    }
+    // Check for common invalid strings
+    if (src.includes('undefined') || src.includes('null') || src === 'null') {
+        return false;
+    }
+    // Should be a valid URL or path
+    return src.startsWith('http') || src.startsWith('/') || src.startsWith('storage/');
 };
 
 const showDiscount = computed(() => {
@@ -258,6 +270,24 @@ const discountExpiresIn = computed(() => {
 </script>
 
 <style scoped>
+/* Course Image Container - 4:3 aspect ratio optimized for 600x600px images */
+.course-image-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 75%; /* 4:3 aspect ratio */
+    overflow: hidden;
+}
+
+.course-image-container > img,
+.course-image-container > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
 /* Enhanced line clamp utilities */
 .line-clamp-2 {
     display: -webkit-box;

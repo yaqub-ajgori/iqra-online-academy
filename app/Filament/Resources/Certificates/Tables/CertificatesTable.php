@@ -3,9 +3,7 @@
 namespace App\Filament\Resources\Certificates\Tables;
 
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
@@ -30,7 +28,7 @@ class CertificatesTable
                     ->label('Student')
                     ->searchable()
                     ->sortable()
-                    ->description(fn ($record) => $record->student->email ?? ''),
+                    ->description(fn ($record) => $record->student->email ?? 'N/A'),
 
                 TextColumn::make('course_title')
                     ->label('Course')
@@ -53,6 +51,12 @@ class CertificatesTable
                     ->date()
                     ->sortable(),
 
+                TextColumn::make('completion_date')
+                    ->label('Completed')
+                    ->date()
+                    ->sortable()
+                    ->toggleable(),
+
                 TextColumn::make('verification_code')
                     ->label('Verification Code')
                     ->limit(12)
@@ -63,6 +67,18 @@ class CertificatesTable
                     ->label('Verified')
                     ->boolean()
                     ->sortable(),
+
+                IconColumn::make('is_revoked')
+                    ->label('Revoked')
+                    ->boolean()
+                    ->sortable()
+                    ->color(fn ($state) => $state ? 'danger' : 'success'),
+
+                TextColumn::make('created_at')
+                    ->label('System Created')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -80,16 +96,43 @@ class CertificatesTable
                     ->label('Revocation Status'),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->icon('heroicon-o-pencil'),
+                Action::make('revoke')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->modalHeading('Revoke Certificate')
+                    ->modalDescription('Are you sure you want to revoke this certificate?')
+                    ->action(function ($record) {
+                        $record->update([
+                            'is_revoked' => true,
+                            'revoked_at' => now(),
+                            'revoked_reason' => 'Revoked by administrator'
+                        ]);
+                    })
+                    ->visible(fn ($record) => !$record->is_revoked),
 
-                DeleteAction::make()
-                    ->icon('heroicon-o-trash'),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                Action::make('undo_revoke')
+                    ->label('Undo Revoke')
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Restore Certificate')
+                    ->modalDescription('Are you sure you want to restore this certificate?')
+                    ->action(function ($record) {
+                        $record->update([
+                            'is_revoked' => false,
+                            'revoked_at' => null,
+                            'revoked_reason' => null
+                        ]);
+                    })
+                    ->visible(fn ($record) => $record->is_revoked),
+
+                Action::make('download')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('primary')
+                    ->url(fn ($record) => route('certificates.download', $record))
+                    ->openUrlInNewTab()
+                    ->visible(fn ($record) => $record->certificate_path),
             ])
             ->defaultSort('created_at', 'desc')
             ->striped()
