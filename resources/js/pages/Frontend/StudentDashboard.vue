@@ -9,7 +9,6 @@
                     <!-- Sidebar Navigation -->
                     <div class="lg:col-span-1">
                         <div class="sticky top-8 rounded-2xl border border-gray-100 bg-white p-6 shadow-lg">
-                            <h3 class="mb-6 text-xl font-bold text-gray-900">Dashboard Menu</h3>
 
                             <nav class="space-y-2">
                                 <button
@@ -64,8 +63,8 @@
                                     <div class="relative">
                                         <div class="h-48 w-full">
                                             <img
-                                                v-if="isValidImage(enrollment.course.thumbnail_image)"
-                                                :src="enrollment.course.thumbnail_image"
+                                                v-if="isValidImage(enrollment.course.image || enrollment.course.thumbnail_image)"
+                                                :src="enrollment.course.image || enrollment.course.thumbnail_image"
                                                 :alt="enrollment.course.title"
                                                 class="h-full w-full object-cover"
                                             />
@@ -137,7 +136,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="flex space-x-3">
+                                        <div class="flex space-x-2">
                                             <PrimaryButton
                                                 v-if="enrollment.payment_status === 'completed'"
                                                 @click="goToLearning(enrollment.course.slug)"
@@ -161,15 +160,18 @@
                                                 {{ enrollment.payment_status === 'pending' ? 'Awaiting Verification' : 'Access Restricted' }}
                                             </PrimaryButton>
 
+                                            <!-- View Certificate Button - Only for completed courses -->
                                             <PrimaryButton
-                                                @click="goToCourseDetails(enrollment.course.slug)"
+                                                v-if="enrollment.payment_status === 'completed' && enrollment.is_completed"
+                                                @click="viewCourseCertificate(enrollment.course.slug)"
                                                 variant="outline"
                                                 size="sm"
-                                                :icon="BookOpenIcon"
+                                                :icon="AwardIcon"
                                                 class="flex-1 justify-center"
                                             >
-                                                Details
+                                                View Certificate
                                             </PrimaryButton>
+
                                         </div>
                                     </div>
                                 </div>
@@ -398,13 +400,13 @@
                                     </div>
 
                                     <PrimaryButton
-                                        @click="downloadCertificate(certificate)"
+                                        @click="viewCourseCertificate(certificate.course_slug)"
                                         variant="outline"
                                         size="sm"
-                                        :icon="DownloadIcon"
+                                        :icon="AwardIcon"
                                         class="w-full justify-center"
                                     >
-                                        Download Certificate
+                                        View Certificate
                                     </PrimaryButton>
                                 </div>
                             </div>
@@ -584,7 +586,6 @@ const navigationItems = [
     { id: 'courses', name: 'My Courses', icon: BookOpenIcon },
     { id: 'profile', name: 'Profile', icon: SettingsIcon },
     { id: 'progress', name: 'Progress', icon: TrendingUpIcon },
-    { id: 'certificates', name: 'Certificates', icon: AwardIcon },
 ];
 
 // Default values for optional props
@@ -640,7 +641,8 @@ const goToCourseDetails = (courseSlug: string) => {
 };
 
 const goToCertificatesPage = () => {
-    router.visit(route('certificates.my-certificates'));
+    // Show the certificates section in current dashboard
+    activeSection.value = 'certificates';
 };
 
 const updateProfile = () => {
@@ -668,20 +670,14 @@ const changePassword = () => {
     });
 };
 
-const downloadCertificate = (certificate: any) => {
-    if (certificate.download_url) {
-        // Create a temporary link and trigger download
-        const link = document.createElement('a');
-        link.href = certificate.download_url;
-        link.download = `Certificate_${certificate.certificate_number || certificate.id}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+const viewCertificate = (certificate: any) => {
+    // Redirect to certificate preview page
+    window.open('/certificates/preview', '_blank');
+};
 
-        success('Certificate download started!');
-    } else {
-        error('Certificate download URL not available. Please contact support.');
-    }
+const viewCourseCertificate = (courseSlug: string) => {
+    // Open course-specific certificate in new tab
+    window.open(`/certificates/preview/${courseSlug}`, '_blank');
 };
 
 const handlePendingCourseAccess = (enrollment: any) => {

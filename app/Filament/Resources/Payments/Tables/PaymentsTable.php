@@ -14,15 +14,14 @@ class PaymentsTable
                 Tables\Columns\TextColumn::make('student.user.name')
                     ->label('Student')
                     ->searchable()
-                    ->sortable()
-                    ->description(fn ($record) => $record->student->user->email ?? ''),
+                    ->sortable(),
                     
                 Tables\Columns\TextColumn::make('course.title')
                     ->label('Course')
                     ->searchable()
                     ->sortable()
-                    ->limit(30)
-                    ->description(fn ($record) => $record->course->category->name ?? ''),
+                    ->limit(25)
+                    ->toggleable(),
                     
                 Tables\Columns\TextColumn::make('amount')
                     ->label('Amount')
@@ -68,24 +67,23 @@ class PaymentsTable
                 Tables\Columns\TextColumn::make('transaction_id')
                     ->label('Transaction ID')
                     ->searchable()
-                    ->toggleable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->copyable(),
                     
                 Tables\Columns\TextColumn::make('sender_number')
                     ->label('Sender Mobile')
-                    ->toggleable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('N/A'),
                     
                 Tables\Columns\TextColumn::make('bank_name')
                     ->label('Bank')
-                    ->toggleable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('N/A'),
                     
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Payment Date')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(),
+                    ->label('Date')
+                    ->date()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

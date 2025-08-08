@@ -163,15 +163,7 @@ class Course extends Model
      */
     public function quizzes(): HasMany
     {
-        return $this->hasMany(Quiz::class);
-    }
-
-    /**
-     * Get the course's certificates.
-     */
-    public function certificates(): HasMany
-    {
-        return $this->hasMany(Certificate::class);
+        return $this->hasMany(Quiz::class)->active()->orderBy('sort_order');
     }
 
     /**

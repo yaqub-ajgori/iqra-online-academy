@@ -43,10 +43,17 @@ class LearningController extends Controller
                 $query->orderBy('sort_order');
             },
             'modules.lessons.quiz' => function ($query) {
-                $query->where('is_active', true);
+                $query->where('status', 'active');
             },
             'modules.lessons.quiz.questions' => function ($query) {
-                $query->active()->orderBy('sort_order');
+                $query->orderBy('sort_order');
+            },
+            'quizzes' => function ($query) {
+                $query->where('status', 'active')
+                      ->orderBy('sort_order');
+            },
+            'quizzes.questions' => function ($query) {
+                $query->orderBy('sort_order');
             }
         ]);
 
@@ -63,11 +70,105 @@ class LearningController extends Controller
             }
         }
 
-        // Calculate progress
+        // Create unified learning sequence: lessons → lesson quizzes → course quizzes
+        $learningItems = collect();
+        
+        // Add all lessons and their associated quizzes
+        foreach ($course->modules as $module) {
+            foreach ($module->lessons as $lesson) {
+                // Add the lesson
+                $learningItems->push([
+                    'type' => 'lesson',
+                    'id' => $lesson->id,
+                    'order' => $lesson->sort_order,
+                    'module_order' => $module->sort_order,
+                    'title' => $lesson->title ?: 'Untitled Lesson',
+                    'duration' => $lesson->formatted_duration ? $lesson->formatted_duration : ($lesson->video_duration ? gmdate('H:i:s', $lesson->video_duration) : '0 min'),
+                    'lesson_type' => $lesson->lesson_type ?: 'mixed',
+                    'video_url' => $lesson->video_url,
+                    'content' => $lesson->content,
+                    'primary_file_url' => $lesson->primary_file_url,
+                    'primary_file_type' => $lesson->primary_file_type,
+                    'attachments' => $lesson->downloadable_files,
+                    'resources' => $lesson->resources,
+                    'thumbnail_url' => $lesson->thumbnail_url,
+                    'completed' => $lesson->completed,
+                    'module_id' => $lesson->module_id,
+                    'module_title' => $module->title,
+                ]);
+                
+                // Add lesson quiz immediately after the lesson (if exists)
+                if ($lesson->quiz && $lesson->quiz->status === 'active') {
+                    $learningItems->push([
+                        'type' => 'quiz',
+                        'id' => $lesson->quiz->id,
+                        'order' => $lesson->sort_order + 0.5, // Place quiz right after lesson
+                        'module_order' => $module->sort_order,
+                        'title' => $lesson->quiz->title,
+                        'description' => $lesson->quiz->description,
+                        'quiz_type' => $lesson->quiz->type,
+                        'time_limit_minutes' => $lesson->quiz->time_limit_minutes,
+                        'passing_score' => $lesson->quiz->passing_score,
+                        'total_questions' => $lesson->quiz->questions->count(),
+                        'lesson_id' => $lesson->id,
+                        'module_id' => $lesson->module_id,
+                        'module_title' => $module->title,
+                        'questions' => $lesson->quiz->questions->map(function ($question) {
+                            return [
+                                'id' => $question->id,
+                                'question' => $question->question,
+                                'type' => $question->type,
+                                'options' => $question->options,
+                                'formatted_options' => $question->formatted_options,
+                                'points' => $question->points,
+                                'sort_order' => $question->sort_order,
+                            ];
+                        }),
+                    ]);
+                }
+            }
+        }
+        
+        // Add course-level quizzes at the end
+        foreach ($course->quizzes->where('status', 'active')->whereNull('lesson_id') as $quiz) {
+            $learningItems->push([
+                'type' => 'quiz',
+                'id' => $quiz->id,
+                'order' => 9999 + $quiz->sort_order, // Place at end
+                'module_order' => 9999,
+                'title' => $quiz->title,
+                'description' => $quiz->description,
+                'quiz_type' => $quiz->type,
+                'time_limit_minutes' => $quiz->time_limit_minutes,
+                'passing_score' => $quiz->passing_score,
+                'total_questions' => $quiz->questions->count(),
+                'lesson_id' => null,
+                'module_id' => null,
+                'module_title' => 'কোর্স সমাপনী',
+                'questions' => $quiz->questions->map(function ($question) {
+                    return [
+                        'id' => $question->id,
+                        'question' => $question->question,
+                        'type' => $question->type,
+                        'options' => $question->options,
+                        'formatted_options' => $question->formatted_options,
+                        'points' => $question->points,
+                        'sort_order' => $question->sort_order,
+                    ];
+                }),
+            ]);
+        }
+        
+        // Sort learning items by module_order, then by order
+        $learningItems = $learningItems->sortBy([
+            ['module_order', 'asc'],
+            ['order', 'asc']
+        ])->values();
+
+        // Calculate progress based on lessons only
         $totalLessons = $course->modules->sum(function ($module) {
             return $module->lessons->count();
         });
-
         $completedCount = count($completedLessons);
 
         return Inertia::render('Frontend/LearningPage', [
@@ -75,50 +176,7 @@ class LearningController extends Controller
                 'id' => $course->id,
                 'title' => $course->title,
                 'slug' => $course->slug,
-                'modules' => $course->modules->map(function ($module) {
-                    return [
-                        'id' => $module->id,
-                        'title' => $module->title,
-                        'duration' => '0 min', // Duration is calculated from lessons, not stored on module
-                        'lessons' => $module->lessons->map(function ($lesson) {
-                            return [
-                                'id' => $lesson->id,
-                                'order' => $lesson->sort_order,
-                                'title' => $lesson->title ?: 'Untitled Lesson',
-                                'duration' => $lesson->formatted_duration ? $lesson->formatted_duration : ($lesson->video_duration ? gmdate('H:i:s', $lesson->video_duration) : '0 min'),
-                                'type' => $lesson->lesson_type ?: 'mixed',
-                                'video_url' => $lesson->video_url,
-                                'content' => $lesson->content,
-                                'primary_file_url' => $lesson->primary_file_url,
-                                'primary_file_type' => $lesson->primary_file_type,
-                                'attachments' => $lesson->downloadable_files,
-                                'resources' => $lesson->resources,
-                                'thumbnail_url' => $lesson->thumbnail_url,
-                                'completed' => $lesson->completed,
-                                'module_id' => $lesson->module_id,
-                                'quiz' => $lesson->quiz ? [
-                                    'id' => $lesson->quiz->id,
-                                    'title' => $lesson->quiz->title,
-                                    'description' => $lesson->quiz->description,
-                                    'time_limit_minutes' => $lesson->quiz->time_limit_minutes,
-                                    'passing_score' => $lesson->quiz->passing_score,
-                                    'total_questions' => $lesson->quiz->questions->count(),
-                                    'questions' => $lesson->quiz->questions->map(function ($question) {
-                                        return [
-                                            'id' => $question->id,
-                                            'question' => $question->question,
-                                            'type' => $question->type,
-                                            'options' => $question->options,
-                                            'formatted_options' => $question->formatted_options,
-                                            'points' => $question->points,
-                                            'sort_order' => $question->sort_order,
-                                        ];
-                                    }),
-                                ] : null,
-                            ];
-                        })
-                    ];
-                }),
+                'learning_items' => $learningItems,
                 'total_lessons' => $totalLessons,
                 'completed_lessons' => $completedCount,
             ],
@@ -130,6 +188,7 @@ class LearningController extends Controller
             'course_slug' => $course->slug,
         ]);
     }
+
 
     /**
      * Mark a lesson as completed

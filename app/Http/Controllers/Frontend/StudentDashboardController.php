@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 class StudentDashboardController extends Controller
 {
@@ -59,6 +60,7 @@ class StudentDashboardController extends Controller
                         'title' => $enrollment->course->title,
                         'slug' => $enrollment->course->slug,
                         'thumbnail_image' => $enrollment->course->thumbnail_image,
+                        'image' => $enrollment->course->thumbnail_image ? Storage::url($enrollment->course->thumbnail_image) : null,
                         'category' => $enrollment->course->category?->name,
                         'instructor' => $enrollment->course->instructor?->full_name,
                     ],
@@ -174,7 +176,7 @@ class StudentDashboardController extends Controller
                         'id' => $progress->id,
                         'title' => $progress->lesson->title,
                         'course' => $progress->lesson->module->course->title,
-                        'date' => $progress->completed_at->diffForHumans(),
+                        'date' => $progress->completed_at ? $progress->completed_at->diffForHumans() : 'In Progress',
                         'type' => 'lesson_completed'
                     ];
                 })->toArray();
@@ -182,35 +184,27 @@ class StudentDashboardController extends Controller
     }
 
     /**
-     * Get certificates data
+     * Get certificates data - based on completed courses
      */
     private function getCertificates($enrollments): array
     {
-        // Get student ID from first enrollment or return empty if none
-        if ($enrollments->isEmpty()) {
-            return [];
-        }
-        
-        $studentId = $enrollments->first()->student_id;
-        
-        // Fetch actual certificates from database
-        $certificates = \App\Models\Certificate::where('student_id', $studentId)
-            ->where('is_revoked', false)
-            ->with('course')
-            ->orderBy('issue_date', 'desc')
-            ->get();
-        
-        return $certificates->map(function ($certificate) {
-            return [
-                'id' => $certificate->id,
-                'certificate_number' => $certificate->certificate_number,
-                'course' => $certificate->course_title,
-                'date' => $certificate->issue_date->format('d M Y'),
-                'course_slug' => $certificate->course->slug ?? '',
-                'verification_code' => $certificate->verification_code,
-                'download_url' => route('certificates.download', $certificate),
-            ];
-        })->toArray();
+        // Return certificates for completed courses
+        return $enrollments
+            ->where('is_completed', true)
+            ->where('payment_status', 'completed')
+            ->map(function ($enrollment) {
+                return [
+                    'id' => $enrollment->id,
+                    'certificate_number' => 'IOA-' . now()->format('Y') . '-' . str_pad($enrollment->id, 3, '0', STR_PAD_LEFT),
+                    'course' => $enrollment->course->title,
+                    'date' => $enrollment->updated_at->format('d M Y'),
+                    'course_slug' => $enrollment->course->slug,
+                    'verification_code' => 'CERT' . strtoupper(\Illuminate\Support\Str::random(8)),
+                    'download_url' => route('certificates.preview'), // Points to preview route
+                ];
+            })
+            ->values()
+            ->toArray();
     }
 
     /**

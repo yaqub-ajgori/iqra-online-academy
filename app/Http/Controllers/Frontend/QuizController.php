@@ -6,71 +6,164 @@ use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class QuizController extends Controller
 {
     /**
-     * Show the quiz page.
+     * Show a quiz for taking.
      */
     public function show(Quiz $quiz)
     {
-        // Check if quiz is active
-        if (!$quiz->is_active) {
-            return redirect()->route('frontend.student.dashboard')
-                ->with('error', 'এই কুইজটি বর্তমানে উপলব্ধ নয়।');
+        // Check if user can take this quiz
+        if (!$quiz->canUserTakeQuiz(Auth::id())) {
+            return redirect()->back()->with('error', 'You cannot take this quiz at this time.');
         }
 
-        // Check if student is enrolled in the course
-        $student = auth()->user()->student;
-        $enrollment = $student->enrollments()
-            ->where('course_id', $quiz->course_id)
-            ->where('is_active', true)
-            ->where('payment_status', 'completed')
-            ->first();
+        // Load quiz with questions and course
+        $quiz->load([
+            'questions' => function ($query) {
+                $query->orderBy('sort_order');
+            },
+            'course',
+            'lesson'
+        ]);
 
-        if (!$enrollment) {
-            return redirect()->route('frontend.courses.show', $quiz->course->slug)
-                ->with('error', 'এই কুইজটি অ্যাক্সেস করতে আপনাকে কোর্সে নিবন্ধিত হতে হবে।');
-        }
+        // Get user's previous attempts
+        $userAttempts = $quiz->attemptsFor(Auth::id())->orderBy('created_at', 'desc')->get();
 
-        // Load quiz with questions
-        $quiz->load(['questions' => function ($query) {
-            $query->active()->orderBy('sort_order');
-        }]);
-
-        return Inertia::render('Frontend/QuizPage', [
-            'quiz' => $quiz,
+        return Inertia::render('Frontend/Quiz', [
+            'quiz' => [
+                'id' => $quiz->id,
+                'title' => $quiz->title,
+                'description' => $quiz->description,
+                'passing_score' => $quiz->passing_score,
+                'time_limit_minutes' => $quiz->time_limit_minutes,
+                'max_attempts' => $quiz->max_attempts,
+                'total_questions' => $quiz->questions->count(),
+                'course_id' => $quiz->course_id,
+                'course_slug' => $quiz->course?->slug,
+                'lesson_id' => $quiz->lesson_id,
+                'questions' => $quiz->questions->map(function ($question) {
+                    return [
+                        'id' => $question->id,
+                        'question' => $question->question,
+                        'type' => $question->type,
+                        'options' => $question->options,
+                        'points' => $question->points,
+                    ];
+                }),
+            ],
+            'userAttempts' => $userAttempts->map(function ($attempt) {
+                return [
+                    'id' => $attempt->id,
+                    'score' => $attempt->score,
+                    'is_passed' => $attempt->is_passed,
+                    'completed_at' => $attempt->completed_at?->format('Y-m-d H:i:s'),
+                    'time_spent' => $attempt->formatted_time_spent,
+                ];
+            }),
+            'canTakeQuiz' => $quiz->canUserTakeQuiz(Auth::id()),
+            'attemptsLeft' => $quiz->max_attempts - $userAttempts->count(),
         ]);
     }
 
     /**
-     * Submit quiz answers.
+     * Submit quiz answers and calculate results.
      */
     public function submit(Request $request, Quiz $quiz)
     {
-        $request->validate([
-            'answers' => 'required|array',
-        ]);
+        try {
+            $request->validate([
+                'answers' => 'required|array',
+                'started_at' => 'required|date',
+            ]);
 
-        $student = auth()->user()->student;
+            // Check if user can still take this quiz
+            if (!$quiz->canUserTakeQuiz(Auth::id())) {
+                return back()->with('error', 'You cannot submit this quiz.');
+            }
+        } catch (\Exception $e) {
+            \Log::error('Quiz validation error: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Invalid quiz submission data.']);
+        }
 
-        // Create attempt
-        $attempt = QuizAttempt::create([
-            'quiz_id' => $quiz->id,
-            'student_id' => $student->id,
-            'answers' => $request->answers,
-            'started_at' => now(),
-            'completed_at' => now(),
-        ]);
+        try {
+            // Calculate time spent
+            $startedAt = new \DateTime($request->started_at);
+            $completedAt = now();
+            $timeSpentSeconds = $completedAt->diffInSeconds($startedAt);
 
-        // Calculate score
-        $attempt->calculateScore();
+            // Create quiz attempt
+            $attempt = QuizAttempt::create([
+                'quiz_id' => $quiz->id,
+                'user_id' => Auth::id(),
+                'answers' => $request->answers,
+                'started_at' => $startedAt,
+                'completed_at' => $completedAt,
+                'time_spent_seconds' => $timeSpentSeconds,
+            ]);
 
-        // Return results
-        return Inertia::render('Frontend/QuizResults', [
-            'quiz' => $quiz->load('course'),
-            'attempt' => $attempt,
-        ]);
+            // Calculate score
+            $attempt->calculateScore();
+
+            // Reload quiz data with results
+            $quiz->load([
+                'questions' => function ($query) {
+                    $query->orderBy('sort_order');
+                },
+                'course',
+                'lesson'
+            ]);
+
+            // Get updated user attempts
+            $userAttempts = $quiz->attemptsFor(Auth::id())->orderBy('created_at', 'desc')->get();
+
+            return Inertia::render('Frontend/Quiz', [
+                'quiz' => [
+                    'id' => $quiz->id,
+                    'title' => $quiz->title,
+                    'description' => $quiz->description,
+                    'passing_score' => $quiz->passing_score,
+                    'time_limit_minutes' => $quiz->time_limit_minutes,
+                    'max_attempts' => $quiz->max_attempts,
+                    'total_questions' => $quiz->questions->count(),
+                    'course_id' => $quiz->course_id,
+                    'course_slug' => $quiz->course?->slug,
+                    'lesson_id' => $quiz->lesson_id,
+                    'questions' => $quiz->questions->map(function ($question) {
+                        return [
+                            'id' => $question->id,
+                            'question' => $question->question,
+                            'type' => $question->type,
+                            'options' => $question->options,
+                            'points' => $question->points,
+                        ];
+                    }),
+                ],
+                'userAttempts' => $userAttempts->map(function ($attempt) {
+                    return [
+                        'id' => $attempt->id,
+                        'score' => $attempt->score,
+                        'is_passed' => $attempt->is_passed,
+                        'completed_at' => $attempt->completed_at?->format('Y-m-d H:i:s'),
+                        'time_spent' => $attempt->formatted_time_spent,
+                    ];
+                }),
+                'canTakeQuiz' => $quiz->canUserTakeQuiz(Auth::id()),
+                'attemptsLeft' => $quiz->max_attempts - $userAttempts->count(),
+                'quiz_results' => [
+                    'score' => $attempt->score,
+                    'correct_answers' => $attempt->correct_answers,
+                    'total_questions' => $attempt->total_questions,
+                    'is_passed' => $attempt->is_passed,
+                    'time_spent' => $attempt->formatted_time_spent,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Quiz submission error: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Failed to submit quiz. Please try again.']);
+        }
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CourseLesson extends Model
 {
@@ -63,6 +64,14 @@ class CourseLesson extends Model
     public function progress(): HasMany
     {
         return $this->hasMany(LessonProgress::class, 'lesson_id');
+    }
+
+    /**
+     * Get the quiz for this lesson.
+     */
+    public function quiz(): HasOne
+    {
+        return $this->hasOne(Quiz::class, 'lesson_id')->active();
     }
 
     /**

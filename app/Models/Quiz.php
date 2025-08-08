@@ -2,46 +2,33 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quiz extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
+        'title',
+        'description',
         'course_id',
         'lesson_id',
-        'title',
-        'slug',
-        'description',
-        'type',
+        'passing_score',
         'time_limit_minutes',
         'max_attempts',
-        'passing_score',
-        'randomize_questions',
-        'show_results_immediately',
-        'allow_review',
-        'available_from',
-        'available_until',
-        'is_active',
+        'status',
         'sort_order',
     ];
 
     protected $casts = [
-        'passing_score' => 'decimal:2',
-        'randomize_questions' => 'boolean',
-        'show_results_immediately' => 'boolean',
-        'allow_review' => 'boolean',
-        'is_active' => 'boolean',
-        'available_from' => 'datetime',
-        'available_until' => 'datetime',
+        'passing_score' => 'integer',
+        'time_limit_minutes' => 'integer',
+        'max_attempts' => 'integer',
+        'sort_order' => 'integer',
     ];
 
     /**
-     * Get the course that owns the quiz.
+     * Get the course this quiz belongs to.
      */
     public function course(): BelongsTo
     {
@@ -49,7 +36,7 @@ class Quiz extends Model
     }
 
     /**
-     * Get the lesson that owns the quiz (optional).
+     * Get the lesson this quiz belongs to.
      */
     public function lesson(): BelongsTo
     {
@@ -57,7 +44,7 @@ class Quiz extends Model
     }
 
     /**
-     * Get the quiz questions.
+     * Get all questions for this quiz.
      */
     public function questions(): HasMany
     {
@@ -65,7 +52,7 @@ class Quiz extends Model
     }
 
     /**
-     * Get the quiz attempts.
+     * Get all attempts for this quiz.
      */
     public function attempts(): HasMany
     {
@@ -73,49 +60,23 @@ class Quiz extends Model
     }
 
     /**
-     * Scope: Active quizzes only.
+     * Get attempts for a specific user.
+     */
+    public function attemptsFor($userId): HasMany
+    {
+        return $this->hasMany(QuizAttempt::class)->where('user_id', $userId);
+    }
+
+    /**
+     * Scope to get only active quizzes.
      */
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
-    }
-
-
-    /**
-     * Scope: Available quizzes (within time range).
-     */
-    public function scopeAvailable($query)
-    {
-        $now = now();
-        return $query->where(function ($q) use ($now) {
-            $q->whereNull('available_from')
-              ->orWhere('available_from', '<=', $now);
-        })->where(function ($q) use ($now) {
-            $q->whereNull('available_until')
-              ->orWhere('available_until', '>=', $now);
-        });
+        return $query->where('status', 'active');
     }
 
     /**
-     * Check if quiz is available now.
-     */
-    public function getIsAvailableAttribute(): bool
-    {
-        $now = now();
-        
-        if ($this->available_from && $now->lessThan($this->available_from)) {
-            return false;
-        }
-        
-        if ($this->available_until && $now->greaterThan($this->available_until)) {
-            return false;
-        }
-        
-        return $this->is_active;
-    }
-
-    /**
-     * Get total questions count.
+     * Get the total number of questions.
      */
     public function getTotalQuestionsAttribute(): int
     {
@@ -123,10 +84,31 @@ class Quiz extends Model
     }
 
     /**
-     * Get total points available.
+     * Get the total points for this quiz.
      */
-    public function getTotalPointsAttribute(): float
+    public function getTotalPointsAttribute(): int
     {
         return $this->questions()->sum('points');
+    }
+
+    /**
+     * Check if a user can take this quiz.
+     */
+    public function canUserTakeQuiz($userId): bool
+    {
+        if ($this->status !== 'active') {
+            return false;
+        }
+
+        $attempts = $this->attemptsFor($userId)->count();
+        return $attempts < $this->max_attempts;
+    }
+
+    /**
+     * Get the best score for a user.
+     */
+    public function getBestScoreForUser($userId): ?int
+    {
+        return $this->attemptsFor($userId)->max('score');
     }
 }

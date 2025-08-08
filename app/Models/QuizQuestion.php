@@ -2,35 +2,29 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QuizQuestion extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'quiz_id',
         'question',
         'type',
         'options',
-        'correct_answers',
-        'explanation',
+        'correct_answer',
         'points',
         'sort_order',
-        'is_active',
     ];
 
     protected $casts = [
         'options' => 'array',
-        'correct_answers' => 'array',
-        'points' => 'decimal:2',
-        'is_active' => 'boolean',
+        'points' => 'integer',
+        'sort_order' => 'integer',
     ];
 
     /**
-     * Get the quiz that owns the question.
+     * Get the quiz this question belongs to.
      */
     public function quiz(): BelongsTo
     {
@@ -38,86 +32,37 @@ class QuizQuestion extends Model
     }
 
     /**
-     * Scope: Active questions only.
+     * Check if the given answer is correct.
      */
-    public function scopeActive($query)
+    public function isAnswerCorrect($answer): bool
     {
-        return $query->where('is_active', true);
+        switch ($this->type) {
+            case 'multiple_choice':
+                return (int) $answer === (int) $this->correct_answer;
+            case 'true_false':
+                return $answer === $this->correct_answer;
+            case 'short_answer':
+                return strtolower(trim($answer)) === strtolower(trim($this->correct_answer));
+            default:
+                return false;
+        }
     }
 
     /**
-     * Check if given answer is correct.
+     * Get formatted options for multiple choice questions.
      */
-    public function isCorrectAnswer($answer): bool
-    {
-        // Ensure correct_answers is always an array
-        $correctAnswers = $this->getCorrectAnswersAsArray();
-        
-        if ($this->type === 'multiple_choice') {
-            return in_array($answer, $correctAnswers);
-        }
-        
-        if ($this->type === 'true_false') {
-            // Direct string comparison for Bengali true/false values
-            return $answer === $correctAnswers[0];
-        }
-        
-        if ($this->type === 'short_answer') {
-            // Case-insensitive comparison for short answers
-            $correctAnswers = array_map('strtolower', $correctAnswers);
-            return in_array(strtolower((string)$answer), $correctAnswers);
-        }
-        
-        // For essay questions, manual grading is required
-        if ($this->type === 'essay') {
-            return false; // Requires manual grading
-        }
-        
-        return false;
-    }
-
-    /**
-     * Get correct answers as array, handling string data.
-     */
-    private function getCorrectAnswersAsArray(): array
-    {
-        $correctAnswers = $this->correct_answers;
-        
-        // Handle case where correct_answers might be a string
-        if (is_string($correctAnswers)) {
-            // Try to decode as JSON first
-            $decoded = json_decode($correctAnswers, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                return $decoded;
-            }
-            // If not JSON, treat as single answer
-            return [$correctAnswers];
-        }
-        
-        // If already array, return as is
-        if (is_array($correctAnswers)) {
-            return $correctAnswers;
-        }
-        
-        // Fallback to empty array
-        return [];
-    }
-
-    /**
-     * Get formatted question options.
-     */
-    public function getFormattedOptionsAttribute(): array
+    public function getFormattedOptionsAttribute(): ?array
     {
         if ($this->type !== 'multiple_choice' || !$this->options) {
-            return [];
+            return null;
         }
 
-        return collect($this->options)->map(function ($option, $key) {
+        return array_map(function ($option, $index) {
             return [
-                'key' => is_numeric($key) ? chr(65 + $key) : $key, // A, B, C, D...
-                'value' => $option,
-                'index' => $key
+                'index' => $index,
+                'letter' => chr(65 + $index), // A, B, C, D...
+                'text' => $option,
             ];
-        })->toArray();
+        }, $this->options, array_keys($this->options));
     }
 }

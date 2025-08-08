@@ -58,64 +58,64 @@
                             </button>
                         </div>
 
-                        <!-- Course Modules -->
+                        <!-- Learning Sequence -->
                         <div v-if="!sidebarCollapsed" class="flex-1 overflow-y-auto py-2 pr-1">
-                            <div
-                                v-for="module in course?.modules"
-                                :key="module.id"
-                                class="mb-2 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm"
-                            >
+                            <!-- Group by modules -->
+                            <div v-for="moduleGroup in groupedLearningItems" :key="moduleGroup.title"
+                                class="mb-2 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
+                                
                                 <!-- Module Header -->
                                 <button
-                                    @click="toggleModule(module.id)"
+                                    @click="toggleModule(moduleGroup.title)"
                                     class="group flex w-full items-center justify-between bg-white px-4 py-3 text-left transition-colors hover:bg-[#f5f6fd]"
                                 >
                                     <div>
-                                        <h3 class="text-base font-medium text-gray-900 group-hover:text-[#5f5fcd]">{{ module.title }}</h3>
-                                        <p class="text-xs text-gray-500">{{ module.lessons?.length || 0 }} পাঠ • {{ module.duration }}</p>
+                                        <h3 class="text-base font-medium text-gray-900 group-hover:text-[#5f5fcd]">{{ moduleGroup.title }}</h3>
+                                        <p class="text-xs text-gray-500">{{ moduleGroup.items.length }} আইটেম</p>
                                     </div>
                                     <ChevronDownIcon
                                         :class="[
                                             'h-5 w-5 text-gray-400 transition-transform duration-300',
-                                            expandedModules.includes(module.id) ? 'rotate-180 text-[#5f5fcd]' : '',
+                                            expandedModules.includes(moduleGroup.title) ? 'rotate-180 text-[#5f5fcd]' : '',
                                         ]"
                                     />
                                 </button>
-                                <!-- Module Lessons -->
+
+                                <!-- Learning Items -->
                                 <transition name="module-scale-rotate">
-                                    <div v-show="expandedModules.includes(module.id)" class="overflow-hidden bg-[#f5f6fd]">
+                                    <div v-show="expandedModules.includes(moduleGroup.title)" class="overflow-hidden bg-[#f5f6fd]">
                                         <button
-                                            v-for="lesson in module.lessons"
-                                            :key="lesson.id"
-                                            @click="!isLessonLocked(lesson) && selectLesson(lesson)"
-                                            :disabled="isLessonLocked(lesson)"
+                                            v-for="item in moduleGroup.items"
+                                            :key="`${item.type}-${item.id}`"
+                                            @click="!isItemLocked(item) && selectLearningItem(item)"
+                                            :disabled="isItemLocked(item)"
                                             :class="[
                                                 'flex w-full items-center space-x-3 border-l-4 px-6 py-3 text-left transition-colors',
-                                                isLessonLocked(lesson)
+                                                isItemLocked(item)
                                                     ? 'cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400 opacity-60'
-                                                    : currentLesson?.id === lesson.id
+                                                    : currentItem?.type === item.type && currentItem?.id === item.id
                                                       ? 'border-[#5f5fcd] bg-[#e7eafd] font-semibold text-[#5f5fcd] hover:bg-[#e7eafd]'
-                                                      : lesson.completed
+                                                      : item.completed
                                                         ? 'border-[#2d5a27] bg-white text-[#2d5a27] hover:bg-[#e7eafd]'
                                                         : 'border-transparent bg-white text-gray-700 hover:bg-[#e7eafd]',
                                             ]"
-                                            :title="isLessonLocked(lesson) ? 'Complete previous lessons to unlock.' : lesson.title"
+                                            :title="isItemLocked(item) ? 'Complete previous items to unlock.' : item.title"
                                         >
                                             <div class="flex-shrink-0">
                                                 <div
-                                                    v-if="lesson.completed"
+                                                    v-if="item.completed"
                                                     class="flex h-6 w-6 items-center justify-center rounded-full bg-[#2d5a27]"
                                                 >
                                                     <CheckIcon class="h-4 w-4 text-white" />
                                                 </div>
                                                 <div
-                                                    v-else-if="currentLesson?.id === lesson.id"
+                                                    v-else-if="currentItem?.type === item.type && currentItem?.id === item.id"
                                                     class="flex h-6 w-6 items-center justify-center rounded-full bg-[#5f5fcd]"
                                                 >
                                                     <PlayIcon class="h-3 w-3 text-white" />
                                                 </div>
                                                 <div
-                                                    v-else-if="isLessonLocked(lesson)"
+                                                    v-else-if="isItemLocked(item)"
                                                     class="flex h-6 w-6 items-center justify-center rounded-full border-2 border-gray-300"
                                                 >
                                                     <svg
@@ -135,10 +135,13 @@
                                                 <div v-else class="h-6 w-6 rounded-full border-2 border-gray-300"></div>
                                             </div>
                                             <div class="min-w-0 flex-1">
-                                                <p class="truncate">{{ lesson.title }}</p>
+                                                <div class="flex items-center space-x-2">
+                                                    <component :is="getItemTypeIcon(item)" class="h-4 w-4 flex-shrink-0" />
+                                                    <p class="truncate">{{ item.title }}</p>
+                                                </div>
                                                 <div class="flex items-center space-x-2 text-xs text-gray-400">
-                                                    <component :is="getLessonTypeIcon(lesson.type)" class="h-4 w-4" />
-                                                    <span>{{ lesson.duration }}</span>
+                                                    <span>{{ getItemTypeLabel(item.type) }}</span>
+                                                    <span v-if="item.duration">• {{ item.duration }}</span>
                                                 </div>
                                             </div>
                                         </button>
@@ -147,24 +150,24 @@
                             </div>
                         </div>
 
-                        <!-- Collapsed Sidebar Lessons -->
+                        <!-- Collapsed Sidebar Learning Items -->
                         <div v-else class="flex flex-1 flex-col items-center gap-2 overflow-y-auto py-2">
-                            <div v-for="lesson in allLessons" :key="lesson.id" class="">
+                            <div v-for="(item, index) in allLearningItems" :key="`${item.type}-${item.id}`" class="">
                                 <button
-                                    @click="selectLesson(lesson)"
+                                    @click="selectLearningItem(item)"
                                     :class="[
                                         'flex h-10 w-10 items-center justify-center rounded-full transition-colors',
-                                        currentLesson?.id === lesson.id
+                                        currentItem?.type === item.type && currentItem?.id === item.id
                                             ? 'bg-[#5f5fcd] text-white shadow-lg'
-                                            : lesson.completed
+                                            : item.completed
                                               ? 'bg-[#2d5a27] text-white'
                                               : 'bg-gray-200 text-gray-400 hover:bg-gray-300',
                                     ]"
-                                    :title="lesson.title"
+                                    :title="item.title"
                                 >
-                                    <CheckIcon v-if="lesson.completed" class="h-4 w-4" />
-                                    <PlayIcon v-else-if="currentLesson?.id === lesson.id" class="h-3 w-3" />
-                                    <span v-else class="text-xs">{{ lesson.order.toString() }}</span>
+                                    <CheckIcon v-if="item.completed" class="h-4 w-4" />
+                                    <PlayIcon v-else-if="currentItem?.type === item.type && currentItem?.id === item.id" class="h-3 w-3" />
+                                    <component v-else :is="getItemTypeIcon(item)" class="h-4 w-4" />
                                 </button>
                             </div>
                         </div>
@@ -180,6 +183,12 @@
                     <div class="flex flex-1 items-center justify-center pb-[80px] transition-all duration-500" :class="'px-0 sm:px-0'">
                         <!-- Loading Content -->
                         <div v-if="contentLoading" class="text-center text-lg font-medium text-gray-400">Loading...</div>
+                        <!-- No Lessons Available -->
+                        <div v-else-if="!currentLesson && totalLessons === 0" class="flex flex-col items-center justify-center p-8 text-center">
+                            <BookOpenIcon class="mb-4 h-16 w-16 text-gray-300" />
+                            <h2 class="mb-2 text-xl font-semibold text-gray-700">কোনো পাঠ নেই</h2>
+                            <p class="text-gray-500">এই কোর্সে এখনও কোনো পাঠ যোগ করা হয়নি</p>
+                        </div>
                         <!-- Responsive Video Player -->
                         <div v-else-if="currentLesson?.type === 'video' && currentLesson.video_url" class="h-full w-full">
                             <div class="relative w-full" style="padding-top: 56.25%">
@@ -206,382 +215,36 @@
                             <div class="prose prose-lg max-w-none leading-relaxed text-gray-800" v-html="sanitizeHtml(currentLesson.content)"></div>
                         </div>
                         <!-- Quiz Content -->
-                        <div v-else-if="currentLesson?.type === 'quiz'" class="h-full w-full overflow-y-auto bg-white p-4 sm:p-8">
-                            <!-- Quiz Not Started -->
-                            <div v-if="!quizStarted" class="space-y-4">
-                                <h1 class="mb-6 text-lg leading-tight font-bold text-gray-900 sm:text-2xl">{{ currentLesson.title }}</h1>
-
-                                <div v-if="currentLesson?.quiz" class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                                    <h3 class="mb-2 text-lg font-semibold text-gray-900">{{ currentLesson.quiz.title }}</h3>
-                                    <p v-if="currentLesson.quiz.description" class="mb-4 text-gray-600">{{ currentLesson.quiz.description }}</p>
-
-                                    <div class="mb-4 flex flex-wrap gap-4 text-sm text-gray-500">
-                                        <span class="flex items-center">
-                                            <HelpCircleIcon class="mr-1 h-4 w-4" />
-                                            {{ currentLesson.quiz.total_questions }} প্রশ্ন
-                                        </span>
-                                        <span v-if="currentLesson.quiz.time_limit_minutes" class="flex items-center">
-                                            <ClockIcon class="mr-1 h-4 w-4" />
-                                            {{ currentLesson.quiz.time_limit_minutes }} মিনিট
-                                        </span>
-                                        <span class="flex items-center">
-                                            <CheckCircleIcon class="mr-1 h-4 w-4" />
-                                            পাশ: {{ currentLesson.quiz.passing_score }}%
-                                        </span>
-                                    </div>
-
-                                    <button
-                                        class="inline-flex transform items-center rounded-lg bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] px-6 py-3 font-medium text-white transition-all hover:scale-105 hover:shadow-lg focus:ring-2 focus:ring-[#5f5fcd] focus:ring-offset-2 focus:outline-none"
-                                        @click="startQuiz(currentLesson.quiz)"
-                                    >
-                                        <PlayIcon class="mr-2 h-4 w-4" />
-                                        কুইজ শুরু করুন
-                                    </button>
+                        <div v-else-if="currentItem?.type === 'quiz'" class="flex h-full w-full flex-col items-center justify-center bg-white p-4 sm:p-8">
+                            <div class="max-w-2xl text-center">
+                                <div class="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-[#5f5fcd] text-white">
+                                    <HelpCircleIcon class="h-8 w-8" />
                                 </div>
-                            </div>
-
-                            <!-- Quiz Player -->
-                            <div v-else-if="quizStarted && !quizCompleted" class="space-y-6">
-                                <!-- Quiz Header -->
-                                <div class="rounded-xl bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] p-6 text-white shadow-lg">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <h2 class="mb-2 text-xl font-bold">{{ currentQuiz.title }}</h2>
-                                            <div class="flex items-center space-x-4 text-sm opacity-90">
-                                                <span class="flex items-center">
-                                                    <HelpCircleIcon class="mr-1 h-4 w-4" />
-                                                    প্রশ্ন {{ currentQuestionIndex + 1 }} / {{ currentQuiz.questions.length }}
-                                                </span>
-                                                <span v-if="currentQuiz.time_limit_minutes" class="flex items-center">
-                                                    <ClockIcon class="mr-1 h-4 w-4" />
-                                                    {{ currentQuiz.time_limit_minutes }} মিনিট
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <!-- Progress Circle -->
-                                        <div class="bg-opacity-20 flex h-16 w-16 items-center justify-center rounded-full bg-white text-lg font-bold">
-                                            {{ Math.round(((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100) }}%
-                                        </div>
-                                    </div>
-
-                                    <!-- Progress Bar -->
-                                    <div class="mt-4">
-                                        <div class="bg-opacity-20 h-2 rounded-full bg-white">
-                                            <div
-                                                class="h-2 rounded-full bg-white transition-all duration-300"
-                                                :style="{ width: ((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100 + '%' }"
-                                            ></div>
-                                        </div>
-                                    </div>
+                                <h1 class="mb-4 text-2xl font-bold text-gray-900">{{ currentItem.title }}</h1>
+                                <p v-if="currentItem.description" class="mb-6 text-gray-600">{{ currentItem.description }}</p>
+                                
+                                <div class="mb-8 flex flex-wrap justify-center gap-4 text-sm text-gray-500">
+                                    <span class="flex items-center">
+                                        <HelpCircleIcon class="mr-1 h-4 w-4" />
+                                        {{ currentItem.total_questions }} প্রশ্ন
+                                    </span>
+                                    <span v-if="currentItem.time_limit_minutes" class="flex items-center">
+                                        <ClockIcon class="mr-1 h-4 w-4" />
+                                        {{ currentItem.time_limit_minutes }} মিনিট
+                                    </span>
+                                    <span class="flex items-center">
+                                        <CheckCircleIcon class="mr-1 h-4 w-4" />
+                                        পাশ: {{ currentItem.passing_score }}%
+                                    </span>
                                 </div>
-
-                                <!-- Question Card -->
-                                <div v-if="currentQuestion" class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
-                                    <!-- Question Header -->
-                                    <div class="border-b border-gray-200 bg-[#f5f6fd] px-6 py-4">
-                                        <div class="flex items-start justify-between">
-                                            <div class="flex-1">
-                                                <h3 class="text-lg leading-relaxed font-semibold text-gray-900">
-                                                    {{ currentQuestionIndex + 1 }}. {{ currentQuestion.question }}
-                                                </h3>
-                                            </div>
-
-                                            <!-- Compact Navigation Buttons -->
-                                            <div class="ml-4 flex items-center space-x-2">
-                                                <!-- Previous Button -->
-                                                <button
-                                                    @click="previousQuestion"
-                                                    :disabled="currentQuestionIndex === 0"
-                                                    class="inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200"
-                                                    :class="
-                                                        currentQuestionIndex === 0
-                                                            ? 'cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400'
-                                                            : 'border border-[#5f5fcd] bg-white text-[#5f5fcd] hover:bg-[#5f5fcd] hover:text-white'
-                                                    "
-                                                >
-                                                    <ChevronLeftIcon class="mr-1 h-3 w-3" />
-                                                    পূর্ববর্তী
-                                                </button>
-
-                                                <!-- Progress Indicator -->
-                                                <div class="text-xs font-medium text-[#5f5fcd]">
-                                                    {{ currentQuestionIndex + 1 }}/{{ currentQuiz.questions.length }}
-                                                </div>
-
-                                                <!-- Next/Submit Button -->
-                                                <button
-                                                    v-if="currentQuestionIndex < currentQuiz.questions.length - 1"
-                                                    @click="nextQuestion"
-                                                    class="inline-flex items-center rounded-md bg-[#5f5fcd] px-3 py-1.5 text-xs font-medium text-white transition-all duration-200 hover:bg-[#4a4a9f]"
-                                                >
-                                                    পরবর্তী
-                                                    <ChevronRightIcon class="ml-1 h-3 w-3" />
-                                                </button>
-                                                <button
-                                                    v-else
-                                                    @click="submitQuiz"
-                                                    :disabled="submittingQuiz"
-                                                    class="inline-flex items-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition-all duration-200 hover:bg-green-700"
-                                                >
-                                                    <CheckIcon class="mr-1 h-3 w-3" />
-                                                    <span v-if="submittingQuiz">জমা দিচ্ছে...</span>
-                                                    <span v-else>জমা দিন</span>
-                                                </button>
-                                                <div v-if="quizError" class="mt-2 text-red-600">{{ quizError }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Answer Options -->
-                                    <div class="p-6">
-                                        <!-- Multiple Choice -->
-                                        <div v-if="currentQuestion.type === 'multiple_choice'" class="space-y-3">
-                                            <label
-                                                v-for="(option, index) in currentQuestion.options"
-                                                :key="index"
-                                                class="group flex cursor-pointer items-start rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-md"
-                                                :class="
-                                                    quizAnswers[currentQuestion.id] == index
-                                                        ? 'border-[#5f5fcd] bg-[#e7eafd] shadow-md'
-                                                        : 'border-gray-200 hover:border-[#5f5fcd] hover:bg-[#f8f9ff]'
-                                                "
-                                            >
-                                                <div class="flex h-5 items-center">
-                                                    <input
-                                                        type="radio"
-                                                        :value="index"
-                                                        v-model="quizAnswers[currentQuestion.id]"
-                                                        class="h-4 w-4 border-gray-300 text-[#5f5fcd] focus:ring-[#5f5fcd]"
-                                                    />
-                                                </div>
-                                                <div class="ml-3 text-sm">
-                                                    <span class="font-medium text-gray-700 group-hover:text-[#5f5fcd]">
-                                                        {{ String.fromCharCode(65 + index) }}.
-                                                    </span>
-                                                    <span class="ml-2 text-gray-900">{{ option }}</span>
-                                                </div>
-                                            </label>
-                                        </div>
-
-                                        <!-- True/False -->
-                                        <div v-else-if="currentQuestion.type === 'true_false'" class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                            <label
-                                                class="group flex cursor-pointer items-center rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-md"
-                                                :class="
-                                                    quizAnswers[currentQuestion.id] === 'সত্য'
-                                                        ? 'border-green-500 bg-green-50 shadow-md'
-                                                        : 'border-gray-200 hover:border-green-400 hover:bg-green-50'
-                                                "
-                                            >
-                                                <input
-                                                    type="radio"
-                                                    value="সত্য"
-                                                    v-model="quizAnswers[currentQuestion.id]"
-                                                    class="h-4 w-4 border-gray-300 text-green-600 focus:ring-green-500"
-                                                />
-                                                <div class="ml-3">
-                                                    <div class="text-2xl">✓</div>
-                                                    <div class="text-sm font-medium text-gray-700">সত্য</div>
-                                                </div>
-                                            </label>
-                                            <label
-                                                class="group flex cursor-pointer items-center rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-md"
-                                                :class="
-                                                    quizAnswers[currentQuestion.id] === 'মিথ্যা'
-                                                        ? 'border-red-500 bg-red-50 shadow-md'
-                                                        : 'border-gray-200 hover:border-red-400 hover:bg-red-50'
-                                                "
-                                            >
-                                                <input
-                                                    type="radio"
-                                                    value="মিথ্যা"
-                                                    v-model="quizAnswers[currentQuestion.id]"
-                                                    class="h-4 w-4 border-gray-300 text-red-600 focus:ring-red-500"
-                                                />
-                                                <div class="ml-3">
-                                                    <div class="text-2xl">✗</div>
-                                                    <div class="text-sm font-medium text-gray-700">মিথ্যা</div>
-                                                </div>
-                                            </label>
-                                        </div>
-
-                                        <!-- Short Answer -->
-                                        <div v-else-if="currentQuestion.type === 'short_answer'">
-                                            <input
-                                                v-model="quizAnswers[currentQuestion.id]"
-                                                type="text"
-                                                class="focus:ring-opacity-20 w-full rounded-xl border-2 border-gray-200 p-4 transition-colors focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]"
-                                                placeholder="আপনার উত্তর লিখুন..."
-                                            />
-                                        </div>
-
-                                        <!-- Essay -->
-                                        <div v-else-if="currentQuestion.type === 'essay'">
-                                            <textarea
-                                                v-model="quizAnswers[currentQuestion.id]"
-                                                rows="6"
-                                                class="focus:ring-opacity-20 resize-vertical w-full rounded-xl border-2 border-gray-200 p-4 transition-colors focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]"
-                                                placeholder="আপনার বিস্তারিত উত্তর লিখুন..."
-                                            ></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Quiz Results -->
-                            <div v-else-if="quizCompleted && quizResults" class="space-y-6">
-                                <!-- Results Header -->
-                                <div class="text-center">
-                                    <div
-                                        class="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full"
-                                        :class="quizResults.is_passed ? 'bg-green-100' : 'bg-red-100'"
-                                    >
-                                        <CheckCircleIcon v-if="quizResults.is_passed" class="h-10 w-10 text-green-600" />
-                                        <AlertTriangleIcon v-else class="h-10 w-10 text-red-600" />
-                                    </div>
-                                    <h2 class="mb-2 text-2xl font-bold text-gray-900">কুইজ সম্পন্ন!</h2>
-                                </div>
-
-                                <!-- Score Card -->
-                                <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
-                                    <div
-                                        class="px-6 py-8 text-center"
-                                        :class="
-                                            quizResults.is_passed
-                                                ? 'bg-gradient-to-br from-green-50 to-green-100'
-                                                : 'bg-gradient-to-br from-red-50 to-red-100'
-                                        "
-                                    >
-                                        <div class="mb-3 text-5xl font-bold" :class="quizResults.is_passed ? 'text-green-600' : 'text-red-600'">
-                                            {{ Math.round(quizResults.score) }}%
-                                        </div>
-                                        <p class="mb-4 text-lg text-gray-700">
-                                            {{ quizResults.correct_answers }} / {{ quizResults.total_questions }} সঠিক উত্তর
-                                        </p>
-
-                                        <!-- Status Badge -->
-                                        <div
-                                            class="inline-flex items-center rounded-full px-6 py-3 text-lg font-semibold"
-                                            :class="quizResults.is_passed ? 'bg-green-600 text-white' : 'bg-red-600 text-white'"
-                                        >
-                                            <CheckIcon v-if="quizResults.is_passed" class="mr-2 h-5 w-5" />
-                                            <AlertTriangleIcon v-else class="mr-2 h-5 w-5" />
-                                            <span v-if="quizResults.is_passed">
-                                                উত্তীর্ণ ({{ quizResults.correct_answers }}/{{ quizResults.total_questions }} সঠিক)
-                                            </span>
-                                            <span v-else>
-                                                {{ quizResults.total_questions - quizResults.correct_answers }} ভুল উত্তর | অনুত্তীর্ণ
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Performance Breakdown -->
-                                    <div class="border-t bg-gray-50 px-6 py-4">
-                                        <div class="grid grid-cols-3 gap-4 text-center">
-                                            <div>
-                                                <div class="text-2xl font-bold text-green-600">{{ quizResults.correct_answers }}</div>
-                                                <div class="text-sm text-gray-600">সঠিক</div>
-                                            </div>
-                                            <div>
-                                                <div class="text-2xl font-bold text-red-600">
-                                                    {{ quizResults.total_questions - quizResults.correct_answers }}
-                                                </div>
-                                                <div class="text-sm text-gray-600">ভুল</div>
-                                            </div>
-                                            <div>
-                                                <div class="text-2xl font-bold text-[#5f5fcd]">{{ quizResults.total_questions }}</div>
-                                                <div class="text-sm text-gray-600">মোট</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Action Buttons -->
-                                <div class="flex flex-col gap-4 sm:flex-row">
-                                    <button
-                                        @click="resetQuiz"
-                                        class="inline-flex flex-1 items-center justify-center rounded-xl border-2 border-gray-200 bg-white px-6 py-3 font-medium text-gray-700 transition-all hover:bg-gray-50 focus:ring-2 focus:ring-[#5f5fcd] focus:ring-offset-2 focus:outline-none"
-                                    >
-                                        <RotateCcwIcon class="mr-2 h-4 w-4" />
-                                        পুনরায় চেষ্টা করুন
-                                    </button>
-                                    <button
-                                        @click="goToNextLesson"
-                                        v-if="hasNextLesson"
-                                        class="inline-flex flex-1 transform items-center justify-center rounded-xl bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] px-6 py-3 font-medium text-white transition-all hover:scale-105 hover:shadow-lg focus:ring-2 focus:ring-[#5f5fcd] focus:ring-offset-2 focus:outline-none"
-                                    >
-                                        পরবর্তী পাঠ
-                                        <ChevronRightIcon class="ml-2 h-4 w-4" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Fallback: Course Quizzes (Legacy) -->
-                            <div v-else-if="course?.quizzes && course.quizzes.length > 0" class="space-y-4">
-                                <div
-                                    v-for="quiz in course.quizzes"
-                                    :key="quiz.id"
-                                    class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+                                
+                                <button
+                                    @click="takeQuiz"
+                                    class="inline-flex transform items-center rounded-lg bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] px-6 py-3 font-medium text-white transition-all hover:scale-105 hover:shadow-lg focus:ring-2 focus:ring-[#5f5fcd] focus:ring-offset-2 focus:outline-none"
                                 >
-                                    <div class="flex items-start justify-between">
-                                        <div class="flex-1">
-                                            <h3 class="mb-2 text-lg font-semibold text-gray-900">{{ quiz.title }}</h3>
-                                            <p v-if="quiz.description" class="mb-4 text-gray-600">{{ quiz.description }}</p>
-
-                                            <div class="mb-4 flex flex-wrap gap-4 text-sm text-gray-500">
-                                                <span class="flex items-center">
-                                                    <HelpCircleIcon class="mr-1 h-4 w-4" />
-                                                    {{ quiz.total_questions }} প্রশ্ন
-                                                </span>
-                                                <span v-if="quiz.time_limit_minutes" class="flex items-center">
-                                                    <ClockIcon class="mr-1 h-4 w-4" />
-                                                    {{ quiz.time_limit_minutes }} মিনিট
-                                                </span>
-                                                <span class="flex items-center">
-                                                    <CheckCircleIcon class="mr-1 h-4 w-4" />
-                                                    পাশ: {{ quiz.passing_score }}%
-                                                </span>
-                                            </div>
-
-                                            <!-- Quiz Status -->
-                                            <div v-if="quiz.attempts && quiz.attempts.length > 0" class="mb-4">
-                                                <div class="mb-2 text-sm text-gray-600">আপনার সর্বোচ্চ স্কোর:</div>
-                                                <div class="flex items-center space-x-2">
-                                                    <div
-                                                        class="text-lg font-bold"
-                                                        :class="getBestScore(quiz.attempts) >= quiz.passing_score ? 'text-green-600' : 'text-red-600'"
-                                                    >
-                                                        {{ getBestScore(quiz.attempts) }}%
-                                                    </div>
-                                                    <div
-                                                        v-if="getBestScore(quiz.attempts) >= quiz.passing_score"
-                                                        class="rounded-full bg-green-100 px-2 py-1 text-xs text-green-800"
-                                                    >
-                                                        পাশ
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="ml-4">
-                                            <PrimaryButton
-                                                @click="startQuiz(quiz.id)"
-                                                variant="primary"
-                                                size="sm"
-                                                class="border-[#5f5fcd] bg-[#5f5fcd] text-white hover:bg-[#4a4ab8]"
-                                            >
-                                                {{ quiz.attempts && quiz.attempts.length > 0 ? 'পুনরায় চেষ্টা' : 'কুইজ শুরু করুন' }}
-                                            </PrimaryButton>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- No Quizzes Available -->
-                            <div v-else class="rounded-lg bg-[#f5f6fd] p-6 text-center">
-                                <HelpCircleIcon class="mx-auto mb-4 h-12 w-12 text-gray-400" />
-                                <h3 class="mb-2 text-lg font-semibold text-gray-900">কোনো কুইজ নেই</h3>
-                                <p class="text-gray-600">এই কোর্সের জন্য এখনো কোনো কুইজ যোগ করা হয়নি।</p>
+                                    <PlayIcon class="mr-2 h-4 w-4" />
+                                    কুইজ শুরু করুন
+                                </button>
                             </div>
                         </div>
                         <!-- PDF Content -->
@@ -616,7 +279,7 @@
                             <!-- Content Section -->
                             <div class="px-4 sm:px-8">
                                 <h1 class="mb-6 text-xl leading-tight font-extrabold text-gray-900 sm:text-3xl">
-                                    {{ currentLesson?.title || 'Untitled Lesson' }}
+                                    {{ currentLesson?.title || '' }}
                                 </h1>
 
                                 <!-- Text Content -->
@@ -728,8 +391,8 @@
                             </PrimaryButton>
                         </div>
                         <div class="flex items-center space-x-4">
-                            <!-- Lesson Info -->
-                            <div class="text-sm text-gray-500">পাঠ {{ currentLessonIndex + 1 }} / {{ totalLessons }}</div>
+                            <!-- Item Info -->
+                            <div class="text-sm text-gray-500">আইটেম {{ currentItemIndex + 1 }} / {{ allLearningItems.length }}</div>
                             <!-- Next Lesson -->
                             <PrimaryButton
                                 @click="goToNextLesson"
@@ -747,6 +410,7 @@
                 </main>
             </div>
         </div>
+
     </div>
 </template>
 
@@ -755,8 +419,8 @@ import PrimaryButton from '@/components/Frontend/PrimaryButton.vue';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { useIntervalFn } from '@vueuse/core';
 import {
-    AlertTriangleIcon,
     ArrowLeftIcon,
+    BookOpenIcon,
     CheckCircleIcon,
     CheckIcon,
     ChevronDownIcon,
@@ -772,7 +436,6 @@ import {
     PanelLeftIcon,
     PanelRightIcon,
     PlayIcon,
-    RotateCcwIcon,
     VideoIcon,
 } from 'lucide-vue-next';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
@@ -807,32 +470,15 @@ interface Module {
     lessons: Lesson[];
 }
 
-interface Quiz {
-    id: number;
-    title: string;
-    description?: string;
-    type: string;
-    time_limit_minutes?: number;
-    passing_score: number;
-    total_questions: number;
-    attempts?: QuizAttempt[];
-}
-
-interface QuizAttempt {
-    id: number;
-    score: number;
-    is_passed: boolean;
-    completed_at: string;
-}
 
 interface Course {
     id: number;
     title: string;
     slug: string;
-    modules: Module[];
+    modules?: Module[];
+    learning_items?: any[];
     total_lessons: number;
     completed_lessons: number;
-    quizzes?: Quiz[];
 }
 
 // Get data from props
@@ -844,25 +490,19 @@ const markingComplete = ref(false);
 
 // State
 const sidebarCollapsed = ref(false);
-const expandedModules = ref<number[]>([]);
+const expandedModules = ref<string[]>([]);
 const currentLesson = ref<Lesson | null>(null);
+const currentItem = ref<any>(null);
 const completedLessons = ref(0);
 
-// Quiz state
-const quizStarted = ref(false);
-const quizCompleted = ref(false);
-const currentQuiz = ref<any>(null);
-const currentQuestionIndex = ref(0);
-const quizAnswers = ref<Record<number, any>>({});
-const quizResults = ref<any>(null);
-const quizStartTime = ref<Date | null>(null);
-const submittingQuiz = ref(false);
-const quizError = ref(null);
 
 // Computed properties
+const allLearningItems = computed(() => {
+    return course.value?.learning_items || [];
+});
+
 const allLessons = computed(() => {
-    if (!course.value?.modules) return [];
-    return course.value.modules.flatMap((module) => module.lessons);
+    return allLearningItems.value.filter((item: any) => item.type === 'lesson');
 });
 
 const totalLessons = computed(() => allLessons.value.length);
@@ -871,32 +511,73 @@ const progressPercentage = computed(() => {
     return totalLessons.value > 0 ? (completedLessons.value / totalLessons.value) * 100 : 0;
 });
 
-const currentLessonIndex = computed(() => {
-    if (!currentLesson.value) return -1;
-    return allLessons.value.findIndex((lesson) => lesson.id === currentLesson.value!.id);
+const currentItemIndex = computed(() => {
+    if (!currentItem.value) return -1;
+    return allLearningItems.value.findIndex((item: any) => 
+        item.type === currentItem.value.type && item.id === currentItem.value.id
+    );
 });
 
-const hasPreviousLesson = computed(() => currentLessonIndex.value > 0);
+const currentLessonIndex = computed(() => currentItemIndex.value);
 
-const hasNextLesson = computed(() => currentLessonIndex.value < totalLessons.value - 1);
+const hasPreviousLesson = computed(() => currentItemIndex.value > 0);
 
-// Helper: Get a flat list of all lessons in order
-const flatLessons = computed(() => {
-    if (!course.value?.modules) return [];
-    return course.value.modules.flatMap((module) => module.lessons);
+const hasNextLesson = computed(() => currentItemIndex.value < allLearningItems.value.length - 1);
+
+const groupedLearningItems = computed(() => {
+    const groups: { [key: string]: any[] } = {};
+    
+    allLearningItems.value.forEach((item: any) => {
+        const moduleTitle = item.module_title || 'Unknown Module';
+        if (!groups[moduleTitle]) {
+            groups[moduleTitle] = [];
+        }
+        groups[moduleTitle].push(item);
+    });
+    
+    return Object.entries(groups).map(([title, items]) => ({
+        title,
+        items
+    }));
 });
 
-// Helper: Get the index of a lesson in the flat list
-function getLessonIndex(lessonId: number) {
-    return flatLessons.value.findIndex((l) => l.id === lessonId);
+// Helper: Get the index of an item in the learning sequence
+function getItemIndex(item: any) {
+    return allLearningItems.value.findIndex((i: any) => 
+        i.type === item.type && i.id === item.id
+    );
 }
 
-// Helper: Is a lesson locked?
-function isLessonLocked(lesson: Lesson) {
-    const idx = getLessonIndex(lesson.id);
-    if (idx === 0) return false; // First lesson always unlocked
-    // All previous lessons must be completed
-    return !flatLessons.value.slice(0, idx).every((l) => l.completed);
+// Helper: Is an item locked?
+function isItemLocked(item: any) {
+    const idx = getItemIndex(item);
+    if (idx === 0) return false; // First item always unlocked
+    
+    // All previous lessons must be completed (quizzes don't block progression)
+    const previousItems = allLearningItems.value.slice(0, idx);
+    return !previousItems.filter((i: any) => i.type === 'lesson').every((i: any) => i.completed);
+}
+
+// Helper: Type icon mapping
+function getItemTypeIcon(item: any) {
+    if (item.type === 'lesson') {
+        return getLessonTypeIcon(item.lesson_type || 'mixed');
+    } else if (item.type === 'quiz') {
+        return HelpCircleIcon;
+    }
+    return FileTextIcon;
+}
+
+// Helper: Type label mapping
+function getItemTypeLabel(type: string) {
+    switch (type) {
+        case 'lesson':
+            return 'পাঠ';
+        case 'quiz':
+            return 'কুইজ';
+        default:
+            return 'অজানা';
+    }
 }
 
 // Methods
@@ -917,14 +598,10 @@ const loadCourseData = async () => {
         course.value = pageData.props.course as Course;
         completedLessons.value = (pageData.props.enrollment as any)?.completed_lessons || 0;
 
-        // Set first lesson as current if none selected
-        if (!currentLesson.value && allLessons.value.length > 0) {
-            currentLesson.value = allLessons.value[0];
-            // Expand the module containing this lesson
-            const module = course.value?.modules.find((m) => m.lessons.some((l) => l.id === currentLesson.value!.id));
-            if (module) {
-                expandedModules.value = [module.id];
-            }
+        // Set first learning item as current if none selected and no quiz results to handle
+        const hasQuizResults = page.props.flash?.quiz_results || page.props.quiz_results;
+        if (!currentItem.value && allLearningItems.value.length > 0 && !hasQuizResults) {
+            selectLearningItem(allLearningItems.value[0]);
         }
     } catch (err) {
         // Handle course loading error silently
@@ -935,22 +612,30 @@ const toggleSidebar = () => {
     sidebarCollapsed.value = !sidebarCollapsed.value;
 };
 
-const toggleModule = (moduleId: number) => {
-    if (expandedModules.value.includes(moduleId)) {
+const toggleModule = (moduleTitle: string) => {
+    if (expandedModules.value.includes(moduleTitle)) {
         expandedModules.value = []; // Close all if clicking the open one
     } else {
-        expandedModules.value = [moduleId]; // Only one open at a time
+        expandedModules.value = [moduleTitle]; // Only one open at a time
     }
 };
 
-const selectLesson = async (lesson: Lesson) => {
+const selectLearningItem = async (item: any) => {
     contentLoading.value = true;
-    currentLesson.value = lesson;
+    currentItem.value = item;
+    
+    // If it's a lesson, also set currentLesson for compatibility
+    if (item.type === 'lesson') {
+        currentLesson.value = {
+            ...item,
+            type: item.lesson_type || 'mixed'
+        };
+    }
 
-    // Expand the module containing this lesson
-    const module = course.value?.modules.find((m) => m.lessons.some((l) => l.id === lesson.id));
-    if (module && !expandedModules.value.includes(module.id)) {
-        expandedModules.value.push(module.id);
+    // Expand the module containing this item
+    const moduleTitle = item.module_title;
+    if (moduleTitle && !expandedModules.value.includes(moduleTitle)) {
+        expandedModules.value = [moduleTitle];
     }
 
     // Simulate content loading
@@ -959,17 +644,30 @@ const selectLesson = async (lesson: Lesson) => {
     }, 500);
 };
 
+const selectLesson = async (lesson: Lesson) => {
+    // Convert lesson to learning item format for compatibility
+    const learningItem = {
+        type: 'lesson',
+        id: lesson.id,
+        title: lesson.title,
+        lesson_type: lesson.type,
+        completed: lesson.completed,
+        ...lesson
+    };
+    selectLearningItem(learningItem);
+};
+
 const goToPreviousLesson = () => {
     if (hasPreviousLesson.value) {
-        const previousLesson = allLessons.value[currentLessonIndex.value - 1];
-        selectLesson(previousLesson);
+        const previousItem = allLearningItems.value[currentItemIndex.value - 1];
+        selectLearningItem(previousItem);
     }
 };
 
 const goToNextLesson = () => {
     if (hasNextLesson.value) {
-        const nextLesson = allLessons.value[currentLessonIndex.value + 1];
-        selectLesson(nextLesson);
+        const nextItem = allLearningItems.value[currentItemIndex.value + 1];
+        selectLearningItem(nextItem);
     }
 };
 
@@ -1012,102 +710,12 @@ const goBackToDashboard = () => {
     router.visit(route('frontend.student.dashboard'));
 };
 
-const startQuiz = async (quiz: any) => {
-    try {
-        // Handle both quiz object and quiz ID
-        let quizData;
-
-        if (typeof quiz === 'object' && quiz) {
-            // Quiz object passed directly (from current lesson)
-            quizData = quiz;
-        } else {
-            // Quiz ID passed - find it in course quizzes
-            const quizId = quiz;
-            if (course.value?.quizzes) {
-                quizData = course.value.quizzes.find((q) => q.id === quizId);
-            }
-        }
-
-        if (!quizData) {
-            alert('কুইজ পাওয়া যায়নি। দয়া করে পুনরায় চেষ্টা করুন।');
-            return;
-        }
-
-        if (!quizData.questions || quizData.questions.length === 0) {
-            alert('এই কুইজে কোনো প্রশ্ন নেই।');
-            return;
-        }
-
-        // Set up quiz state
-        currentQuiz.value = quizData;
-        quizStarted.value = true;
-        quizCompleted.value = false;
-        currentQuestionIndex.value = 0;
-        quizAnswers.value = {};
-        quizStartTime.value = new Date();
-    } catch (error) {
-        alert('কুইজ শুরু করতে সমস্যা হয়েছে। দয়া করে পুনরায় চেষ্টা করুন।');
+const takeQuiz = () => {
+    if (currentItem.value && currentItem.value.type === 'quiz') {
+        router.visit(route('quiz.show', currentItem.value.id));
     }
 };
 
-const currentQuestion = computed(() => {
-    if (!currentQuiz.value?.questions) return null;
-    return currentQuiz.value.questions[currentQuestionIndex.value];
-});
-
-const nextQuestion = () => {
-    if (currentQuestionIndex.value < currentQuiz.value.questions.length - 1) {
-        currentQuestionIndex.value++;
-    }
-};
-
-const previousQuestion = () => {
-    if (currentQuestionIndex.value > 0) {
-        currentQuestionIndex.value--;
-    }
-};
-
-const submitQuiz = () => {
-    if (!currentQuiz.value) {
-        alert('কুইজ লোড হয়নি। দয়া করে পুনরায় চেষ্টা করুন।');
-        return;
-    }
-    submittingQuiz.value = true;
-    quizError.value = null;
-
-    router.post(
-        route('quiz.submit', currentQuiz.value.id),
-        {
-            answers: quizAnswers.value, // associative array (object)
-            started_at: quizStartTime.value?.toISOString(),
-        },
-        {
-            preserveScroll: true,
-            onSuccess: (page) => {
-                if (page.props.flash?.quiz_results) {
-                    quizResults.value = page.props.flash.quiz_results;
-                    quizCompleted.value = true;
-                    quizStarted.value = false;
-                }
-                submittingQuiz.value = false;
-            },
-            onError: (errors) => {
-                quizError.value = errors?.answers || 'কুইজ জমা দিতে সমস্যা হয়েছে।';
-                submittingQuiz.value = false;
-            },
-        },
-    );
-};
-
-const resetQuiz = () => {
-    quizStarted.value = false;
-    quizCompleted.value = false;
-    currentQuiz.value = null;
-    currentQuestionIndex.value = 0;
-    quizAnswers.value = {};
-    quizResults.value = null;
-    quizStartTime.value = null;
-};
 
 const getLessonTypeIcon = (type: string) => {
     switch (type) {
@@ -1115,8 +723,6 @@ const getLessonTypeIcon = (type: string) => {
             return VideoIcon;
         case 'text':
             return FileTextIcon;
-        case 'quiz':
-            return HelpCircleIcon;
         case 'pdf':
             return FileIcon;
         case 'audio':
@@ -1151,11 +757,6 @@ const sanitizeHtml = (html: string): string => {
     return doc.body.innerHTML || '';
 };
 
-// Quiz helper methods
-const getBestScore = (attempts: QuizAttempt[]): number => {
-    if (!attempts || attempts.length === 0) return 0;
-    return Math.max(...attempts.map((attempt) => attempt.score));
-};
 
 // File type display helper
 const getFileTypeDisplay = (fileType: string | null): string => {
@@ -1186,16 +787,10 @@ const getFileTypeDisplay = (fileType: string | null): string => {
     }
 };
 
-// Initialize on mount
-onMounted(() => {
-    loadCourseData();
 
-    // Check for quiz results in flash messages
-    if (page.props.flash?.quiz_results) {
-        quizResults.value = page.props.flash.quiz_results;
-        quizCompleted.value = true;
-        quizStarted.value = false;
-    }
+// Initialize on mount
+onMounted(async () => {
+    await loadCourseData();
 });
 
 // Watch for course slug changes

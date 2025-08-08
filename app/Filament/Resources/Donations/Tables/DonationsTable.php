@@ -12,18 +12,9 @@ class DonationsTable
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->label('Donor Name')
+                    ->label('Donor')
                     ->searchable()
                     ->sortable(),
-                    
-                Tables\Columns\TextColumn::make('email')
-                    ->label('Email')
-                    ->searchable()
-                    ->sortable(),
-                    
-                Tables\Columns\TextColumn::make('phone')
-                    ->label('Phone')
-                    ->searchable(),
                     
                 Tables\Columns\TextColumn::make('amount')
                     ->label('Amount')
@@ -31,7 +22,7 @@ class DonationsTable
                     ->sortable(),
                     
                 Tables\Columns\TextColumn::make('payment_method')
-                    ->label('Payment Method')
+                    ->label('Method')
                     ->badge()
                     ->color(fn (string $state): string => match($state) {
                         'bkash' => 'success',
@@ -42,22 +33,31 @@ class DonationsTable
                         default => 'gray',
                     }),
                     
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Date')
+                    ->date()
+                    ->sortable(),
+                    
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                    
+                Tables\Columns\TextColumn::make('phone')
+                    ->label('Phone')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                    
                 Tables\Columns\TextColumn::make('transaction_id')
                     ->label('Transaction ID')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                     
                 Tables\Columns\TextColumn::make('reason')
                     ->label('Reason')
                     ->limit(30)
                     ->tooltip(fn ($record) => $record->reason)
-                    ->toggleable(),
-                    
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Donated At')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('payment_method')

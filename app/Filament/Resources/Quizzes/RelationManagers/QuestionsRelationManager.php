@@ -2,110 +2,114 @@
 
 namespace App\Filament\Resources\Quizzes\RelationManagers;
 
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components;
-use Filament\Schemas\Components\Grid;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class QuestionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'questions';
+    protected static ?string $recordTitleAttribute = 'question';
+    protected static ?string $title = 'Quiz Questions';
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Components\Section::make()
-                    ->schema([
-                        Textarea::make('question')
-                            ->label('Question')
-                            ->required()
-                            ->rows(4)
-                            ->columnSpanFull(),
-
-                        Grid::make(4)
-                            ->schema([
-                                Select::make('type')
-                                    ->label('Question Type')
-                                    ->options([
-                                        'multiple_choice' => 'Multiple Choice',
-                                        'true_false' => 'True/False',
-                                        'short_answer' => 'Short Answer',
-                                        'essay' => 'Essay',
-                                    ])
-                                    ->required()
-                                    ->columnSpan(2),
-
-                                TextInput::make('points')
-                                    ->label('Points')
-                                    ->numeric()
-                                    ->minValue(0.5)
-                                    ->maxValue(100)
-                                    ->step(0.5)
-                                    ->default(1)
-                                    ->required()
-                                    ->columnSpan(1),
-
-                                TextInput::make('sort_order')
-                                    ->label('Sort Order')
-                                    ->numeric()
-                                    ->default(0)
-                                    ->columnSpan(1),
-                            ]),
-
-                        Repeater::make('options')
-                            ->label('Answer Options')
-                            ->simple(
-                                TextInput::make('option')
-                                    ->label('Option')
-                                    ->required()
-                            )
-                            ->minItems(2)
-                            ->maxItems(6)
-                            ->defaultItems(4)
-                            ->visible(fn ($get) => $get('type') === 'multiple_choice')
-                            ->columnSpanFull()
-                            ->columns(2),
-
-                        TagsInput::make('correct_answers')
-                            ->label('Correct Answer(s)')
-                            ->placeholder('Enter correct answer(s)')
-                            ->required()
-                            ->helperText(fn ($get) => match($get('type')) {
-                                'multiple_choice' => 'Enter the index of correct option (0 for first, 1 for second, etc.)',
-                                'true_false' => 'Enter "সত্য" or "মিথ্যা"',
-                                'short_answer' => 'Enter all acceptable answers',
-                                default => 'Enter the correct answer(s)'
-                            })
-                            ->columnSpanFull(),
-
-                        Textarea::make('explanation')
-                            ->label('Explanation')
-                            ->helperText('Explain why this is the correct answer')
-                            ->rows(3)
-                            ->columnSpanFull(),
-
-                        Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(true)
-                            ->columnSpanFull(),
-                    ])
+                Textarea::make('question')
+                    ->label('Question')
+                    ->required()
+                    ->rows(3)
+                    ->maxLength(65535)
                     ->columnSpanFull(),
+
+                Select::make('type')
+                    ->label('Question Type')
+                    ->options([
+                        'multiple_choice' => 'Multiple Choice',
+                        'true_false' => 'True/False',
+                        'short_answer' => 'Short Answer',
+                    ])
+                    ->default('multiple_choice')
+                    ->required()
+                    ->live(),
+
+                // Multiple Choice Options
+                Repeater::make('options')
+                    ->label('Answer Options')
+                    ->schema([
+                        TextInput::make('option')
+                            ->label('Option')
+                            ->required(),
+                    ])
+                    ->visible(fn ($get) => $get('type') === 'multiple_choice')
+                    ->addActionLabel('Add Option')
+                    ->minItems(2)
+                    ->maxItems(6)
+                    ->columnSpanFull()
+                    ->mutateDehydratedStateUsing(function ($state) {
+                        return array_map(fn($item) => $item['option'], $state ?? []);
+                    }),
+
+                // Correct Answer for Multiple Choice
+                Select::make('correct_answer')
+                    ->label('Correct Answer')
+                    ->options(function (callable $get) {
+                        if ($get('type') === 'multiple_choice') {
+                            $options = $get('options') ?? [];
+                            $choices = [];
+                            foreach ($options as $index => $option) {
+                                $optionText = is_array($option) ? ($option['option'] ?? '') : $option;
+                                if ($optionText) {
+                                    $choices[$index] = chr(65 + $index) . '. ' . $optionText;
+                                }
+                            }
+                            return $choices;
+                        }
+                        return [];
+                    })
+                    ->visible(fn ($get) => $get('type') === 'multiple_choice')
+                    ->required(),
+
+                // Correct Answer for True/False
+                Select::make('correct_answer')
+                    ->label('Correct Answer')
+                    ->options([
+                        'সত্য' => 'সত্য (True)',
+                        'মিথ্যা' => 'মিথ্যা (False)',
+                    ])
+                    ->visible(fn ($get) => $get('type') === 'true_false')
+                    ->required(),
+
+                // Correct Answer for Short Answer
+                TextInput::make('correct_answer')
+                    ->label('Correct Answer')
+                    ->visible(fn ($get) => $get('type') === 'short_answer')
+                    ->required()
+                    ->helperText('Case insensitive matching'),
+
+                TextInput::make('points')
+                    ->label('Points')
+                    ->numeric()
+                    ->default(1)
+                    ->minValue(1)
+                    ->required(),
+
+                TextInput::make('sort_order')
+                    ->label('Sort Order')
+                    ->numeric()
+                    ->default(0)
+                    ->helperText('Lower numbers appear first'),
             ]);
     }
 
@@ -113,63 +117,38 @@ class QuestionsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('question')
-            ->reorderable('sort_order')
             ->columns([
-                Tables\Columns\TextColumn::make('sort_order')
+                TextColumn::make('sort_order')
                     ->label('#')
                     ->sortable()
-                    ->width('50px'),
-                
-                Tables\Columns\TextColumn::make('question')
+                    ->width(50),
+
+                TextColumn::make('question')
                     ->label('Question')
-                    ->limit(50)
-                    ->searchable(),
-                
-                Tables\Columns\BadgeColumn::make('type')
+                    ->limit(100)
+                    ->wrap(),
+
+                TextColumn::make('type')
                     ->label('Type')
-                    ->colors([
-                        'primary' => 'multiple_choice',
-                        'success' => 'true_false',
-                        'warning' => 'short_answer',
-                        'danger' => 'essay',
-                    ])
-                    ->formatStateUsing(fn ($state) => match($state) {
+                    ->formatStateUsing(fn ($state) => match ($state) {
                         'multiple_choice' => 'Multiple Choice',
                         'true_false' => 'True/False',
                         'short_answer' => 'Short Answer',
-                        'essay' => 'Essay',
                         default => $state,
                     }),
-                
-                Tables\Columns\TextColumn::make('points')
+
+                TextColumn::make('points')
                     ->label('Points')
-                    ->numeric(decimalPlaces: 1)
                     ->sortable(),
-                
-                Tables\Columns\IconColumn::make('is_active')
-                    ->label('Active')
-                    ->boolean(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('type')
-                    ->options([
-                        'multiple_choice' => 'Multiple Choice',
-                        'true_false' => 'True/False',
-                        'short_answer' => 'Short Answer',
-                        'essay' => 'Essay',
-                    ]),
-                Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Active'),
+                //
             ])
             ->headerActions([
-                CreateAction::make()
-                    ->slideOver()
-                    ->modalWidth('6xl'),
+                CreateAction::make(),
             ])
-            ->actions([
-                EditAction::make()
-                    ->slideOver()
-                    ->modalWidth('6xl'),
+            ->recordActions([
+                EditAction::make(),
                 DeleteAction::make(),
             ])
             ->bulkActions([
@@ -177,10 +156,7 @@ class QuestionsRelationManager extends RelationManager
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateActions([
-                CreateAction::make()
-                    ->slideOver()
-                    ->modalWidth('6xl'),
-            ]);
+            ->defaultSort('sort_order', 'asc')
+            ->reorderable('sort_order');
     }
 }

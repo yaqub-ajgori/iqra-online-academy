@@ -22,18 +22,12 @@ class CoursesTable
     {
         return $table
             ->columns([
-                ImageColumn::make('thumbnail_image')
-                    ->label('Thumbnail')
-                    ->disk('public')
-                    ->circular()
-                    ->size(50),
-                    
                 TextColumn::make('title')
                     ->label('Course Title')
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
-                    ->description(fn ($record) => $record->category->name ?? ''),
+                    ->limit(30),
                     
                 TextColumn::make('instructor.full_name')
                     ->label('Instructor')
@@ -61,6 +55,13 @@ class CoursesTable
                         'success' => 'published',
                         'danger' => 'archived',
                     ]),
+                    
+                ImageColumn::make('thumbnail_image')
+                    ->label('Thumbnail')
+                    ->disk('public')
+                    ->circular()
+                    ->size(40)
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('status')

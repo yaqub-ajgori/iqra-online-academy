@@ -6,9 +6,9 @@ use App\Http\Controllers\Frontend\StudentDashboardController;
 use App\Http\Controllers\Frontend\LearningController;
 use App\Http\Controllers\Frontend\AboutController;
 use App\Http\Controllers\Frontend\ContactController;
-use App\Http\Controllers\Frontend\QuizController;
 use App\Http\Controllers\Frontend\CertificateController;
 use App\Http\Controllers\Frontend\ReviewController;
+use App\Http\Controllers\Frontend\QuizController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -93,22 +93,8 @@ Route::middleware(['auth', 'student', 'verified'])->prefix('quiz')->name('quiz.'
 
 // Certificate Routes
 Route::prefix('certificates')->name('certificates.')->group(function () {
-    // Public certificate verification
-    Route::get('/verify', [CertificateController::class, 'verify'])->name('verify');
-    Route::post('/verify', [CertificateController::class, 'checkVerification'])->name('check');
-    Route::get('/view/{verificationCode}', [CertificateController::class, 'show'])->name('view');
-    Route::get('/download-public/{verificationCode}', [CertificateController::class, 'downloadPublic'])->name('download.public');
-    
-    // Preview routes (for development/testing)
-    Route::get('/preview', [CertificateController::class, 'preview'])->name('preview');
-    Route::get('/preview/download', [CertificateController::class, 'previewDownload'])->name('preview.download');
-    
-    // Protected certificate routes (requires student authentication)
-    Route::middleware(['auth', 'student', 'verified'])->group(function () {
-        Route::get('/my-certificates', [CertificateController::class, 'myCertificates'])->name('my-certificates');
-        Route::get('/download/{certificate}', [CertificateController::class, 'download'])->name('download');
-        Route::post('/generate', [CertificateController::class, 'generate'])->name('generate');
-    });
+    // Certificate preview for students
+    Route::get('/preview/{course?}', [CertificateController::class, 'preview'])->name('preview');
 });
 
 // API Routes for AJAX requests

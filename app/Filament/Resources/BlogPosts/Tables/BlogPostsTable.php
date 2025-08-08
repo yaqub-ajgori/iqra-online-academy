@@ -11,32 +11,16 @@ class BlogPostsTable
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('featured_image')
-                    ->label('Image')
-                    ->circular()
-                    ->defaultImageUrl(url('https://ui-avatars.com/api/?name=Blog+Post'))
-                    ->size(40)
-                    ->toggleable(),
-                    
                 Tables\Columns\TextColumn::make('title')
                     ->label('Title')
                     ->searchable()
                     ->sortable()
-                    ->limit(40)
-                    ->tooltip(fn ($record) => $record->title),
-                    
-                Tables\Columns\TextColumn::make('author.name')
-                    ->label('Author')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+                    ->limit(35),
                     
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Category')
                     ->badge()
-                    ->color('primary')
-                    ->searchable()
-                    ->sortable(),
+                    ->color('primary'),
                     
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
@@ -47,9 +31,25 @@ class BlogPostsTable
                         'published' => 'success',
                         'archived' => 'danger',
                         default => 'gray',
-                    })
-                    ->formatStateUsing(fn ($state) => ucfirst($state))
+                    }),
+                    
+                Tables\Columns\TextColumn::make('published_at')
+                    ->label('Published')
+                    ->date()
                     ->sortable(),
+                    
+                Tables\Columns\ImageColumn::make('featured_image')
+                    ->label('Image')
+                    ->circular()
+                    ->defaultImageUrl(url('https://ui-avatars.com/api/?name=Blog+Post'))
+                    ->size(40)
+                    ->toggleable(isToggledHiddenByDefault: true),
+                    
+                Tables\Columns\TextColumn::make('author.name')
+                    ->label('Author')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                     
                 Tables\Columns\IconColumn::make('is_featured')
                     ->label('Featured')
@@ -58,7 +58,7 @@ class BlogPostsTable
                     ->falseIcon('heroicon-o-star')
                     ->trueColor('warning')
                     ->falseColor('gray')
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                     
                 Tables\Columns\IconColumn::make('is_sticky')
                     ->label('Sticky')
@@ -67,13 +67,7 @@ class BlogPostsTable
                     ->falseIcon('heroicon-o-bookmark')
                     ->trueColor('info')
                     ->falseColor('gray')
-                    ->toggleable(),
-                    
-                Tables\Columns\TextColumn::make('published_at')
-                    ->label('Published')
-                    ->dateTime('M j, Y')
-                    ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                     
                 Tables\Columns\TextColumn::make('views_count')
                     ->label('Views')

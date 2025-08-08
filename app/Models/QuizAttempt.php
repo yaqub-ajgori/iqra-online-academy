@@ -2,38 +2,37 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QuizAttempt extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'quiz_id',
-        'student_id',
+        'user_id',
         'answers',
         'score',
         'correct_answers',
         'total_questions',
+        'is_passed',
         'started_at',
         'completed_at',
-        'time_taken_seconds',
-        'is_passed',
-        'feedback',
+        'time_spent_seconds',
     ];
 
     protected $casts = [
         'answers' => 'array',
-        'score' => 'decimal:2',
+        'score' => 'integer',
+        'correct_answers' => 'integer',
+        'total_questions' => 'integer',
         'is_passed' => 'boolean',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
+        'time_spent_seconds' => 'integer',
     ];
 
     /**
-     * Get the quiz that owns the attempt.
+     * Get the quiz this attempt belongs to.
      */
     public function quiz(): BelongsTo
     {
@@ -41,104 +40,65 @@ class QuizAttempt extends Model
     }
 
     /**
-     * Get the student that made the attempt.
+     * Get the user who made this attempt.
      */
-    public function student(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(User::class);
     }
 
     /**
-     * Scope: Completed attempts only.
+     * Get formatted time spent.
      */
-    public function scopeCompleted($query)
+    public function getFormattedTimeSpentAttribute(): string
     {
-        return $query->whereNotNull('completed_at');
-    }
-
-    /**
-     * Scope: Passed attempts only.
-     */
-    public function scopePassed($query)
-    {
-        return $query->where('is_passed', true);
-    }
-
-    /**
-     * Get formatted time taken.
-     */
-    public function getFormattedTimeTakenAttribute(): string
-    {
-        if (!$this->time_taken_seconds) {
-            return '0:00';
+        if (!$this->time_spent_seconds) {
+            return 'N/A';
         }
 
-        $hours = floor($this->time_taken_seconds / 3600);
-        $minutes = floor(($this->time_taken_seconds % 3600) / 60);
-        $seconds = $this->time_taken_seconds % 60;
+        $minutes = floor($this->time_spent_seconds / 60);
+        $seconds = $this->time_spent_seconds % 60;
 
-        if ($hours > 0) {
-            return sprintf('%d:%02d:%02d', $hours, $minutes, $seconds);
+        if ($minutes > 0) {
+            return "{$minutes} মিনিট {$seconds} সেকেন্ড";
         }
 
-        return sprintf('%d:%02d', $minutes, $seconds);
+        return "{$seconds} সেকেন্ড";
     }
 
     /**
-     * Get percentage score.
-     */
-    public function getPercentageScoreAttribute(): float
-    {
-        return $this->score ?? 0.0;
-    }
-
-    /**
-     * Get grade letter.
-     */
-    public function getGradeAttribute(): string
-    {
-        $score = $this->score ?? 0;
-        
-        if ($score >= 90) return 'A+';
-        if ($score >= 85) return 'A';
-        if ($score >= 80) return 'A-';
-        if ($score >= 75) return 'B+';
-        if ($score >= 70) return 'B';
-        if ($score >= 65) return 'B-';
-        if ($score >= 60) return 'C+';
-        if ($score >= 55) return 'C';
-        if ($score >= 50) return 'C-';
-        
-        return 'F';
-    }
-
-    /**
-     * Calculate and update the score for this attempt.
+     * Calculate and update the score based on answers.
      */
     public function calculateScore(): void
     {
+        if (!$this->answers || !$this->quiz) {
+            return;
+        }
+
         $quiz = $this->quiz;
-        $questions = $quiz->questions()->active()->get();
-        
-        $correctCount = 0;
+        $questions = $quiz->questions;
+        $correctAnswers = 0;
+        $totalQuestions = $questions->count();
         $totalPoints = 0;
         $earnedPoints = 0;
 
         foreach ($questions as $question) {
             $totalPoints += $question->points;
-            $studentAnswer = $this->answers[$question->id] ?? null;
-            
-            if ($question->isCorrectAnswer($studentAnswer)) {
-                $correctCount++;
+            $userAnswer = $this->answers[$question->id] ?? null;
+
+            if ($userAnswer !== null && $question->isAnswerCorrect($userAnswer)) {
+                $correctAnswers++;
                 $earnedPoints += $question->points;
             }
         }
 
+        $scorePercentage = $totalPoints > 0 ? round(($earnedPoints / $totalPoints) * 100) : 0;
+
         $this->update([
-            'correct_answers' => $correctCount,
-            'total_questions' => $questions->count(),
-            'score' => $totalPoints > 0 ? ($earnedPoints / $totalPoints) * 100 : 0,
-            'is_passed' => $totalPoints > 0 ? (($earnedPoints / $totalPoints) * 100) >= $quiz->passing_score : false,
+            'correct_answers' => $correctAnswers,
+            'total_questions' => $totalQuestions,
+            'score' => $scorePercentage,
+            'is_passed' => $scorePercentage >= $quiz->passing_score,
         ]);
     }
 }

@@ -256,7 +256,7 @@
                                 class="flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
                                 :class="{ 'bg-gray-100 text-[#5f5fcd]': $page.component === 'Frontend/QuranReader' }"
                             >
-                                <BookOpenIcon class="mr-3 h-5 w-5" />
+                                <BookIcon class="mr-3 h-5 w-5" />
                                 আল-কুরআন
                             </Link>
                             <Link
@@ -440,15 +440,6 @@
                                         ম্যাগাজিন
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link
-                                        :href="route('certificates.verify')"
-                                        class="group flex items-center text-gray-300 transition-colors hover:text-white"
-                                    >
-                                        <ArrowRightIcon class="mr-2 h-3 w-3 transition-transform group-hover:translate-x-1" />
-                                        সার্টিফিকেট যাচাই
-                                    </Link>
-                                </li>
                             </ul>
                         </div>
 
@@ -579,6 +570,7 @@ import { ToastContainer, useToast } from '@/components/ui/toast';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
     ArrowRightIcon,
+    BookIcon,
     BookOpenIcon,
     ChevronDownIcon,
     FacebookIcon,

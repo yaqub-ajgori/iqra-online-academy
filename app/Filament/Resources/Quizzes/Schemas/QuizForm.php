@@ -2,14 +2,12 @@
 
 namespace App\Filament\Resources\Quizzes\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
+use App\Models\Course;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 
 class QuizForm
 {
@@ -17,118 +15,95 @@ class QuizForm
     {
         return $schema
             ->components([
-                Section::make('Basic Information')
-                    ->columns(2)
+                Section::make('Quiz Information')
                     ->schema([
                         TextInput::make('title')
                             ->label('Quiz Title')
                             ->required()
                             ->maxLength(255)
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(fn (string $operation, $state, callable $set) => 
-                                $operation === 'create' ? $set('slug', Str::slug($state)) : null
-                            )
-                            ->columnSpanFull(),
-
-                        TextInput::make('slug')
-                            ->label('URL Slug')
-                            ->required()
-                            ->maxLength(255)
-                            ->unique(ignoreRecord: true)
-                            ->readOnly()
-                            ->columnSpanFull(),
-
+                            ->placeholder('Enter quiz title'),
+                        
                         Textarea::make('description')
                             ->label('Description')
+                            ->placeholder('Enter quiz description (optional)')
                             ->rows(3)
-                            ->columnSpanFull(),
-
-                        Select::make('course_id')
-                            ->label('Course')
-                            ->relationship('course', 'title')
-                            ->required()
-                            ->searchable()
-                            ->preload(),
-
-                        Select::make('lesson_id')
-                            ->label('Lesson (Optional)')
-                            ->relationship('lesson', 'title')
-                            ->searchable()
-                            ->preload(),
-
-                        Select::make('type')
-                            ->label('Quiz Type')
-                            ->options([
-                                'quiz' => 'Quiz',
-                                'exam' => 'Exam', 
-                                'assessment' => 'Assessment'
-                            ])
-                            ->default('quiz')
-                            ->required()
                             ->columnSpanFull(),
                     ]),
 
-                Section::make('Settings')
+                Section::make('Assignment')
+                    ->description('Assign this quiz to a course or specific lesson')
                     ->columns(2)
                     ->schema([
+                        Select::make('course_id')
+                            ->label('Course')
+                            ->relationship('course', 'title')
+                            ->searchable()
+                            ->preload()
+                            ->placeholder('Select a course')
+                            ->live()
+                            ->afterStateUpdated(fn (callable $set) => $set('lesson_id', null)),
+                            
+                        Select::make('lesson_id')
+                            ->label('Lesson (Optional)')
+                            ->placeholder('Select a lesson')
+                            ->searchable()
+                            ->relationship(
+                                name: 'lesson',
+                                titleAttribute: 'title',
+                                modifyQueryUsing: fn ($query, callable $get) => 
+                                    $get('course_id') ? $query->where('course_id', $get('course_id')) : $query->whereNull('id')
+                            )
+                            ->helperText('If selected, quiz will appear after this lesson. Otherwise, quiz will be available at course level.'),
+                    ]),
+
+                Section::make('Quiz Settings')
+                    ->columns(3)
+                    ->schema([
+                        TextInput::make('passing_score')
+                            ->label('Passing Score (%)')
+                            ->required()
+                            ->numeric()
+                            ->default(70)
+                            ->minValue(0)
+                            ->maxValue(100)
+                            ->suffix('%')
+                            ->helperText('Minimum score required to pass'),
+                            
                         TextInput::make('time_limit_minutes')
                             ->label('Time Limit (Minutes)')
                             ->numeric()
                             ->minValue(1)
-                            ->suffix('minutes'),
-
+                            ->suffix('min')
+                            ->placeholder('No limit')
+                            ->helperText('Leave empty for no time limit'),
+                            
                         TextInput::make('max_attempts')
-                            ->label('Maximum Attempts')
+                            ->label('Max Attempts')
+                            ->required()
                             ->numeric()
-                            ->minValue(1)
                             ->default(3)
-                            ->required(),
+                            ->minValue(1)
+                            ->helperText('Maximum attempts allowed'),
+                    ]),
 
-                        TextInput::make('passing_score')
-                            ->label('Passing Score (%)')
-                            ->numeric()
-                            ->minValue(0)
-                            ->maxValue(100)
-                            ->default(70)
-                            ->suffix('%')
-                            ->required(),
-
+                Section::make('Status & Ordering')
+                    ->columns(2)
+                    ->schema([
+                        Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'active' => 'Active', 
+                                'inactive' => 'Inactive'
+                            ])
+                            ->default('active')
+                            ->required()
+                            ->helperText('Only active quizzes are visible to students'),
+                            
                         TextInput::make('sort_order')
                             ->label('Sort Order')
                             ->numeric()
-                            ->default(0),
-                    ]),
-
-                Section::make('Options')
-                    ->columns(2)
-                    ->schema([
-                        Toggle::make('randomize_questions')
-                            ->label('Randomize Questions'),
-
-                        Toggle::make('show_results_immediately')
-                            ->label('Show Results Immediately')
-                            ->default(true),
-
-                        Toggle::make('allow_review')
-                            ->label('Allow Review')
-                            ->default(true),
-
-                        Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(true),
-                    ]),
-                    
-                Section::make('Scheduling')
-                    ->columns(2)
-                    ->schema([
-                        DateTimePicker::make('available_from')
-                            ->label('Available From')
-                            ->native(false),
-
-                        DateTimePicker::make('available_until')
-                            ->label('Available Until')
-                            ->after('available_from') 
-                            ->native(false),
+                            ->default(0)
+                            ->helperText('Lower numbers appear first'),
                     ]),
             ]);
     }

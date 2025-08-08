@@ -22,6 +22,16 @@ class LessonForm
                     ->schema([
                         Section::make('Lesson Content')
                             ->schema([
+                                Select::make('module_id')
+                                    ->label('Module')
+                                    ->relationship('module', 'title', 
+                                        fn ($query, $get, $livewire) => $query->where('course_id', $livewire->ownerRecord?->id ?? $get('../../course_id'))
+                                    )
+                                    ->searchable()
+                                    ->preload()
+                                    ->required()
+                                    ->columnSpanFull(),
+
                                 TextInput::make('title')
                                     ->label('Lesson Title')
                                     ->required()

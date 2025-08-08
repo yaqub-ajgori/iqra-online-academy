@@ -3,14 +3,10 @@
 namespace App\Filament\Resources\Quizzes\Tables;
 
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class QuizzesTable
@@ -23,82 +19,87 @@ class QuizzesTable
                     ->label('Quiz Title')
                     ->searchable()
                     ->sortable()
-                    ->weight('bold')
-                    ->description(fn ($record) => $record->course->title ?? ''),
-
+                    ->wrap(),
+                    
                 TextColumn::make('course.title')
                     ->label('Course')
                     ->sortable()
                     ->searchable()
-                    ->toggleable(),
-
-                BadgeColumn::make('type')
-                    ->label('Type')
-                    ->colors([
-                        'info' => 'quiz',
-                        'warning' => 'exam',
-                        'success' => 'assessment',
-                    ]),
-
-                TextColumn::make('total_questions')
-                    ->label('Questions')
+                    ->placeholder('No course assigned')
+                    ->wrap(),
+                    
+                TextColumn::make('lesson.title')
+                    ->label('Lesson')
                     ->sortable()
-                    ->getStateUsing(fn ($record) => $record->questions()->count())
-                    ->suffix(' questions'),
-
+                    ->searchable()
+                    ->placeholder('Course level quiz')
+                    ->wrap(),
+                    
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'active' => 'success',
+                        'inactive' => 'danger',
+                        default => 'secondary',
+                    }),
+                    
+                TextColumn::make('questions_count')
+                    ->label('Questions')
+                    ->counts('questions')
+                    ->sortable(),
+                    
+                TextColumn::make('passing_score')
+                    ->label('Pass %')
+                    ->suffix('%')
+                    ->sortable(),
+                    
                 TextColumn::make('time_limit_minutes')
                     ->label('Time Limit')
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => $state ? "{$state} min" : 'No limit'),
-
-                TextColumn::make('passing_score')
-                    ->label('Passing Score')
-                    ->sortable()
-                    ->suffix('%'),
-
-                IconColumn::make('is_active')
-                    ->label('Active')
-                    ->boolean()
+                    ->suffix(' min')
+                    ->placeholder('No limit')
                     ->sortable(),
-
+                    
+                TextColumn::make('max_attempts')
+                    ->label('Max Attempts')
+                    ->sortable(),
+                    
+                TextColumn::make('attempts_count')
+                    ->label('Attempts')
+                    ->counts('attempts')
+                    ->sortable(),
+                    
+                TextColumn::make('sort_order')
+                    ->label('Order')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                    
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('type')
+                SelectFilter::make('status')
                     ->options([
-                        'quiz' => 'Quiz',
-                        'exam' => 'Exam',
-                        'assessment' => 'Assessment'
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
                     ]),
-
-                SelectFilter::make('course_id')
-                    ->label('Course')
+                    
+                SelectFilter::make('course')
                     ->relationship('course', 'title')
+                    ->searchable()
                     ->preload(),
-
-                TernaryFilter::make('is_active')
-                    ->label('Active Status'),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->icon('heroicon-o-pencil'),
-
-                DeleteAction::make()
-                    ->icon('heroicon-o-trash'),
+                EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc')
-            ->striped()
-            ->emptyStateHeading('No quizzes yet')
-            ->emptyStateDescription('Create your first quiz to get started.')
-            ->emptyStateIcon('heroicon-o-clipboard-document-check');
+            ->defaultSort('sort_order', 'asc');
     }
 }

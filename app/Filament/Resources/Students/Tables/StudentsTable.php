@@ -17,25 +17,29 @@ class StudentsTable
         return $table
             ->columns([
                 TextColumn::make('user.name')
-                    ->label('User')
-                    ->searchable(),
-                TextColumn::make('full_name')
-                    ->label('Full Name')
-                    ->searchable(),
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('phone')
                     ->label('Phone')
                     ->searchable(),
-                TextColumn::make('gender')
-                    ->label('Gender'),
                 TextColumn::make('city')
                     ->label('City')
-                    ->searchable(),
+                    ->toggleable(),
                 IconColumn::make('is_active')
                     ->label('Active')
                     ->boolean(),
+                TextColumn::make('full_name')
+                    ->label('Full Name')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('gender')
+                    ->label('Gender')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('is_verified')
                     ->label('Verified')
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
