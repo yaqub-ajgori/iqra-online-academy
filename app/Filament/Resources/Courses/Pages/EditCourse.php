@@ -3,12 +3,10 @@
 namespace App\Filament\Resources\Courses\Pages;
 
 use App\Filament\Resources\Courses\CourseResource;
-use App\Services\CertificateService;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\Action;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Notifications\Notification;
 
 class EditCourse extends EditRecord
 {
@@ -25,23 +23,6 @@ class EditCourse extends EditRecord
                 ->openUrlInNewTab()
                 ->visible(fn () => $this->record->status === 'published'),
 
-            Action::make('generate_certificates')
-                ->label('Generate Certificates')
-                ->icon('heroicon-o-academic-cap')
-                ->color('success')
-                ->requiresConfirmation()
-                ->modalHeading('Generate Certificates')
-                ->modalDescription('This will generate certificates for all eligible students who have completed this course.')
-                ->action(function (CertificateService $certificateService) {
-                    $generated = $certificateService->autoGenerateCertificates($this->record);
-                    
-                    Notification::make()
-                        ->title('Certificates Generated')
-                        ->body("Successfully generated {$generated} certificates.")
-                        ->success()
-                        ->send();
-                })
-                ->visible(fn () => $this->record->status === 'published'),
 
             DeleteAction::make(),
         ];
@@ -65,14 +46,12 @@ class EditCourse extends EditRecord
                         return [
                             'id' => $lesson->id,
                             'title' => $lesson->title,
+                            'description' => $lesson->description,
                             'content' => $lesson->content,
-                            'lesson_type' => $lesson->lesson_type,
+                            'type' => $lesson->type,
                             'video_url' => $lesson->video_url,
-                            'video_duration' => $lesson->video_duration,
-                            'video_provider' => $lesson->video_provider,
-                            'reading_time_minutes' => $lesson->reading_time_minutes,
+                            'file_path' => $lesson->file_path,
                             'is_preview' => $lesson->is_preview,
-                            'is_mandatory' => $lesson->is_mandatory,
                             'sort_order' => $lesson->sort_order,
                             'is_active' => $lesson->is_active,
                         ];

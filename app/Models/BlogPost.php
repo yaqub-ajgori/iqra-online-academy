@@ -40,6 +40,8 @@ class BlogPost extends Model
         'reading_time' => 'integer',
     ];
 
+    protected $appends = ['featured_image_url'];
+
     protected static function boot()
     {
         parent::boot();
@@ -187,6 +189,12 @@ class BlogPost extends Model
             return $this->featured_image;
         }
 
+        // Handle paths that already include 'storage/'
+        if (str_starts_with($this->featured_image, 'storage/')) {
+            return asset($this->featured_image);
+        }
+
+        // For paths stored as 'blog-images/filename.jpg'
         return asset('storage/' . $this->featured_image);
     }
 

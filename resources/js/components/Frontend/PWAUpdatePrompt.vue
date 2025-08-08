@@ -47,7 +47,6 @@ function handleSWUpdate(event: any) {
 
 function handleSWOfflineReady() {
     // App is ready to work offline
-    console.log('App ready to work offline');
 }
 
 async function updateApp() {
@@ -56,7 +55,7 @@ async function updateApp() {
         try {
             await updateSW(true); // This will reload the page with the new version
         } catch (error) {
-            console.error('Error updating app:', error);
+            // Error updating app
             updating.value = false;
         }
     }

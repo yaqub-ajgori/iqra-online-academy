@@ -2,6 +2,17 @@
 
 namespace App\Filament\Resources\Quizzes\RelationManagers;
 
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Toggle;
+use Filament\Actions\ViewAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Schemas\Components;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -18,51 +29,51 @@ class AttemptsRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                Components\Section::make('Attempt Details')
+                Section::make('Attempt Details')
                     ->schema([
-                        Components\Select::make('student_id')
+                        Select::make('student_id')
                             ->label('Student')
                             ->relationship('student', 'full_name')
                             ->disabled()
                             ->columnSpan(2),
 
-                        Components\DateTimePicker::make('started_at')
+                        DateTimePicker::make('started_at')
                             ->label('Started At')
                             ->disabled()
                             ->columnSpan(1),
 
-                        Components\DateTimePicker::make('completed_at')
+                        DateTimePicker::make('completed_at')
                             ->label('Completed At')
                             ->disabled()
                             ->columnSpan(1),
 
-                        Components\TextInput::make('score')
+                        TextInput::make('score')
                             ->label('Score (%)')
                             ->disabled()
                             ->suffix('%')
                             ->columnSpan(1),
 
-                        Components\TextInput::make('correct_answers')
+                        TextInput::make('correct_answers')
                             ->label('Correct Answers')
                             ->disabled()
                             ->columnSpan(1),
 
-                        Components\TextInput::make('total_questions')
+                        TextInput::make('total_questions')
                             ->label('Total Questions')
                             ->disabled()
                             ->columnSpan(1),
 
-                        Components\TextInput::make('formatted_time_taken')
+                        TextInput::make('formatted_time_taken')
                             ->label('Time Taken')
                             ->disabled()
                             ->columnSpan(1),
 
-                        Components\Toggle::make('is_passed')
+                        Toggle::make('is_passed')
                             ->label('Passed')
                             ->disabled()
                             ->columnSpan(1),
 
-                        Components\Textarea::make('feedback')
+                        Textarea::make('feedback')
                             ->label('Feedback')
                             ->rows(3)
                             ->columnSpanFull(),
@@ -144,9 +155,9 @@ class AttemptsRelationManager extends RelationManager
 
                 Tables\Filters\Filter::make('date_range')
                     ->form([
-                        Components\DatePicker::make('from')
+                        DatePicker::make('from')
                             ->label('From Date'),
-                        Components\DatePicker::make('until')
+                        DatePicker::make('until')
                             ->label('Until Date'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -162,12 +173,12 @@ class AttemptsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                ViewAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateDescription('No quiz attempts yet');

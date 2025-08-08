@@ -128,8 +128,11 @@ class ContactController extends Controller
                 'phone' => $request->phone,
                 'subject' => $request->subject,
                 'message' => $request->message,
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent()
+                'metadata' => [
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'submitted_at' => now()->toISOString(),
+                ]
             ]);
 
             return back()->with('success', 'আপনার বার্তা সফলভাবে পাঠানো হয়েছে। আমরা শীঘ্রই আপনার সাথে যোগাযোগ করবো।');

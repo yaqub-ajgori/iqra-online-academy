@@ -33,7 +33,8 @@
       "Bash(vendor/bin/pest:*)",
       "Bash(php -l:*)",
       "Bash(composer test:*)",
-      "Bash(php:*)"
+      "Bash(php:*)",
+      "Bash(composer run:*)"
     ],
     "deny": []
   }

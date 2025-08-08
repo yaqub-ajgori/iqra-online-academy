@@ -2,18 +2,21 @@
     <div
         class="group shadow-islamic hover:shadow-islamic-lg relative transform overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all duration-500 hover:-translate-y-2 hover:border-[#5f5fcd]/20"
     >
-        <!-- Course Image with Enhanced Placeholder - Optimized for 600x600px -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+        <!-- Course Image with Enhanced Placeholder - Optimized for 600x600px square images -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-2xl">
             <div class="course-image-container">
                 <img
                     v-if="isValidImage(course.image)"
                     :src="course.image"
                     :alt="course.title"
-                    class="h-full w-full object-cover object-center transition-all duration-700 group-hover:scale-105 group-hover:brightness-110"
+                    class="course-image"
                     loading="lazy"
                     decoding="async"
+                    @error="handleImageError"
+                    :srcset="generateSrcset(course.image)"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
-                <CoursePlaceholder v-else class="h-full w-full" :text="course.category" />
+                <CoursePlaceholder v-else class="course-placeholder" :text="course.category" />
             </div>
 
             <!-- Badges Container -->
@@ -252,6 +255,25 @@ const isValidImage = (src: string | undefined | null): boolean => {
     return src.startsWith('http') || src.startsWith('/') || src.startsWith('storage/');
 };
 
+// Handle image loading errors
+const handleImageError = (event: Event) => {
+    const img = event.target as HTMLImageElement;
+    // Hide broken image and let placeholder show instead
+    img.style.display = 'none';
+    console.warn('Failed to load course image:', img.src);
+};
+
+// Generate responsive srcset for better image optimization
+const generateSrcset = (imageSrc: string | undefined | null): string => {
+    if (!imageSrc || !isValidImage(imageSrc)) {
+        return '';
+    }
+    
+    // For now, use the same image at different virtual sizes
+    // In the future, you could implement server-side image resizing
+    return `${imageSrc} 600w, ${imageSrc} 400w, ${imageSrc} 300w`;
+};
+
 const showDiscount = computed(() => {
     return props.course.discount_price && props.course.discount_expires_at && dayjs(props.course.discount_expires_at).isAfter(dayjs());
 });
@@ -270,22 +292,87 @@ const discountExpiresIn = computed(() => {
 </script>
 
 <style scoped>
-/* Course Image Container - 4:3 aspect ratio optimized for 600x600px images */
+/* Course Image Container - 1:1 aspect ratio optimized for 600x600px square images */
 .course-image-container {
     position: relative;
     width: 100%;
     height: 0;
-    padding-bottom: 75%; /* 4:3 aspect ratio */
+    padding-bottom: 100%; /* 1:1 aspect ratio for square images */
     overflow: hidden;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    /* Subtle loading animation */
+    background-image: linear-gradient(
+        45deg,
+        transparent 25%,
+        rgba(255, 255, 255, 0.4) 25%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 50%,
+        transparent 75%,
+        rgba(255, 255, 255, 0.4) 75%
+    );
+    background-size: 20px 20px;
+    animation: shimmer 2s infinite linear;
 }
 
-.course-image-container > img,
-.course-image-container > * {
+@keyframes shimmer {
+    0% {
+        background-position: -20px 0;
+    }
+    100% {
+        background-position: 20px 0;
+    }
+}
+
+/* Hide shimmer effect when image is loaded */
+.course-image-container:has(.course-image) {
+    animation: none;
+    background-image: none;
+}
+
+/* Course image with enhanced responsive handling */
+.course-image {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #f8fafc;
+}
+
+/* Enhanced hover effects for course images */
+.group:hover .course-image {
+    transform: scale(1.05);
+    filter: brightness(1.1) saturate(1.1);
+}
+
+/* Course placeholder with consistent sizing */
+.course-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive image sizing for different screen sizes */
+@media (max-width: 640px) {
+    .course-image-container {
+        /* On mobile, use slightly shorter aspect ratio to save space */
+        padding-bottom: 85%; /* Slightly rectangular for better mobile UX */
+    }
+}
+
+@media (min-width: 1024px) {
+    .course-image-container {
+        /* On desktop, maintain perfect square ratio */
+        padding-bottom: 100%;
+    }
 }
 
 /* Enhanced line clamp utilities */

@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\Courses\Schemas;
 
-use App\Models\Quiz;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -26,6 +24,7 @@ class LessonForm
                             ->schema([
                                 TextInput::make('title')
                                     ->label('Lesson Title')
+                                    ->required()
                                     ->maxLength(255)
                                     ->columnSpanFull(),
 
@@ -35,39 +34,16 @@ class LessonForm
                                     ->columnSpanFull()
                                     ->helperText('Brief description of the lesson'),
 
-                                Select::make('lesson_type')
+                                Select::make('type')
                                     ->label('Lesson Type')
                                     ->options([
-                                        'video' => 'Video',
                                         'text' => 'Text/Article',
-                                        'pdf' => 'PDF Document',
-                                        'quiz' => 'Quiz',
-                                        'assignment' => 'Assignment',
-                                        'live' => 'Live Session',
-                                        'mixed' => 'Mixed Content'
+                                        'video' => 'Video (YouTube/Vimeo)',
+                                        'pdf' => 'PDF Document'
                                     ])
-                                    ->placeholder('Select lesson type')
-                                    ->helperText('Mixed Content allows video, text, files, and attachments')
+                                    ->required()
+                                    ->default('text')
                                     ->live()
-                                    ->columnSpan(1),
-
-                                Select::make('quiz_id')
-                                    ->label('Select Quiz')
-                                    ->options(function (callable $get) {
-                                        $courseId = $get('../../course_id') ?? $get('../course_id') ?? $get('course_id');
-                                        if (!$courseId) {
-                                            return [];
-                                        }
-                                        return Quiz::where('course_id', $courseId)
-                                            ->where('is_active', true)
-                                            ->pluck('title', 'id')
-                                            ->toArray();
-                                    })
-                                    ->placeholder('Choose a quiz for this lesson')
-                                    ->helperText('Select an existing quiz or create one first')
-                                    ->searchable()
-                                    ->preload()
-                                    ->visible(fn ($get) => $get('lesson_type') === 'quiz')
                                     ->columnSpan(1),
 
                                 TextInput::make('sort_order')
@@ -79,11 +55,11 @@ class LessonForm
                                 RichEditor::make('content')
                                     ->label('Lesson Content')
                                     ->columnSpanFull()
+                                    ->visible(fn ($get) => in_array($get('type'), ['text', null]))
                                     ->toolbarButtons([
                                         'blockquote',
                                         'bold',
                                         'bulletList',
-                                        'codeBlock',
                                         'h2',
                                         'h3',
                                         'italic',
@@ -103,105 +79,26 @@ class LessonForm
                                     ->label('Video URL')
                                     ->url()
                                     ->maxLength(500)
-                                    ->helperText('YouTube, Vimeo, or direct video URL')
-                                    ->columnSpan(1),
-
-                                TextInput::make('video_duration')
-                                    ->label('Video Duration (seconds)')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->suffix('seconds')
-                                    ->columnSpan(1),
+                                    ->helperText('YouTube or Vimeo video URL')
+                                    ->placeholder('https://youtube.com/watch?v=... or https://vimeo.com/...')
+                                    ->required()
+                                    ->columnSpanFull(),
                             ])
-                            ->columns(2)
-                            ->visible(fn ($get) => in_array($get('lesson_type'), ['video', 'mixed', 'live']) || !$get('lesson_type')),
+                            ->visible(fn ($get) => $get('type') === 'video'),
 
-                        Section::make('File Content')
+                        Section::make('PDF File')
                             ->schema([
-                                FileUpload::make('primary_file_path')
-                                    ->label('Primary File')
+                                FileUpload::make('file_path')
+                                    ->label('PDF File')
                                     ->disk('public')
                                     ->directory('course-content')
-                                    ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                                    ->acceptedFileTypes(['application/pdf'])
                                     ->maxSize(50 * 1024) // 50MB
-                                    ->helperText('Upload PDF, DOC, or DOCX files (max 50MB)')
-                                    ->columnSpanFull(),
-
-                                Repeater::make('attachments')
-                                    ->label('Additional Attachments')
-                                    ->schema([
-                                        TextInput::make('name')
-                                            ->label('File Name')
-                                            ->placeholder('Enter file name')
-                                            ->columnSpan(1),
-
-                                        FileUpload::make('path')
-                                            ->label('File')
-                                            ->disk('public')
-                                            ->directory('course-attachments')
-                                            ->maxSize(25 * 1024) // 25MB
-                                            ->columnSpan(1),
-
-                                        Select::make('type')
-                                            ->label('File Type')
-                                            ->options([
-                                                'pdf' => 'PDF Document',
-                                                'doc' => 'Word Document',
-                                                'ppt' => 'Presentation',
-                                                'image' => 'Image',
-                                                'other' => 'Other'
-                                            ])
-                                            ->placeholder('Select file type')
-                                            ->columnSpan(1),
-                                    ])
-                                    ->columns(3)
-                                    ->addActionLabel('Add Attachment')
-                                    ->collapsible()
-                                    ->columnSpanFull(),
-
-                                Repeater::make('resources')
-                                    ->label('External Resources')
-                                    ->schema([
-                                        TextInput::make('title')
-                                            ->label('Resource Title')
-                                            ->placeholder('Enter resource title')
-                                            ->columnSpan(1),
-
-                                        TextInput::make('url')
-                                            ->label('URL')
-                                            ->url()
-                                            ->placeholder('Enter resource URL')
-                                            ->columnSpan(1),
-
-                                        Select::make('type')
-                                            ->label('Resource Type')
-                                            ->options([
-                                                'article' => 'Article',
-                                                'video' => 'Video',
-                                                'book' => 'Book',
-                                                'website' => 'Website',
-                                                'tool' => 'Tool',
-                                                'other' => 'Other'
-                                            ])
-                                            ->placeholder('Select resource type')
-                                            ->columnSpan(1),
-                                    ])
-                                    ->columns(3)
-                                    ->addActionLabel('Add Resource')
-                                    ->collapsible()
+                                    ->helperText('Upload PDF file (max 50MB)')
+                                    ->required()
                                     ->columnSpanFull(),
                             ])
-                            ->visible(fn ($get) => in_array($get('lesson_type'), ['pdf', 'text', 'mixed', 'assignment', 'quiz']) || !$get('lesson_type')),
-
-                        Section::make('Lesson Media')
-                            ->schema([
-                                FileUpload::make('thumbnail')
-                                    ->label('Lesson Thumbnail')
-                                    ->image()
-                                    ->disk('public')
-                                    ->directory('lesson-thumbnails')
-                                    ->helperText('Optional thumbnail for the lesson'),
-                            ]),
+                            ->visible(fn ($get) => $get('type') === 'pdf'),
                     ])
                     ->columnSpan(['lg' => 2, 'xl' => 2]),
 
@@ -213,30 +110,10 @@ class LessonForm
                                     ->label('Preview Lesson')
                                     ->helperText('Can be viewed without enrollment'),
 
-                                Toggle::make('is_mandatory')
-                                    ->label('Mandatory')
-                                    ->default(true)
-                                    ->helperText('Required for course completion'),
-
-                                Toggle::make('requires_completion')
-                                    ->label('Requires Completion')
-                                    ->helperText('Student must mark as completed'),
-
                                 Toggle::make('is_active')
                                     ->label('Active')
                                     ->default(true),
                             ]),
-
-                        Section::make('Completion Requirements')
-                            ->schema([
-                                TextInput::make('minimum_time_seconds')
-                                    ->label('Minimum Time (seconds)')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->suffix('seconds')
-                                    ->helperText('Minimum time student must spend on lesson'),
-                            ])
-                            ->visible(fn ($get) => $get('requires_completion')),
                     ])
                     ->columnSpan(['lg' => 1, 'xl' => 1]),
             ])

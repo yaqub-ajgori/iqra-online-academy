@@ -23,7 +23,7 @@ class BlogPostResource extends Resource
     protected static ?string $model = BlogPost::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedNewspaper;
-    protected static UnitEnum|string|null $navigationGroup = 'Blog';
+    protected static UnitEnum|string|null $navigationGroup = 'Content';
     protected static ?string $navigationLabel = 'Blog Posts';
     protected static ?string $modelLabel = 'Blog Post';
     protected static ?string $pluralModelLabel = 'Blog Posts';

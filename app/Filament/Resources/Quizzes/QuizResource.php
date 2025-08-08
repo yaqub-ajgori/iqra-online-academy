@@ -24,7 +24,7 @@ class QuizResource extends Resource
     protected static ?string $model = Quiz::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
-    protected static UnitEnum|string|null $navigationGroup = 'Academy';
+    protected static UnitEnum|string|null $navigationGroup = 'Learning';
     protected static ?int $navigationSort = 3;
 
     /**

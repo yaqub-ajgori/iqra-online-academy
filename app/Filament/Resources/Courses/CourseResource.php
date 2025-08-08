@@ -24,7 +24,7 @@ class CourseResource extends Resource
     protected static ?string $model = Course::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
-    protected static UnitEnum|string|null $navigationGroup = 'Academy';
+    protected static UnitEnum|string|null $navigationGroup = 'Learning';
     protected static ?int $navigationSort = 1;
     protected static ?string $navigationLabel = 'Courses';
 

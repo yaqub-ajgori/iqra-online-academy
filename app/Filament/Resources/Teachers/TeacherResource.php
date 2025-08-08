@@ -23,7 +23,7 @@ class TeacherResource extends Resource
     protected static ?string $model = Teacher::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
-    protected static UnitEnum|string|null $navigationGroup = 'Users';
+    protected static UnitEnum|string|null $navigationGroup = 'People';
     protected static ?string $navigationLabel = 'Teachers';
     protected static ?string $modelLabel = 'Teacher';
     protected static ?string $pluralModelLabel = 'Teachers';

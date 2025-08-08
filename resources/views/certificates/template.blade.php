@@ -470,13 +470,18 @@
                 <div class="signatures-container">
                     <div class="signature-block">
                         <div class="signature-line"></div>
-                        <div class="signature-name">Md Saeedul Mostafa</div>
-                        <div class="signature-title">Director & Founder</div>
+                        <div class="signature-name">Mohammad Saeedul Mostafa</div>
+                        <div class="signature-title">Academic Principal</div>
                     </div>
                     <div class="signature-block">
                         <div class="signature-line"></div>
-                        <div class="signature-name">Dr. Muhammad Ibrahim Al-Hafiz</div>
-                        <div class="signature-title">Chief Academic Officer</div>
+                        <div class="signature-name">Ahmadullah AL Jami</div>
+                        <div class="signature-title">Academic Director</div>
+                    </div>
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-name">Mohammad Firoz Al Unaid</div>
+                        <div class="signature-title">Administrator</div>
                     </div>
                 </div>
                 

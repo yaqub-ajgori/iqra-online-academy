@@ -20,7 +20,7 @@ class CertificateResource extends Resource
     protected static ?string $model = Certificate::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
-    protected static UnitEnum|string|null $navigationGroup = 'Academy';
+    protected static UnitEnum|string|null $navigationGroup = 'Learning';
     protected static ?int $navigationSort = 4;
     protected static ?string $navigationLabel = 'Certificate Monitoring';
 
@@ -49,13 +49,4 @@ class CertificateResource extends Resource
         ];
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::valid()->count();
-    }
-
-    public static function getNavigationBadgeColor(): ?string
-    {
-        return 'success';
-    }
 }

@@ -1,5 +1,5 @@
 <template>
-    <article class="rounded-lg bg-neutral-50 p-4">
+    <article class="rounded-lg border p-4 transition-all duration-200" :class="commentClasses">
         <!-- Comment Header -->
         <div class="mb-3 flex items-start space-x-3">
             <img v-if="comment.author_avatar" :src="comment.author_avatar" :alt="comment.author_name" class="h-10 w-10 rounded-full" />
@@ -40,7 +40,7 @@
         </div>
 
         <!-- Reply Form -->
-        <div v-if="showReplyForm" class="mt-4 ml-13 rounded-lg border border-neutral-200 bg-white p-4">
+        <div v-if="showReplyForm" class="mt-4 ml-13 rounded-lg border border-[#5f5fcd]/20 bg-gradient-to-r from-blue-50 to-indigo-50 p-4">
             <form @submit.prevent="submitReply" class="space-y-3">
                 <div v-if="!isAuthenticated" class="grid grid-cols-1 gap-3 md:grid-cols-2">
                     <input
@@ -83,7 +83,12 @@
         </div>
 
         <!-- Replies -->
-        <div v-if="comment.replies && comment.replies.length > 0" class="mt-4 ml-13 space-y-4">
+        <div v-if="comment.replies && comment.replies.length > 0" class="mt-6 ml-8 space-y-4 border-l-2 border-[#5f5fcd]/20 pl-4">
+            <div class="mb-3 flex items-center">
+                <div class="h-px flex-1 bg-gradient-to-r from-[#5f5fcd]/20 to-transparent"></div>
+                <span class="mx-3 text-xs font-medium text-[#5f5fcd]">{{ comment.replies.length }} টি উত্তর</span>
+                <div class="h-px flex-1 bg-gradient-to-l from-[#5f5fcd]/20 to-transparent"></div>
+            </div>
             <CommentItem
                 v-for="reply in comment.replies"
                 :key="reply.id"
@@ -141,6 +146,26 @@ const replyForm = ref({
     content: '',
 });
 
+const commentClasses = computed(() => {
+    if (props.isReply) {
+        return [
+            'bg-gradient-to-r from-purple-50 to-blue-50',
+            'border-[#5f5fcd]/30',
+            'ml-2',
+            'hover:from-purple-100 hover:to-blue-100',
+            'hover:border-[#5f5fcd]/50'
+        ];
+    } else {
+        return [
+            'bg-gradient-to-r from-gray-50 to-neutral-50',
+            'border-neutral-200',
+            'hover:from-gray-100 hover:to-neutral-100',
+            'hover:border-neutral-300',
+            'hover:shadow-sm'
+        ];
+    }
+});
+
 const toggleReplyForm = () => {
     showReplyForm.value = !showReplyForm.value;
     if (!showReplyForm.value) {
@@ -169,14 +194,14 @@ const submitReply = async () => {
             onSuccess: () => {
                 replyForm.value = { name: '', email: '', content: '' };
                 showReplyForm.value = false;
-                console.log('Reply submitted successfully');
+                // Reply submitted successfully
             },
             onError: (errors) => {
-                console.error('Reply submission errors:', errors);
+                // Reply submission errors
             },
         });
     } catch (error) {
-        console.error('Error submitting reply:', error);
+        // Error submitting reply
     } finally {
         replySubmitting.value = false;
     }
@@ -201,7 +226,7 @@ const toggleLike = async () => {
             },
         });
     } catch (error) {
-        console.error('Error toggling like:', error);
+        // Error toggling like
         // Revert on error
         isLiked.value = !isLiked.value;
         likeCount.value += isLiked.value ? 1 : -1;

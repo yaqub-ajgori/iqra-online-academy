@@ -2,10 +2,22 @@
 
 namespace App\Filament\Resources\Quizzes\RelationManagers;
 
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components;
+use Filament\Schemas\Components\Grid;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -20,37 +32,46 @@ class QuestionsRelationManager extends RelationManager
             ->components([
                 Components\Section::make()
                     ->schema([
-                        Components\Textarea::make('question')
+                        Textarea::make('question')
                             ->label('Question')
                             ->required()
-                            ->rows(3)
+                            ->rows(4)
                             ->columnSpanFull(),
 
-                        Components\Select::make('type')
-                            ->label('Question Type')
-                            ->options([
-                                'multiple_choice' => 'Multiple Choice',
-                                'true_false' => 'True/False',
-                                'short_answer' => 'Short Answer',
-                                'essay' => 'Essay',
-                            ])
-                            ->required()
-                            ->columnSpan(1),
+                        Grid::make(4)
+                            ->schema([
+                                Select::make('type')
+                                    ->label('Question Type')
+                                    ->options([
+                                        'multiple_choice' => 'Multiple Choice',
+                                        'true_false' => 'True/False',
+                                        'short_answer' => 'Short Answer',
+                                        'essay' => 'Essay',
+                                    ])
+                                    ->required()
+                                    ->columnSpan(2),
 
-                        Components\TextInput::make('points')
-                            ->label('Points')
-                            ->numeric()
-                            ->minValue(0.5)
-                            ->maxValue(100)
-                            ->step(0.5)
-                            ->default(1)
-                            ->required()
-                            ->columnSpan(1),
+                                TextInput::make('points')
+                                    ->label('Points')
+                                    ->numeric()
+                                    ->minValue(0.5)
+                                    ->maxValue(100)
+                                    ->step(0.5)
+                                    ->default(1)
+                                    ->required()
+                                    ->columnSpan(1),
 
-                        Components\Repeater::make('options')
+                                TextInput::make('sort_order')
+                                    ->label('Sort Order')
+                                    ->numeric()
+                                    ->default(0)
+                                    ->columnSpan(1),
+                            ]),
+
+                        Repeater::make('options')
                             ->label('Answer Options')
                             ->simple(
-                                Components\TextInput::make('option')
+                                TextInput::make('option')
                                     ->label('Option')
                                     ->required()
                             )
@@ -58,9 +79,10 @@ class QuestionsRelationManager extends RelationManager
                             ->maxItems(6)
                             ->defaultItems(4)
                             ->visible(fn ($get) => $get('type') === 'multiple_choice')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->columns(2),
 
-                        Components\TagsInput::make('correct_answers')
+                        TagsInput::make('correct_answers')
                             ->label('Correct Answer(s)')
                             ->placeholder('Enter correct answer(s)')
                             ->required()
@@ -72,24 +94,18 @@ class QuestionsRelationManager extends RelationManager
                             })
                             ->columnSpanFull(),
 
-                        Components\Textarea::make('explanation')
+                        Textarea::make('explanation')
                             ->label('Explanation')
                             ->helperText('Explain why this is the correct answer')
-                            ->rows(2)
+                            ->rows(3)
                             ->columnSpanFull(),
 
-                        Components\TextInput::make('sort_order')
-                            ->label('Sort Order')
-                            ->numeric()
-                            ->default(0)
-                            ->columnSpan(1),
-
-                        Components\Toggle::make('is_active')
+                        Toggle::make('is_active')
                             ->label('Active')
                             ->default(true)
-                            ->columnSpan(1),
+                            ->columnSpanFull(),
                     ])
-                    ->columns(2),
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -146,19 +162,25 @@ class QuestionsRelationManager extends RelationManager
                     ->label('Active'),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make()
+                    ->slideOver()
+                    ->modalWidth('6xl'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make()
+                    ->slideOver()
+                    ->modalWidth('6xl'),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make()
+                    ->slideOver()
+                    ->modalWidth('6xl'),
             ]);
     }
 }

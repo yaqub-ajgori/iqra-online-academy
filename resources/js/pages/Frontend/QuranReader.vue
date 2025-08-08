@@ -45,10 +45,13 @@
                             @input="debouncedSearch"
                             type="text"
                             placeholder="কুরআনে খুঁজুন... (আরবি অথবা বাংলা)"
-                            class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-white py-3 pr-4 pl-10 font-medium text-gray-700 placeholder-gray-500 transition-all duration-300 focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30"
+                            class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-white py-3 pr-4 pl-10 font-medium text-gray-700 placeholder-gray-400 transition-all duration-300 focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 focus:shadow-lg focus:bg-white/95 hover:border-[#5f5fcd]/40 hover:shadow-sm"
                         />
                         <div v-if="searchLoading" class="absolute inset-y-0 right-0 flex items-center pr-3">
-                            <div class="h-5 w-5 animate-spin rounded-full border-b-2 border-[#5f5fcd]"></div>
+                            <div class="relative">
+                                <div class="h-5 w-5 animate-spin rounded-full border-2 border-[#5f5fcd]/20 border-t-[#5f5fcd]"></div>
+                                <div class="absolute inset-0 h-5 w-5 animate-ping rounded-full bg-[#5f5fcd]/10"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -56,7 +59,7 @@
                     <button
                         @click="performSearch"
                         :disabled="searchLoading || !searchQuery.trim()"
-                        class="flex min-w-[100px] items-center justify-center rounded-lg bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] px-4 py-3 font-semibold text-white transition-all duration-300 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 sm:px-6"
+                        class="flex min-w-[100px] items-center justify-center rounded-lg bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] px-4 py-3 font-semibold text-white transition-all duration-300 hover:shadow-lg hover:scale-105 hover:from-[#4a4aa6] hover:to-[#1f3e1b] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 sm:px-6 active:scale-95"
                     >
                         <svg v-if="!searchLoading" class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -120,7 +123,7 @@
                                 <button
                                     v-if="searchResults.length > 0"
                                     @click="clearSearch"
-                                    class="rounded-lg bg-red-50 border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition-all duration-200 hover:bg-red-100 shadow-sm"
+                                    class="rounded-lg bg-red-50 border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition-all duration-200 hover:bg-red-100 hover:scale-105 hover:shadow-md shadow-sm active:scale-95"
                                 >
                                     🗑️ সাফ করুন
                                 </button>
@@ -211,7 +214,7 @@
                         v-for="topic in topicCategories"
                         :key="topic.id"
                         @click="selectTopic(topic)"
-                        class="group relative cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:scale-105 hover:transform sm:p-4"
+                        class="group relative cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:scale-105 hover:transform hover:-translate-y-1 hover:shadow-lg active:scale-95 sm:p-4"
                         :class="{
                             'pointer-events-none opacity-50': topicLoading && selectedTopic?.id === topic.id,
                             'border-[#d4a574] bg-gradient-to-br from-[#d4a574]/20 to-[#5f5fcd]/20 shadow-lg': selectedTopic?.id === topic.id,
@@ -634,9 +637,9 @@
             </div>
 
             <!-- Topic Results Header -->
-            <div v-if="topicResults.length > 0 && !topicLoading" class="mb-4 text-center sm:mb-6">
+            <div v-if="topicResults.length > 0 && !topicLoading" class="mb-4 text-center sm:mb-6 animate-fade-in animate-bounce-once">
                 <div
-                    class="inline-flex items-center rounded-full border border-[#d4a574]/20 bg-gradient-to-r from-[#d4a574]/10 to-[#5f5fcd]/10 px-4 py-2"
+                    class="inline-flex items-center rounded-full border border-[#d4a574]/20 bg-gradient-to-r from-[#d4a574]/10 to-[#5f5fcd]/10 px-4 py-2 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
                 >
                     <span class="mr-2 text-lg">{{ selectedTopic.icon }}</span>
                     <span class="font-semibold text-[#2d5a27]"> {{ selectedTopic.name }} - {{ topicResults.length }}টি আয়াত পাওয়া গেছে </span>
@@ -742,7 +745,7 @@
             </div>
 
             <!-- Premium Ayahs Display -->
-            <div v-if="(ayahs.length > 0 || surahLoading || juzLoading || pageLoading || searchResults.length > 0 || topicResults.length > 0) && !topicLoading" class="space-y-4 sm:space-y-6">
+            <div ref="resultsArea" v-if="(ayahs.length > 0 || surahLoading || juzLoading || pageLoading || searchResults.length > 0 || topicResults.length > 0) && !topicLoading" class="space-y-4 sm:space-y-6 relative">
                 <!-- Skeleton Loaders for Ayahs -->
                 <template v-if="(surahLoading && currentSurah) || (juzLoading && currentJuz) || (pageLoading && selectedPage)">
                     <div
@@ -879,7 +882,8 @@
                             class="relative rounded-xl border border-[#d4a574]/10 bg-gradient-to-r from-[#d4a574]/5 via-[#f8f9ff] to-[#d4a574]/5 p-4 shadow-sm sm:p-6"
                         >
                             <div
-                                class="text-base leading-relaxed font-medium text-gray-700 selection:bg-[#d4a574]/20 selection:text-gray-800 sm:text-lg"
+                                class="text-base leading-relaxed font-medium text-gray-700 selection:bg-[#d4a574]/20 selection:text-gray-800 sm:text-lg tracking-wide"
+                                style="line-height: 1.75;"
                             >
                                 <!-- Show search match context for topic results -->
                                 <div v-if="selectedTopic && ayah.text && ayah.text !== (ayah.translationText || ayahTranslations[ayah.numberInSurah])" class="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-lg">
@@ -946,6 +950,19 @@
                 style="display: none"
             ></audio>
 
+            <!-- Back to Top Button -->
+            <div v-if="displayAyahs.length > 3" class="fixed bottom-6 right-6 z-50">
+                <button
+                    @click="scrollToTop"
+                    class="group rounded-full bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] p-3 text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-110 active:scale-95"
+                    title="উপরে যান"
+                >
+                    <svg class="h-5 w-5 transition-transform duration-200 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                </button>
+            </div>
+
         </div>
     </FrontendLayout>
 </template>
@@ -966,6 +983,7 @@ const isPlaying = ref(false);
 const audioLoading = ref(false);
 const audioElement = ref(null);
 const nextAudioElement = ref(null); // Pre-buffer next audio
+const resultsArea = ref(null); // Reference to results display area
 const surahLoading = ref(false);
 const juzLoading = ref(false);
 const pageLoading = ref(false);
@@ -1088,7 +1106,6 @@ const selectedTopic = ref(null);
 const topicResults = ref([]);
 const topicLoading = ref(false);
 
-// const apiCache = new Map(); // Unused - using localStorage instead
 const CACHE_DURATION = 30 * 60 * 1000;
 const LOCALSTORAGE_CACHE_KEY = 'iqra_quran_cache';
 const MAX_CACHE_SIZE = 50; // Maximum number of cached items
@@ -1153,8 +1170,6 @@ const getCachedData = (key) => {
 
 const conceptSuggestions = ref([]);
 const searchHistory = ref([]);
-// const similarAyahs = ref([]); // Future feature
-// const showSimilarAyahs = ref(false); // Future feature
 const showMemorizationHelper = ref(false);
 const progressiveMode = ref(false);
 const hideTranslation = ref(false);
@@ -1544,6 +1559,28 @@ const loadSearchHistory = () => {
     }
 };
 
+// Smooth scroll to results area
+const scrollToResults = () => {
+    if (resultsArea.value) {
+        // Calculate offset to ensure header visibility
+        const offset = 80; // 80px offset from top
+        const elementPosition = resultsArea.value.offsetTop - offset;
+        
+        window.scrollTo({
+            top: elementPosition,
+            behavior: 'smooth'
+        });
+    }
+};
+
+// Scroll to top of page
+const scrollToTop = () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+};
+
 const selectTopic = async (topic) => {
     // Clear any previous errors
     errorMessage.value = '';
@@ -1558,12 +1595,21 @@ const selectTopic = async (topic) => {
 
     selectedTopic.value = topic;
 
+    // Scroll to results area with a small delay to ensure content is ready
+    setTimeout(() => {
+        scrollToResults();
+    }, 100);
+
     // Check cache first
     const cacheKey = `topic_${topic.id}`;
     const cachedData = getCachedData(cacheKey);
 
     if (cachedData) {
         topicResults.value = cachedData;
+        // Scroll again after content is loaded from cache
+        setTimeout(() => {
+            scrollToResults();
+        }, 150);
         return; // Exit early with cached data
     }
 
@@ -1650,6 +1696,11 @@ const selectTopic = async (topic) => {
 
         // Cache the results
         setLocalCache(cacheKey, topicResults.value);
+        
+        // Scroll to results after content is fully loaded
+        setTimeout(() => {
+            scrollToResults();
+        }, 200);
     } catch (error) {
         console.error('Error loading topic results:', error);
         topicResults.value = [];
@@ -3304,12 +3355,36 @@ html {
     }
 }
 
+/* Bounce Once Animation for Results */
+@keyframes bounce-once {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    25% {
+        transform: translateY(-10px);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+    75% {
+        transform: translateY(-2px);
+    }
+}
+
+.animate-bounce-once {
+    animation: bounce-once 0.6s ease-out;
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+    
+    .animate-bounce-once {
+        animation: none;
     }
 }
 </style>

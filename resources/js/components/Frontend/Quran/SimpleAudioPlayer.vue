@@ -138,7 +138,7 @@ const tryNextAudioSource = async () => {
     if (currentUrlIndex.value < availableUrls.value.length - 1) {
         currentUrlIndex.value++;
         const nextUrl = availableUrls.value[currentUrlIndex.value];
-        console.log(`Trying fallback audio source ${currentUrlIndex.value + 1}:`, nextUrl);
+        // Trying fallback audio source
 
         audioElement.value.src = nextUrl;
         audioElement.value.load();
@@ -147,7 +147,7 @@ const tryNextAudioSource = async () => {
             await audioElement.value.play();
             return true;
         } catch (error) {
-            console.error(`Fallback source ${currentUrlIndex.value + 1} failed:`, error);
+            // Fallback source failed
             return await tryNextAudioSource();
         }
     }
@@ -166,7 +166,7 @@ const loadAudioWithFallback = async (url) => {
         availableUrls.value.unshift(url);
     }
 
-    console.log('Available audio sources:', availableUrls.value);
+    // Available audio sources loaded
 
     const firstUrl = availableUrls.value[0];
     if (!firstUrl) return false;
@@ -178,7 +178,7 @@ const loadAudioWithFallback = async (url) => {
         await audioElement.value.play();
         return true;
     } catch (error) {
-        console.error('Primary audio source failed:', error);
+        // Primary audio source failed
         return await tryNextAudioSource();
     }
 };
@@ -207,7 +207,7 @@ const togglePlayPause = async () => {
             }
         }
     } catch (error) {
-        console.error('Audio play error:', error);
+        // Audio play error
 
         if (error.name === 'NotAllowedError') {
             errorMessage.value = 'ব্রাউজার অডিও চালানোর অনুমতি দেয়নি। পেজ রিফ্রেশ করে আবার চেষ্টা করুন।';
@@ -295,11 +295,11 @@ const handleTimeUpdate = () => {
 };
 
 const handleError = async (event) => {
-    console.error('Audio error:', event);
+    // Audio error
 
     // Try next audio source if available
     if (currentUrlIndex.value < availableUrls.value.length - 1) {
-        console.log('Trying next audio source due to error...');
+        // Trying next audio source due to error
         const success = await tryNextAudioSource();
         if (success) {
             return; // Successfully loaded fallback
@@ -323,7 +323,7 @@ watch(
     () => props.audioUrl,
     (newUrl, oldUrl) => {
         if (newUrl && newUrl !== oldUrl && audioElement.value) {
-            console.log('Audio URL changed to:', newUrl);
+            // Audio URL changed
 
             // Stop current playback
             audioElement.value.pause();

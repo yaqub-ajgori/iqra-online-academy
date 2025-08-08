@@ -23,7 +23,7 @@ class BlogCategoryResource extends Resource
     protected static ?string $model = BlogCategory::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFolder;
-    protected static UnitEnum|string|null $navigationGroup = 'Blog';
+    protected static UnitEnum|string|null $navigationGroup = 'Content';
     protected static ?string $navigationLabel = 'Blog Categories';
     protected static ?string $modelLabel = 'Blog Category';
     protected static ?string $pluralModelLabel = 'Blog Categories';

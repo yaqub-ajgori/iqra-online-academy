@@ -350,11 +350,10 @@ class ComprehensiveTestSeeder extends Seeder
                     'course_id' => $course->id,
                     'title' => $lessonName,
                     'description' => $lessonName . ' সম্পর্কে সম্পূর্ণ ও বিস্তারিত শিক্ষা',
-                    'lesson_type' => $lessonData['type'],
+                    'type' => $this->mapLessonType($lessonData['type']),
                     'content' => $this->generateLessonContent($lessonData['type'], $lessonName),
                     'video_url' => $this->getVideoUrl($lessonData['type']),
-                    'attachments' => $this->getAttachments($lessonData['type'], $lessonName),
-                    'minimum_time_seconds' => $lessonData['duration'] * 60,
+                    'file_path' => $this->getFilePath($lessonData['type'], $lessonName),
                     'sort_order' => $lessonOrder++,
                     'is_active' => true,
                     'is_preview' => $lessonOrder <= 2, // First 2 lessons are preview
@@ -383,21 +382,20 @@ class ComprehensiveTestSeeder extends Seeder
         return null;
     }
 
-    private function getAttachments(string $type, string $title): ?string
+    private function mapLessonType(string $oldType): string
     {
-        if ($type === 'pdf' || $type === 'mixed') {
-            return json_encode([
-                [
-                    'name' => $title . ' - পাঠ্য উপকরণ.pdf',
-                    'url' => 'lessons/' . str_replace(' ', '_', $title) . '.pdf',
-                    'size' => '2.5 MB'
-                ],
-                [
-                    'name' => $title . ' - অনুশীলনী.pdf', 
-                    'url' => 'lessons/' . str_replace(' ', '_', $title) . '_exercise.pdf',
-                    'size' => '1.2 MB'
-                ]
-            ]);
+        return match($oldType) {
+            'video', 'mixed' => 'video',
+            'pdf' => 'pdf',
+            'text', 'audio', 'quiz' => 'text',
+            default => 'text',
+        };
+    }
+
+    private function getFilePath(string $type, string $title): ?string
+    {
+        if ($type === 'pdf') {
+            return 'lessons/' . str_replace(' ', '_', $title) . '.pdf';
         }
         return null;
     }
@@ -434,8 +432,7 @@ class ComprehensiveTestSeeder extends Seeder
             'sort_order' => $lesson->sort_order,
         ]);
 
-        // Update lesson to link to quiz
-        $lesson->update(['quiz_id' => $quiz->id]);
+        // Quiz is separate from lessons in streamlined structure
 
         // Create comprehensive questions for the quiz
         $this->createComprehensiveQuestions($quiz, $lesson->title, $course->title);

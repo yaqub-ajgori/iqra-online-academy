@@ -584,20 +584,18 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Additional Attachments -->
-                                <div v-if="currentLesson?.attachments && currentLesson?.attachments.length > 0" class="mb-6">
-                                    <h3 class="mb-3 font-semibold text-gray-900">অতিরিক্ত সংযুক্তি</h3>
-                                    <div class="space-y-2">
-                                        <div v-for="attachment in currentLesson?.attachments" :key="attachment.name" class="rounded border border-gray-200 bg-gray-50 p-3">
-                                            <div class="flex items-center justify-between">
-                                                <div>
-                                                    <p class="font-medium text-gray-900">{{ attachment.name }}</p>
-                                                    <p v-if="attachment.formatted_size" class="text-sm text-gray-500">{{ attachment.formatted_size }}</p>
-                                                </div>
-                                                <a :href="attachment.url" download class="text-[#5f5fcd] hover:text-[#4a4ab8]">
-                                                    <DownloadIcon class="h-4 w-4" />
-                                                </a>
+                                <!-- PDF File Download -->
+                                <div v-if="currentLesson?.type === 'pdf' && currentLesson?.file_path" class="mb-6">
+                                    <h3 class="mb-3 font-semibold text-gray-900">পিডিএফ ফাইল</h3>
+                                    <div class="rounded border border-gray-200 bg-gray-50 p-3">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="font-medium text-gray-900">{{ currentLesson.title }}.pdf</p>
+                                                <p class="text-sm text-gray-500">পিডিএফ ডকুমেন্ট</p>
                                             </div>
+                                            <a :href="currentLesson.file_url || `/storage/${currentLesson.file_path}`" download class="text-[#5f5fcd] hover:text-[#4a4ab8]">
+                                                <DownloadIcon class="h-4 w-4" />
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -720,16 +718,11 @@ interface Lesson {
     order: number;
     title: string;
     duration: string;
-    type: 'video' | 'text' | 'quiz' | 'pdf' | 'audio' | 'mixed';
+    type: 'video' | 'text' | 'pdf';
     video_url?: string;
     content?: string;
-    primary_file_url?: string;
-    primary_file_type?: string;
-    attachments?: Array<{
-        name: string;
-        url: string;
-        formatted_size?: string;
-    }>;
+    file_path?: string;
+    file_url?: string;
     resources?: Array<{
         title: string;
         url: string;

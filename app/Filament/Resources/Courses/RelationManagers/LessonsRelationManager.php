@@ -45,19 +45,13 @@ class LessonsRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
                     
-                BadgeColumn::make('lesson_type')
+                BadgeColumn::make('type')
                     ->label('Type')
                     ->colors([
                         'primary' => 'video',
                         'success' => 'text',
                         'warning' => 'pdf',
-                        'info' => 'mixed',
                     ]),
-                    
-                TextColumn::make('video_duration')
-                    ->label('Duration')
-                    ->formatStateUsing(fn ($state) => $state ? gmdate('H:i:s', $state) : '-')
-                    ->sortable(),
                     
                 IconColumn::make('is_preview')
                     ->label('Preview')

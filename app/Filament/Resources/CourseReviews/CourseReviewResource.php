@@ -29,7 +29,7 @@ class CourseReviewResource extends Resource
 
     protected static ?int $navigationSort = 4;
 
-    protected static UnitEnum|string|null $navigationGroup = 'Academy';
+    protected static UnitEnum|string|null $navigationGroup = 'Operations';
 
     public static function form(Schema $schema): Schema
     {
@@ -118,23 +118,4 @@ class CourseReviewResource extends Resource
         return auth()->user()->isAdmin();
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::where('status', CourseReview::STATUS_PENDING)->count();
-    }
-
-    public static function getNavigationBadgeColor(): ?string
-    {
-        $pendingCount = static::getNavigationBadge();
-        
-        if ($pendingCount > 10) {
-            return 'danger';
-        }
-        
-        if ($pendingCount > 5) {
-            return 'warning';
-        }
-        
-        return 'primary';
-    }
 }

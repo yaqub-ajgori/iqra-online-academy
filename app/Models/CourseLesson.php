@@ -18,23 +18,13 @@ class CourseLesson extends Model
     protected $fillable = [
         'module_id',
         'course_id',
-        'quiz_id',
         'title',
         'content',
         'description',
-        'lesson_type',
+        'type',
         'video_url',
-        'video_duration',
-        'attachments',
-        'resources',
-        'primary_file_path',
-        'primary_file_type',
-        'primary_file_size',
-        'thumbnail',
+        'file_path',
         'is_preview',
-        'is_mandatory',
-        'requires_completion',
-        'minimum_time_seconds',
         'sort_order',
         'is_active',
     ];
@@ -46,15 +36,8 @@ class CourseLesson extends Model
      */
     protected $casts = [
         'is_preview' => 'boolean',
-        'is_mandatory' => 'boolean',
-        'requires_completion' => 'boolean',
         'is_active' => 'boolean',
         'sort_order' => 'integer',
-        'video_duration' => 'integer',
-        'minimum_time_seconds' => 'integer',
-        'primary_file_size' => 'integer',
-        'attachments' => 'array',
-        'resources' => 'array',
     ];
 
     /**
@@ -73,13 +56,6 @@ class CourseLesson extends Model
         return $this->belongsTo(Course::class, 'course_id');
     }
 
-    /**
-     * Get the quiz that belongs to the lesson.
-     */
-    public function quiz(): BelongsTo
-    {
-        return $this->belongsTo(Quiz::class, 'quiz_id');
-    }
 
     /**
      * Get the lesson progress records.
@@ -110,80 +86,25 @@ class CourseLesson extends Model
      */
     public function scopeOfType($query, string $type)
     {
-        return $query->where('lesson_type', $type);
+        return $query->where('type', $type);
     }
 
 
 
     /**
-     * Get formatted video duration
+     * Get file URL (for PDF lessons).
      */
-    public function getFormattedDurationAttribute(): ?string
+    public function getFileUrlAttribute(): ?string
     {
-        if (!$this->video_duration) {
+        if (!$this->file_path) {
             return null;
         }
 
-        $hours = floor($this->video_duration / 3600);
-        $minutes = floor(($this->video_duration % 3600) / 60);
-        $seconds = $this->video_duration % 60;
-
-        if ($hours > 0) {
-            return sprintf('%d:%02d:%02d', $hours, $minutes, $seconds);
+        if (str_starts_with($this->file_path, 'http')) {
+            return $this->file_path;
         }
 
-        return sprintf('%d:%02d', $minutes, $seconds);
-    }
-
-    /**
-     * Get primary file URL.
-     */
-    public function getPrimaryFileUrlAttribute(): ?string
-    {
-        if (!$this->primary_file_path) {
-            return null;
-        }
-
-        if (str_starts_with($this->primary_file_path, 'http')) {
-            return $this->primary_file_path;
-        }
-
-        return asset('storage/' . $this->primary_file_path);
-    }
-
-    /**
-     * Get formatted file size.
-     */
-    public function getFormattedFileSizeAttribute(): ?string
-    {
-        if (!$this->primary_file_size) {
-            return null;
-        }
-
-        $bytes = $this->primary_file_size;
-        $units = ['B', 'KB', 'MB', 'GB'];
-        
-        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
-            $bytes /= 1024;
-        }
-        
-        return round($bytes, 2) . ' ' . $units[$i];
-    }
-
-    /**
-     * Get thumbnail URL.
-     */
-    public function getThumbnailUrlAttribute(): ?string
-    {
-        if (!$this->thumbnail) {
-            return null;
-        }
-
-        if (str_starts_with($this->thumbnail, 'http')) {
-            return $this->thumbnail;
-        }
-
-        return asset('storage/' . $this->thumbnail);
+        return asset('storage/' . $this->file_path);
     }
 
     /**
@@ -191,58 +112,30 @@ class CourseLesson extends Model
      */
     public function getHasDownloadableContentAttribute(): bool
     {
-        return !empty($this->primary_file_path) || 
-               !empty($this->attachments);
+        return $this->type === 'pdf' && !empty($this->file_path);
     }
 
     /**
-     * Get all downloadable files.
+     * Get lesson type icon for frontend display.
      */
-    public function getDownloadableFilesAttribute(): array
+    public function getTypeIconAttribute(): string
     {
-        $files = [];
-        
-        // Add primary file
-        if ($this->primary_file_path) {
-            $files[] = [
-                'name' => basename($this->primary_file_path),
-                'url' => $this->primary_file_url,
-                'type' => $this->primary_file_type,
-                'size' => $this->primary_file_size,
-                'formatted_size' => $this->formatted_file_size,
-            ];
-        }
-        
-        // Add attachments - ensure it's an array
-        if ($this->attachments && is_array($this->attachments)) {
-            foreach ($this->attachments as $attachment) {
-                // Ensure attachment is an array
-                if (is_array($attachment)) {
-                    $files[] = [
-                        'name' => $attachment['name'] ?? basename($attachment['url'] ?? ''),
-                        'url' => $attachment['url'] ?? '#',
-                        'type' => $attachment['type'] ?? null,
-                        'size' => $attachment['size'] ?? null,
-                        'formatted_size' => $attachment['formatted_size'] ?? null,
-                    ];
-                }
-            }
-        }
-        
-        return $files;
+        return match($this->type) {
+            'video' => 'video',
+            'pdf' => 'file-text',
+            default => 'book-open',
+        };
     }
 
     /**
-     * Format bytes to human readable format.
+     * Get lesson duration display text.
      */
-    private function formatBytes($bytes): string
+    public function getDurationAttribute(): string
     {
-        $units = ['B', 'KB', 'MB', 'GB'];
-        
-        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
-            $bytes /= 1024;
-        }
-        
-        return round($bytes, 2) . ' ' . $units[$i];
+        return match($this->type) {
+            'video' => 'ভিডিও পাঠ',
+            'pdf' => 'পিডিএফ ফাইল',
+            default => 'টেক্সট পাঠ',
+        };
     }
 }

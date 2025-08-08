@@ -11,8 +11,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
@@ -54,21 +54,8 @@ class BlogPostForm
                                     ->label('Content')
                                     ->required()
                                     ->columnSpanFull()
-                                    ->toolbarButtons([
-                                        'blockquote',
-                                        'bold',
-                                        'bulletList',
-                                        'codeBlock',
-                                        'h2',
-                                        'h3',
-                                        'italic',
-                                        'link',
-                                        'orderedList',
-                                        'redo',
-                                        'strike',
-                                        'underline',
-                                        'undo',
-                                    ]),
+                                    ->fileAttachmentsDisk('public')
+                                    ->fileAttachmentsDirectory('blog-attachments')
                             ])
                             ->columns(2),
 

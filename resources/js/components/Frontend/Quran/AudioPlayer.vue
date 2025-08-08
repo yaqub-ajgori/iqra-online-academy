@@ -158,7 +158,7 @@ const togglePlayPause = async () => {
                 throw new Error('No audio source loaded');
             }
 
-            console.log('Attempting to play audio:', audioElement.value.src);
+            // Attempting to play audio
 
             // Test if URL is accessible
             try {
@@ -167,7 +167,7 @@ const togglePlayPause = async () => {
                     throw new Error(`Audio file not accessible: ${response.status}`);
                 }
             } catch (fetchError) {
-                console.warn('Could not verify audio URL:', fetchError);
+                // Could not verify audio URL - might be CORS issue
                 // Continue anyway, might be CORS issue
             }
 
@@ -179,7 +179,7 @@ const togglePlayPause = async () => {
             }
         }
     } catch (error) {
-        console.error('Audio play/pause error:', error);
+        // Audio play/pause error
 
         if (error.name === 'NotAllowedError') {
             errorMessage.value = 'ব্রাউজার অডিও চালানোর অনুমতি দেয়নি';
@@ -243,7 +243,7 @@ const loadAudio = async (url) => {
         audioLoading.value = true;
         errorMessage.value = '';
 
-        console.log('Loading audio URL:', url);
+        // Loading audio URL
 
         // Stop current playback
         audioElement.value.pause();
@@ -275,7 +275,7 @@ const loadAudio = async (url) => {
             await audioElement.value.play();
         }
     } catch (error) {
-        console.error('Audio loading error:', error);
+        // Audio loading error
         errorMessage.value = 'অডিও লোড করতে সমস্যা হয়েছে';
         audioLoading.value = false;
         emit('error', error);

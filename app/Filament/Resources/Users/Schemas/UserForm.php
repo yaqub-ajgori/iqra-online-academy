@@ -46,7 +46,7 @@ class UserForm
                     ->nullable()
                     ->displayFormat('Y-m-d H:i'),
                     
-                Select::make('roles')
+                Select::make('role_types')
                     ->label('User Roles')
                     ->multiple()
                     ->options([
@@ -54,18 +54,13 @@ class UserForm
                         'teacher' => 'Teacher',
                         'student' => 'Student',
                     ])
-                    ->preload()
-                    ->relationship('roles', 'role_type')
-                    ->createOptionForm([
-                        Select::make('role_type')
-                            ->label('Role Type')
-                            ->options([
-                                'admin' => 'Administrator',
-                                'teacher' => 'Teacher', 
-                                'student' => 'Student',
-                            ])
-                            ->required(),
-                    ]),
+                    ->default(['student'])
+                    ->afterStateHydrated(function (Select $component, $record) {
+                        if ($record) {
+                            $component->state($record->roles->pluck('role_type')->toArray());
+                        }
+                    })
+                    ->dehydrated(false),
                     
                 Toggle::make('is_active')
                     ->label('Active User')

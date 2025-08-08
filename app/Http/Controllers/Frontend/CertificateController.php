@@ -40,6 +40,9 @@ class CertificateController extends Controller
             ]);
         }
 
+        // Store verification code in session for later use
+        session(['verified_certificate_code' => $request->verification_code]);
+
         return Inertia::render('Frontend/CertificateVerification', [
             'certificate' => [
                 'certificate_number' => $certificate->certificate_number,
@@ -47,7 +50,9 @@ class CertificateController extends Controller
                 'course_title' => $certificate->course_title,
                 'completion_date' => $certificate->completion_date->format('d M Y'),
                 'issue_date' => $certificate->issue_date->format('d M Y'),
-                'instructors' => $certificate->instructors,
+                'final_score' => $certificate->final_score,
+                'instructors' => is_array($certificate->instructors) ? $certificate->instructors : json_decode($certificate->instructors ?? '[]', true),
+                'verification_code' => $certificate->verification_code,
                 'is_valid' => true,
             ]
         ]);
@@ -155,10 +160,34 @@ class CertificateController extends Controller
                 'course_description' => $certificate->course_description,
                 'completion_date' => $certificate->completion_date->format('d M Y'),
                 'issue_date' => $certificate->issue_date->format('d M Y'),
+                'final_score' => $certificate->final_score,
                 'instructors' => $certificate->instructors,
                 'verification_code' => $certificate->verification_code,
             ]
         ]);
+    }
+
+    /**
+     * Download certificate PDF by verification code (public access).
+     */
+    public function downloadPublic(string $verificationCode)
+    {
+        $certificate = $this->certificateService->verifyCertificate($verificationCode);
+
+        if (!$certificate) {
+            abort(404, 'Certificate not found or expired.');
+        }
+
+        // Generate PDF
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('certificates.template', compact('certificate'))
+            ->setPaper('a4', 'landscape')
+            ->setOption('isHtml5ParserEnabled', true)
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('defaultFont', 'DejaVu Sans');
+        
+        $fileName = "Certificate_{$certificate->certificate_number}.pdf";
+        
+        return $pdf->download($fileName);
     }
 
     /**
@@ -173,7 +202,7 @@ class CertificateController extends Controller
             'student_name' => 'Muhammad Abdullah Ahmed',
             'course_title' => 'Comprehensive Quranic Studies & Tajweed Fundamentals',
             'course_description' => 'This comprehensive course covers the fundamental principles of Quranic recitation, Tajweed rules, Arabic pronunciation, and Islamic studies. Students learn proper articulation points (Makhraj), characteristics of letters (Sifaat), and various Tajweed regulations essential for correct Quranic recitation.',
-            'instructors' => ['Dr. Muhammad Ibrahim Al-Hafiz', 'Ustadha Sarah Khan', 'Sheikh Abdullah Al-Mansouri'],
+            'instructors' => ['Ahmadullah AL Jami', 'Ustadha Sarah Khan', 'Sheikh Abdullah Al-Mansouri'],
             'completion_date' => now()->subDays(7),
             'issue_date' => now(),
             'expiry_date' => null,

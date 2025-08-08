@@ -1,29 +1,5 @@
 <template>
     <aside class="space-y-8">
-        <!-- Search -->
-        <div class="shadow-islamic rounded-2xl border border-neutral-100 bg-white p-6">
-            <h3 class="mb-4 flex items-center text-lg font-semibold text-primary">
-                <SearchIcon class="mr-2 h-5 w-5 text-[#5f5fcd]" />
-                অনুসন্ধান
-            </h3>
-            <div class="relative">
-                <input
-                    v-model="searchQuery"
-                    type="text"
-                    placeholder="পোস্ট অনুসন্ধান করুন..."
-                    class="w-full rounded-xl border border-neutral-200 bg-neutral-50 py-3 pr-4 pl-10 focus:border-[#5f5fcd] focus:ring-[#5f5fcd]"
-                    @keyup.enter="performSearch"
-                />
-                <SearchIcon class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-neutral-400" />
-                <button
-                    v-if="searchQuery"
-                    @click="clearSearch"
-                    class="absolute top-1/2 right-3 -translate-y-1/2 transform text-neutral-400 hover:text-secondary"
-                >
-                    <XMarkIcon class="h-4 w-4" />
-                </button>
-            </div>
-        </div>
 
         <!-- Categories -->
         <div class="shadow-islamic rounded-2xl border border-neutral-100 bg-white p-6">
@@ -32,10 +8,22 @@
                 বিভাগসমূহ
             </h3>
             <ul class="space-y-2">
+                <li>
+                    <button
+                        @click="clearFilters"
+                        class="group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-neutral-50 w-full text-left cursor-pointer"
+                        :class="{ 'bg-[#5f5fcd]/10 text-[#5f5fcd]': !activeCategory && !activeTag }"
+                    >
+                        <div class="flex items-center">
+                            <div class="mr-3 h-3 w-3 rounded-full bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27]"></div>
+                            <span class="font-medium">সব পোস্ট</span>
+                        </div>
+                    </button>
+                </li>
                 <li v-for="category in categories" :key="category.id">
-                    <Link
-                        :href="route('frontend.blog.category', { slug: category.slug })"
-                        class="group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-neutral-50"
+                    <button
+                        @click="filterByCategory(category.slug)"
+                        class="group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-neutral-50 w-full text-left cursor-pointer"
                         :class="{ 'bg-[#5f5fcd]/10 text-[#5f5fcd]': category.slug === activeCategory }"
                     >
                         <div class="flex items-center">
@@ -45,7 +33,7 @@
                         <span class="text-sm text-muted group-hover:text-neutral-700">
                             {{ category.posts_count }}
                         </span>
-                    </Link>
+                    </button>
                 </li>
             </ul>
         </div>
@@ -57,16 +45,16 @@
                 জনপ্রিয় ট্যাগ
             </h3>
             <div class="flex flex-wrap gap-2">
-                <Link
+                <button
                     v-for="tag in popularTags"
                     :key="tag.id"
-                    :href="route('frontend.blog.tag', { slug: tag.slug })"
-                    class="inline-flex items-center rounded-lg bg-neutral-100 px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-[#5f5fcd] hover:text-white"
+                    @click="filterByTag(tag.slug)"
+                    class="inline-flex items-center rounded-lg bg-neutral-100 px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-[#5f5fcd] hover:text-white cursor-pointer"
                     :class="{ 'bg-[#5f5fcd] text-white': tag.slug === activeTag }"
                 >
                     #{{ tag.name }}
                     <span class="ml-1 text-xs opacity-75">({{ tag.posts_count }})</span>
-                </Link>
+                </button>
             </div>
         </div>
 
@@ -75,6 +63,9 @@
             <h3 class="mb-4 flex items-center text-lg font-semibold text-primary">
                 <ClockIcon class="mr-2 h-5 w-5 text-[#5f5fcd]" />
                 সাম্প্রতিক পোস্ট
+                <span v-if="activeCategory || activeTag" class="ml-2 rounded-full bg-[#5f5fcd]/10 px-2 py-1 text-xs font-normal text-[#5f5fcd]">
+                    ফিল্টার করা
+                </span>
             </h3>
             <div class="space-y-4">
                 <article v-for="post in recentPosts" :key="post.id" class="group cursor-pointer">
@@ -116,11 +107,8 @@ import {
     Clock as ClockIcon,
     Hash as HashtagIcon,
     Newspaper as NewspaperIcon,
-    Search as SearchIcon,
     Tag as TagIcon,
-    X as XMarkIcon,
 } from 'lucide-vue-next';
-import { ref } from 'vue';
 
 interface Category {
     id: number;
@@ -155,18 +143,53 @@ interface Props {
 
 defineProps<Props>();
 
-const searchQuery = ref('');
-
-const performSearch = () => {
-    if (searchQuery.value.trim()) {
-        router.get(route('frontend.blog.search'), {
-            q: searchQuery.value.trim(),
-        });
+const filterByCategory = (categorySlug: string) => {
+    const url = new URL(window.location.href);
+    url.pathname = '/blog';
+    url.searchParams.delete('page');
+    url.searchParams.delete('tag'); // Clear tag filter when filtering by category
+    
+    if (categorySlug) {
+        url.searchParams.set('category', categorySlug);
+    } else {
+        url.searchParams.delete('category');
     }
+    
+    router.get(url.toString(), {}, {
+        preserveState: false,
+        preserveScroll: false,
+    });
 };
 
-const clearSearch = () => {
-    searchQuery.value = '';
+const filterByTag = (tagSlug: string) => {
+    const url = new URL(window.location.href);
+    url.pathname = '/blog';
+    url.searchParams.delete('page');
+    url.searchParams.delete('category'); // Clear category filter when filtering by tag
+    
+    if (tagSlug) {
+        url.searchParams.set('tag', tagSlug);
+    } else {
+        url.searchParams.delete('tag');
+    }
+    
+    router.get(url.toString(), {}, {
+        preserveState: false,
+        preserveScroll: false,
+    });
+};
+
+const clearFilters = () => {
+    const url = new URL(window.location.href);
+    url.pathname = '/blog';
+    url.searchParams.delete('page');
+    url.searchParams.delete('category');
+    url.searchParams.delete('tag');
+    
+    router.get(url.toString(), {}, {
+        preserveState: false,
+        preserveScroll: false,
+    });
 };
 
 const formatDate = (date: string) => {

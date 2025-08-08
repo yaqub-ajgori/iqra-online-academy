@@ -97,6 +97,7 @@ Route::prefix('certificates')->name('certificates.')->group(function () {
     Route::get('/verify', [CertificateController::class, 'verify'])->name('verify');
     Route::post('/verify', [CertificateController::class, 'checkVerification'])->name('check');
     Route::get('/view/{verificationCode}', [CertificateController::class, 'show'])->name('view');
+    Route::get('/download-public/{verificationCode}', [CertificateController::class, 'downloadPublic'])->name('download.public');
     
     // Preview routes (for development/testing)
     Route::get('/preview', [CertificateController::class, 'preview'])->name('preview');

@@ -87,30 +87,35 @@ class BlogController extends Controller
                 ->get();
         });
 
-        $recentPosts = Cache::remember('blog_recent_posts', 1800, function () {
-            return BlogPost::with(['author'])
-                ->published()
-                ->latest('published_at')
-                ->limit(5)
-                ->get()
-                ->map(function ($post) {
-                    return [
-                        'id' => $post->id,
-                        'slug' => $post->slug,
-                        'title' => strip_tags($post->title),
-                        'featured_image_url' => $post->featured_image_url,
-                        'published_at' => $post->published_at->toISOString(),
-                    ];
-                });
-        });
-
-        // Support for infinite scroll with merge
-        if ($request->has('merge') && $request->boolean('merge')) {
-            return Inertia::merge([
-                'posts' => $posts->items(),
-                'hasMorePosts' => $posts->hasMorePages(),
-            ]);
+        // Get recent posts based on current filters
+        $recentPostsQuery = BlogPost::with(['author'])->published()->latest('published_at');
+        
+        // Apply same filters as main query for consistent recent posts
+        if ($request->filled('category')) {
+            $recentPostsQuery->whereHas('category', function ($q) use ($request) {
+                $q->where('slug', $request->category);
+            });
         }
+
+        if ($request->filled('tag')) {
+            $recentPostsQuery->whereHas('tags', function ($q) use ($request) {
+                $q->where('slug', $request->tag);
+            });
+        }
+
+        $recentPosts = $recentPostsQuery
+            ->limit(5)
+            ->get()
+            ->map(function ($post) {
+                return [
+                    'id' => $post->id,
+                    'slug' => $post->slug,
+                    'title' => strip_tags($post->title),
+                    'featured_image_url' => $post->featured_image_url,
+                    'published_at' => $post->published_at->toISOString(),
+                ];
+            });
+
 
         return Inertia::render('Frontend/Blog/BlogIndex', [
             'posts' => $posts->items(),
@@ -118,7 +123,14 @@ class BlogController extends Controller
             'categories' => $categories,
             'popularTags' => $popularTags,
             'recentPosts' => $recentPosts,
-            'hasMorePosts' => $posts->hasMorePages(),
+            'pagination' => [
+                'current_page' => $posts->currentPage(),
+                'last_page' => $posts->lastPage(),
+                'per_page' => $posts->perPage(),
+                'total' => $posts->total(),
+                'has_more_pages' => $posts->hasMorePages(),
+                'next_page_url' => $posts->nextPageUrl(),
+            ],
             'activeCategory' => $request->category,
             'filters' => [
                 'search' => $request->search,
@@ -257,32 +269,12 @@ class BlogController extends Controller
     }
 
     /**
-     * Search blog posts.
+     * Search blog posts - redirect to index with search parameter.
      */
     public function search(Request $request)
     {
         $query = $request->get('q', '');
-        
-        $posts = BlogPost::with(['author', 'category', 'tags'])
-            ->published()
-            ->where(function ($q) use ($query) {
-                $q->where('title', 'like', "%{$query}%")
-                  ->orWhere('content', 'like', "%{$query}%")
-                  ->orWhere('excerpt', 'like', "%{$query}%");
-            })
-            ->orderBy('published_at', 'desc')
-            ->paginate(12);
-
-        $posts->getCollection()->transform(function ($post) {
-            return $this->formatPostForFrontend($post);
-        });
-
-        return Inertia::render('Frontend/Blog/BlogSearch', [
-            'query' => $query,
-            'posts' => $posts->items(),
-            'hasMorePosts' => $posts->hasMorePages(),
-            'totalResults' => $posts->total(),
-        ]);
+        return redirect()->route('frontend.blog.index', ['search' => $query]);
     }
 
     /**

@@ -22,7 +22,7 @@ class CourseEnrollmentResource extends Resource
     protected static ?string $model = CourseEnrollment::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
-    protected static UnitEnum|string|null $navigationGroup = 'Academy';
+    protected static UnitEnum|string|null $navigationGroup = 'Operations';
     protected static ?string $navigationLabel = 'Course Enrollments';
     protected static ?string $modelLabel = 'Course Enrollment';
     protected static ?string $pluralModelLabel = 'Course Enrollments';

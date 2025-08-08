@@ -38,11 +38,11 @@
                         <span class="text-sm font-medium text-white">{{ post.category.name }}</span>
                     </div>
 
-                    <h1 class="mb-6 text-3xl leading-tight font-bold text-white lg:text-5xl">
+                    <h1 class="mb-6 text-3xl leading-tight font-bold text-white sm:text-4xl lg:text-5xl">
                         {{ post.title }}
                     </h1>
 
-                    <div class="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-300">
+                    <div class="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-300 sm:gap-6">
                         <div class="flex items-center">
                             <CalendarIcon class="mr-2 h-4 w-4" />
                             {{ formatDate(post.published_at) }}
@@ -65,38 +65,66 @@
         </section>
 
         <!-- Main Content -->
-        <article class="py-12 lg:py-16">
+        <article class="py-8 sm:py-12 lg:py-16">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 gap-12 lg:grid-cols-4">
+                <div class="grid grid-cols-1 gap-8 lg:gap-12 lg:grid-cols-4">
                     <!-- Article Content -->
                     <div class="lg:col-span-3">
-                        <!-- Social Share -->
-                        <div class="mb-8 flex items-center space-x-4">
-                            <span class="text-sm font-medium text-neutral-700">শেয়ার করুন:</span>
-                            <div class="flex space-x-2">
-                                <button @click="shareOnFacebook" class="rounded-lg bg-blue-600 p-2 text-white transition-colors hover:bg-blue-700">
-                                    <Facebook class="h-4 w-4" />
-                                </button>
-                                <button @click="shareOnTwitter" class="rounded-lg bg-sky-500 p-2 text-white transition-colors hover:bg-sky-600">
-                                    <Twitter class="h-4 w-4" />
-                                </button>
-                                <button @click="shareOnWhatsApp" class="rounded-lg bg-green-600 p-2 text-white transition-colors hover:bg-green-700">
-                                    <MessageCircle class="h-4 w-4" />
-                                </button>
-                                <button @click="copyLink" class="rounded-lg bg-neutral-600 p-2 text-white transition-colors hover:bg-neutral-700">
-                                    <LinkIcon class="h-4 w-4" />
-                                </button>
+
+                        <!-- Featured Image -->
+                        <div v-if="post.featured_image_url" class="mb-12">
+                            <div class="overflow-hidden rounded-2xl shadow-2xl">
+                                <img 
+                                    :src="post.featured_image_url" 
+                                    :alt="post.title" 
+                                    class="h-64 w-full object-cover transition-transform duration-300 hover:scale-105 lg:h-96" 
+                                />
                             </div>
                         </div>
 
-                        <!-- Featured Image -->
-                        <div v-if="post.featured_image_url" class="mb-8">
-                            <img :src="post.featured_image_url" :alt="post.title" class="h-64 w-full rounded-2xl object-cover shadow-lg lg:h-96" />
+                        <!-- Article Content -->
+                        <div class="prose prose-lg mb-12 max-w-none">
+                            <div v-html="post.content" class="blog-content"></div>
                         </div>
 
-                        <!-- Article Content -->
-                        <div class="prose prose-lg mb-8 max-w-none">
-                            <div v-html="post.content" class="blog-content"></div>
+                        <!-- Social Share -->
+                        <div class="mb-8 rounded-2xl border border-neutral-100 bg-white p-6 shadow-sm">
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h3 class="mb-1 text-lg font-semibold text-primary">এই পোস্টটি শেয়ার করুন</h3>
+                                    <p class="text-sm text-muted">অন্যদের সাথে এই জ্ঞান ভাগ করে নিন</p>
+                                </div>
+                                <div class="flex flex-wrap gap-3">
+                                    <button 
+                                        @click="shareOnFacebook" 
+                                        class="group flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-blue-700 hover:shadow-md"
+                                    >
+                                        <Facebook class="h-4 w-4" />
+                                        Facebook
+                                    </button>
+                                    <button 
+                                        @click="shareOnTwitter" 
+                                        class="group flex items-center gap-2 rounded-lg bg-sky-500 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-sky-600 hover:shadow-md"
+                                    >
+                                        <Twitter class="h-4 w-4" />
+                                        Twitter
+                                    </button>
+                                    <button 
+                                        @click="shareOnWhatsApp" 
+                                        class="group flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-green-700 hover:shadow-md"
+                                    >
+                                        <MessageCircle class="h-4 w-4" />
+                                        WhatsApp
+                                    </button>
+                                    <button 
+                                        @click="copyLink" 
+                                        class="group flex items-center gap-2 rounded-lg bg-neutral-600 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-neutral-700 hover:shadow-md"
+                                    >
+                                        <LinkIcon class="h-4 w-4" />
+                                        লিংক কপি
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Tags -->
@@ -115,14 +143,14 @@
                         </div>
 
                         <!-- Reactions -->
-                        <div class="mb-8 rounded-2xl bg-neutral-50">
+                        <div class="mb-8 rounded-2xl border border-neutral-100 bg-white p-6 shadow-sm">
                             <h3 class="mb-4 text-lg font-semibold text-primary">এই পোস্টটি কেমন লাগল?</h3>
 
-                            <div class="flex space-x-4">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:gap-4">
                                 <button
                                     @click="toggleReaction('like')"
                                     :disabled="reactionLoading"
-                                    class="reaction-btn-like group flex transform cursor-pointer items-center rounded-lg border px-4 py-2 transition-all duration-300 hover:scale-105 active:scale-95"
+                                    class="reaction-btn-like group flex flex-1 transform cursor-pointer items-center justify-center rounded-lg border px-4 py-3 transition-all duration-300 hover:scale-105 active:scale-95 sm:flex-none sm:justify-start"
                                     :class="[
                                         reactionCounts.like_active
                                             ? 'border-red-200 bg-red-50 text-red-700 shadow-md'
@@ -149,7 +177,7 @@
                                 <button
                                     @click="toggleReaction('helpful')"
                                     :disabled="reactionLoading"
-                                    class="reaction-btn-helpful group flex transform cursor-pointer items-center rounded-lg border px-4 py-2 transition-all duration-300 hover:scale-105 active:scale-95"
+                                    class="reaction-btn-helpful group flex flex-1 transform cursor-pointer items-center justify-center rounded-lg border px-4 py-3 transition-all duration-300 hover:scale-105 active:scale-95 sm:flex-none sm:justify-start"
                                     :class="[
                                         reactionCounts.helpful_active
                                             ? 'border-green-200 bg-green-50 text-green-700 shadow-md'
@@ -194,8 +222,8 @@
                                         <li v-for="item in tableOfContents" :key="item.id">
                                             <a
                                                 :href="`#${item.id}`"
-                                                class="block py-1 text-sm text-secondary transition-colors hover:text-[#5f5fcd]"
-                                                :class="{ 'pl-4': item.level > 2 }"
+                                                class="block rounded-lg py-2 px-2 text-sm text-secondary transition-all hover:bg-[#5f5fcd]/5 hover:text-[#5f5fcd]"
+                                                :class="{ 'pl-6': item.level > 2, 'font-medium': item.level === 2 }"
                                             >
                                                 {{ item.text }}
                                             </a>
@@ -409,7 +437,17 @@ const shareOnWhatsApp = () => {
 const copyLink = async () => {
     try {
         await navigator.clipboard.writeText(window.location.href);
-        // Show success message
+        // Create a temporary notification
+        const notification = document.createElement('div');
+        notification.textContent = 'লিংক কপি হয়েছে!';
+        notification.className = 'fixed bottom-4 right-4 z-50 rounded-lg bg-green-600 px-4 py-2 text-white shadow-lg transition-all duration-300';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(20px)';
+            setTimeout(() => document.body.removeChild(notification), 300);
+        }, 2000);
     } catch (err) {
         console.error('Failed to copy link:', err);
     }
@@ -530,23 +568,26 @@ onUnmounted(() => {
 <style scoped>
 .prose {
     color: var(--color-iqra-neutral-700);
-    line-height: 1.6;
+    line-height: 1.8;
+    font-size: 1.125rem;
 }
 
 .prose h2 {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: 700;
     color: var(--color-iqra-text-primary);
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e5e7eb;
 }
 
 .prose h3 {
-    font-size: 1.25rem;
+    font-size: 1.375rem;
     font-weight: 700;
     color: var(--color-iqra-text-primary);
-    margin-top: 1.5rem;
-    margin-bottom: 0.75rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
 }
 
 .prose h4 {
@@ -558,25 +599,42 @@ onUnmounted(() => {
 }
 
 .prose p {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: justify;
 }
 
 .prose ul,
 .prose ol {
-    margin-bottom: 1rem;
-    padding-left: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
 }
 
 .prose li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.7;
 }
 
 .prose blockquote {
     border-left: 4px solid #5f5fcd;
-    padding-left: 1rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
     font-style: italic;
+    font-size: 1.1rem;
     color: var(--color-iqra-text-secondary);
-    margin: 1.5rem 0;
+    margin: 2rem 0;
+    position: relative;
+    quotes: '\201C' '\201D';
+}
+
+.prose blockquote::before {
+    content: open-quote;
+    font-size: 2rem;
+    color: #5f5fcd;
+    position: absolute;
+    top: 0.5rem;
+    left: 1rem;
+    line-height: 1;
 }
 
 .prose code {
@@ -650,5 +708,35 @@ onUnmounted(() => {
 
 .count-change {
     animation: numberPop 0.4s ease-in-out;
+}
+
+/* Mobile responsive typography */
+@media (max-width: 640px) {
+    .prose {
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+    
+    .prose h2 {
+        font-size: 1.5rem;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .prose h3 {
+        font-size: 1.25rem;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .prose p {
+        margin-bottom: 1.25rem;
+    }
+    
+    .prose blockquote {
+        padding: 1rem;
+        margin: 1.5rem 0;
+        font-size: 1rem;
+    }
 }
 </style>

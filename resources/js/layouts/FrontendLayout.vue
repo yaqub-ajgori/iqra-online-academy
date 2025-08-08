@@ -139,24 +139,20 @@
                             </button>
                         </form>
 
-                        <!-- Enhanced Auth Buttons -->
+                        <!-- Student Auth Section -->
                         <div class="hidden items-center space-x-4 md:flex">
-                            <template v-if="$page.props.auth && $page.props.auth.user">
-                                <!-- Enhanced User Dropdown -->
+                            <template v-if="$page.props.auth && $page.props.auth.user && isStudent">
+                                <!-- Student Dropdown -->
                                 <div class="relative">
                                     <button
                                         @click="userDropdownOpen = !userDropdownOpen"
-                                        class="flex items-center space-x-3 rounded-lg p-2 text-gray-700 transition-all duration-200 hover:bg-gray-50 hover:text-[#5f5fcd]"
+                                        class="flex items-center space-x-2 rounded-lg p-2 text-gray-700 transition-all duration-200 hover:bg-gray-50 hover:text-[#5f5fcd] focus:outline-none focus:ring-2 focus:ring-[#5f5fcd]/20"
                                     >
                                         <div class="relative">
-                                            <div
-                                                class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] shadow-sm"
-                                            >
+                                            <div class="student-avatar flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] shadow-sm">
                                                 <span class="text-sm font-semibold text-white">{{ $page.props.auth.user.name.charAt(0) }}</span>
                                             </div>
-                                            <div
-                                                class="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-white bg-green-400"
-                                            ></div>
+                                            <div class="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-green-400"></div>
                                         </div>
                                         <ChevronDownIcon
                                             class="h-4 w-4 transition-transform duration-200"
@@ -164,39 +160,33 @@
                                         />
                                     </button>
 
-                                    <!-- Enhanced Dropdown Menu -->
+                                    <!-- Student Dropdown Menu -->
                                     <div
                                         v-show="userDropdownOpen"
-                                        class="shadow-islamic-lg absolute right-0 z-50 mt-3 w-56 rounded-xl border border-gray-200 bg-white py-2"
+                                        class="absolute right-0 z-50 mt-2 w-52 origin-top-right rounded-lg border border-gray-200 bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 transition-all duration-200"
+                                        :class="userDropdownOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'"
                                     >
-                                        <div class="py-2">
-                                            <template v-if="userRole === 'admin'">
-                                                <!-- Only show logout for admin, no extra whitespace above -->
-                                            </template>
-                                            <template v-else-if="userRole === 'student'">
-                                                <Link
-                                                    :href="route('frontend.student.dashboard')"
-                                                    class="flex items-center px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
-                                                >
-                                                    <UserIcon class="mr-3 h-4 w-4" />
-                                                    Dashboard
-                                                </Link>
-                                                <Link
-                                                    :href="route('frontend.student.dashboard')"
-                                                    class="flex items-center px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
-                                                >
-                                                    <BookOpenIcon class="mr-3 h-4 w-4" />
-                                                    My Courses
-                                                </Link>
-                                            </template>
-                                        </div>
-                                        <div v-if="userRole === 'student'" class="my-2 border-t border-gray-200"></div>
+                                        <Link
+                                            :href="route('frontend.student.dashboard')"
+                                            class="flex items-center px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
+                                        >
+                                            <UserIcon class="mr-3 h-4 w-4" />
+                                            ড্যাশবোর্ড
+                                        </Link>
+                                        <Link
+                                            :href="route('frontend.student.dashboard')"
+                                            class="flex items-center px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
+                                        >
+                                            <BookOpenIcon class="mr-3 h-4 w-4" />
+                                            আমার কোর্স
+                                        </Link>
+                                        <div class="my-1 border-t border-gray-200"></div>
                                         <button
                                             @click="logout"
-                                            class="flex w-full items-center px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-50"
+                                            class="flex w-full items-center px-4 py-3 text-sm text-red-600 transition-colors hover:bg-red-50"
                                         >
                                             <LogOutIcon class="mr-3 h-4 w-4" />
-                                            Logout
+                                            লগআউট
                                         </button>
                                     </div>
                                 </div>
@@ -289,27 +279,27 @@
                             </Link>
 
                             <div class="mt-4 border-t border-gray-200 pt-4">
-                                <template v-if="$page.props.auth && $page.props.auth.user">
+                                <template v-if="$page.props.auth && $page.props.auth.user && isStudent">
                                     <Link
                                         :href="route('frontend.student.dashboard')"
                                         class="flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
                                     >
                                         <UserIcon class="mr-3 h-5 w-5" />
-                                        Student Dashboard
+                                        ড্যাশবোর্ড
                                     </Link>
                                     <Link
                                         :href="route('frontend.student.dashboard')"
                                         class="flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
                                     >
                                         <BookOpenIcon class="mr-3 h-5 w-5" />
-                                        My Courses
+                                        আমার কোর্স
                                     </Link>
                                     <button
                                         @click="logout"
                                         class="flex w-full items-center rounded-lg px-4 py-3 text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
                                     >
                                         <LogOutIcon class="mr-3 h-5 w-5" />
-                                        Logout
+                                        লগআউট
                                     </button>
                                 </template>
                                 <template v-else>
@@ -631,14 +621,11 @@ const page = usePage();
 const searchQuery = ref('');
 const searching = ref(false);
 
-// Computed property to determine user role
-const userRole = computed(() => {
+// Check if user is a student
+const isStudent = computed(() => {
     const user = page.props.auth?.user;
     const roles = Array.isArray((user as any)?.roles) ? (user as any).roles.map((r: any) => r.role_type) : [];
-    if (roles.includes('admin')) return 'admin';
-    if (roles.includes('teacher')) return 'teacher';
-    if (roles.includes('student')) return 'student';
-    return null;
+    return roles.includes('student');
 });
 
 // Logout function
@@ -784,6 +771,33 @@ function scrollToDonation() {
     100% {
         box-shadow: 0 0 0 0 #5f5fcd00;
     }
+}
+
+/* Student dropdown animations */
+.student-dropdown-enter-active,
+.student-dropdown-leave-active {
+    transition: all 0.2s ease;
+}
+
+.student-dropdown-enter-from,
+.student-dropdown-leave-to {
+    transform: scale(0.95);
+    opacity: 0;
+}
+
+.student-dropdown-enter-to,
+.student-dropdown-leave-from {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Avatar hover effects */
+.student-avatar:hover {
+    transform: scale(1.05);
+}
+
+.student-avatar {
+    transition: transform 0.2s ease;
 }
 
 @media (max-width: 640px) {

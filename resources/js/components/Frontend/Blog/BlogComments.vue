@@ -60,7 +60,10 @@
         </div>
 
         <!-- Comments List -->
-        <div v-if="comments.length > 0" class="space-y-6">
+        <div v-if="comments.length > 0" class="space-y-8">
+            <div class="border-t border-neutral-200 pt-6">
+                <h4 class="mb-4 text-lg font-semibold text-primary">সকল মন্তব্য</h4>
+            </div>
             <CommentItem v-for="comment in topLevelComments" :key="comment.id" :comment="comment" :post-id="postId" @reply-added="handleReplyAdded" />
         </div>
 
@@ -139,14 +142,14 @@ const submitComment = async () => {
                 };
 
                 // Show success message
-                console.log('Comment submitted successfully');
+                // Comment submitted successfully
             },
             onError: (errors) => {
-                console.error('Comment submission errors:', errors);
+                // Comment submission errors
             },
         });
     } catch (error) {
-        console.error('Error submitting comment:', error);
+        // Error submitting comment
     } finally {
         submitting.value = false;
     }

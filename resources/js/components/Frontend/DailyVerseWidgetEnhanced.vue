@@ -340,7 +340,7 @@ const getDailyVerse = async (categoryKey = null, verseIndex = null) => {
 
         loading.value = false;
     } catch (error) {
-        console.error('Error fetching verse:', error);
+        // Error fetching verse
 
         // Fallback verse (Bismillah)
         verse.value = {
@@ -378,7 +378,6 @@ const getSurahBanglaName = (englishName) => {
 
 const toggleAudio = async () => {
     if (!audioElement.value || !verse.value.audioUrl) {
-        console.log('No audio element or URL available');
         return;
     }
 
@@ -408,7 +407,7 @@ const toggleAudio = async () => {
 
         audioLoading.value = false;
     } catch (error) {
-        console.error('Audio play failed:', error);
+        // Audio play failed
         audioLoading.value = false;
         audioError.value = true;
     }
@@ -421,7 +420,7 @@ const changeSpeed = () => {
 };
 
 const handleAudioError = (event) => {
-    console.error('Audio error:', event);
+    // Audio error
     audioError.value = true;
     audioLoading.value = false;
     isPlaying.value = false;
@@ -446,7 +445,7 @@ ${verse.value.theme ? `- বিষয়: ${verse.value.theme}` : ''}
                 text: shareText,
                 url: window.location.href,
             })
-            .catch(console.error);
+            .catch(() => {});
     } else {
         // Fallback: copy to clipboard
         navigator.clipboard

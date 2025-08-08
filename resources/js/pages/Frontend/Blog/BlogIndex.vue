@@ -32,6 +32,23 @@
                     <p class="mx-auto max-w-3xl text-xl leading-relaxed text-gray-300">
                         কুরআন, হাদিস, ইসলামিক জীবনযাত্রা এবং ইতিহাস সম্পর্কে গভীর আলোচনা ও দিকনির্দেশনা
                     </p>
+
+                    <!-- Search Form -->
+                    <div class="mx-auto mt-8 max-w-md">
+                        <div class="relative">
+                            <input
+                                v-model="searchQuery"
+                                @input="handleSearch"
+                                type="text"
+                                placeholder="পোস্ট খুঁজুন..."
+                                class="w-full rounded-full border-0 bg-white/10 py-3 pl-4 pr-12 text-white placeholder-gray-300 backdrop-blur-sm focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30"
+                            />
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                                <SearchIcon v-if="!searchLoading" class="h-5 w-5 text-gray-300" />
+                                <Loader2Icon v-else class="h-5 w-5 animate-spin text-gray-300" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -80,17 +97,16 @@
                         <!-- Posts Grid -->
                         <BlogGrid :posts="filteredPosts" :loading="loading" />
 
-                        <!-- Infinite Scroll Trigger -->
-                        <div v-if="props.hasMorePosts" class="mt-12">
-                            <!-- Loading indicator -->
-                            <div v-if="loadingMore" class="py-8 text-center">
-                                <div class="inline-flex items-center space-x-2 text-gray-600">
-                                    <Loader2Icon class="h-6 w-6 animate-spin" />
-                                    <span>আরও পোস্ট লোড হচ্ছে...</span>
-                                </div>
-                            </div>
-                            <!-- Invisible trigger element -->
-                            <div ref="loadMoreTrigger" class="h-20 w-full"></div>
+                        <!-- Show More Button -->
+                        <div v-if="pagination?.has_more_pages" class="mt-12 text-center">
+                            <button
+                                @click="loadMorePosts"
+                                :disabled="loadingMore"
+                                class="inline-flex items-center rounded-lg bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] px-6 py-3 text-white font-medium transition-all duration-200 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <Loader2Icon v-if="loadingMore" class="mr-2 h-4 w-4 animate-spin" />
+                                {{ loadingMore ? 'লোড হচ্ছে...' : 'আরও দেখুন' }}
+                            </button>
                         </div>
                     </div>
 
@@ -102,6 +118,7 @@
                                 :popular-tags="popularTags"
                                 :recent-posts="recentPosts"
                                 :active-category="activeCategory"
+                                :active-tag="filters?.tag"
                             />
                         </WhenVisible>
                     </div>
@@ -118,9 +135,8 @@ import BlogSidebar from '@/components/Frontend/Blog/BlogSidebar.vue';
 import WhenVisible from '@/components/Frontend/WhenVisible.vue';
 import FrontendLayout from '@/layouts/FrontendLayout.vue';
 import { Head, router, usePage } from '@inertiajs/vue3';
-import { useIntersectionObserver } from '@vueuse/core';
-import { BookOpen as BookOpenIcon, Loader2 as Loader2Icon, Star as StarIcon } from 'lucide-vue-next';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { BookOpen as BookOpenIcon, Loader2 as Loader2Icon, Search as SearchIcon, Star as StarIcon } from 'lucide-vue-next';
+import { computed, onMounted, ref } from 'vue';
 
 interface BlogPost {
     id: number;
@@ -179,8 +195,20 @@ interface Props {
         featured_image_url?: string;
         published_at: string;
     }>;
-    hasMorePosts?: boolean;
+    pagination?: {
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+        has_more_pages: boolean;
+        next_page_url?: string;
+    };
     activeCategory?: string;
+    filters?: {
+        search?: string;
+        category?: string;
+        tag?: string;
+    };
 }
 
 const props = defineProps<Props>();
@@ -188,23 +216,12 @@ const props = defineProps<Props>();
 const activeFilter = ref('all');
 const loading = ref(false);
 const loadingMore = ref(false);
+const searchLoading = ref(false);
+const searchQuery = ref(props.filters?.search || '');
 const allPosts = ref([...props.posts]);
-const loadMoreTrigger = ref<HTMLElement>();
 const page = usePage();
 
-// Setup intersection observer for infinite scroll
-const { stop } = useIntersectionObserver(
-    loadMoreTrigger,
-    ([{ isIntersecting }]) => {
-        if (isIntersecting && props.hasMorePosts && !loadingMore.value) {
-            loadMorePosts();
-        }
-    },
-    {
-        threshold: 0.1,
-        rootMargin: '100px',
-    },
-);
+let searchTimeout: NodeJS.Timeout;
 
 const filters = [
     { key: 'all', label: 'সব পোস্ট', count: allPosts.value.length },
@@ -226,17 +243,48 @@ const filteredPosts = computed(() => {
     }
 });
 
+const handleSearch = () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+        if (searchQuery.value.length < 2 && searchQuery.value.length > 0) return;
+        
+        searchLoading.value = true;
+        
+        try {
+            const url = new URL(window.location.href);
+            url.pathname = '/blog';
+            url.searchParams.delete('page');
+            
+            if (searchQuery.value.trim()) {
+                url.searchParams.set('search', searchQuery.value.trim());
+            } else {
+                url.searchParams.delete('search');
+            }
+            
+            await router.get(url.toString(), {}, {
+                preserveState: false,
+                preserveScroll: false,
+                onSuccess: () => {
+                    allPosts.value = page.props.posts || [];
+                },
+            });
+        } catch (error) {
+            // Search failed
+        } finally {
+            searchLoading.value = false;
+        }
+    }, 500);
+};
+
 const loadMorePosts = async () => {
-    if (!props.hasMorePosts || loadingMore.value) return;
+    if (!props.pagination?.has_more_pages || loadingMore.value) return;
 
     loadingMore.value = true;
 
     try {
+        const nextPage = (props.pagination.current_page + 1).toString();
         const currentUrl = new URL(window.location.href);
-        const nextPage = (parseInt(currentUrl.searchParams.get('page') || '1') + 1).toString();
-
         currentUrl.searchParams.set('page', nextPage);
-        currentUrl.searchParams.set('merge', 'true');
 
         await router.get(
             currentUrl.toString(),
@@ -251,16 +299,12 @@ const loadMorePosts = async () => {
             },
         );
     } catch (error) {
-        console.error('Error loading more posts:', error);
+        // Error loading more posts
     } finally {
         loadingMore.value = false;
     }
 };
 
-// Cleanup intersection observer on unmount
-onUnmounted(() => {
-    stop();
-});
 
 function isRecent(publishedAt: string): boolean {
     const publishDate = new Date(publishedAt);

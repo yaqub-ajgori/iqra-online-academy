@@ -22,7 +22,7 @@ class StudentResource extends Resource
     protected static ?string $model = Student::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUser;
-    protected static UnitEnum|string|null $navigationGroup = 'Academy';
+    protected static UnitEnum|string|null $navigationGroup = 'People';
     
     /**
      * Teachers can view students, but only those enrolled in their courses

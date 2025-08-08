@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Course;
 use App\Models\Payment;
 use App\Models\CourseEnrollment;
+use App\Models\Donation;
 use Illuminate\Support\Facades\Cache;
 
 class AcademyStatsWidget extends StatsOverviewWidget
@@ -119,8 +120,20 @@ class AcademyStatsWidget extends StatsOverviewWidget
         
         $publishedCourses = Course::where('status', 'published')->count();
         
+        // Course payments revenue
         $thisMonthRevenue = Payment::where('status', 'completed')
             ->whereMonth('created_at', now()->month)->sum('amount');
+        
+        $totalCourseRevenue = Payment::where('status', 'completed')->sum('amount');
+        
+        // Donation statistics
+        $totalDonations = Donation::sum('amount');
+        $thisMonthDonations = Donation::whereMonth('created_at', now()->month)->sum('amount');
+        $donationCount = Donation::count();
+        
+        // Total income (course payments + donations)
+        $totalIncome = $totalCourseRevenue + $totalDonations;
+        $thisMonthTotalIncome = $thisMonthRevenue + $thisMonthDonations;
 
         return [
             Stat::make('Total Students', number_format($totalStudents))
@@ -141,11 +154,23 @@ class AcademyStatsWidget extends StatsOverviewWidget
                 ->description('Available for enrollment')
                 ->descriptionIcon('heroicon-m-eye'),
                 
+            Stat::make('Total Donations', '৳' . number_format($totalDonations, 0))
+                ->icon('heroicon-m-heart')
+                ->color('success')
+                ->description("{$donationCount} total donations")
+                ->descriptionIcon('heroicon-m-gift'),
+                
             Stat::make('Monthly Revenue', '৳' . number_format($thisMonthRevenue, 0))
                 ->icon('heroicon-m-banknotes')
                 ->color($thisMonthRevenue > 0 ? 'success' : 'gray')
-                ->description('Current month earnings')
+                ->description('Course payments this month')
                 ->descriptionIcon($thisMonthRevenue > 0 ? 'heroicon-m-arrow-trending-up' : 'heroicon-m-minus'),
+                
+            Stat::make('Total Income', '৳' . number_format($totalIncome, 0))
+                ->icon('heroicon-m-currency-dollar')
+                ->color('success')
+                ->description("৳" . number_format($thisMonthTotalIncome, 0) . " this month")
+                ->descriptionIcon('heroicon-m-chart-bar-square'),
         ];
     }
 } 
