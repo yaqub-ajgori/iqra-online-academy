@@ -10,7 +10,7 @@
         </div>
 
         <!-- Review Title (if exists) -->
-        <h3 v-if="testimonial.title" class="text-lg font-semibold text-gray-900 mb-3">{{ testimonial.title }}</h3>
+        <h3 v-if="testimonial.title" class="mb-3 text-lg font-semibold text-gray-900">{{ testimonial.title }}</h3>
 
         <!-- Testimonial Content -->
         <div class="relative mb-4">
@@ -21,13 +21,12 @@
         <div v-if="testimonial.is_long" class="mb-4">
             <button
                 @click="showModal = true"
-                class="inline-flex items-center text-sm text-[#5f5fcd] hover:text-[#2d5a27] transition-colors duration-200 font-medium"
+                class="inline-flex items-center text-sm font-medium text-[#5f5fcd] transition-colors duration-200 hover:text-[#2d5a27]"
             >
                 বিস্তারিত দেখুন
                 <ChevronRightIcon class="ml-1 h-4 w-4" />
             </button>
         </div>
-
 
         <!-- Rating Stars -->
         <div class="mb-6 flex items-center space-x-1">
@@ -43,7 +42,9 @@
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <!-- Enhanced Avatar -->
-                <div class="flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/20 to-[#2d5a27]/20 shadow-sm">
+                <div
+                    class="flex h-14 w-14 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/20 to-[#2d5a27]/20 shadow-sm"
+                >
                     <span class="text-base font-bold text-[#5f5fcd]">
                         {{ getInitials(testimonial.name) }}
                     </span>
@@ -51,14 +52,13 @@
 
                 <!-- Enhanced Student Details -->
                 <div>
-                    <h4 class="font-bold text-gray-900 transition-colors duration-200 group-hover:text-[#5f5fcd] text-base">
+                    <h4 class="text-base font-bold text-gray-900 transition-colors duration-200 group-hover:text-[#5f5fcd]">
                         {{ testimonial.name }}
                     </h4>
-                    <p class="text-sm text-gray-600 font-medium">ইকরা একাডেমি শিক্ষার্থী</p>
-                    <time class="text-xs text-[#d4a574] font-medium">{{ testimonial.date }}</time>
+                    <p class="text-sm font-medium text-gray-600">ইকরা একাডেমি শিক্ষার্থী</p>
+                    <time class="text-xs font-medium text-[#d4a574]">{{ testimonial.date }}</time>
                 </div>
             </div>
-
         </div>
 
         <!-- Islamic Decorative Element -->
@@ -69,39 +69,30 @@
 
     <!-- Review Details Modal -->
     <Teleport to="body">
-        <div
-            v-show="showModal"
-            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-            @click="showModal = false"
-        >
-            <div
-                class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-                @click.stop
-            >
+        <div v-show="showModal" class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4" @click="showModal = false">
+            <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white" @click.stop>
                 <div class="p-8">
                     <!-- Modal Header -->
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="mb-6 flex items-center justify-between">
                         <h2 class="text-2xl font-bold text-gray-900">বিস্তারিত রিভিউ</h2>
-                        <button
-                            @click="showModal = false"
-                            class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                        >
+                        <button @click="showModal = false" class="text-gray-400 transition-colors duration-200 hover:text-gray-600">
                             <XIcon class="h-6 w-6" />
                         </button>
                     </div>
 
                     <!-- Review Details -->
                     <div class="space-y-6">
-
                         <!-- Student Info -->
                         <div class="flex items-center space-x-3">
-                            <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10"
+                            >
                                 <span class="text-sm font-semibold text-[#5f5fcd]">
                                     {{ getInitials(testimonial.name) }}
                                 </span>
                             </div>
                             <div>
-                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                <h4 class="flex items-center font-semibold text-gray-900">
                                     {{ testimonial.name }}
                                     <CheckIcon v-if="testimonial.verified" class="ml-2 h-4 w-4 text-[#2d5a27]" />
                                 </h4>
@@ -114,7 +105,10 @@
                             <StarIcon
                                 v-for="star in 5"
                                 :key="star"
-                                :class="['h-6 w-6 transition-colors duration-200', star <= testimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300']"
+                                :class="[
+                                    'h-6 w-6 transition-colors duration-200',
+                                    star <= testimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300',
+                                ]"
                             />
                             <span class="ml-2 text-lg font-medium text-gray-700">({{ testimonial.rating }}/৫)</span>
                         </div>
@@ -124,9 +118,8 @@
 
                         <!-- Full Review Text -->
                         <div class="prose prose-lg max-w-none">
-                            <p class="text-gray-700 leading-relaxed">"{{ testimonial.full_review }}"</p>
+                            <p class="leading-relaxed text-gray-700">"{{ testimonial.full_review }}"</p>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -135,8 +128,8 @@
 </template>
 
 <script setup lang="ts">
+import { CheckIcon, ChevronRightIcon, QuoteIcon, StarIcon, XIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
-import { CheckIcon, QuoteIcon, StarIcon, ChevronRightIcon, XIcon } from 'lucide-vue-next';
 
 interface Testimonial {
     id: number | string;

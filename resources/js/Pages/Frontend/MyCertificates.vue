@@ -7,9 +7,7 @@
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
                     <h1 class="text-4xl font-bold text-white sm:text-5xl">My Certificates</h1>
-                    <p class="mt-4 text-xl text-green-100">
-                        Your achievements and certifications in Islamic education
-                    </p>
+                    <p class="mt-4 text-xl text-green-100">Your achievements and certifications in Islamic education</p>
                 </div>
             </div>
         </section>
@@ -21,17 +19,10 @@
                     <div class="flex flex-col items-center justify-center space-y-4">
                         <AwardIcon class="h-24 w-24 text-gray-400" />
                         <h3 class="text-2xl font-medium text-gray-900">No certificates yet</h3>
-                        <p class="text-gray-600 max-w-md">
+                        <p class="max-w-md text-gray-600">
                             Complete courses to earn certificates that recognize your achievements in Islamic education.
                         </p>
-                        <PrimaryButton
-                            @click="goToCourses"
-                            variant="primary"
-                            size="md"
-                            :icon="BookOpenIcon"
-                        >
-                            Browse Courses
-                        </PrimaryButton>
+                        <PrimaryButton @click="goToCourses" variant="primary" size="md" :icon="BookOpenIcon"> Browse Courses </PrimaryButton>
                     </div>
                 </div>
 
@@ -57,7 +48,7 @@
                         <!-- Certificate Body -->
                         <div class="p-6">
                             <h4 class="mb-2 text-xl font-bold text-gray-900">{{ certificate.course_title }}</h4>
-                            
+
                             <div class="mb-4 space-y-2">
                                 <div class="flex items-center text-sm text-gray-600">
                                     <CalendarIcon class="mr-2 h-4 w-4" />
@@ -105,29 +96,27 @@
                         <div>
                             <h4 class="mb-2 font-semibold text-gray-900">Certificate Verification</h4>
                             <p class="text-gray-600">
-                                Each certificate comes with a unique verification code. Anyone can verify the authenticity 
-                                of your certificate using this code on our verification page.
+                                Each certificate comes with a unique verification code. Anyone can verify the authenticity of your certificate using
+                                this code on our verification page.
                             </p>
                         </div>
                         <div>
                             <h4 class="mb-2 font-semibold text-gray-900">Digital & Print Ready</h4>
                             <p class="text-gray-600">
-                                Your certificates are available in high-quality PDF format, suitable for both digital 
-                                sharing and professional printing.
+                                Your certificates are available in high-quality PDF format, suitable for both digital sharing and professional
+                                printing.
                             </p>
                         </div>
                         <div>
                             <h4 class="mb-2 font-semibold text-gray-900">Lifetime Access</h4>
                             <p class="text-gray-600">
-                                Once earned, your certificates remain accessible in your account permanently. You can 
-                                download them anytime you need.
+                                Once earned, your certificates remain accessible in your account permanently. You can download them anytime you need.
                             </p>
                         </div>
                         <div>
                             <h4 class="mb-2 font-semibold text-gray-900">Professional Recognition</h4>
                             <p class="text-gray-600">
-                                Our certificates are recognized credentials that demonstrate your commitment to Islamic 
-                                education and knowledge.
+                                Our certificates are recognized credentials that demonstrate your commitment to Islamic education and knowledge.
                             </p>
                         </div>
                     </div>
@@ -142,14 +131,7 @@ import PrimaryButton from '@/components/Frontend/PrimaryButton.vue';
 import { useToast } from '@/composables/useToast';
 import FrontendLayout from '@/layouts/FrontendLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
-import {
-    AwardIcon,
-    BookOpenIcon,
-    CalendarIcon,
-    DownloadIcon,
-    ExternalLinkIcon,
-    ShieldCheckIcon,
-} from 'lucide-vue-next';
+import { AwardIcon, BookOpenIcon, CalendarIcon, DownloadIcon, ExternalLinkIcon, ShieldCheckIcon } from 'lucide-vue-next';
 
 // Props
 interface Props {
@@ -179,7 +161,7 @@ const downloadCertificate = (certificate: any) => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         success('Certificate download started!');
     } else {
         error('Certificate download URL not available. Please contact support.');
@@ -189,7 +171,7 @@ const downloadCertificate = (certificate: any) => {
 const verifyCertificate = (verificationCode: string) => {
     router.visit(route('certificates.verify'), {
         data: { verification_code: verificationCode },
-        method: 'get'
+        method: 'get',
     });
 };
 

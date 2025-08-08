@@ -153,7 +153,7 @@ const commentClasses = computed(() => {
             'border-[#5f5fcd]/30',
             'ml-2',
             'hover:from-purple-100 hover:to-blue-100',
-            'hover:border-[#5f5fcd]/50'
+            'hover:border-[#5f5fcd]/50',
         ];
     } else {
         return [
@@ -161,7 +161,7 @@ const commentClasses = computed(() => {
             'border-neutral-200',
             'hover:from-gray-100 hover:to-neutral-100',
             'hover:border-neutral-300',
-            'hover:shadow-sm'
+            'hover:shadow-sm',
         ];
     }
 });

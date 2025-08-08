@@ -41,7 +41,7 @@
                                 @input="handleSearch"
                                 type="text"
                                 placeholder="পোস্ট খুঁজুন..."
-                                class="w-full rounded-full border-0 bg-white/10 py-3 pl-4 pr-12 text-white placeholder-gray-300 backdrop-blur-sm focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/30"
+                                class="w-full rounded-full border-0 bg-white/10 py-3 pr-12 pl-4 text-white placeholder-gray-300 backdrop-blur-sm focus:bg-white/20 focus:ring-2 focus:ring-white/30 focus:outline-none"
                             />
                             <div class="absolute inset-y-0 right-0 flex items-center pr-4">
                                 <SearchIcon v-if="!searchLoading" class="h-5 w-5 text-gray-300" />
@@ -102,7 +102,7 @@
                             <button
                                 @click="loadMorePosts"
                                 :disabled="loadingMore"
-                                class="inline-flex items-center rounded-lg bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] px-6 py-3 text-white font-medium transition-all duration-200 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="inline-flex items-center rounded-lg bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] px-6 py-3 font-medium text-white transition-all duration-200 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <Loader2Icon v-if="loadingMore" class="mr-2 h-4 w-4 animate-spin" />
                                 {{ loadingMore ? 'লোড হচ্ছে...' : 'আরও দেখুন' }}
@@ -247,27 +247,31 @@ const handleSearch = () => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(async () => {
         if (searchQuery.value.length < 2 && searchQuery.value.length > 0) return;
-        
+
         searchLoading.value = true;
-        
+
         try {
             const url = new URL(window.location.href);
             url.pathname = '/blog';
             url.searchParams.delete('page');
-            
+
             if (searchQuery.value.trim()) {
                 url.searchParams.set('search', searchQuery.value.trim());
             } else {
                 url.searchParams.delete('search');
             }
-            
-            await router.get(url.toString(), {}, {
-                preserveState: false,
-                preserveScroll: false,
-                onSuccess: () => {
-                    allPosts.value = page.props.posts || [];
+
+            await router.get(
+                url.toString(),
+                {},
+                {
+                    preserveState: false,
+                    preserveScroll: false,
+                    onSuccess: () => {
+                        allPosts.value = page.props.posts || [];
+                    },
                 },
-            });
+            );
         } catch (error) {
             // Search failed
         } finally {
@@ -304,7 +308,6 @@ const loadMorePosts = async () => {
         loadingMore.value = false;
     }
 };
-
 
 function isRecent(publishedAt: string): boolean {
     const publishDate = new Date(publishedAt);

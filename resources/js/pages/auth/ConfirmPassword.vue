@@ -48,21 +48,14 @@
                                         <Shield class="h-8 w-8 text-[#5f5fcd]" />
                                     </div>
                                     <h2 class="mb-2 text-2xl font-bold text-gray-900">পাসওয়ার্ড নিশ্চিত করুন</h2>
-                                    <p class="text-sm text-gray-600">
-                                        আপনার বর্তমান পাসওয়ার্ড দিয়ে নিশ্চিত করুন
-                                    </p>
+                                    <p class="text-sm text-gray-600">আপনার বর্তমান পাসওয়ার্ড দিয়ে নিশ্চিত করুন</p>
                                 </div>
 
                                 <form @submit.prevent="submit">
                                     <div class="space-y-6">
                                         <!-- Password Field -->
                                         <div>
-                                            <label
-                                                for="password"
-                                                class="block text-sm font-medium text-gray-700 mb-2"
-                                            >
-                                                পাসওয়ার্ড
-                                            </label>
+                                            <label for="password" class="mb-2 block text-sm font-medium text-gray-700"> পাসওয়ার্ড </label>
                                             <div class="relative">
                                                 <div class="absolute inset-y-0 left-0 flex items-center pl-4">
                                                     <Lock class="h-5 w-5 text-gray-400" />
@@ -71,7 +64,7 @@
                                                     id="password"
                                                     v-model="form.password"
                                                     type="password"
-                                                    class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5f5fcd] focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200"
+                                                    class="w-full rounded-lg border border-gray-300 bg-white/80 py-3 pr-4 pl-12 backdrop-blur-sm transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-[#5f5fcd]"
                                                     placeholder="আপনার বর্তমান পাসওয়ার্ড লিখুন"
                                                     required
                                                     autofocus
@@ -85,9 +78,11 @@
                                             <Button
                                                 type="submit"
                                                 :disabled="form.processing"
-                                                class="w-full justify-center relative overflow-hidden bg-gradient-to-r from-[#5f5fcd] via-[#2d5a27] to-[#d4a574] text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] py-3 px-6 rounded-lg font-medium"
+                                                class="relative w-full transform justify-center overflow-hidden rounded-lg bg-gradient-to-r from-[#5f5fcd] via-[#2d5a27] to-[#d4a574] px-6 py-3 font-medium text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
                                             >
-                                                <div class="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+                                                <div
+                                                    class="absolute inset-0 bg-white/10 opacity-0 transition-opacity duration-300 hover:opacity-100"
+                                                ></div>
                                                 <Shield class="mr-2 h-4 w-4" />
                                                 <span class="relative z-10">{{ form.processing ? 'প্রক্রিয়াধীন...' : 'নিশ্চিত করুন' }}</span>
                                             </Button>
@@ -104,9 +99,9 @@
 </template>
 
 <script setup>
-import FrontendLayout from '@/layouts/FrontendLayout.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
+import FrontendLayout from '@/layouts/FrontendLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { Lock, Shield } from 'lucide-vue-next';
 

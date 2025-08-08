@@ -16,7 +16,7 @@
         </Head>
 
         <!-- Enhanced Hero Section with Better Animations -->
-        <section class="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/30 pt-4 pb-8 sm:py-12 lg:py-28">
+        <section class="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/30 pt-8 pb-12 sm:py-16 lg:py-20">
             <!-- Enhanced Gradient Background -->
             <div class="absolute inset-0 bg-gradient-to-br from-[#5f5fcd]/5 via-transparent to-[#2d5a27]/4"></div>
 
@@ -418,33 +418,74 @@
                 id="donation"
                 :class="{ 'donation-highlight': donationHighlight }"
             >
+                <!-- Enhanced Background Elements -->
+                <div class="absolute inset-0 bg-gradient-to-br from-[#5f5fcd]/5 via-transparent to-[#d4a574]/5"></div>
+
+                <!-- Floating Decorative Elements -->
+                <div
+                    class="absolute top-10 left-10 h-32 w-32 animate-pulse rounded-full bg-gradient-to-br from-[#d4a574]/10 to-[#5f5fcd]/10 blur-3xl"
+                ></div>
+                <div
+                    class="animation-delay-1000 absolute right-16 bottom-16 h-24 w-24 animate-pulse rounded-full bg-gradient-to-br from-[#5f5fcd]/10 to-[#d4a574]/10 blur-2xl"
+                ></div>
+
+                <!-- Islamic Pattern Overlay -->
+                <div class="absolute inset-0 opacity-[0.02]">
+                    <div
+                        class="absolute inset-0 bg-[#d4a574]"
+                        style="mask-image: radial-gradient(circle at 2px 2px, black 1px, transparent 0); mask-size: 30px 30px"
+                    ></div>
+                </div>
+
                 <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex flex-col items-center gap-6 sm:gap-8 lg:flex-row lg:items-start lg:gap-12">
-                        <!-- Left: Heading and Description -->
-                        <div class="flex w-full flex-col items-center justify-center text-center lg:w-1/2">
+                        <!-- Left: Enhanced Heading and Description -->
+                        <div class="flex w-full flex-col items-center justify-center text-center lg:w-1/2 lg:items-start lg:text-left">
+                            <!-- Enhanced Badge -->
                             <div
-                                class="mb-6 inline-flex items-center rounded-full border border-white/20 bg-white/10 px-6 py-3 backdrop-blur-sm transition-transform duration-300 hover:scale-105"
+                                class="mb-8 inline-flex items-center rounded-full border border-white/20 bg-gradient-to-r from-white/10 to-white/5 px-6 py-3 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[#d4a574]/30"
                             >
-                                <HeartIcon class="mr-2 h-5 w-5 text-[#d4a574]" />
+                                <HeartIcon class="mr-2 h-5 w-5 animate-pulse text-[#d4a574]" />
                                 <span class="text-sm font-medium text-white">দান করুন, সওয়াবের অংশীদার হোন</span>
                             </div>
-                            <h2 class="mb-4 text-center text-2xl leading-tight font-bold text-white sm:mb-6 sm:text-3xl lg:text-4xl">
+
+                            <!-- Enhanced Title -->
+                            <h2
+                                class="mb-6 text-center text-2xl leading-tight font-bold text-white sm:mb-8 sm:text-3xl lg:text-left lg:text-4xl xl:text-5xl"
+                            >
                                 ইসলামী শিক্ষার প্রসারে
                                 <span
-                                    class="text-gradient-islamic animate-gradient-shift bg-gradient-to-r from-[#d4a574] to-[#5f5fcd] bg-clip-text text-transparent"
-                                    >আপনার দান</span
+                                    class="text-gradient-islamic animate-gradient-shift block bg-gradient-to-r from-[#d4a574] to-[#5f5fcd] bg-clip-text text-transparent"
                                 >
+                                    আপনার দান
+                                </span>
                                 গুরুত্বপূর্ণ
                             </h2>
-                            <p class="mx-auto max-w-xl text-center text-base leading-relaxed text-gray-300 sm:text-lg lg:text-xl">
+
+                            <!-- Enhanced Description -->
+                            <p
+                                class="mx-auto mb-8 max-w-xl text-center text-base leading-relaxed text-gray-300 sm:text-lg lg:mx-0 lg:text-left lg:text-xl"
+                            >
                                 ইকরা অনলাইন একাডেমির মাধ্যমে হাজারো শিক্ষার্থী ইসলামী শিক্ষা গ্রহণ করছে। আপনার দান সরাসরি শিক্ষার্থীদের বৃত্তি,
                                 পাঠ্যপুস্তক ও প্রযুক্তি সহায়তায় ব্যবহৃত হবে।
                             </p>
+
+                            <!-- Impact Stats -->
+                            <div class="mx-auto mb-6 grid w-full max-w-md grid-cols-2 gap-4 lg:mx-0 lg:mb-0">
+                                <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm lg:text-left">
+                                    <div class="mb-1 text-2xl font-bold text-[#d4a574]">১০০০+</div>
+                                    <div class="text-xs text-gray-300">উপকৃত শিক্ষার্থী</div>
+                                </div>
+                                <div class="rounded-xl border border-white/10 bg-white/5 p-4 text-center backdrop-blur-sm lg:text-left">
+                                    <div class="mb-1 text-2xl font-bold text-[#5f5fcd]">৫০+</div>
+                                    <div class="text-xs text-gray-300">বৃত্তিপ্রাপ্ত ছাত্র</div>
+                                </div>
+                            </div>
                         </div>
-                        <!-- Right: Donation Form -->
+                        <!-- Right: Enhanced Donation Form -->
                         <div class="w-full lg:w-1/2">
                             <form
-                                class="mx-auto max-w-xl space-y-4 rounded-2xl border border-white/10 bg-white/10 p-4 text-left shadow-lg sm:space-y-6 sm:p-8"
+                                class="mx-auto max-w-xl space-y-4 rounded-2xl border border-white/20 bg-gradient-to-br from-white/10 to-white/5 p-4 text-left shadow-2xl backdrop-blur-xl transition-all duration-500 hover:border-white/30 sm:space-y-6 sm:p-8"
                                 @submit.prevent="submitDonation"
                             >
                                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
@@ -453,7 +494,7 @@
                                         <input
                                             type="text"
                                             v-model="form.name"
-                                            class="w-full rounded-xl border border-gray-300 bg-white/80 px-4 py-3 text-gray-900 focus:border-[#5f5fcd] focus:ring-[#5f5fcd]"
+                                            class="w-full rounded-xl border border-gray-300 bg-white/90 px-4 py-3 text-gray-900 transition-all duration-300 hover:bg-white/95 focus:border-[#5f5fcd] focus:bg-white focus:ring-2 focus:ring-[#5f5fcd]/20"
                                             placeholder="আপনার নাম"
                                             required
                                         />
@@ -463,7 +504,7 @@
                                         <input
                                             type="email"
                                             v-model="form.email"
-                                            class="w-full rounded-xl border border-gray-300 bg-white/80 px-4 py-3 text-gray-900 focus:border-[#5f5fcd] focus:ring-[#5f5fcd]"
+                                            class="w-full rounded-xl border border-gray-300 bg-white/90 px-4 py-3 text-gray-900 transition-all duration-300 hover:bg-white/95 focus:border-[#5f5fcd] focus:bg-white focus:ring-2 focus:ring-[#5f5fcd]/20"
                                             placeholder="আপনার ইমেইল"
                                             required
                                         />
@@ -473,7 +514,7 @@
                                         <input
                                             type="tel"
                                             v-model="form.phone"
-                                            class="w-full rounded-xl border border-gray-300 bg-white/80 px-4 py-3 text-gray-900 focus:border-[#5f5fcd] focus:ring-[#5f5fcd]"
+                                            class="w-full rounded-xl border border-gray-300 bg-white/90 px-4 py-3 text-gray-900 transition-all duration-300 hover:bg-white/95 focus:border-[#5f5fcd] focus:bg-white focus:ring-2 focus:ring-[#5f5fcd]/20"
                                             placeholder="ফোন নম্বর"
                                             required
                                         />
@@ -484,7 +525,7 @@
                                             type="number"
                                             v-model="form.amount"
                                             min="1"
-                                            class="w-full rounded-xl border border-gray-300 bg-white/80 px-4 py-3 text-gray-900 focus:border-[#5f5fcd] focus:ring-[#5f5fcd]"
+                                            class="w-full rounded-xl border border-gray-300 bg-white/90 px-4 py-3 text-gray-900 transition-all duration-300 hover:bg-white/95 focus:border-[#5f5fcd] focus:bg-white focus:ring-2 focus:ring-[#5f5fcd]/20"
                                             placeholder="যত টাকা দান করতে চান"
                                             required
                                         />
@@ -495,79 +536,111 @@
                                     <input
                                         type="text"
                                         v-model="form.reason"
-                                        class="w-full rounded-xl border border-gray-300 bg-white/80 px-4 py-3 text-gray-900 focus:border-[#5f5fcd] focus:ring-[#5f5fcd]"
+                                        class="w-full rounded-xl border border-gray-300 bg-white/90 px-4 py-3 text-gray-900 transition-all duration-300 hover:bg-white/95 focus:border-[#5f5fcd] focus:bg-white focus:ring-2 focus:ring-[#5f5fcd]/20"
                                         placeholder="কেন দান করছেন (ঐচ্ছিক)"
                                     />
                                 </div>
                                 <div>
-                                    <label class="mb-2 block text-gray-200">পেমেন্ট মাধ্যম</label>
-                                    <div class="flex flex-col gap-3 sm:gap-4">
+                                    <label class="mb-2 block font-medium text-gray-200">পেমেন্ট মাধ্যম</label>
+                                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
                                         <button
                                             type="button"
                                             @click="form.payment_method = 'bkash'"
                                             :class="[
-                                                'flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 font-semibold',
+                                                'flex flex-1 transform items-center justify-center gap-2 rounded-xl px-4 py-3 font-semibold transition-all duration-300 hover:scale-105',
                                                 form.payment_method === 'bkash'
-                                                    ? 'bg-[#e2136e]/90 text-white shadow-lg'
-                                                    : 'border border-gray-300 bg-white/80 text-gray-900',
+                                                    ? 'bg-[#e2136e] text-white shadow-lg ring-2 shadow-[#e2136e]/25 ring-[#e2136e]/20'
+                                                    : 'border border-gray-300 bg-white/90 text-gray-900 hover:bg-white hover:shadow-md',
                                             ]"
                                         >
+                                            <div class="flex h-5 w-5 items-center justify-center rounded bg-[#e2136e] text-xs font-bold text-white">
+                                                ৳
+                                            </div>
                                             <span>bKash</span>
                                         </button>
                                         <button
                                             type="button"
                                             @click="form.payment_method = 'nagad'"
                                             :class="[
-                                                'flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 font-semibold',
+                                                'flex flex-1 transform items-center justify-center gap-2 rounded-xl px-4 py-3 font-semibold transition-all duration-300 hover:scale-105',
                                                 form.payment_method === 'nagad'
-                                                    ? 'bg-[#f58220]/90 text-white shadow-lg'
-                                                    : 'border border-gray-300 bg-white/80 text-gray-900',
+                                                    ? 'bg-[#f58220] text-white shadow-lg ring-2 shadow-[#f58220]/25 ring-[#f58220]/20'
+                                                    : 'border border-gray-300 bg-white/90 text-gray-900 hover:bg-white hover:shadow-md',
                                             ]"
                                         >
+                                            <div class="flex h-5 w-5 items-center justify-center rounded bg-[#f58220] text-xs font-bold text-white">
+                                                N
+                                            </div>
                                             <span>Nagad</span>
                                         </button>
                                         <button
                                             type="button"
                                             @click="form.payment_method = 'rocket'"
                                             :class="[
-                                                'flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 font-semibold',
+                                                'flex flex-1 transform items-center justify-center gap-2 rounded-xl px-4 py-3 font-semibold transition-all duration-300 hover:scale-105',
                                                 form.payment_method === 'rocket'
-                                                    ? 'bg-[#8a2be2]/90 text-white shadow-lg'
-                                                    : 'border border-gray-300 bg-white/80 text-gray-900',
+                                                    ? 'bg-[#8a2be2] text-white shadow-lg ring-2 shadow-[#8a2be2]/25 ring-[#8a2be2]/20'
+                                                    : 'border border-gray-300 bg-white/90 text-gray-900 hover:bg-white hover:shadow-md',
                                             ]"
                                         >
+                                            <div class="flex h-5 w-5 items-center justify-center rounded bg-[#8a2be2] text-xs font-bold text-white">
+                                                R
+                                            </div>
                                             <span>Rocket</span>
                                         </button>
                                     </div>
                                 </div>
-                                <div v-if="form.payment_method" class="mt-2 rounded-xl bg-white/20 p-4 text-gray-100">
-                                    <div v-if="form.payment_method === 'bkash'">
-                                        <div class="font-bold">bKash নম্বর: <span class="font-mono">01915878662 (পার্সোনাল)</span></div>
+                                <div
+                                    v-if="form.payment_method"
+                                    class="mt-4 rounded-xl border border-white/20 bg-gradient-to-r from-white/20 to-white/10 p-5 text-gray-100 backdrop-blur-sm"
+                                >
+                                    <div v-if="form.payment_method === 'bkash'" class="mb-3 flex items-center">
+                                        <div class="mr-3 flex h-6 w-6 items-center justify-center rounded bg-[#e2136e] text-xs font-bold text-white">
+                                            ৳
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-white">bKash নম্বর:</div>
+                                            <div class="font-mono text-lg text-white">01915878662 (পার্সোনাল)</div>
+                                        </div>
                                     </div>
-                                    <div v-else-if="form.payment_method === 'nagad'">
-                                        <div class="font-bold">Nagad নম্বর: <span class="font-mono">01750-469027 (পার্সোনাল)</span></div>
+                                    <div v-else-if="form.payment_method === 'nagad'" class="mb-3 flex items-center">
+                                        <div class="mr-3 flex h-6 w-6 items-center justify-center rounded bg-[#f58220] text-xs font-bold text-white">
+                                            N
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-white">Nagad নম্বর:</div>
+                                            <div class="font-mono text-lg text-white">01750-469027 (পার্সোনাল)</div>
+                                        </div>
                                     </div>
-                                    <div v-else-if="form.payment_method === 'rocket'">
-                                        <div class="font-bold">Rocket নম্বর: <span class="font-mono">019158786625 (পার্সোনাল)</span></div>
+                                    <div v-else-if="form.payment_method === 'rocket'" class="mb-3 flex items-center">
+                                        <div class="mr-3 flex h-6 w-6 items-center justify-center rounded bg-[#8a2be2] text-xs font-bold text-white">
+                                            R
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-white">Rocket নম্বর:</div>
+                                            <div class="font-mono text-lg text-white">019158786625 (পার্সোনাল)</div>
+                                        </div>
                                     </div>
-                                    <div class="mt-2 text-sm">অনুগ্রহ করে উপরের নম্বরে সেন্ড মানি করুন এবং নিচে ট্রানজেকশন আইডি লিখুন।</div>
+                                    <div class="mt-3 rounded-lg border border-white/10 bg-white/10 p-3 text-sm">
+                                        📱 অনুগ্রহ করে উপরের নম্বরে সেন্ড মানি করুন এবং নিচে ট্রানজেকশন আইডি লিখুন।
+                                    </div>
                                 </div>
                                 <div v-if="form.payment_method">
                                     <label class="mt-4 mb-2 block text-gray-200">ট্রানজেকশন আইডি</label>
                                     <input
                                         type="text"
                                         v-model="form.transaction_id"
-                                        class="w-full rounded-xl border border-gray-300 bg-white/80 px-4 py-3 text-gray-900 focus:border-[#5f5fcd] focus:ring-[#5f5fcd]"
+                                        class="w-full rounded-xl border border-gray-300 bg-white/90 px-4 py-3 text-gray-900 transition-all duration-300 hover:bg-white/95 focus:border-[#5f5fcd] focus:bg-white focus:ring-2 focus:ring-[#5f5fcd]/20"
                                         placeholder="পেমেন্টের পর প্রাপ্ত ট্রানজেকশন আইডি লিখুন"
                                         required
                                     />
                                 </div>
-                                <div class="pt-4">
+                                <div class="pt-6">
                                     <PrimaryButton
                                         size="xl"
                                         variant="primary"
                                         :icon="HeartIcon"
-                                        class="w-full min-w-[200px]"
+                                        class="w-full min-w-[200px] transform shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
                                         :loading="form.processing"
                                         type="submit"
                                     >
@@ -575,12 +648,11 @@
                                     </PrimaryButton>
                                 </div>
                             </form>
-                            <div v-if="form.hasErrors" class="mt-4 text-center text-red-500">
-                                <div v-for="(msg, field) in form.errors" :key="field">{{ msg }}</div>
+                            <!-- Enhanced Error Messages -->
+                            <div v-if="form.hasErrors" class="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-center">
+                                <div v-for="(msg, field) in form.errors" :key="field" class="text-sm text-red-300">{{ msg }}</div>
                             </div>
-                            <div class="mt-6 text-center text-sm text-gray-400 sm:mt-8 lg:text-left">
-                                <span>আল্লাহ্‌ আপনার দান কবুল করুন এবং দ্বীনি শিক্ষার প্রসারে আপনাকে অংশীদার করুন।</span>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -985,6 +1057,17 @@ const submitDonation = () => {
 }
 .animate-spin-slow {
     animation: spin-slow 18s linear infinite;
+}
+
+/* Animation delay utilities for donation section */
+.animation-delay-1000 {
+    animation-delay: 1s;
+}
+
+/* Enhanced form focus styles */
+.form-input-enhanced:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -8px rgba(95, 95, 205, 0.3);
 }
 
 @keyframes statIn {

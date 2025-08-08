@@ -122,8 +122,8 @@ class ComprehensiveTestSeeder extends Seeder
         ]);
         UserRole::factory()->admin()->create(['user_id' => $adminUser->id]);
 
-        // Create Teachers (5)
-        $teachers = User::factory()->count(5)->create();
+        // Create Teachers (6)
+        $teachers = User::factory()->count(6)->create();
         foreach ($teachers as $teacher) {
             UserRole::factory()->teacher()->create(['user_id' => $teacher->id]);
             Teacher::factory()->create([
@@ -132,8 +132,8 @@ class ComprehensiveTestSeeder extends Seeder
             ]);
         }
 
-        // Create Students (50)
-        $students = User::factory()->count(50)->create();
+        // Create Students (6)
+        $students = User::factory()->count(6)->create();
         foreach ($students as $student) {
             UserRole::factory()->student()->create(['user_id' => $student->id]);
             Student::factory()->create([
@@ -173,13 +173,13 @@ class ComprehensiveTestSeeder extends Seeder
     private function createReferenceData(): void
     {
         // Course Categories
-        CourseCategory::factory()->count(8)->create();
+        CourseCategory::factory()->count(6)->create();
 
         // Blog Categories
-        BlogCategory::factory()->count(8)->create();
+        BlogCategory::factory()->count(6)->create();
 
         // Blog Tags
-        BlogTag::factory()->count(25)->create();
+        BlogTag::factory()->count(6)->create();
     }
 
     /**
@@ -572,32 +572,30 @@ class ComprehensiveTestSeeder extends Seeder
             $q->whereIn('role_type', ['admin', 'teacher']);
         })->get();
 
-        // Create 30 blog posts
+        // Create 6 blog posts
+        $postsCreated = 0;
         foreach ($categories as $category) {
-            $postsCount = fake()->numberBetween(3, 5);
+            if ($postsCreated >= 6) break;
             
-            for ($i = 0; $i < $postsCount; $i++) {
+            for ($i = 0; $i < 1; $i++) {
+                if ($postsCreated >= 6) break;
                 $post = BlogPost::factory()->published()->create([
                     'category_id' => $category->id,
                     'author_id' => $authors->random()->id,
                 ]);
 
-                // Attach random tags (2-5 tags per post)
-                $postTags = $tags->random(fake()->numberBetween(2, 5));
+                // Attach random tags (2-3 tags per post)
+                $postTags = $tags->random(min(3, $tags->count()));
                 foreach ($postTags as $tag) {
                     DB::table('blog_post_tags')->insert([
                         'blog_post_id' => $post->id,
                         'blog_tag_id' => $tag->id,
                     ]);
                 }
+                
+                $postsCreated++;
             }
         }
-
-        // Create some featured posts
-        BlogPost::factory()->featured()->published()->count(3)->create([
-            'category_id' => $categories->random()->id,
-            'author_id' => $authors->random()->id,
-        ]);
     }
 
     /**
@@ -608,12 +606,15 @@ class ComprehensiveTestSeeder extends Seeder
         $students = Student::all();
         $courses = Course::all();
 
-        // Create payments for 80% of students
-        $studentsForPayments = $students->random($students->count() * 0.8);
+        // Create exactly 6 payments
+        $studentsForPayments = $students->random(min(6, $students->count()));
         
+        $paymentsCreated = 0;
         foreach ($studentsForPayments as $student) {
-            // Each student pays for 1-3 courses
-            $coursesToEnroll = $courses->random(fake()->numberBetween(1, 3));
+            if ($paymentsCreated >= 6) break;
+            
+            // Each student pays for 1 course
+            $coursesToEnroll = $courses->random(1);
             
             foreach ($coursesToEnroll as $course) {
                 // Skip if already enrolled (e.g., test student)
@@ -639,14 +640,20 @@ class ComprehensiveTestSeeder extends Seeder
                     'amount_paid' => $payment->amount,
                     'payment_status' => $payment->status,
                 ]);
+                
+                $paymentsCreated++;
+                if ($paymentsCreated >= 6) break;
             }
         }
 
-        // Create some free enrollments
-        $studentsForFree = $students->random($students->count() * 0.3);
+        // Create 6 free enrollments
+        $studentsForFree = $students->random(min(6, $students->count()));
         $freeCourses = Course::where('is_free', true)->get();
         
+        $freeEnrollmentsCreated = 0;
         foreach ($studentsForFree as $student) {
+            if ($freeEnrollmentsCreated >= 6) break;
+            
             if ($freeCourses->isNotEmpty()) {
                 $course = $freeCourses->random();
                 
@@ -658,6 +665,8 @@ class ComprehensiveTestSeeder extends Seeder
                         'student_id' => $student->id,
                         'course_id' => $course->id,
                     ]);
+                    
+                    $freeEnrollmentsCreated++;
                 }
             }
         }
@@ -711,8 +720,8 @@ class ComprehensiveTestSeeder extends Seeder
                     'sort_order' => $i + 1,
                 ]);
 
-                // Create 10-20 questions per quiz
-                $questionCount = fake()->numberBetween(10, 20);
+                // Create 6 questions per quiz
+                $questionCount = 6;
                 for ($j = 1; $j <= $questionCount; $j++) {
                     QuizQuestion::factory()->create([
                         'quiz_id' => $quiz->id,
@@ -724,7 +733,7 @@ class ComprehensiveTestSeeder extends Seeder
                 $enrollments = CourseEnrollment::where('course_id', $course->id)
                     ->where('is_active', true)->get();
                     
-                foreach ($enrollments->random(min($enrollments->count(), 10)) as $enrollment) {
+                foreach ($enrollments->random(min($enrollments->count(), 6)) as $enrollment) {
                     QuizAttempt::factory()->create([
                         'quiz_id' => $quiz->id,
                         'student_id' => $enrollment->student_id,
@@ -742,7 +751,7 @@ class ComprehensiveTestSeeder extends Seeder
     {
         $completedEnrollments = CourseEnrollment::where('is_completed', true)->get();
 
-        foreach ($completedEnrollments->random(min($completedEnrollments->count(), 30)) as $enrollment) {
+        foreach ($completedEnrollments->random(min($completedEnrollments->count(), 6)) as $enrollment) {
             Certificate::factory()->create([
                 'student_id' => $enrollment->student_id,
                 'course_id' => $enrollment->course_id,
@@ -764,7 +773,7 @@ class ComprehensiveTestSeeder extends Seeder
         $enrollmentsShuffled = $enrollments->shuffle();
         
         foreach ($enrollmentsShuffled as $enrollment) {
-            if ($reviewsCreated >= 50) break; // Limit to 50 reviews
+            if ($reviewsCreated >= 6) break; // Limit to 6 reviews
             
             try {
                 CourseReview::factory()->approved()->create([
@@ -779,34 +788,39 @@ class ComprehensiveTestSeeder extends Seeder
             }
         }
 
-        // Create blog comments
+        // Create blog comments (6 total)
+        $commentsCreated = 0;
         foreach ($posts as $post) {
-            $commentCount = fake()->numberBetween(0, 8);
+            if ($commentsCreated >= 6) break;
+            
+            $commentCount = fake()->numberBetween(0, 2);
             
             for ($i = 0; $i < $commentCount; $i++) {
+                if ($commentsCreated >= 6) break;
                 $comment = BlogComment::factory()->approved()->create([
                     'blog_post_id' => $post->id,
                     'user_id' => $users->random()->id,
                 ]);
-
-                // Create some replies
-                if (fake()->boolean(30)) {
-                    BlogComment::factory()->approved()->create([
-                        'blog_post_id' => $post->id,
-                        'user_id' => $users->random()->id,
-                        'parent_id' => $comment->id,
-                    ]);
-                }
+                
+                $commentsCreated++;
             }
+        }
 
-            // Create blog reactions
-            $reactionCount = fake()->numberBetween(5, 50);
+        // Create blog reactions (6 total)
+        $reactionsCreated = 0;
+        foreach ($posts as $post) {
+            if ($reactionsCreated >= 6) break;
+            
+            $reactionCount = fake()->numberBetween(1, 2);
             for ($i = 0; $i < $reactionCount; $i++) {
+                if ($reactionsCreated >= 6) break;
                 BlogReaction::factory()->create([
                     'blog_post_id' => $post->id,
                     'user_id' => fake()->boolean(70) ? $users->random()->id : null,
                     'session_id' => fake()->boolean(70) ? null : fake()->uuid(),
                 ]);
+                
+                $reactionsCreated++;
             }
         }
     }
@@ -818,13 +832,10 @@ class ComprehensiveTestSeeder extends Seeder
     {
         $users = User::all();
 
-        // Create 50 donations
-        for ($i = 0; $i < 50; $i++) {
+        // Create 6 donations
+        for ($i = 0; $i < 6; $i++) {
             Donation::factory()->create();
         }
-
-        // Create some donations with specific reasons
-        Donation::factory()->withReason('গরীব ছাত্র সহায়তা')->count(15)->create();
     }
 
     /**

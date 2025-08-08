@@ -149,7 +149,7 @@
                             <div v-if="activeTab === 'reviews'" class="space-y-6">
                                 <!-- Reviews Header -->
                                 <div v-if="course.reviews && course.reviews.length > 0" class="mb-6">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">শিক্ষার্থীদের রিভিউ</h3>
+                                    <h3 class="mb-2 text-lg font-semibold text-gray-900">শিক্ষার্থীদের রিভিউ</h3>
                                     <div class="flex items-center space-x-4 text-sm text-gray-600">
                                         <div class="flex items-center space-x-1">
                                             <StarIcon class="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -162,49 +162,51 @@
                                 <!-- Reviews List -->
                                 <div v-for="review in course.reviews" :key="review.id" class="border-b border-gray-200 pb-6">
                                     <div class="flex items-start space-x-4">
-                                        <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10">
+                                        <div
+                                            class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10"
+                                        >
                                             <span class="text-sm font-semibold text-[#5f5fcd]">
                                                 {{ getInitials(review.student.name) }}
                                             </span>
                                         </div>
                                         <div class="flex-1">
-                                            <div class="flex items-center justify-between mb-2">
+                                            <div class="mb-2 flex items-center justify-between">
                                                 <div class="flex items-center space-x-3">
                                                     <h5 class="font-semibold text-gray-900">{{ review.student.name }}</h5>
-                                                    <CheckIcon v-if="review.is_verified_purchase" class="h-4 w-4 text-[#2d5a27]" title="যাচাইকৃত ক্রয়" />
+                                                    <CheckIcon
+                                                        v-if="review.is_verified_purchase"
+                                                        class="h-4 w-4 text-[#2d5a27]"
+                                                        title="যাচাইকৃত ক্রয়"
+                                                    />
                                                 </div>
                                                 <span class="text-sm text-gray-500">{{ review.date }}</span>
                                             </div>
-                                            
+
                                             <!-- Rating -->
                                             <div class="mb-3 flex items-center space-x-1">
                                                 <StarIcon
                                                     v-for="star in 5"
                                                     :key="star"
-                                                    :class="[
-                                                        'h-4 w-4',
-                                                        star <= review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300',
-                                                    ]"
+                                                    :class="['h-4 w-4', star <= review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300']"
                                                 />
                                             </div>
 
                                             <!-- Review Title -->
-                                            <h4 v-if="review.title" class="font-medium text-gray-900 mb-2">{{ review.title }}</h4>
+                                            <h4 v-if="review.title" class="mb-2 font-medium text-gray-900">{{ review.title }}</h4>
 
                                             <!-- Review Content -->
-                                            <p class="text-gray-700 mb-3">{{ review.comment }}</p>
+                                            <p class="mb-3 text-gray-700">{{ review.comment }}</p>
 
                                             <!-- See More Button -->
                                             <div v-if="review.is_long" class="mb-3">
                                                 <button
                                                     @click="showReviewModal(review)"
-                                                    class="inline-flex items-center text-sm text-[#5f5fcd] hover:text-[#2d5a27] transition-colors duration-200 font-medium"
+                                                    class="inline-flex items-center text-sm font-medium text-[#5f5fcd] transition-colors duration-200 hover:text-[#2d5a27]"
                                                 >
                                                     বিস্তারিত দেখুন
                                                     <ChevronDownIcon class="ml-1 h-4 w-4" />
                                                 </button>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -225,12 +227,7 @@
                             <div class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl">
                                 <!-- Course Image -->
                                 <div v-if="course.image" class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-                                    <img
-                                        :src="course.image"
-                                        :alt="course.title"
-                                        class="h-64 w-full object-cover object-center"
-                                        loading="lazy"
-                                    />
+                                    <img :src="course.image" :alt="course.title" class="h-64 w-full object-cover object-center" loading="lazy" />
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
                                 </div>
                                 <!-- Price Section -->
@@ -346,23 +343,13 @@
 
     <!-- Review Details Modal -->
     <Teleport to="body">
-        <div
-            v-show="showModalState"
-            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-            @click="closeReviewModal"
-        >
-            <div
-                class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-                @click.stop
-            >
+        <div v-show="showModalState" class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4" @click="closeReviewModal">
+            <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white" @click.stop>
                 <div class="p-8" v-if="selectedReview">
                     <!-- Modal Header -->
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="mb-6 flex items-center justify-between">
                         <h2 class="text-2xl font-bold text-gray-900">বিস্তারিত রিভিউ</h2>
-                        <button
-                            @click="closeReviewModal"
-                            class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                        >
+                        <button @click="closeReviewModal" class="text-gray-400 transition-colors duration-200 hover:text-gray-600">
                             <XIcon class="h-6 w-6" />
                         </button>
                     </div>
@@ -371,13 +358,15 @@
                     <div class="space-y-6">
                         <!-- Student Info -->
                         <div class="flex items-center space-x-3">
-                            <div class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10">
+                            <div
+                                class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#d4a574] bg-gradient-to-br from-[#5f5fcd]/10 to-[#2d5a27]/10"
+                            >
                                 <span class="text-sm font-semibold text-[#5f5fcd]">
                                     {{ getInitials(selectedReview.student.name) }}
                                 </span>
                             </div>
                             <div>
-                                <h4 class="font-semibold text-gray-900 flex items-center">
+                                <h4 class="flex items-center font-semibold text-gray-900">
                                     {{ selectedReview.student.name }}
                                     <CheckIcon v-if="selectedReview.is_verified_purchase" class="ml-2 h-4 w-4 text-[#2d5a27]" />
                                 </h4>
@@ -390,7 +379,10 @@
                             <StarIcon
                                 v-for="star in 5"
                                 :key="star"
-                                :class="['h-6 w-6 transition-colors duration-200', star <= selectedReview.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300']"
+                                :class="[
+                                    'h-6 w-6 transition-colors duration-200',
+                                    star <= selectedReview.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300',
+                                ]"
                             />
                             <span class="ml-2 text-lg font-medium text-gray-700">({{ selectedReview.rating }}/৫)</span>
                         </div>
@@ -400,9 +392,8 @@
 
                         <!-- Full Review Text -->
                         <div class="prose prose-lg max-w-none">
-                            <p class="text-gray-700 leading-relaxed">"{{ selectedReview.full_review }}"</p>
+                            <p class="leading-relaxed text-gray-700">"{{ selectedReview.full_review }}"</p>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -543,7 +534,12 @@ const reviewCount = computed(() => (reviews.value ? reviews.value.length : 0));
 
 // Helper function for getting initials from name
 const getInitials = (name: string): string => {
-    return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase().substring(0, 2);
+    return name
+        .split(' ')
+        .map((word) => word.charAt(0))
+        .join('')
+        .toUpperCase()
+        .substring(0, 2);
 };
 
 const showDiscount = computed(() => {

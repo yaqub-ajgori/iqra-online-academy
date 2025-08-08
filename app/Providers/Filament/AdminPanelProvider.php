@@ -49,6 +49,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->widgets([
                 \App\Filament\Widgets\AcademyStatsWidget::class,
+                \App\Filament\Widgets\EnrollmentTrendsChart::class,
+                \App\Filament\Widgets\RevenueBreakdownChart::class,
             ])
             ->navigationGroups([
                 'Academy',

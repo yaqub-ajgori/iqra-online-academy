@@ -45,7 +45,7 @@
                             @input="debouncedSearch"
                             type="text"
                             placeholder="কুরআনে খুঁজুন... (আরবি অথবা বাংলা)"
-                            class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-white py-3 pr-4 pl-10 font-medium text-gray-700 placeholder-gray-400 transition-all duration-300 focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 focus:shadow-lg focus:bg-white/95 hover:border-[#5f5fcd]/40 hover:shadow-sm"
+                            class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-white py-3 pr-4 pl-10 font-medium text-gray-700 placeholder-gray-400 transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-sm focus:border-[#5f5fcd] focus:bg-white/95 focus:shadow-lg focus:ring-2 focus:ring-[#5f5fcd]/30"
                         />
                         <div v-if="searchLoading" class="absolute inset-y-0 right-0 flex items-center pr-3">
                             <div class="relative">
@@ -59,7 +59,7 @@
                     <button
                         @click="performSearch"
                         :disabled="searchLoading || !searchQuery.trim()"
-                        class="flex min-w-[100px] items-center justify-center rounded-lg bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] px-4 py-3 font-semibold text-white transition-all duration-300 hover:shadow-lg hover:scale-105 hover:from-[#4a4aa6] hover:to-[#1f3e1b] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 sm:px-6 active:scale-95"
+                        class="flex min-w-[100px] items-center justify-center rounded-lg bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] px-4 py-3 font-semibold text-white transition-all duration-300 hover:scale-105 hover:from-[#4a4aa6] hover:to-[#1f3e1b] hover:shadow-lg active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 sm:px-6"
                     >
                         <svg v-if="!searchLoading" class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -75,13 +75,15 @@
                     <div class="rounded-xl border border-gray-200 bg-gradient-to-r from-gray-50 to-white p-4 shadow-sm">
                         <!-- Search Scope & Language -->
                         <div class="mb-3">
-                            <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">🎯 অনুসন্ধান পরিসর</p>
+                            <p class="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">🎯 অনুসন্ধান পরিসর</p>
                             <div class="flex flex-wrap gap-2">
                                 <button
                                     @click="searchIn = 'all'"
                                     :class="[
-                                        'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 shadow-sm',
-                                        searchIn === 'all' ? 'bg-[#5f5fcd] text-white shadow-md' : 'bg-white border border-[#5f5fcd]/20 text-[#5f5fcd] hover:bg-[#5f5fcd]/5',
+                                        'rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition-all duration-200',
+                                        searchIn === 'all'
+                                            ? 'bg-[#5f5fcd] text-white shadow-md'
+                                            : 'border border-[#5f5fcd]/20 bg-white text-[#5f5fcd] hover:bg-[#5f5fcd]/5',
                                     ]"
                                 >
                                     📚 সব সূরা
@@ -89,8 +91,10 @@
                                 <button
                                     @click="searchIn = 'current'"
                                     :class="[
-                                        'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 shadow-sm',
-                                        searchIn === 'current' ? 'bg-[#2d5a27] text-white shadow-md' : 'bg-white border border-[#2d5a27]/20 text-[#2d5a27] hover:bg-[#2d5a27]/5',
+                                        'rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition-all duration-200',
+                                        searchIn === 'current'
+                                            ? 'bg-[#2d5a27] text-white shadow-md'
+                                            : 'border border-[#2d5a27]/20 bg-white text-[#2d5a27] hover:bg-[#2d5a27]/5',
                                     ]"
                                 >
                                     📖 বর্তমান {{ currentSurah ? 'সূরা' : currentJuz ? 'পারা' : selectedPage ? 'পৃষ্ঠা' : 'নির্বাচন' }}
@@ -100,13 +104,13 @@
 
                         <!-- Language & Auto-search Options -->
                         <div class="border-t border-gray-100 pt-3">
-                            <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">⚙️ অনুসন্ধান অপশন</p>
+                            <p class="mb-2 text-xs font-semibold tracking-wide text-gray-500 uppercase">⚙️ অনুসন্ধান অপশন</p>
                             <div class="flex flex-wrap gap-2">
                                 <button
                                     @click="searchLanguage = searchLanguage === 'arabic' ? 'bengali' : 'arabic'"
                                     :class="[
-                                        'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 shadow-sm',
-                                        'bg-white border border-[#d4a574]/20 text-[#d4a574] hover:bg-[#d4a574]/5',
+                                        'rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition-all duration-200',
+                                        'border border-[#d4a574]/20 bg-white text-[#d4a574] hover:bg-[#d4a574]/5',
                                     ]"
                                 >
                                     🌐 {{ searchLanguage === 'arabic' ? 'আরবি' : 'বাংলা' }} অনুবাদ
@@ -114,8 +118,10 @@
                                 <button
                                     @click="autoSearch = !autoSearch"
                                     :class="[
-                                        'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 shadow-sm',
-                                        autoSearch ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50',
+                                        'rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition-all duration-200',
+                                        autoSearch
+                                            ? 'border border-green-200 bg-green-50 text-green-700 hover:bg-green-100'
+                                            : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50',
                                     ]"
                                 >
                                     {{ autoSearch ? '⚡ অটো সার্চ চালু' : '⚡ অটো সার্চ বন্ধ' }}
@@ -123,7 +129,7 @@
                                 <button
                                     v-if="searchResults.length > 0"
                                     @click="clearSearch"
-                                    class="rounded-lg bg-red-50 border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition-all duration-200 hover:bg-red-100 hover:scale-105 hover:shadow-md shadow-sm active:scale-95"
+                                    class="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 shadow-sm transition-all duration-200 hover:scale-105 hover:bg-red-100 hover:shadow-md active:scale-95"
                                 >
                                     🗑️ সাফ করুন
                                 </button>
@@ -132,11 +138,19 @@
                     </div>
 
                     <!-- Concept-Based Search Suggestions -->
-                    <div v-if="conceptSuggestions.length > 0" class="rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 p-4 shadow-sm">
+                    <div
+                        v-if="conceptSuggestions.length > 0"
+                        class="rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 p-4 shadow-sm"
+                    >
                         <div class="mb-3 flex items-center gap-2">
                             <div class="rounded-full bg-blue-100 p-1">
                                 <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                                    />
                                 </svg>
                             </div>
                             <p class="text-sm font-semibold text-blue-700">সংশ্লিষ্ট বিষয়সমূহ</p>
@@ -155,11 +169,19 @@
                     </div>
 
                     <!-- Search History -->
-                    <div v-if="searchHistory.length > 0" class="rounded-xl border border-amber-100 bg-gradient-to-r from-amber-50/50 to-orange-50/50 p-4 shadow-sm">
+                    <div
+                        v-if="searchHistory.length > 0"
+                        class="rounded-xl border border-amber-100 bg-gradient-to-r from-amber-50/50 to-orange-50/50 p-4 shadow-sm"
+                    >
                         <div class="mb-3 flex items-center gap-2">
                             <div class="rounded-full bg-amber-100 p-1">
                                 <svg class="h-4 w-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                    />
                                 </svg>
                             </div>
                             <p class="text-sm font-semibold text-amber-700">সাম্প্রতিক অনুসন্ধান</p>
@@ -214,7 +236,7 @@
                         v-for="topic in topicCategories"
                         :key="topic.id"
                         @click="selectTopic(topic)"
-                        class="group relative cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:scale-105 hover:transform hover:-translate-y-1 hover:shadow-lg active:scale-95 sm:p-4"
+                        class="group relative cursor-pointer rounded-xl border p-3 transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:transform hover:shadow-lg active:scale-95 sm:p-4"
                         :class="{
                             'pointer-events-none opacity-50': topicLoading && selectedTopic?.id === topic.id,
                             'border-[#d4a574] bg-gradient-to-br from-[#d4a574]/20 to-[#5f5fcd]/20 shadow-lg': selectedTopic?.id === topic.id,
@@ -279,7 +301,8 @@
                         @click="toggleProgressiveMode"
                         class="group relative cursor-pointer overflow-hidden rounded-xl border p-3 transition-all duration-300 hover:scale-105 hover:transform sm:p-4"
                         :class="{
-                            'border-[#5f5fcd] bg-gradient-to-br from-[#5f5fcd]/20 to-[#2d5a27]/20 shadow-xl ring-2 ring-[#5f5fcd]/30': progressiveMode,
+                            'border-[#5f5fcd] bg-gradient-to-br from-[#5f5fcd]/20 to-[#2d5a27]/20 shadow-xl ring-2 ring-[#5f5fcd]/30':
+                                progressiveMode,
                             'border-[#5f5fcd]/20 bg-gradient-to-br from-white to-[#f8f9ff] hover:border-[#5f5fcd]/40 hover:shadow-md':
                                 !progressiveMode,
                         }"
@@ -291,33 +314,39 @@
                                 <div class="absolute inset-0 h-3 w-3 animate-ping rounded-full bg-green-400 opacity-75"></div>
                             </div>
                         </div>
-                        
+
                         <!-- Background pattern -->
                         <div class="absolute inset-0 opacity-5">
                             <div class="h-full w-full bg-gradient-to-br from-[#5f5fcd] to-transparent"></div>
                         </div>
-                        
+
                         <div class="relative z-10 mb-2 flex items-center">
                             <div
-                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] shadow-lg sm:h-10 sm:w-10 transition-transform duration-300"
+                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] shadow-lg transition-transform duration-300 sm:h-10 sm:w-10"
                                 :class="{ 'scale-110 shadow-xl': progressiveMode }"
                             >
-                                <span class="text-lg sm:text-xl transition-transform duration-300" :class="{ 'animate-pulse': progressiveMode }">👁️</span>
+                                <span class="text-lg transition-transform duration-300 sm:text-xl" :class="{ 'animate-pulse': progressiveMode }"
+                                    >👁️</span
+                                >
                             </div>
                             <div class="flex-1">
-                                <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base flex items-center">
+                                <h4 class="flex items-center text-sm font-bold text-[#2d5a27] sm:text-base">
                                     {{ progressiveMode ? 'প্রগ্রেসিভ মোড চালু' : 'প্রগ্রেসিভ মোড' }}
-                                    <span v-if="progressiveMode" class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">সক্রিয়</span>
+                                    <span v-if="progressiveMode" class="ml-2 rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-800"
+                                        >সক্রিয়</span
+                                    >
                                 </h4>
                             </div>
                         </div>
                         <p class="relative z-10 text-xs leading-relaxed text-gray-700 sm:text-sm">
                             {{ progressiveMode ? 'সকল আয়াত একসাথে দেখানো হবে' : 'হিফয অনুশীলনের জন্য একে একে আয়াত প্রদর্শন' }}
                         </p>
-                        
+
                         <!-- Shine effect on hover -->
                         <div class="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                            <div class="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-700"></div>
+                            <div
+                                class="h-full w-full translate-x-full -skew-x-12 transform bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-[-200%]"
+                            ></div>
                         </div>
                     </div>
 
@@ -326,7 +355,8 @@
                         @click="toggleTranslationVisibility"
                         class="group relative cursor-pointer overflow-hidden rounded-xl border p-3 transition-all duration-300 hover:scale-105 hover:transform sm:p-4"
                         :class="{
-                            'border-[#d4a574] bg-gradient-to-br from-[#d4a574]/20 to-[#5f5fcd]/20 shadow-xl ring-2 ring-[#d4a574]/30': hideTranslation,
+                            'border-[#d4a574] bg-gradient-to-br from-[#d4a574]/20 to-[#5f5fcd]/20 shadow-xl ring-2 ring-[#d4a574]/30':
+                                hideTranslation,
                             'border-[#d4a574]/20 bg-gradient-to-br from-white to-[#f8f9ff] hover:border-[#d4a574]/40 hover:shadow-md':
                                 !hideTranslation,
                         }"
@@ -338,33 +368,39 @@
                                 <div class="absolute inset-0 h-3 w-3 animate-ping rounded-full bg-orange-400 opacity-75"></div>
                             </div>
                         </div>
-                        
+
                         <!-- Background pattern -->
                         <div class="absolute inset-0 opacity-5">
                             <div class="h-full w-full bg-gradient-to-br from-[#d4a574] to-transparent"></div>
                         </div>
-                        
+
                         <div class="relative z-10 mb-2 flex items-center">
                             <div
-                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#d4a574] to-[#5f5fcd] shadow-lg sm:h-10 sm:w-10 transition-transform duration-300"
+                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#d4a574] to-[#5f5fcd] shadow-lg transition-transform duration-300 sm:h-10 sm:w-10"
                                 :class="{ 'scale-110 shadow-xl': hideTranslation }"
                             >
-                                <span class="text-lg sm:text-xl transition-transform duration-300" :class="{ 'animate-pulse': hideTranslation }">{{ hideTranslation ? '🙈' : '🔤' }}</span>
+                                <span class="text-lg transition-transform duration-300 sm:text-xl" :class="{ 'animate-pulse': hideTranslation }">{{
+                                    hideTranslation ? '🙈' : '🔤'
+                                }}</span>
                             </div>
                             <div class="flex-1">
-                                <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base flex items-center">
+                                <h4 class="flex items-center text-sm font-bold text-[#2d5a27] sm:text-base">
                                     {{ hideTranslation ? 'অনুবাদ লুকানো' : 'অনুবাদ লুকান' }}
-                                    <span v-if="hideTranslation" class="ml-2 text-xs bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full">সক্রিয়</span>
+                                    <span v-if="hideTranslation" class="ml-2 rounded-full bg-orange-100 px-2 py-0.5 text-xs text-orange-800"
+                                        >সক্রিয়</span
+                                    >
                                 </h4>
                             </div>
                         </div>
                         <p class="relative z-10 text-xs leading-relaxed text-gray-700 sm:text-sm">
                             {{ hideTranslation ? 'অনুবাদ আবার দেখানো হবে' : 'হিফয অনুশীলনের জন্য অনুবাদ লুকিয়ে রাখুন' }}
                         </p>
-                        
+
                         <!-- Shine effect on hover -->
                         <div class="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                            <div class="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-700"></div>
+                            <div
+                                class="h-full w-full translate-x-full -skew-x-12 transform bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-[-200%]"
+                            ></div>
                         </div>
                     </div>
 
@@ -384,33 +420,35 @@
                                 <div class="absolute inset-0 h-3 w-3 animate-ping rounded-full bg-blue-400 opacity-75"></div>
                             </div>
                         </div>
-                        
+
                         <!-- Background pattern -->
                         <div class="absolute inset-0 opacity-5">
                             <div class="h-full w-full bg-gradient-to-br from-[#2d5a27] to-transparent"></div>
                         </div>
-                        
+
                         <div class="relative z-10 mb-2 flex items-center">
                             <div
-                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#2d5a27] to-[#d4a574] shadow-lg sm:h-10 sm:w-10 transition-transform duration-300"
+                                class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#2d5a27] to-[#d4a574] shadow-lg transition-transform duration-300 sm:h-10 sm:w-10"
                                 :class="{ 'scale-110 shadow-xl': repeatMode }"
                             >
-                                <span class="text-lg sm:text-xl transition-transform duration-300" :class="{ 'animate-spin': repeatMode }">🔄</span>
+                                <span class="text-lg transition-transform duration-300 sm:text-xl" :class="{ 'animate-spin': repeatMode }">🔄</span>
                             </div>
                             <div class="flex-1">
-                                <h4 class="text-sm font-bold text-[#2d5a27] sm:text-base flex items-center">
+                                <h4 class="flex items-center text-sm font-bold text-[#2d5a27] sm:text-base">
                                     {{ repeatMode ? 'রিপিট মোড চালু' : 'রিপিট মোড' }}
-                                    <span v-if="repeatMode" class="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">সক্রিয়</span>
+                                    <span v-if="repeatMode" class="ml-2 rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-800">সক্রিয়</span>
                                 </h4>
                             </div>
                         </div>
                         <p class="relative z-10 text-xs leading-relaxed text-gray-700 sm:text-sm">
                             {{ repeatMode ? 'রিপিট মোড কার্যকর' : 'হিফয অনুশীলনের জন্য রিপিট মোড' }}
                         </p>
-                        
+
                         <!-- Shine effect on hover -->
                         <div class="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                            <div class="h-full w-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 translate-x-full group-hover:translate-x-[-200%] transition-transform duration-700"></div>
+                            <div
+                                class="h-full w-full translate-x-full -skew-x-12 transform bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-[-200%]"
+                            ></div>
                         </div>
                     </div>
                 </div>
@@ -437,14 +475,14 @@
                                 v-model="currentSurahNumber"
                                 @change="selectSurah($event)"
                                 :disabled="surahLoading"
-                                class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-gradient-to-r from-white to-[#5f5fcd]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-md focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 sm:px-3 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-gradient-to-r from-white to-[#5f5fcd]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-md focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:text-sm"
                             >
                                 <option value="">সূরা নির্বাচন করুন</option>
                                 <option v-for="surah in surahs" :key="surah.number" :value="surah.number">
                                     {{ surah.number }}. {{ surah.banglaName }}
                                 </option>
                             </select>
-                            <div v-if="surahLoading" class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <div v-if="surahLoading" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                 <div class="h-4 w-4 animate-spin rounded-full border-2 border-[#5f5fcd] border-t-transparent"></div>
                             </div>
                         </div>
@@ -467,14 +505,14 @@
                                 v-model="selectedJuz"
                                 @change="selectJuz($event)"
                                 :disabled="juzLoading"
-                                class="w-full rounded-lg border-2 border-[#2d5a27]/20 bg-gradient-to-r from-white to-[#2d5a27]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#2d5a27]/40 hover:shadow-md focus:border-[#2d5a27] focus:ring-2 focus:ring-[#2d5a27]/30 sm:px-3 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="w-full rounded-lg border-2 border-[#2d5a27]/20 bg-gradient-to-r from-white to-[#2d5a27]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#2d5a27]/40 hover:shadow-md focus:border-[#2d5a27] focus:ring-2 focus:ring-[#2d5a27]/30 disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:text-sm"
                             >
                                 <option value="">পারা নির্বাচন করুন</option>
                                 <option v-for="juz in availableJuzs" :key="juz.number" :value="juz.number">
                                     {{ juz.name }}
                                 </option>
                             </select>
-                            <div v-if="juzLoading" class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <div v-if="juzLoading" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                 <div class="h-4 w-4 animate-spin rounded-full border-2 border-[#2d5a27] border-t-transparent"></div>
                             </div>
                         </div>
@@ -566,12 +604,12 @@
                                 v-model="selectedPage"
                                 @change="selectPage($event)"
                                 :disabled="pageLoading"
-                                class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-gradient-to-r from-white to-[#5f5fcd]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-md focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 sm:px-3 sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="w-full rounded-lg border-2 border-[#5f5fcd]/20 bg-gradient-to-r from-white to-[#5f5fcd]/5 px-2 py-2 text-xs font-medium text-gray-700 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:shadow-md focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]/30 disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:text-sm"
                             >
                                 <option value="">পৃষ্ঠা নির্বাচন করুন</option>
                                 <option v-for="page in availablePages" :key="page.number" :value="page.number">পৃষ্ঠা {{ page.number }}</option>
                             </select>
-                            <div v-if="pageLoading" class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                            <div v-if="pageLoading" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                                 <div class="h-4 w-4 animate-spin rounded-full border-2 border-[#5f5fcd] border-t-transparent"></div>
                             </div>
                         </div>
@@ -588,14 +626,15 @@
                             isPlaying
                                 ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white'
                                 : 'bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] text-white',
-                            audioLoading && 'opacity-75 cursor-wait'
+                            audioLoading && 'cursor-wait opacity-75',
                         ]"
                     >
-                        <div v-if="audioLoading" class="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent sm:mr-2 sm:h-4 sm:w-4"></div>
+                        <div
+                            v-if="audioLoading"
+                            class="mr-1 h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent sm:mr-2 sm:h-4 sm:w-4"
+                        ></div>
                         <component v-else :is="isPlaying ? PauseIcon : PlayIcon" class="mr-1 h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
-                        <span>{{
-                            audioLoading ? 'লোড হচ্ছে...' : isPlaying ? 'থামান' : 'তেলাওয়াত শুনুন'
-                        }}</span>
+                        <span>{{ audioLoading ? 'লোড হচ্ছে...' : isPlaying ? 'থামান' : 'তেলাওয়াত শুনুন' }}</span>
                     </button>
                 </div>
             </div>
@@ -623,7 +662,6 @@
                     <span class="text-sm font-semibold text-[#2d5a27]"> পৃষ্ঠা {{ selectedPage }} </span>
                     <span class="ml-2 text-xs text-gray-600"> {{ ayahs.length }} আয়াত </span>
                 </div>
-
             </div>
 
             <!-- Topic Loading State -->
@@ -637,9 +675,9 @@
             </div>
 
             <!-- Topic Results Header -->
-            <div v-if="topicResults.length > 0 && !topicLoading" class="mb-4 text-center sm:mb-6 animate-fade-in animate-bounce-once">
+            <div v-if="topicResults.length > 0 && !topicLoading" class="animate-fade-in animate-bounce-once mb-4 text-center sm:mb-6">
                 <div
-                    class="inline-flex items-center rounded-full border border-[#d4a574]/20 bg-gradient-to-r from-[#d4a574]/10 to-[#5f5fcd]/10 px-4 py-2 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
+                    class="inline-flex items-center rounded-full border border-[#d4a574]/20 bg-gradient-to-r from-[#d4a574]/10 to-[#5f5fcd]/10 px-4 py-2 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
                 >
                     <span class="mr-2 text-lg">{{ selectedTopic.icon }}</span>
                     <span class="font-semibold text-[#2d5a27]"> {{ selectedTopic.name }} - {{ topicResults.length }}টি আয়াত পাওয়া গেছে </span>
@@ -668,7 +706,12 @@
             <div v-if="searchError" class="mb-4 py-4 text-center">
                 <div class="rounded-xl border border-red-200 bg-gradient-to-r from-red-50 to-red-100 p-4 sm:p-6">
                     <svg class="mx-auto mb-3 h-10 w-10 text-red-500 sm:h-12 sm:w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        />
                     </svg>
                     <h3 class="mb-2 text-lg font-semibold text-red-700 sm:text-xl">সমস্যা ঘটেছে</h3>
                     <p class="text-sm text-red-600 sm:text-base">{{ searchError }}</p>
@@ -738,20 +781,29 @@
 
             <!-- Juz Boundary Fixing Indicator -->
             <div v-if="juzBoundaryFixing && currentJuz" class="mb-4 text-center">
-                <div class="inline-flex items-center rounded-full border border-[#5f5fcd]/20 bg-gradient-to-r from-[#5f5fcd]/10 to-[#2d5a27]/10 px-4 py-2">
+                <div
+                    class="inline-flex items-center rounded-full border border-[#5f5fcd]/20 bg-gradient-to-r from-[#5f5fcd]/10 to-[#2d5a27]/10 px-4 py-2"
+                >
                     <div class="mr-2 h-5 w-5 animate-spin rounded-full border-b-2 border-[#5f5fcd]"></div>
                     <span class="font-semibold text-[#2d5a27]">পারা {{ currentJuz.number }} এর সঠিক সীমানা নির্ধারণ করা হচ্ছে...</span>
                 </div>
             </div>
 
             <!-- Premium Ayahs Display -->
-            <div ref="resultsArea" v-if="(ayahs.length > 0 || surahLoading || juzLoading || pageLoading || searchResults.length > 0 || topicResults.length > 0) && !topicLoading" class="space-y-4 sm:space-y-6 relative">
+            <div
+                ref="resultsArea"
+                v-if="
+                    (ayahs.length > 0 || surahLoading || juzLoading || pageLoading || searchResults.length > 0 || topicResults.length > 0) &&
+                    !topicLoading
+                "
+                class="relative space-y-4 sm:space-y-6"
+            >
                 <!-- Skeleton Loaders for Ayahs -->
                 <template v-if="(surahLoading && currentSurah) || (juzLoading && currentJuz) || (pageLoading && selectedPage)">
                     <div
                         v-for="i in currentSurah ? Math.min(currentSurah.numberOfAyahs || 5, 10) : 10"
                         :key="`skeleton-${i}`"
-                        class="group relative overflow-hidden rounded-2xl border border-[#5f5fcd]/10 bg-gradient-to-br from-white via-[#f8f9ff] to-[#f0f7f0] p-4 shadow-lg sm:rounded-3xl sm:p-6 animate-pulse"
+                        class="group relative animate-pulse overflow-hidden rounded-2xl border border-[#5f5fcd]/10 bg-gradient-to-br from-white via-[#f8f9ff] to-[#f0f7f0] p-4 shadow-lg sm:rounded-3xl sm:p-6"
                     >
                         <!-- Header Skeleton -->
                         <div class="relative z-10 mb-4 flex items-center justify-between sm:mb-6">
@@ -769,7 +821,9 @@
                         </div>
 
                         <!-- Arabic Text Skeleton -->
-                        <div class="relative z-10 mb-4 rounded-2xl border border-[#5f5fcd]/20 bg-gradient-to-br from-[#5f5fcd]/8 via-white to-[#2d5a27]/8 p-5 sm:mb-6 sm:p-8">
+                        <div
+                            class="relative z-10 mb-4 rounded-2xl border border-[#5f5fcd]/20 bg-gradient-to-br from-[#5f5fcd]/8 via-white to-[#2d5a27]/8 p-5 sm:mb-6 sm:p-8"
+                        >
                             <div class="space-y-3 text-center">
                                 <div class="mx-auto h-6 w-3/4 rounded bg-gray-200 sm:h-8"></div>
                                 <div class="mx-auto h-6 w-full rounded bg-gray-200 sm:h-8"></div>
@@ -790,117 +844,128 @@
 
                 <!-- Actual Ayahs Display -->
                 <template v-else-if="displayAyahs.length > 0">
-                <div
-                    v-for="ayah in displayAyahs"
-                    :key="ayah.numberInSurah"
-                    class="group relative overflow-hidden rounded-2xl border border-[#5f5fcd]/10 bg-gradient-to-br from-white via-[#f8f9ff] to-[#f0f7f0] p-4 shadow-lg transition-all duration-500 hover:scale-[1.01] hover:transform hover:border-[#5f5fcd]/20 hover:shadow-xl sm:rounded-3xl sm:p-6"
-                >
-                    <!-- Subtle Background Pattern -->
-                    <div class="absolute inset-0 opacity-[0.02]">
-                        <div
-                            class="absolute top-0 right-0 h-32 w-32 translate-x-16 -translate-y-16 transform rounded-full bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] blur-3xl"
-                        ></div>
-                        <div
-                            class="absolute bottom-0 left-0 h-24 w-24 -translate-x-12 translate-y-12 transform rounded-full bg-gradient-to-tr from-[#d4a574] to-[#5f5fcd] blur-2xl"
-                        ></div>
-                    </div>
-
-                    <!-- Enhanced Header -->
-                    <div class="relative z-10 mb-4 flex items-center justify-between sm:mb-6">
-                        <div class="flex items-center space-x-3 sm:space-x-4">
-                            <!-- Premium Ayah Number Badge -->
-                            <div class="relative">
-                                <div
-                                    class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#5f5fcd] via-[#4a4aa6] to-[#2d5a27] shadow-lg sm:h-10 sm:w-10"
-                                >
-                                    <span class="text-sm font-bold text-white sm:text-base">{{ ayah.numberInSurah }}</span>
-                                </div>
-                                <div class="absolute -inset-1 rounded-full bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] opacity-20 blur"></div>
-                            </div>
-
-                            <!-- Ayah Info -->
-                            <div class="space-y-1">
-                                <div class="flex items-center space-x-2 text-sm sm:text-base">
-                                    <span
-                                        v-if="currentJuz || selectedTopic"
-                                        class="rounded-full bg-[#2d5a27]/10 px-2 py-1 text-xs font-semibold text-[#2d5a27] sm:text-sm"
-                                    >
-                                        {{ ayah.surah.englishName }}
-                                    </span>
-                                    <span v-if="selectedTopic" class="rounded-full bg-[#d4a574]/10 px-2 py-1 text-xs font-semibold text-[#d4a574] sm:text-sm flex items-center">
-                                        <span class="mr-1">{{ selectedTopic.icon }}</span>
-                                        {{ selectedTopic.name }}
-                                    </span>
-                                </div>
-                                <div v-if="currentJuz || selectedTopic" class="text-xs text-gray-500">
-                                    {{ ayah.surah.revelationType === 'Meccan' ? 'মক্কী' : 'মাদানী' }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Enhanced Copy Button -->
-                        <div class="flex items-center">
-                            <button
-                                @click="copyAyah(ayah, $event)"
-                                class="group/copy flex items-center rounded-xl border border-[#5f5fcd]/20 bg-gradient-to-r from-[#5f5fcd]/10 via-[#5f5fcd]/5 to-[#2d5a27]/10 px-3 py-2 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:from-[#5f5fcd]/20 hover:to-[#2d5a27]/20 hover:shadow-md sm:px-4 sm:py-2.5"
-                                title="আয়াত কপি করুন"
-                            >
-                                <svg
-                                    class="mr-2 h-4 w-4 text-[#5f5fcd] transition-transform group-hover/copy:scale-110 sm:h-5 sm:w-5"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
-                                    <path
-                                        d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11.586l-3-3a1 1 0 00-1.414 1.414L11.586 11H15V11.586z"
-                                    />
-                                </svg>
-                                <span class="text-sm font-semibold text-[#5f5fcd] group-hover/copy:text-[#4a4aa6] sm:text-base">কপি</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Premium Arabic Text -->
                     <div
-                        class="relative z-10 mb-4 rounded-2xl border border-[#5f5fcd]/20 bg-gradient-to-br from-[#5f5fcd]/8 via-white to-[#2d5a27]/8 p-5 shadow-inner sm:mb-6 sm:p-8"
-                        dir="rtl"
+                        v-for="ayah in displayAyahs"
+                        :key="ayah.numberInSurah"
+                        class="group relative overflow-hidden rounded-2xl border border-[#5f5fcd]/10 bg-gradient-to-br from-white via-[#f8f9ff] to-[#f0f7f0] p-4 shadow-lg transition-all duration-500 hover:scale-[1.01] hover:transform hover:border-[#5f5fcd]/20 hover:shadow-xl sm:rounded-3xl sm:p-6"
                     >
-                        <div
-                            class="font-arabic text-center text-xl leading-[1.8] font-medium text-[#2d5a27] selection:bg-[#5f5fcd]/20 selection:text-[#2d5a27] sm:text-2xl sm:leading-[1.9] md:text-3xl lg:text-4xl lg:leading-[2.0]"
-                        >
-                            {{ ayah.arabicText || ayah.text }}
+                        <!-- Subtle Background Pattern -->
+                        <div class="absolute inset-0 opacity-[0.02]">
+                            <div
+                                class="absolute top-0 right-0 h-32 w-32 translate-x-16 -translate-y-16 transform rounded-full bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27] blur-3xl"
+                            ></div>
+                            <div
+                                class="absolute bottom-0 left-0 h-24 w-24 -translate-x-12 translate-y-12 transform rounded-full bg-gradient-to-tr from-[#d4a574] to-[#5f5fcd] blur-2xl"
+                            ></div>
                         </div>
-                        <!-- Subtle shine effect -->
-                        <div
-                            class="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-                        ></div>
-                    </div>
 
-                    <!-- Enhanced Bengali Translation -->
-                    <div v-if="!hideTranslation && (ayah.translationText || ayahTranslations[ayah.numberInSurah])" class="relative z-10 text-center">
+                        <!-- Enhanced Header -->
+                        <div class="relative z-10 mb-4 flex items-center justify-between sm:mb-6">
+                            <div class="flex items-center space-x-3 sm:space-x-4">
+                                <!-- Premium Ayah Number Badge -->
+                                <div class="relative">
+                                    <div
+                                        class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#5f5fcd] via-[#4a4aa6] to-[#2d5a27] shadow-lg sm:h-10 sm:w-10"
+                                    >
+                                        <span class="text-sm font-bold text-white sm:text-base">{{ ayah.numberInSurah }}</span>
+                                    </div>
+                                    <div class="absolute -inset-1 rounded-full bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] opacity-20 blur"></div>
+                                </div>
+
+                                <!-- Ayah Info -->
+                                <div class="space-y-1">
+                                    <div class="flex items-center space-x-2 text-sm sm:text-base">
+                                        <span
+                                            v-if="currentJuz || selectedTopic"
+                                            class="rounded-full bg-[#2d5a27]/10 px-2 py-1 text-xs font-semibold text-[#2d5a27] sm:text-sm"
+                                        >
+                                            {{ ayah.surah.englishName }}
+                                        </span>
+                                        <span
+                                            v-if="selectedTopic"
+                                            class="flex items-center rounded-full bg-[#d4a574]/10 px-2 py-1 text-xs font-semibold text-[#d4a574] sm:text-sm"
+                                        >
+                                            <span class="mr-1">{{ selectedTopic.icon }}</span>
+                                            {{ selectedTopic.name }}
+                                        </span>
+                                    </div>
+                                    <div v-if="currentJuz || selectedTopic" class="text-xs text-gray-500">
+                                        {{ ayah.surah.revelationType === 'Meccan' ? 'মক্কী' : 'মাদানী' }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Enhanced Copy Button -->
+                            <div class="flex items-center">
+                                <button
+                                    @click="copyAyah(ayah, $event)"
+                                    class="group/copy flex items-center rounded-xl border border-[#5f5fcd]/20 bg-gradient-to-r from-[#5f5fcd]/10 via-[#5f5fcd]/5 to-[#2d5a27]/10 px-3 py-2 shadow-sm transition-all duration-300 hover:border-[#5f5fcd]/40 hover:from-[#5f5fcd]/20 hover:to-[#2d5a27]/20 hover:shadow-md sm:px-4 sm:py-2.5"
+                                    title="আয়াত কপি করুন"
+                                >
+                                    <svg
+                                        class="mr-2 h-4 w-4 text-[#5f5fcd] transition-transform group-hover/copy:scale-110 sm:h-5 sm:w-5"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
+                                        <path
+                                            d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11.586l-3-3a1 1 0 00-1.414 1.414L11.586 11H15V11.586z"
+                                        />
+                                    </svg>
+                                    <span class="text-sm font-semibold text-[#5f5fcd] group-hover/copy:text-[#4a4aa6] sm:text-base">কপি</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Premium Arabic Text -->
                         <div
-                            class="relative rounded-xl border border-[#d4a574]/10 bg-gradient-to-r from-[#d4a574]/5 via-[#f8f9ff] to-[#d4a574]/5 p-4 shadow-sm sm:p-6"
+                            class="relative z-10 mb-4 rounded-2xl border border-[#5f5fcd]/20 bg-gradient-to-br from-[#5f5fcd]/8 via-white to-[#2d5a27]/8 p-5 shadow-inner sm:mb-6 sm:p-8"
+                            dir="rtl"
                         >
                             <div
-                                class="text-base leading-relaxed font-medium text-gray-700 selection:bg-[#d4a574]/20 selection:text-gray-800 sm:text-lg tracking-wide"
-                                style="line-height: 1.75;"
+                                class="font-arabic text-center text-xl leading-[1.8] font-medium text-[#2d5a27] selection:bg-[#5f5fcd]/20 selection:text-[#2d5a27] sm:text-2xl sm:leading-[1.9] md:text-3xl lg:text-4xl lg:leading-[2.0]"
                             >
-                                <!-- Show search match context for topic results -->
-                                <div v-if="selectedTopic && ayah.text && ayah.text !== (ayah.translationText || ayahTranslations[ayah.numberInSurah])" class="mb-3 p-2 bg-blue-50 border border-blue-200 rounded-lg">
-                                    <div class="text-xs font-semibold text-blue-700 mb-1">ইংরেজি অনুবাদে পাওয়া গেছে:</div>
-                                    <div class="text-sm text-blue-600 italic">{{ ayah.text }}</div>
-                                </div>
-                                
-                                <span class="text-lg text-[#d4a574] sm:text-xl">"</span>
-                                {{ ayah.translationText || ayahTranslations[ayah.numberInSurah] }}
-                                <span class="text-lg text-[#d4a574] sm:text-xl">"</span>
+                                {{ ayah.arabicText || ayah.text }}
                             </div>
-                            <!-- Quote decoration -->
-                            <div class="absolute top-2 left-2 h-2 w-2 rounded-full bg-[#d4a574]/20"></div>
-                            <div class="absolute right-2 bottom-2 h-2 w-2 rounded-full bg-[#d4a574]/20"></div>
+                            <!-- Subtle shine effect -->
+                            <div
+                                class="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                            ></div>
+                        </div>
+
+                        <!-- Enhanced Bengali Translation -->
+                        <div
+                            v-if="!hideTranslation && (ayah.translationText || ayahTranslations[ayah.numberInSurah])"
+                            class="relative z-10 text-center"
+                        >
+                            <div
+                                class="relative rounded-xl border border-[#d4a574]/10 bg-gradient-to-r from-[#d4a574]/5 via-[#f8f9ff] to-[#d4a574]/5 p-4 shadow-sm sm:p-6"
+                            >
+                                <div
+                                    class="text-base leading-relaxed font-medium tracking-wide text-gray-700 selection:bg-[#d4a574]/20 selection:text-gray-800 sm:text-lg"
+                                    style="line-height: 1.75"
+                                >
+                                    <!-- Show search match context for topic results -->
+                                    <div
+                                        v-if="
+                                            selectedTopic && ayah.text && ayah.text !== (ayah.translationText || ayahTranslations[ayah.numberInSurah])
+                                        "
+                                        class="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-2"
+                                    >
+                                        <div class="mb-1 text-xs font-semibold text-blue-700">ইংরেজি অনুবাদে পাওয়া গেছে:</div>
+                                        <div class="text-sm text-blue-600 italic">{{ ayah.text }}</div>
+                                    </div>
+
+                                    <span class="text-lg text-[#d4a574] sm:text-xl">"</span>
+                                    {{ ayah.translationText || ayahTranslations[ayah.numberInSurah] }}
+                                    <span class="text-lg text-[#d4a574] sm:text-xl">"</span>
+                                </div>
+                                <!-- Quote decoration -->
+                                <div class="absolute top-2 left-2 h-2 w-2 rounded-full bg-[#d4a574]/20"></div>
+                                <div class="absolute right-2 bottom-2 h-2 w-2 rounded-full bg-[#d4a574]/20"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </template>
             </div>
 
@@ -910,7 +975,12 @@
                     <div class="flex items-start">
                         <div class="flex-shrink-0">
                             <svg class="h-5 w-5 text-red-400 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                                />
                             </svg>
                         </div>
                         <div class="ml-3 flex-1">
@@ -918,7 +988,7 @@
                                 {{ errorType === 'audio' ? 'অডিও ত্রুটি' : 'লোডিং ত্রুটি' }}
                             </h3>
                             <p class="mt-1 text-sm text-red-700">{{ errorMessage }}</p>
-                            <button 
+                            <button
                                 @click="clearError"
                                 class="mt-3 rounded-lg bg-red-100 px-3 py-1.5 text-sm font-medium text-red-800 hover:bg-red-200"
                             >
@@ -942,27 +1012,27 @@
                 preload="metadata"
                 style="display: none"
             ></audio>
-            
+
             <!-- Pre-buffer Next Audio Element -->
-            <audio
-                ref="nextAudioElement"
-                preload="auto"
-                style="display: none"
-            ></audio>
+            <audio ref="nextAudioElement" preload="auto" style="display: none"></audio>
 
             <!-- Back to Top Button -->
-            <div v-if="displayAyahs.length > 3" class="fixed bottom-6 right-6 z-50">
+            <div v-if="displayAyahs.length > 3" class="fixed right-6 bottom-6 z-50">
                 <button
                     @click="scrollToTop"
-                    class="group rounded-full bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] p-3 text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-110 active:scale-95"
+                    class="group rounded-full bg-gradient-to-r from-[#5f5fcd] to-[#2d5a27] p-3 text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl active:scale-95"
                     title="উপরে যান"
                 >
-                    <svg class="h-5 w-5 transition-transform duration-200 group-hover:-translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg
+                        class="h-5 w-5 transition-transform duration-200 group-hover:-translate-y-0.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
                     </svg>
                 </button>
             </div>
-
         </div>
     </FrontendLayout>
 </template>
@@ -1045,7 +1115,7 @@ const juzBoundaries = {
     27: { startSurah: 51, startAyah: 31 },
     28: { startSurah: 58, startAyah: 1 },
     29: { startSurah: 67, startAyah: 1 },
-    30: { startSurah: 78, startAyah: 1 }
+    30: { startSurah: 78, startAyah: 1 },
 };
 
 const availableJuzs = ref([
@@ -1119,7 +1189,7 @@ const getLocalCache = () => {
             // Clean expired entries
             const now = Date.now();
             const cleaned = {};
-            Object.keys(data).forEach(key => {
+            Object.keys(data).forEach((key) => {
                 if (data[key].expires > now) {
                     cleaned[key] = data[key];
                 }
@@ -1136,13 +1206,13 @@ const getLocalCache = () => {
 const setLocalCache = (key, value) => {
     try {
         const cache = getLocalCache();
-        
+
         // Add new entry
         cache[key] = {
             data: value,
-            expires: Date.now() + CACHE_DURATION
+            expires: Date.now() + CACHE_DURATION,
         };
-        
+
         // Limit cache size
         const keys = Object.keys(cache);
         if (keys.length > MAX_CACHE_SIZE) {
@@ -1152,7 +1222,7 @@ const setLocalCache = (key, value) => {
                 delete cache[keys[i]];
             }
         }
-        
+
         localStorage.setItem(LOCALSTORAGE_CACHE_KEY, JSON.stringify(cache));
     } catch (e) {
         console.error('Error setting cache:', e);
@@ -1463,7 +1533,7 @@ const debouncedSearch = () => {
     if (searchTimeout.value) {
         clearTimeout(searchTimeout.value);
     }
-    
+
     searchTimeout.value = setTimeout(() => {
         if (autoSearch.value && searchQuery.value.trim().length >= 3) {
             performSearch();
@@ -1565,10 +1635,10 @@ const scrollToResults = () => {
         // Calculate offset to ensure header visibility
         const offset = 80; // 80px offset from top
         const elementPosition = resultsArea.value.offsetTop - offset;
-        
+
         window.scrollTo({
             top: elementPosition,
-            behavior: 'smooth'
+            behavior: 'smooth',
         });
     }
 };
@@ -1577,7 +1647,7 @@ const scrollToResults = () => {
 const scrollToTop = () => {
     window.scrollTo({
         top: 0,
-        behavior: 'smooth'
+        behavior: 'smooth',
     });
 };
 
@@ -1585,7 +1655,7 @@ const selectTopic = async (topic) => {
     // Clear any previous errors
     errorMessage.value = '';
     errorType.value = '';
-    
+
     // If clicking the same topic, reset/clear it
     if (selectedTopic.value?.id === topic.id) {
         selectedTopic.value = null;
@@ -1696,7 +1766,7 @@ const selectTopic = async (topic) => {
 
         // Cache the results
         setLocalCache(cacheKey, topicResults.value);
-        
+
         // Scroll to results after content is fully loaded
         setTimeout(() => {
             scrollToResults();
@@ -1991,7 +2061,7 @@ const selectSurah = async (event) => {
     if (event && event.preventDefault) {
         event.preventDefault();
     }
-    
+
     const surah = surahs.value.find((s) => s.number === currentSurahNumber.value);
     if (!surah) return;
 
@@ -2014,14 +2084,14 @@ const selectSurah = async (event) => {
     ayahTranslations.value = {};
     searchResults.value = []; // Clear search results
     topicResults.value = []; // Clear topic results
-    
+
     // Clear any previous errors
     errorMessage.value = '';
     errorType.value = '';
-    
+
     // Start loading indicator after setting currentSurah
     surahLoading.value = true;
-    
+
     try {
         // Progressive loading: First load Arabic text
         const loadArabicText = async () => {
@@ -2029,7 +2099,7 @@ const selectSurah = async (event) => {
                 // Check cache first
                 const cacheKey = `surah_${currentSurah.value.number}_${selectedTextStyle.value}`;
                 const cachedData = getCachedData(cacheKey);
-                
+
                 if (cachedData) {
                     // Use cached data
                     ayahs.value = cachedData.ayahs;
@@ -2038,19 +2108,19 @@ const selectSurah = async (event) => {
                     }
                     return;
                 }
-                
+
                 // If not cached, fetch from API
                 const arabicResponse = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.value.number}/${selectedTextStyle.value}`);
                 const arabicJson = await arabicResponse.json();
-                
+
                 // Progressive update: Add ayahs as they come
                 ayahs.value = arabicJson.data.ayahs;
-                
+
                 // Cache the successful response
                 if (arabicJson.data) {
                     setLocalCache(cacheKey, arabicJson.data);
                 }
-                
+
                 // If we have ayahs, we can hide the skeleton loader
                 if (ayahs.value.length > 0) {
                     surahLoading.value = false;
@@ -2061,7 +2131,7 @@ const selectSurah = async (event) => {
                     const fallbackResponse = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.value.number}`);
                     const fallbackJson = await fallbackResponse.json();
                     ayahs.value = fallbackJson.data.ayahs;
-                    
+
                     if (ayahs.value.length > 0) {
                         surahLoading.value = false;
                     }
@@ -2073,14 +2143,14 @@ const selectSurah = async (event) => {
                 }
             }
         };
-        
+
         // Load translations separately (don't wait for it)
         const loadTranslations = async () => {
             try {
                 // Check cache first
                 const cacheKey = `surah_trans_${currentSurah.value.number}_${selectedTranslation.value}`;
                 const cachedData = getCachedData(cacheKey);
-                
+
                 if (cachedData) {
                     // Use cached data
                     const translations = {};
@@ -2090,15 +2160,17 @@ const selectSurah = async (event) => {
                     ayahTranslations.value = translations;
                     return;
                 }
-                
-                const translationResponse = await fetch(`https://api.alquran.cloud/v1/surah/${currentSurah.value.number}/${selectedTranslation.value}`);
+
+                const translationResponse = await fetch(
+                    `https://api.alquran.cloud/v1/surah/${currentSurah.value.number}/${selectedTranslation.value}`,
+                );
                 const translationJson = await translationResponse.json();
                 const translations = {};
                 translationJson.data.ayahs.forEach((ayah) => {
                     translations[ayah.numberInSurah] = ayah.text;
                 });
                 ayahTranslations.value = translations;
-                
+
                 // Cache the successful response
                 if (translationJson.data) {
                     setLocalCache(cacheKey, translationJson.data);
@@ -2118,11 +2190,10 @@ const selectSurah = async (event) => {
                 }
             }
         };
-        
+
         // Start both but don't wait for translations
         await loadArabicText();
         loadTranslations(); // Fire and forget for progressive loading
-        
     } catch (error) {
         console.error('Error loading surah:', error);
         surahLoading.value = false;
@@ -2134,7 +2205,7 @@ const selectJuz = async (event) => {
     if (event && event.preventDefault) {
         event.preventDefault();
     }
-    
+
     if (!selectedJuz.value || selectedJuz.value === '') {
         // "পারা নির্বাচন করুন" selected, just reset without navigation
         currentJuz.value = null;
@@ -2163,21 +2234,20 @@ const selectJuz = async (event) => {
     ayahTranslations.value = {};
     searchResults.value = []; // Clear search results
     topicResults.value = []; // Clear topic results
-    
+
     // Clear any previous errors
     errorMessage.value = '';
     errorType.value = '';
-    
+
     // Start loading indicator after setting currentJuz
     juzLoading.value = true;
 
     try {
         // Progressive loading: First load Arabic text
         await loadJuzArabicText();
-        
+
         // Load translations separately (don't wait for it)
         loadJuzTranslation(); // Fire and forget for progressive loading
-        
     } catch (error) {
         console.error('Error loading juz:', error);
         juzLoading.value = false;
@@ -2189,7 +2259,7 @@ const selectPage = async (event) => {
     if (event && event.preventDefault) {
         event.preventDefault();
     }
-    
+
     if (!selectedPage.value || selectedPage.value === '') return;
 
     // Note: Page doesn't need to be cleared since it's the selected value
@@ -2211,21 +2281,20 @@ const selectPage = async (event) => {
     ayahTranslations.value = {};
     searchResults.value = []; // Clear search results
     topicResults.value = []; // Clear topic results
-    
+
     // Clear any previous errors
     errorMessage.value = '';
     errorType.value = '';
-    
+
     // Start loading indicator
     pageLoading.value = true;
 
     try {
         // Progressive loading: First load Arabic text
         await loadPageArabicText();
-        
+
         // Load translations separately (don't wait for it)
         loadPageTranslation(); // Fire and forget for progressive loading
-        
     } catch (error) {
         console.error('Error loading page:', error);
         pageLoading.value = false;
@@ -2285,27 +2354,27 @@ const loadSurahTranslation = async () => {
 const fixJuzBoundary = async (juzNumber, textStyle = 'quran-uthmani') => {
     const boundary = juzBoundaries[juzNumber];
     if (!boundary || ayahs.value.length === 0) return;
-    
+
     const firstAyah = ayahs.value[0];
-    
+
     // Check if the first ayah matches the expected boundary
     if (firstAyah.surah.number === boundary.startSurah && firstAyah.numberInSurah === boundary.startAyah) {
         return;
     }
-    
+
     juzBoundaryFixing.value = true;
-    
+
     try {
         // Check if we're missing ayahs at the beginning (same surah but later ayah)
         if (firstAyah.surah.number === boundary.startSurah && firstAyah.numberInSurah > boundary.startAyah) {
             const missingAyahs = [];
-            
+
             // Fetch all missing ayahs
             for (let ayahNum = boundary.startAyah; ayahNum < firstAyah.numberInSurah; ayahNum++) {
                 try {
                     const response = await fetch(`https://api.alquran.cloud/v1/ayah/${boundary.startSurah}:${ayahNum}/${textStyle}`);
                     const data = await response.json();
-                    
+
                     if (data.data) {
                         missingAyahs.push(data.data);
                     }
@@ -2313,25 +2382,24 @@ const fixJuzBoundary = async (juzNumber, textStyle = 'quran-uthmani') => {
                     // Silent fail for individual ayah fetch
                 }
             }
-            
+
             // Add missing ayahs at the beginning
             if (missingAyahs.length > 0) {
                 ayahs.value = [...missingAyahs, ...ayahs.value];
             }
-        } 
+        }
         // Check if API started from wrong surah or earlier ayah
         else {
             try {
                 const response = await fetch(`https://api.alquran.cloud/v1/ayah/${boundary.startSurah}:${boundary.startAyah}/${textStyle}`);
                 const data = await response.json();
-                
+
                 if (data.data) {
                     // Check if this ayah already exists in our array
                     const existingIndex = ayahs.value.findIndex(
-                        a => a.surah.number === data.data.surah.number && 
-                             a.numberInSurah === data.data.numberInSurah
+                        (a) => a.surah.number === data.data.surah.number && a.numberInSurah === data.data.numberInSurah,
                     );
-                    
+
                     if (existingIndex === -1) {
                         ayahs.value.unshift(data.data);
                     }
@@ -2353,30 +2421,29 @@ const loadJuzArabicText = async () => {
     try {
         const arabicResponse = await fetch(`https://api.alquran.cloud/v1/juz/${juzNumber}/${selectedTextStyle.value}`);
         const arabicData = await arabicResponse.json();
-        
+
         if (arabicData.data && arabicData.data.ayahs && arabicData.data.ayahs.length > 0) {
             ayahs.value = arabicData.data.ayahs;
-            
+
             // Hide skeleton loader once we have ayahs
             juzLoading.value = false;
-            
+
             await fixJuzBoundary(juzNumber, selectedTextStyle.value);
         } else {
             throw new Error('No ayahs returned from API');
         }
-        
     } catch (error) {
         // Fallback to default text style
         try {
             const fallbackResponse = await fetch(`https://api.alquran.cloud/v1/juz/${juzNumber}`);
             const fallbackData = await fallbackResponse.json();
-            
+
             if (fallbackData.data && fallbackData.data.ayahs) {
                 ayahs.value = fallbackData.data.ayahs;
-                
+
                 // Hide skeleton loader once we have ayahs
                 juzLoading.value = false;
-                
+
                 await fixJuzBoundary(juzNumber, 'quran-uthmani');
             } else {
                 ayahs.value = [];
@@ -2400,14 +2467,14 @@ const loadJuzTranslation = async () => {
         const translationData = await translationResponse.json();
 
         const translations = {};
-        
+
         // Create a map of translations from the API response
         const apiTranslations = {};
         translationData.data.ayahs.forEach((ayah) => {
             const key = `${ayah.surah.number}:${ayah.numberInSurah}`;
             apiTranslations[key] = ayah.text;
         });
-        
+
         // Map translations to our displayed ayahs
         ayahs.value.forEach((ayah) => {
             const key = `${ayah.surah.number}:${ayah.numberInSurah}`;
@@ -2415,17 +2482,19 @@ const loadJuzTranslation = async () => {
                 translations[ayah.numberInSurah] = apiTranslations[key];
             }
         });
-        
+
         ayahTranslations.value = translations;
-        
+
         // Fetch any missing translations individually
-        const missingAyahs = ayahs.value.filter(ayah => !translations[ayah.numberInSurah]);
+        const missingAyahs = ayahs.value.filter((ayah) => !translations[ayah.numberInSurah]);
         if (missingAyahs.length > 0) {
             for (const ayah of missingAyahs) {
                 try {
-                    const response = await fetch(`https://api.alquran.cloud/v1/ayah/${ayah.surah.number}:${ayah.numberInSurah}/${selectedTranslation.value}`);
+                    const response = await fetch(
+                        `https://api.alquran.cloud/v1/ayah/${ayah.surah.number}:${ayah.numberInSurah}/${selectedTranslation.value}`,
+                    );
                     const data = await response.json();
-                    
+
                     if (data.data) {
                         ayahTranslations.value[ayah.numberInSurah] = data.data.text;
                     }
@@ -2442,14 +2511,14 @@ const loadJuzTranslation = async () => {
             const fallbackData = await fallbackResponse.json();
 
             const translations = {};
-            
+
             // Create a map of translations from the API response
             const apiTranslations = {};
             fallbackData.data.ayahs.forEach((ayah) => {
                 const key = `${ayah.surah.number}:${ayah.numberInSurah}`;
                 apiTranslations[key] = ayah.text;
             });
-            
+
             // Map translations to our displayed ayahs
             ayahs.value.forEach((ayah) => {
                 const key = `${ayah.surah.number}:${ayah.numberInSurah}`;
@@ -2457,7 +2526,7 @@ const loadJuzTranslation = async () => {
                     translations[ayah.numberInSurah] = apiTranslations[key];
                 }
             });
-            
+
             ayahTranslations.value = translations;
         } catch (fallbackError) {
             console.error('Error loading fallback Juz translation:', fallbackError);
@@ -2472,7 +2541,7 @@ const loadPageArabicText = async () => {
         const arabicResponse = await fetch(`https://api.alquran.cloud/v1/page/${selectedPage.value}/${selectedTextStyle.value}`);
         const arabicData = await arabicResponse.json();
         ayahs.value = arabicData.data.ayahs;
-        
+
         // Hide skeleton loader once we have ayahs
         if (ayahs.value.length > 0) {
             pageLoading.value = false;
@@ -2484,7 +2553,7 @@ const loadPageArabicText = async () => {
             const fallbackResponse = await fetch(`https://api.alquran.cloud/v1/page/${selectedPage.value}`);
             const fallbackData = await fallbackResponse.json();
             ayahs.value = fallbackData.data.ayahs;
-            
+
             // Hide skeleton loader once we have ayahs
             if (ayahs.value.length > 0) {
                 pageLoading.value = false;
@@ -2745,7 +2814,7 @@ const handleAudioEnded = async () => {
     if (playMode !== 'juz' && playMode !== 'page') {
         if (repeatMode.value && repeatCount.value < 2) {
             repeatCount.value++;
-            
+
             setTimeout(async () => {
                 if (audioElement.value) {
                     audioElement.value.currentTime = 0;
@@ -2759,7 +2828,7 @@ const handleAudioEnded = async () => {
             }, 500);
             return;
         }
-        
+
         // Reset and stop for surah mode
         if (repeatMode.value) {
             repeatCount.value = 0;
@@ -2783,7 +2852,7 @@ const handleAudioEnded = async () => {
 
             const surahPadded = surahNumber.toString().padStart(3, '0');
             const ayahPadded = ayahNumber.toString().padStart(3, '0');
-            
+
             // Use the selected reciter's ayah server
             const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
             if (!currentReciter) {
@@ -2812,19 +2881,19 @@ const handleAudioEnded = async () => {
             // Reached end of juz - handle collection-level repeat
             if (repeatMode.value && collectionRepeatCount.value < 2) {
                 collectionRepeatCount.value++;
-                
+
                 // Restart from first ayah of the juz
                 setTimeout(async () => {
                     audioElement.value.dataset.currentAyahIndex = '0';
                     currentlyPlayingAyahIndex.value = 0;
-                    
+
                     const firstAyah = ayahs.value[0];
                     const surahNumber = firstAyah.surah.number;
                     const ayahNumber = firstAyah.numberInSurah;
-                    
+
                     const surahPadded = surahNumber.toString().padStart(3, '0');
                     const ayahPadded = ayahNumber.toString().padStart(3, '0');
-                    
+
                     // Use the selected reciter's ayah server
                     const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
                     if (!currentReciter) {
@@ -2834,7 +2903,7 @@ const handleAudioEnded = async () => {
                         return;
                     }
                     const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
-                    
+
                     audioElement.value.src = audioUrl;
                     try {
                         await audioElement.value.play();
@@ -2863,7 +2932,7 @@ const handleAudioEnded = async () => {
 
             const surahPadded = surahNumber.toString().padStart(3, '0');
             const ayahPadded = ayahNumber.toString().padStart(3, '0');
-            
+
             // Use the selected reciter's ayah server
             const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
             if (!currentReciter) {
@@ -2892,19 +2961,19 @@ const handleAudioEnded = async () => {
             // Reached end of page - handle collection-level repeat
             if (repeatMode.value && collectionRepeatCount.value < 2) {
                 collectionRepeatCount.value++;
-                
+
                 // Restart from first ayah of the page
                 setTimeout(async () => {
                     audioElement.value.dataset.currentAyahIndex = '0';
                     currentlyPlayingAyahIndex.value = 0;
-                    
+
                     const firstAyah = ayahs.value[0];
                     const surahNumber = firstAyah.surah.number;
                     const ayahNumber = firstAyah.numberInSurah;
-                    
+
                     const surahPadded = surahNumber.toString().padStart(3, '0');
                     const ayahPadded = ayahNumber.toString().padStart(3, '0');
-                    
+
                     // Use the selected reciter's ayah server
                     const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
                     if (!currentReciter) {
@@ -2914,7 +2983,7 @@ const handleAudioEnded = async () => {
                         return;
                     }
                     const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
-                    
+
                     audioElement.value.src = audioUrl;
                     try {
                         await audioElement.value.play();
@@ -2992,10 +3061,10 @@ const copyAyah = async (ayah, event) => {
 // Pre-load next ayah's audio
 const preloadNextAudio = () => {
     if (!nextAudioElement.value || !selectedReciter.value) return;
-    
+
     // Determine the next ayah to pre-load
     let nextAyah = null;
-    
+
     if (currentSurah.value && ayahs.value.length > 0) {
         // For surah mode, get the next ayah
         const currentIndex = parseInt(audioElement.value?.dataset.currentAyahIndex || '0');
@@ -3008,7 +3077,7 @@ const preloadNextAudio = () => {
             nextAyah = ayahs.value[currentlyPlayingAyahIndex.value + 1];
         }
     }
-    
+
     // Pre-load the audio if we have a next ayah
     if (nextAyah) {
         const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
@@ -3016,7 +3085,7 @@ const preloadNextAudio = () => {
             const surahPadded = String(nextAyah.surah.number).padStart(3, '0');
             const ayahPadded = String(nextAyah.numberInSurah).padStart(3, '0');
             const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
-            
+
             // Set the source but don't play
             nextAudioElement.value.src = audioUrl;
         }
@@ -3027,7 +3096,7 @@ const preloadNextAudio = () => {
 const clearError = () => {
     errorMessage.value = '';
     errorType.value = '';
-    
+
     // Retry based on error type
     if (errorType.value === 'surah' && currentSurah.value) {
         selectSurah();
@@ -3046,13 +3115,13 @@ const handleKeyboardShortcuts = (event) => {
     if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
         return;
     }
-    
-    switch(event.key) {
+
+    switch (event.key) {
         case ' ': // Spacebar
             event.preventDefault();
             toggleAudio();
             break;
-            
+
         case 'ArrowRight':
             event.preventDefault();
             if (progressiveMode.value) {
@@ -3063,7 +3132,7 @@ const handleKeyboardShortcuts = (event) => {
                 playCurrentAyah();
             }
             break;
-            
+
         case 'ArrowLeft':
             event.preventDefault();
             if (progressiveMode.value) {
@@ -3074,7 +3143,7 @@ const handleKeyboardShortcuts = (event) => {
                 playCurrentAyah();
             }
             break;
-            
+
         case 'Escape':
             event.preventDefault();
             // Stop audio
@@ -3091,19 +3160,19 @@ const handleKeyboardShortcuts = (event) => {
 // Play current ayah (helper for keyboard navigation)
 const playCurrentAyah = async () => {
     if (!ayahs.value.length || currentlyPlayingAyahIndex.value < 0) return;
-    
+
     const ayah = ayahs.value[currentlyPlayingAyahIndex.value];
     const currentReciter = availableReciters.value.find((r) => r.code === selectedReciter.value);
-    
+
     if (currentReciter && currentReciter.ayahServer && ayah) {
         const surahPadded = String(ayah.surah.number).padStart(3, '0');
         const ayahPadded = String(ayah.numberInSurah).padStart(3, '0');
         const audioUrl = `https://${currentReciter.ayahServer}/${surahPadded}${ayahPadded}.mp3`;
-        
+
         audioElement.value.src = audioUrl;
         audioElement.value.dataset.currentAyahIndex = currentlyPlayingAyahIndex.value;
         audioElement.value.dataset.playMode = currentJuz.value ? 'juz' : selectedPage.value ? 'page' : 'surah';
-        
+
         try {
             await audioElement.value.play();
         } catch (error) {
@@ -3357,7 +3426,8 @@ html {
 
 /* Bounce Once Animation for Results */
 @keyframes bounce-once {
-    0%, 100% {
+    0%,
+    100% {
         transform: translateY(0);
     }
     25% {
@@ -3382,7 +3452,7 @@ html {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
-    
+
     .animate-bounce-once {
         animation: none;
     }

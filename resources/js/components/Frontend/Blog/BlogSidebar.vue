@@ -1,6 +1,5 @@
 <template>
     <aside class="space-y-8">
-
         <!-- Categories -->
         <div class="shadow-islamic rounded-2xl border border-neutral-100 bg-white p-6">
             <h3 class="mb-4 flex items-center text-lg font-semibold text-primary">
@@ -11,7 +10,7 @@
                 <li>
                     <button
                         @click="clearFilters"
-                        class="group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-neutral-50 w-full text-left cursor-pointer"
+                        class="group flex w-full cursor-pointer items-center justify-between rounded-lg p-3 text-left transition-colors hover:bg-neutral-50"
                         :class="{ 'bg-[#5f5fcd]/10 text-[#5f5fcd]': !activeCategory && !activeTag }"
                     >
                         <div class="flex items-center">
@@ -23,7 +22,7 @@
                 <li v-for="category in categories" :key="category.id">
                     <button
                         @click="filterByCategory(category.slug)"
-                        class="group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-neutral-50 w-full text-left cursor-pointer"
+                        class="group flex w-full cursor-pointer items-center justify-between rounded-lg p-3 text-left transition-colors hover:bg-neutral-50"
                         :class="{ 'bg-[#5f5fcd]/10 text-[#5f5fcd]': category.slug === activeCategory }"
                     >
                         <div class="flex items-center">
@@ -49,7 +48,7 @@
                     v-for="tag in popularTags"
                     :key="tag.id"
                     @click="filterByTag(tag.slug)"
-                    class="inline-flex items-center rounded-lg bg-neutral-100 px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-[#5f5fcd] hover:text-white cursor-pointer"
+                    class="inline-flex cursor-pointer items-center rounded-lg bg-neutral-100 px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-[#5f5fcd] hover:text-white"
                     :class="{ 'bg-[#5f5fcd] text-white': tag.slug === activeTag }"
                 >
                     #{{ tag.name }}
@@ -102,13 +101,7 @@
 
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
-import {
-    Calendar as CalendarIcon,
-    Clock as ClockIcon,
-    Hash as HashtagIcon,
-    Newspaper as NewspaperIcon,
-    Tag as TagIcon,
-} from 'lucide-vue-next';
+import { Calendar as CalendarIcon, Clock as ClockIcon, Hash as HashtagIcon, Newspaper as NewspaperIcon, Tag as TagIcon } from 'lucide-vue-next';
 
 interface Category {
     id: number;
@@ -148,17 +141,21 @@ const filterByCategory = (categorySlug: string) => {
     url.pathname = '/blog';
     url.searchParams.delete('page');
     url.searchParams.delete('tag'); // Clear tag filter when filtering by category
-    
+
     if (categorySlug) {
         url.searchParams.set('category', categorySlug);
     } else {
         url.searchParams.delete('category');
     }
-    
-    router.get(url.toString(), {}, {
-        preserveState: false,
-        preserveScroll: false,
-    });
+
+    router.get(
+        url.toString(),
+        {},
+        {
+            preserveState: false,
+            preserveScroll: false,
+        },
+    );
 };
 
 const filterByTag = (tagSlug: string) => {
@@ -166,17 +163,21 @@ const filterByTag = (tagSlug: string) => {
     url.pathname = '/blog';
     url.searchParams.delete('page');
     url.searchParams.delete('category'); // Clear category filter when filtering by tag
-    
+
     if (tagSlug) {
         url.searchParams.set('tag', tagSlug);
     } else {
         url.searchParams.delete('tag');
     }
-    
-    router.get(url.toString(), {}, {
-        preserveState: false,
-        preserveScroll: false,
-    });
+
+    router.get(
+        url.toString(),
+        {},
+        {
+            preserveState: false,
+            preserveScroll: false,
+        },
+    );
 };
 
 const clearFilters = () => {
@@ -185,11 +186,15 @@ const clearFilters = () => {
     url.searchParams.delete('page');
     url.searchParams.delete('category');
     url.searchParams.delete('tag');
-    
-    router.get(url.toString(), {}, {
-        preserveState: false,
-        preserveScroll: false,
-    });
+
+    router.get(
+        url.toString(),
+        {},
+        {
+            preserveState: false,
+            preserveScroll: false,
+        },
+    );
 };
 
 const formatDate = (date: string) => {

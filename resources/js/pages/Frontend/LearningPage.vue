@@ -210,30 +210,31 @@
                             <!-- Quiz Not Started -->
                             <div v-if="!quizStarted" class="space-y-4">
                                 <h1 class="mb-6 text-lg leading-tight font-bold text-gray-900 sm:text-2xl">{{ currentLesson.title }}</h1>
-                                
+
                                 <div v-if="currentLesson?.quiz" class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ currentLesson.quiz.title }}</h3>
-                                    <p v-if="currentLesson.quiz.description" class="text-gray-600 mb-4">{{ currentLesson.quiz.description }}</p>
-                                    
-                                    <div class="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+                                    <h3 class="mb-2 text-lg font-semibold text-gray-900">{{ currentLesson.quiz.title }}</h3>
+                                    <p v-if="currentLesson.quiz.description" class="mb-4 text-gray-600">{{ currentLesson.quiz.description }}</p>
+
+                                    <div class="mb-4 flex flex-wrap gap-4 text-sm text-gray-500">
                                         <span class="flex items-center">
-                                            <HelpCircleIcon class="h-4 w-4 mr-1" />
+                                            <HelpCircleIcon class="mr-1 h-4 w-4" />
                                             {{ currentLesson.quiz.total_questions }} প্রশ্ন
                                         </span>
                                         <span v-if="currentLesson.quiz.time_limit_minutes" class="flex items-center">
-                                            <ClockIcon class="h-4 w-4 mr-1" />
+                                            <ClockIcon class="mr-1 h-4 w-4" />
                                             {{ currentLesson.quiz.time_limit_minutes }} মিনিট
                                         </span>
                                         <span class="flex items-center">
-                                            <CheckCircleIcon class="h-4 w-4 mr-1" />
+                                            <CheckCircleIcon class="mr-1 h-4 w-4" />
                                             পাশ: {{ currentLesson.quiz.passing_score }}%
                                         </span>
                                     </div>
-                                    
-                                    <button 
-                                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] text-white font-medium rounded-lg hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#5f5fcd] focus:ring-offset-2 transform hover:scale-105 transition-all"
-                                        @click="startQuiz(currentLesson.quiz)">
-                                        <PlayIcon class="w-4 h-4 mr-2" />
+
+                                    <button
+                                        class="inline-flex transform items-center rounded-lg bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] px-6 py-3 font-medium text-white transition-all hover:scale-105 hover:shadow-lg focus:ring-2 focus:ring-[#5f5fcd] focus:ring-offset-2 focus:outline-none"
+                                        @click="startQuiz(currentLesson.quiz)"
+                                    >
+                                        <PlayIcon class="mr-2 h-4 w-4" />
                                         কুইজ শুরু করুন
                                     </button>
                                 </div>
@@ -245,105 +246,112 @@
                                 <div class="rounded-xl bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] p-6 text-white shadow-lg">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <h2 class="text-xl font-bold mb-2">{{ currentQuiz.title }}</h2>
+                                            <h2 class="mb-2 text-xl font-bold">{{ currentQuiz.title }}</h2>
                                             <div class="flex items-center space-x-4 text-sm opacity-90">
                                                 <span class="flex items-center">
-                                                    <HelpCircleIcon class="h-4 w-4 mr-1" />
+                                                    <HelpCircleIcon class="mr-1 h-4 w-4" />
                                                     প্রশ্ন {{ currentQuestionIndex + 1 }} / {{ currentQuiz.questions.length }}
                                                 </span>
                                                 <span v-if="currentQuiz.time_limit_minutes" class="flex items-center">
-                                                    <ClockIcon class="h-4 w-4 mr-1" />
+                                                    <ClockIcon class="mr-1 h-4 w-4" />
                                                     {{ currentQuiz.time_limit_minutes }} মিনিট
                                                 </span>
                                             </div>
                                         </div>
                                         <!-- Progress Circle -->
-                                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-white bg-opacity-20 text-lg font-bold">
+                                        <div class="bg-opacity-20 flex h-16 w-16 items-center justify-center rounded-full bg-white text-lg font-bold">
                                             {{ Math.round(((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100) }}%
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Progress Bar -->
                                     <div class="mt-4">
-                                        <div class="h-2 bg-white bg-opacity-20 rounded-full">
-                                            <div 
-                                                class="h-2 bg-white rounded-full transition-all duration-300" 
-                                                :style="{ width: ((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100 + '%' }">
-                                            </div>
+                                        <div class="bg-opacity-20 h-2 rounded-full bg-white">
+                                            <div
+                                                class="h-2 rounded-full bg-white transition-all duration-300"
+                                                :style="{ width: ((currentQuestionIndex + 1) / currentQuiz.questions.length) * 100 + '%' }"
+                                            ></div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Question Card -->
-                                <div v-if="currentQuestion" class="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
+                                <div v-if="currentQuestion" class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
                                     <!-- Question Header -->
-                                    <div class="bg-[#f5f6fd] px-6 py-4 border-b border-gray-200">
+                                    <div class="border-b border-gray-200 bg-[#f5f6fd] px-6 py-4">
                                         <div class="flex items-start justify-between">
                                             <div class="flex-1">
-                                                <h3 class="text-lg font-semibold text-gray-900 leading-relaxed">
+                                                <h3 class="text-lg leading-relaxed font-semibold text-gray-900">
                                                     {{ currentQuestionIndex + 1 }}. {{ currentQuestion.question }}
                                                 </h3>
                                             </div>
-                                            
+
                                             <!-- Compact Navigation Buttons -->
-                                            <div class="flex items-center space-x-2 ml-4">
+                                            <div class="ml-4 flex items-center space-x-2">
                                                 <!-- Previous Button -->
                                                 <button
                                                     @click="previousQuestion"
                                                     :disabled="currentQuestionIndex === 0"
-                                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200"
-                                                    :class="currentQuestionIndex === 0 
-                                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200' 
-                                                        : 'bg-white border border-[#5f5fcd] text-[#5f5fcd] hover:bg-[#5f5fcd] hover:text-white'">
-                                                    <ChevronLeftIcon class="h-3 w-3 mr-1" />
+                                                    class="inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-200"
+                                                    :class="
+                                                        currentQuestionIndex === 0
+                                                            ? 'cursor-not-allowed border border-gray-200 bg-gray-100 text-gray-400'
+                                                            : 'border border-[#5f5fcd] bg-white text-[#5f5fcd] hover:bg-[#5f5fcd] hover:text-white'
+                                                    "
+                                                >
+                                                    <ChevronLeftIcon class="mr-1 h-3 w-3" />
                                                     পূর্ববর্তী
                                                 </button>
-                                                
+
                                                 <!-- Progress Indicator -->
                                                 <div class="text-xs font-medium text-[#5f5fcd]">
                                                     {{ currentQuestionIndex + 1 }}/{{ currentQuiz.questions.length }}
                                                 </div>
-                                                
+
                                                 <!-- Next/Submit Button -->
                                                 <button
                                                     v-if="currentQuestionIndex < currentQuiz.questions.length - 1"
                                                     @click="nextQuestion"
-                                                    class="inline-flex items-center px-3 py-1.5 bg-[#5f5fcd] text-white text-xs font-medium rounded-md hover:bg-[#4a4a9f] transition-all duration-200">
+                                                    class="inline-flex items-center rounded-md bg-[#5f5fcd] px-3 py-1.5 text-xs font-medium text-white transition-all duration-200 hover:bg-[#4a4a9f]"
+                                                >
                                                     পরবর্তী
-                                                    <ChevronRightIcon class="h-3 w-3 ml-1" />
+                                                    <ChevronRightIcon class="ml-1 h-3 w-3" />
                                                 </button>
                                                 <button
                                                     v-else
                                                     @click="submitQuiz"
                                                     :disabled="submittingQuiz"
-                                                    class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-xs font-medium rounded-md hover:bg-green-700 transition-all duration-200"
+                                                    class="inline-flex items-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white transition-all duration-200 hover:bg-green-700"
                                                 >
-                                                    <CheckIcon class="h-3 w-3 mr-1" />
+                                                    <CheckIcon class="mr-1 h-3 w-3" />
                                                     <span v-if="submittingQuiz">জমা দিচ্ছে...</span>
                                                     <span v-else>জমা দিন</span>
                                                 </button>
-                                                <div v-if="quizError" class="text-red-600 mt-2">{{ quizError }}</div>
+                                                <div v-if="quizError" class="mt-2 text-red-600">{{ quizError }}</div>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Answer Options -->
                                     <div class="p-6">
                                         <!-- Multiple Choice -->
                                         <div v-if="currentQuestion.type === 'multiple_choice'" class="space-y-3">
-                                            <label 
+                                            <label
                                                 v-for="(option, index) in currentQuestion.options"
                                                 :key="index"
-                                                class="flex items-start p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md group"
-                                                :class="quizAnswers[currentQuestion.id] == index 
-                                                    ? 'border-[#5f5fcd] bg-[#e7eafd] shadow-md' 
-                                                    : 'border-gray-200 hover:border-[#5f5fcd] hover:bg-[#f8f9ff]'">
-                                                <div class="flex items-center h-5">
+                                                class="group flex cursor-pointer items-start rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-md"
+                                                :class="
+                                                    quizAnswers[currentQuestion.id] == index
+                                                        ? 'border-[#5f5fcd] bg-[#e7eafd] shadow-md'
+                                                        : 'border-gray-200 hover:border-[#5f5fcd] hover:bg-[#f8f9ff]'
+                                                "
+                                            >
+                                                <div class="flex h-5 items-center">
                                                     <input
                                                         type="radio"
                                                         :value="index"
                                                         v-model="quizAnswers[currentQuestion.id]"
-                                                        class="h-4 w-4 text-[#5f5fcd] border-gray-300 focus:ring-[#5f5fcd]"
+                                                        class="h-4 w-4 border-gray-300 text-[#5f5fcd] focus:ring-[#5f5fcd]"
                                                     />
                                                 </div>
                                                 <div class="ml-3 text-sm">
@@ -356,24 +364,40 @@
                                         </div>
 
                                         <!-- True/False -->
-                                        <div v-else-if="currentQuestion.type === 'true_false'" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <label class="flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md group"
-                                                :class="quizAnswers[currentQuestion.id] === 'সত্য' 
-                                                    ? 'border-green-500 bg-green-50 shadow-md' 
-                                                    : 'border-gray-200 hover:border-green-400 hover:bg-green-50'">
-                                                <input type="radio" value="সত্য" v-model="quizAnswers[currentQuestion.id]" 
-                                                    class="h-4 w-4 text-green-600 border-gray-300 focus:ring-green-500" />
+                                        <div v-else-if="currentQuestion.type === 'true_false'" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                            <label
+                                                class="group flex cursor-pointer items-center rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-md"
+                                                :class="
+                                                    quizAnswers[currentQuestion.id] === 'সত্য'
+                                                        ? 'border-green-500 bg-green-50 shadow-md'
+                                                        : 'border-gray-200 hover:border-green-400 hover:bg-green-50'
+                                                "
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    value="সত্য"
+                                                    v-model="quizAnswers[currentQuestion.id]"
+                                                    class="h-4 w-4 border-gray-300 text-green-600 focus:ring-green-500"
+                                                />
                                                 <div class="ml-3">
                                                     <div class="text-2xl">✓</div>
                                                     <div class="text-sm font-medium text-gray-700">সত্য</div>
                                                 </div>
                                             </label>
-                                            <label class="flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md group"
-                                                :class="quizAnswers[currentQuestion.id] === 'মিথ্যা' 
-                                                    ? 'border-red-500 bg-red-50 shadow-md' 
-                                                    : 'border-gray-200 hover:border-red-400 hover:bg-red-50'">
-                                                <input type="radio" value="মিথ্যা" v-model="quizAnswers[currentQuestion.id]" 
-                                                    class="h-4 w-4 text-red-600 border-gray-300 focus:ring-red-500" />
+                                            <label
+                                                class="group flex cursor-pointer items-center rounded-xl border-2 p-4 transition-all duration-200 hover:shadow-md"
+                                                :class="
+                                                    quizAnswers[currentQuestion.id] === 'মিথ্যা'
+                                                        ? 'border-red-500 bg-red-50 shadow-md'
+                                                        : 'border-gray-200 hover:border-red-400 hover:bg-red-50'
+                                                "
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    value="মিথ্যা"
+                                                    v-model="quizAnswers[currentQuestion.id]"
+                                                    class="h-4 w-4 border-gray-300 text-red-600 focus:ring-red-500"
+                                                />
                                                 <div class="ml-3">
                                                     <div class="text-2xl">✗</div>
                                                     <div class="text-sm font-medium text-gray-700">মিথ্যা</div>
@@ -386,7 +410,7 @@
                                             <input
                                                 v-model="quizAnswers[currentQuestion.id]"
                                                 type="text"
-                                                class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd] focus:ring-opacity-20 transition-colors"
+                                                class="focus:ring-opacity-20 w-full rounded-xl border-2 border-gray-200 p-4 transition-colors focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]"
                                                 placeholder="আপনার উত্তর লিখুন..."
                                             />
                                         </div>
@@ -396,7 +420,7 @@
                                             <textarea
                                                 v-model="quizAnswers[currentQuestion.id]"
                                                 rows="6"
-                                                class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd] focus:ring-opacity-20 transition-colors resize-vertical"
+                                                class="focus:ring-opacity-20 resize-vertical w-full rounded-xl border-2 border-gray-200 p-4 transition-colors focus:border-[#5f5fcd] focus:ring-2 focus:ring-[#5f5fcd]"
                                                 placeholder="আপনার বিস্তারিত উত্তর লিখুন..."
                                             ></textarea>
                                         </div>
@@ -408,33 +432,40 @@
                             <div v-else-if="quizCompleted && quizResults" class="space-y-6">
                                 <!-- Results Header -->
                                 <div class="text-center">
-                                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-4"
-                                        :class="quizResults.is_passed ? 'bg-green-100' : 'bg-red-100'">
-                                        <CheckCircleIcon v-if="quizResults.is_passed" class="w-10 h-10 text-green-600" />
-                                        <AlertTriangleIcon v-else class="w-10 h-10 text-red-600" />
+                                    <div
+                                        class="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full"
+                                        :class="quizResults.is_passed ? 'bg-green-100' : 'bg-red-100'"
+                                    >
+                                        <CheckCircleIcon v-if="quizResults.is_passed" class="h-10 w-10 text-green-600" />
+                                        <AlertTriangleIcon v-else class="h-10 w-10 text-red-600" />
                                     </div>
-                                    <h2 class="text-2xl font-bold text-gray-900 mb-2">কুইজ সম্পন্ন!</h2>
+                                    <h2 class="mb-2 text-2xl font-bold text-gray-900">কুইজ সম্পন্ন!</h2>
                                 </div>
 
                                 <!-- Score Card -->
-                                <div class="bg-white rounded-xl border border-gray-200 shadow-lg overflow-hidden">
-                                    <div class="text-center py-8 px-6"
-                                        :class="quizResults.is_passed ? 'bg-gradient-to-br from-green-50 to-green-100' : 'bg-gradient-to-br from-red-50 to-red-100'">
-                                        <div class="text-5xl font-bold mb-3"
-                                            :class="quizResults.is_passed ? 'text-green-600' : 'text-red-600'">
+                                <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+                                    <div
+                                        class="px-6 py-8 text-center"
+                                        :class="
+                                            quizResults.is_passed
+                                                ? 'bg-gradient-to-br from-green-50 to-green-100'
+                                                : 'bg-gradient-to-br from-red-50 to-red-100'
+                                        "
+                                    >
+                                        <div class="mb-3 text-5xl font-bold" :class="quizResults.is_passed ? 'text-green-600' : 'text-red-600'">
                                             {{ Math.round(quizResults.score) }}%
                                         </div>
-                                        <p class="text-lg text-gray-700 mb-4">
+                                        <p class="mb-4 text-lg text-gray-700">
                                             {{ quizResults.correct_answers }} / {{ quizResults.total_questions }} সঠিক উত্তর
                                         </p>
-                                        
+
                                         <!-- Status Badge -->
-                                        <div class="inline-flex items-center px-6 py-3 rounded-full text-lg font-semibold"
-                                            :class="quizResults.is_passed 
-                                                ? 'bg-green-600 text-white' 
-                                                : 'bg-red-600 text-white'">
-                                            <CheckIcon v-if="quizResults.is_passed" class="w-5 h-5 mr-2" />
-                                            <AlertTriangleIcon v-else class="w-5 h-5 mr-2" />
+                                        <div
+                                            class="inline-flex items-center rounded-full px-6 py-3 text-lg font-semibold"
+                                            :class="quizResults.is_passed ? 'bg-green-600 text-white' : 'bg-red-600 text-white'"
+                                        >
+                                            <CheckIcon v-if="quizResults.is_passed" class="mr-2 h-5 w-5" />
+                                            <AlertTriangleIcon v-else class="mr-2 h-5 w-5" />
                                             <span v-if="quizResults.is_passed">
                                                 উত্তীর্ণ ({{ quizResults.correct_answers }}/{{ quizResults.total_questions }} সঠিক)
                                             </span>
@@ -445,14 +476,16 @@
                                     </div>
 
                                     <!-- Performance Breakdown -->
-                                    <div class="px-6 py-4 bg-gray-50 border-t">
+                                    <div class="border-t bg-gray-50 px-6 py-4">
                                         <div class="grid grid-cols-3 gap-4 text-center">
                                             <div>
                                                 <div class="text-2xl font-bold text-green-600">{{ quizResults.correct_answers }}</div>
                                                 <div class="text-sm text-gray-600">সঠিক</div>
                                             </div>
                                             <div>
-                                                <div class="text-2xl font-bold text-red-600">{{ quizResults.total_questions - quizResults.correct_answers }}</div>
+                                                <div class="text-2xl font-bold text-red-600">
+                                                    {{ quizResults.total_questions - quizResults.correct_answers }}
+                                                </div>
                                                 <div class="text-sm text-gray-600">ভুল</div>
                                             </div>
                                             <div>
@@ -462,63 +495,74 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- Action Buttons -->
-                                <div class="flex flex-col sm:flex-row gap-4">
-                                    <button @click="resetQuiz" 
-                                        class="flex-1 inline-flex items-center justify-center px-6 py-3 border-2 border-gray-200 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#5f5fcd] focus:ring-offset-2 transition-all">
-                                        <RotateCcwIcon class="w-4 h-4 mr-2" />
+                                <div class="flex flex-col gap-4 sm:flex-row">
+                                    <button
+                                        @click="resetQuiz"
+                                        class="inline-flex flex-1 items-center justify-center rounded-xl border-2 border-gray-200 bg-white px-6 py-3 font-medium text-gray-700 transition-all hover:bg-gray-50 focus:ring-2 focus:ring-[#5f5fcd] focus:ring-offset-2 focus:outline-none"
+                                    >
+                                        <RotateCcwIcon class="mr-2 h-4 w-4" />
                                         পুনরায় চেষ্টা করুন
                                     </button>
-                                    <button @click="goToNextLesson" 
+                                    <button
+                                        @click="goToNextLesson"
                                         v-if="hasNextLesson"
-                                        class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] text-white font-medium rounded-xl hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#5f5fcd] focus:ring-offset-2 transform hover:scale-105 transition-all">
+                                        class="inline-flex flex-1 transform items-center justify-center rounded-xl bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] px-6 py-3 font-medium text-white transition-all hover:scale-105 hover:shadow-lg focus:ring-2 focus:ring-[#5f5fcd] focus:ring-offset-2 focus:outline-none"
+                                    >
                                         পরবর্তী পাঠ
-                                        <ChevronRightIcon class="w-4 h-4 ml-2" />
+                                        <ChevronRightIcon class="ml-2 h-4 w-4" />
                                     </button>
                                 </div>
                             </div>
-                            
+
                             <!-- Fallback: Course Quizzes (Legacy) -->
                             <div v-else-if="course?.quizzes && course.quizzes.length > 0" class="space-y-4">
-                                <div v-for="quiz in course.quizzes" :key="quiz.id" 
-                                     class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+                                <div
+                                    v-for="quiz in course.quizzes"
+                                    :key="quiz.id"
+                                    class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+                                >
                                     <div class="flex items-start justify-between">
                                         <div class="flex-1">
-                                            <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ quiz.title }}</h3>
-                                            <p v-if="quiz.description" class="text-gray-600 mb-4">{{ quiz.description }}</p>
-                                            
-                                            <div class="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+                                            <h3 class="mb-2 text-lg font-semibold text-gray-900">{{ quiz.title }}</h3>
+                                            <p v-if="quiz.description" class="mb-4 text-gray-600">{{ quiz.description }}</p>
+
+                                            <div class="mb-4 flex flex-wrap gap-4 text-sm text-gray-500">
                                                 <span class="flex items-center">
-                                                    <HelpCircleIcon class="h-4 w-4 mr-1" />
+                                                    <HelpCircleIcon class="mr-1 h-4 w-4" />
                                                     {{ quiz.total_questions }} প্রশ্ন
                                                 </span>
                                                 <span v-if="quiz.time_limit_minutes" class="flex items-center">
-                                                    <ClockIcon class="h-4 w-4 mr-1" />
+                                                    <ClockIcon class="mr-1 h-4 w-4" />
                                                     {{ quiz.time_limit_minutes }} মিনিট
                                                 </span>
                                                 <span class="flex items-center">
-                                                    <CheckCircleIcon class="h-4 w-4 mr-1" />
+                                                    <CheckCircleIcon class="mr-1 h-4 w-4" />
                                                     পাশ: {{ quiz.passing_score }}%
                                                 </span>
                                             </div>
-                                            
+
                                             <!-- Quiz Status -->
                                             <div v-if="quiz.attempts && quiz.attempts.length > 0" class="mb-4">
-                                                <div class="text-sm text-gray-600 mb-2">আপনার সর্বোচ্চ স্কোর:</div>
+                                                <div class="mb-2 text-sm text-gray-600">আপনার সর্বোচ্চ স্কোর:</div>
                                                 <div class="flex items-center space-x-2">
-                                                    <div class="text-lg font-bold" 
-                                                         :class="getBestScore(quiz.attempts) >= quiz.passing_score ? 'text-green-600' : 'text-red-600'">
+                                                    <div
+                                                        class="text-lg font-bold"
+                                                        :class="getBestScore(quiz.attempts) >= quiz.passing_score ? 'text-green-600' : 'text-red-600'"
+                                                    >
                                                         {{ getBestScore(quiz.attempts) }}%
                                                     </div>
-                                                    <div v-if="getBestScore(quiz.attempts) >= quiz.passing_score" 
-                                                         class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                                    <div
+                                                        v-if="getBestScore(quiz.attempts) >= quiz.passing_score"
+                                                        class="rounded-full bg-green-100 px-2 py-1 text-xs text-green-800"
+                                                    >
                                                         পাশ
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="ml-4">
                                             <PrimaryButton
                                                 @click="startQuiz(quiz.id)"
@@ -532,11 +576,11 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- No Quizzes Available -->
                             <div v-else class="rounded-lg bg-[#f5f6fd] p-6 text-center">
-                                <HelpCircleIcon class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                                <h3 class="text-lg font-semibold text-gray-900 mb-2">কোনো কুইজ নেই</h3>
+                                <HelpCircleIcon class="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                                <h3 class="mb-2 text-lg font-semibold text-gray-900">কোনো কুইজ নেই</h3>
                                 <p class="text-gray-600">এই কোর্সের জন্য এখনো কোনো কুইজ যোগ করা হয়নি।</p>
                             </div>
                         </div>
@@ -546,7 +590,12 @@
                             class="h-full w-full rounded-none border-none shadow-none"
                             style="height: 70vh"
                         >
-                            <iframe :src="currentLesson.primary_file_url" class="h-full w-full rounded-xl" frameborder="0" title="Lesson PDF"></iframe>
+                            <iframe
+                                :src="currentLesson.primary_file_url"
+                                class="h-full w-full rounded-xl"
+                                frameborder="0"
+                                title="Lesson PDF"
+                            ></iframe>
                         </div>
                         <!-- Mixed Content -->
                         <div v-else-if="currentLesson?.type === 'mixed' || !currentLesson?.type" class="h-full w-full overflow-y-auto bg-white">
@@ -563,27 +612,35 @@
                                     ></iframe>
                                 </div>
                             </div>
-                            
+
                             <!-- Content Section -->
                             <div class="px-4 sm:px-8">
                                 <h1 class="mb-6 text-xl leading-tight font-extrabold text-gray-900 sm:text-3xl">
                                     {{ currentLesson?.title || 'Untitled Lesson' }}
                                 </h1>
-                                
+
                                 <!-- Text Content -->
-                                <div v-if="currentLesson?.content" class="prose prose-lg max-w-none leading-relaxed text-gray-800 mb-8" v-html="sanitizeHtml(currentLesson?.content || '')"></div>
-                                
+                                <div
+                                    v-if="currentLesson?.content"
+                                    class="prose prose-lg mb-8 max-w-none leading-relaxed text-gray-800"
+                                    v-html="sanitizeHtml(currentLesson?.content || '')"
+                                ></div>
+
                                 <!-- Primary File Download -->
                                 <div v-if="currentLesson?.primary_file_url" class="mb-6">
                                     <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
                                         <h3 class="mb-3 font-semibold text-gray-900">প্রধান ফাইল</h3>
-                                        <a :href="currentLesson?.primary_file_url" download class="inline-flex items-center space-x-2 text-[#5f5fcd] hover:text-[#4a4ab8]">
+                                        <a
+                                            :href="currentLesson?.primary_file_url"
+                                            download
+                                            class="inline-flex items-center space-x-2 text-[#5f5fcd] hover:text-[#4a4ab8]"
+                                        >
                                             <DownloadIcon class="h-4 w-4" />
                                             <span>{{ getFileTypeDisplay(currentLesson?.primary_file_type) }} ডাউনলোড করুন</span>
                                         </a>
                                     </div>
                                 </div>
-                                
+
                                 <!-- PDF File Download -->
                                 <div v-if="currentLesson?.type === 'pdf' && currentLesson?.file_path" class="mb-6">
                                     <h3 class="mb-3 font-semibold text-gray-900">পিডিএফ ফাইল</h3>
@@ -593,19 +650,28 @@
                                                 <p class="font-medium text-gray-900">{{ currentLesson.title }}.pdf</p>
                                                 <p class="text-sm text-gray-500">পিডিএফ ডকুমেন্ট</p>
                                             </div>
-                                            <a :href="currentLesson.file_url || `/storage/${currentLesson.file_path}`" download class="text-[#5f5fcd] hover:text-[#4a4ab8]">
+                                            <a
+                                                :href="currentLesson.file_url || `/storage/${currentLesson.file_path}`"
+                                                download
+                                                class="text-[#5f5fcd] hover:text-[#4a4ab8]"
+                                            >
                                                 <DownloadIcon class="h-4 w-4" />
                                             </a>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <!-- External Resources -->
                                 <div v-if="currentLesson?.resources && currentLesson?.resources.length > 0" class="mb-6">
                                     <h3 class="mb-3 font-semibold text-gray-900">বাহ্যিক রিসোর্স</h3>
                                     <div class="space-y-2">
-                                        <a v-for="resource in currentLesson?.resources" :key="resource.url" :href="resource.url" target="_blank" 
-                                           class="block rounded border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100">
+                                        <a
+                                            v-for="resource in currentLesson?.resources"
+                                            :key="resource.url"
+                                            :href="resource.url"
+                                            target="_blank"
+                                            class="block rounded border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100"
+                                        >
                                             <div class="flex items-center justify-between">
                                                 <div>
                                                     <p class="font-medium text-gray-900">{{ resource.title }}</p>
@@ -687,9 +753,9 @@
 <script setup lang="ts">
 import PrimaryButton from '@/components/Frontend/PrimaryButton.vue';
 import { Head, router, usePage } from '@inertiajs/vue3';
-import { route } from 'ziggy-js';
 import { useIntervalFn } from '@vueuse/core';
 import {
+    AlertTriangleIcon,
     ArrowLeftIcon,
     CheckCircleIcon,
     CheckIcon,
@@ -698,7 +764,6 @@ import {
     ChevronRightIcon,
     ClockIcon,
     DownloadIcon,
-    AlertTriangleIcon,
     ExternalLinkIcon,
     FileIcon,
     FileTextIcon,
@@ -711,6 +776,7 @@ import {
     VideoIcon,
 } from 'lucide-vue-next';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { route } from 'ziggy-js';
 
 // Type definitions
 interface Lesson {
@@ -950,7 +1016,7 @@ const startQuiz = async (quiz: any) => {
     try {
         // Handle both quiz object and quiz ID
         let quizData;
-        
+
         if (typeof quiz === 'object' && quiz) {
             // Quiz object passed directly (from current lesson)
             quizData = quiz;
@@ -958,21 +1024,20 @@ const startQuiz = async (quiz: any) => {
             // Quiz ID passed - find it in course quizzes
             const quizId = quiz;
             if (course.value?.quizzes) {
-                quizData = course.value.quizzes.find(q => q.id === quizId);
+                quizData = course.value.quizzes.find((q) => q.id === quizId);
             }
         }
-        
+
         if (!quizData) {
             alert('কুইজ পাওয়া যায়নি। দয়া করে পুনরায় চেষ্টা করুন।');
             return;
         }
-        
+
         if (!quizData.questions || quizData.questions.length === 0) {
             alert('এই কুইজে কোনো প্রশ্ন নেই।');
             return;
         }
-        
-        
+
         // Set up quiz state
         currentQuiz.value = quizData;
         quizStarted.value = true;
@@ -980,7 +1045,6 @@ const startQuiz = async (quiz: any) => {
         currentQuestionIndex.value = 0;
         quizAnswers.value = {};
         quizStartTime.value = new Date();
-        
     } catch (error) {
         alert('কুইজ শুরু করতে সমস্যা হয়েছে। দয়া করে পুনরায় চেষ্টা করুন।');
     }
@@ -1031,7 +1095,7 @@ const submitQuiz = () => {
                 quizError.value = errors?.answers || 'কুইজ জমা দিতে সমস্যা হয়েছে।';
                 submittingQuiz.value = false;
             },
-        }
+        },
     );
 };
 
@@ -1090,14 +1154,13 @@ const sanitizeHtml = (html: string): string => {
 // Quiz helper methods
 const getBestScore = (attempts: QuizAttempt[]): number => {
     if (!attempts || attempts.length === 0) return 0;
-    return Math.max(...attempts.map(attempt => attempt.score));
+    return Math.max(...attempts.map((attempt) => attempt.score));
 };
-
 
 // File type display helper
 const getFileTypeDisplay = (fileType: string | null): string => {
     if (!fileType) return 'ফাইল';
-    
+
     switch (fileType.toLowerCase()) {
         case 'pdf':
             return 'পিডিএফ';
@@ -1126,7 +1189,7 @@ const getFileTypeDisplay = (fileType: string | null): string => {
 // Initialize on mount
 onMounted(() => {
     loadCourseData();
-    
+
     // Check for quiz results in flash messages
     if (page.props.flash?.quiz_results) {
         quizResults.value = page.props.flash.quiz_results;
@@ -1141,7 +1204,6 @@ watch(courseSlug, () => {
         loadCourseData();
     }
 });
-
 
 // Track if user is actively learning (watching videos, reading content)
 const isActiveLearning = ref(false);

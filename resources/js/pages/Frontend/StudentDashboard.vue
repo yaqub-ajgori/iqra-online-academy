@@ -359,14 +359,14 @@
                         <div v-if="activeSection === 'certificates'" class="space-y-8">
                             <div class="flex items-center justify-between">
                                 <h2 class="text-2xl font-bold text-gray-900">Certificates</h2>
-                                <PrimaryButton 
+                                <PrimaryButton
                                     v-if="certificates.length > 0"
-                                    @click="goToCertificatesPage" 
-                                    variant="outline" 
-                                    size="md" 
+                                    @click="goToCertificatesPage"
+                                    variant="outline"
+                                    size="md"
                                     :icon="AwardIcon"
-                                > 
-                                    View All Certificates 
+                                >
+                                    View All Certificates
                                 </PrimaryButton>
                             </div>
 
@@ -391,7 +391,9 @@
                                         <div>
                                             <h3 class="text-lg font-semibold text-gray-900">{{ certificate.course }}</h3>
                                             <p class="text-gray-600">{{ certificate.date }}</p>
-                                            <p v-if="certificate.certificate_number" class="text-sm text-gray-500">{{ certificate.certificate_number }}</p>
+                                            <p v-if="certificate.certificate_number" class="text-sm text-gray-500">
+                                                {{ certificate.certificate_number }}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -675,7 +677,7 @@ const downloadCertificate = (certificate: any) => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         success('Certificate download started!');
     } else {
         error('Certificate download URL not available. Please contact support.');

@@ -67,17 +67,16 @@
         <!-- Main Content -->
         <article class="py-8 sm:py-12 lg:py-16">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 gap-8 lg:gap-12 lg:grid-cols-4">
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-4 lg:gap-12">
                     <!-- Article Content -->
                     <div class="lg:col-span-3">
-
                         <!-- Featured Image -->
                         <div v-if="post.featured_image_url" class="mb-12">
                             <div class="overflow-hidden rounded-2xl shadow-2xl">
-                                <img 
-                                    :src="post.featured_image_url" 
-                                    :alt="post.title" 
-                                    class="h-64 w-full object-cover transition-transform duration-300 hover:scale-105 lg:h-96" 
+                                <img
+                                    :src="post.featured_image_url"
+                                    :alt="post.title"
+                                    class="h-64 w-full object-cover transition-transform duration-300 hover:scale-105 lg:h-96"
                                 />
                             </div>
                         </div>
@@ -95,29 +94,29 @@
                                     <p class="text-sm text-muted">অন্যদের সাথে এই জ্ঞান ভাগ করে নিন</p>
                                 </div>
                                 <div class="flex flex-wrap gap-3">
-                                    <button 
-                                        @click="shareOnFacebook" 
+                                    <button
+                                        @click="shareOnFacebook"
                                         class="group flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-blue-700 hover:shadow-md"
                                     >
                                         <Facebook class="h-4 w-4" />
                                         Facebook
                                     </button>
-                                    <button 
-                                        @click="shareOnTwitter" 
+                                    <button
+                                        @click="shareOnTwitter"
                                         class="group flex items-center gap-2 rounded-lg bg-sky-500 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-sky-600 hover:shadow-md"
                                     >
                                         <Twitter class="h-4 w-4" />
                                         Twitter
                                     </button>
-                                    <button 
-                                        @click="shareOnWhatsApp" 
+                                    <button
+                                        @click="shareOnWhatsApp"
                                         class="group flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-green-700 hover:shadow-md"
                                     >
                                         <MessageCircle class="h-4 w-4" />
                                         WhatsApp
                                     </button>
-                                    <button 
-                                        @click="copyLink" 
+                                    <button
+                                        @click="copyLink"
                                         class="group flex items-center gap-2 rounded-lg bg-neutral-600 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-neutral-700 hover:shadow-md"
                                     >
                                         <LinkIcon class="h-4 w-4" />
@@ -222,7 +221,7 @@
                                         <li v-for="item in tableOfContents" :key="item.id">
                                             <a
                                                 :href="`#${item.id}`"
-                                                class="block rounded-lg py-2 px-2 text-sm text-secondary transition-all hover:bg-[#5f5fcd]/5 hover:text-[#5f5fcd]"
+                                                class="block rounded-lg px-2 py-2 text-sm text-secondary transition-all hover:bg-[#5f5fcd]/5 hover:text-[#5f5fcd]"
                                                 :class="{ 'pl-6': item.level > 2, 'font-medium': item.level === 2 }"
                                             >
                                                 {{ item.text }}
@@ -442,7 +441,7 @@ const copyLink = async () => {
         notification.textContent = 'লিংক কপি হয়েছে!';
         notification.className = 'fixed bottom-4 right-4 z-50 rounded-lg bg-green-600 px-4 py-2 text-white shadow-lg transition-all duration-300';
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.style.opacity = '0';
             notification.style.transform = 'translateY(20px)';
@@ -716,23 +715,23 @@ onUnmounted(() => {
         font-size: 1rem;
         line-height: 1.7;
     }
-    
+
     .prose h2 {
         font-size: 1.5rem;
         margin-top: 2rem;
         margin-bottom: 1rem;
     }
-    
+
     .prose h3 {
         font-size: 1.25rem;
         margin-top: 1.5rem;
         margin-bottom: 0.75rem;
     }
-    
+
     .prose p {
         margin-bottom: 1.25rem;
     }
-    
+
     .prose blockquote {
         padding: 1rem;
         margin: 1.5rem 0;

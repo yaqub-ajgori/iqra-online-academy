@@ -3,7 +3,7 @@
         class="group shadow-islamic hover:shadow-islamic-lg relative transform overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all duration-500 hover:-translate-y-2 hover:border-[#5f5fcd]/20"
     >
         <!-- Course Image with Enhanced Placeholder - Optimized for 600x600px square images -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-2xl">
+        <div class="relative overflow-hidden rounded-t-2xl bg-gradient-to-br from-gray-50 to-gray-100">
             <div class="course-image-container">
                 <img
                     v-if="isValidImage(course.image)"
@@ -268,7 +268,7 @@ const generateSrcset = (imageSrc: string | undefined | null): string => {
     if (!imageSrc || !isValidImage(imageSrc)) {
         return '';
     }
-    
+
     // For now, use the same image at different virtual sizes
     // In the future, you could implement server-side image resizing
     return `${imageSrc} 600w, ${imageSrc} 400w, ${imageSrc} 300w`;
