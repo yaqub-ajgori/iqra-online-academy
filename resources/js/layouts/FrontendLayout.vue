@@ -538,6 +538,7 @@
                                 </p>
                             </div>
                             <div class="flex flex-wrap justify-center gap-3 text-xs sm:gap-4 sm:text-sm lg:justify-end lg:gap-6">
+                                <Link :href="route('certificates.verify')" class="text-gray-400 transition-colors hover:text-white">সার্টিফিকেট যাচাই</Link>
                                 <a href="#" class="text-gray-400 transition-colors hover:text-white">প্রাইভেসি পলিসি</a>
                                 <a href="#" class="text-gray-400 transition-colors hover:text-white">ব্যবহারের শর্তাবলী</a>
                                 <a href="#" class="text-gray-400 transition-colors hover:text-white">রিফান্ড পলিসি</a>

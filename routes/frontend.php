@@ -95,6 +95,10 @@ Route::middleware(['auth', 'student', 'verified'])->prefix('quiz')->name('quiz.'
 Route::prefix('certificates')->name('certificates.')->group(function () {
     // Certificate preview for students
     Route::get('/preview/{course?}', [CertificateController::class, 'preview'])->name('preview');
+    
+    // Public certificate verification
+    Route::get('/verify', [CertificateController::class, 'verify'])->name('verify');
+    Route::post('/verify', [CertificateController::class, 'verifySubmit'])->name('verify.submit');
 });
 
 // API Routes for AJAX requests

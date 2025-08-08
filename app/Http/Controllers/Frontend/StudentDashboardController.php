@@ -193,14 +193,15 @@ class StudentDashboardController extends Controller
             ->where('is_completed', true)
             ->where('payment_status', 'completed')
             ->map(function ($enrollment) {
+                $certificateData = $enrollment->getCertificateData();
                 return [
                     'id' => $enrollment->id,
-                    'certificate_number' => 'IOA-' . now()->format('Y') . '-' . str_pad($enrollment->id, 3, '0', STR_PAD_LEFT),
-                    'course' => $enrollment->course->title,
-                    'date' => $enrollment->updated_at->format('d M Y'),
-                    'course_slug' => $enrollment->course->slug,
-                    'verification_code' => 'CERT' . strtoupper(\Illuminate\Support\Str::random(8)),
-                    'download_url' => route('certificates.preview'), // Points to preview route
+                    'certificate_number' => $certificateData['certificate_number'],
+                    'course' => $certificateData['course_title'],
+                    'date' => $certificateData['completion_date']->format('d M Y'),
+                    'course_slug' => $certificateData['course_slug'],
+                    'verification_code' => $certificateData['verification_code'],
+                    'download_url' => route('certificates.preview', $certificateData['course_slug']),
                 ];
             })
             ->values()
