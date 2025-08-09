@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-
 use App\Models\User;
 use App\Models\UserRole;
 use App\Models\Teacher;
@@ -53,7 +52,7 @@ class DatabaseSeeder extends Seeder
             DB::statement('SET FOREIGN_KEY_CHECKS=1');
         }
 
-        // 1) Core users and roles
+        // 1) Core users and roles (always create 1 admin, 1 teacher, 1 student with known credentials)
         $admin = User::factory()->create([
             'name' => 'Admin User',
             'email' => 'admin@iqra.test',
@@ -61,16 +60,29 @@ class DatabaseSeeder extends Seeder
         ]);
         UserRole::factory()->create(['user_id' => $admin->id, 'role_type' => 'admin']);
 
-        // Teachers and Students
-        $teachers = Teacher::factory()->count(1)->create();
-        foreach ($teachers as $teacher) {
-            UserRole::factory()->create(['user_id' => $teacher->user_id, 'role_type' => 'teacher']);
-        }
+        $teacherUser = User::factory()->create([
+            'name' => 'Sample Teacher',
+            'email' => 'teacher@iqra.test',
+            'password' => Hash::make('password'),
+        ]);
+        $teacher = Teacher::factory()->create([
+            'user_id' => $teacherUser->id,
+        ]);
+        UserRole::factory()->create(['user_id' => $teacherUser->id, 'role_type' => 'teacher']);
 
-        $students = Student::factory()->count(1)->create();
-        foreach ($students as $student) {
-            UserRole::factory()->create(['user_id' => $student->user_id, 'role_type' => 'student']);
-        }
+        $studentUser = User::factory()->create([
+            'name' => 'Sample Student',
+            'email' => 'student@iqra.test',
+            'password' => Hash::make('password'),
+        ]);
+        $student = Student::factory()->create([
+            'user_id' => $studentUser->id,
+        ]);
+        UserRole::factory()->create(['user_id' => $studentUser->id, 'role_type' => 'student']);
+
+        // For the rest of the seeder, use collections for teachers and students
+        $teachers = collect([$teacher]);
+        $students = collect([$student]);
 
         // 2) Blog
         $blogCategories = BlogCategory::factory()->count(6)->create();

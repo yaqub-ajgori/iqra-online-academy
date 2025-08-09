@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Frontend;
 
+namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
 use Inertia\Inertia;
 use App\Models\Certificate;
 
@@ -36,7 +35,6 @@ class CertificateController extends Controller
         }
 
         $student = $user->student;
-        
         // If course slug is provided, find that specific completed enrollment
         if ($courseSlug) {
             $completedEnrollment = \App\Models\CourseEnrollment::where('student_id', $student->id)
@@ -126,8 +124,7 @@ class CertificateController extends Controller
         ]);
 
         $code = strtoupper(trim($validated['certificate_code']));
-
-        $certificate = \App\Models\Certificate::where('status', 'issued')
+        $certificate = Certificate::where('status', 'issued')
             ->with(['student.user', 'course'])
             ->where(function ($q) use ($code) {
                 $q->where('certificate_number', $code)

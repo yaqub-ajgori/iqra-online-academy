@@ -271,38 +271,9 @@ interface Stat {
 }
 
 // State
-const loading = ref(true);
-const error = ref('');
-const aboutData = ref<AboutData | null>(null);
-const stats = ref<Stat[]>([]);
-
-// Methods
-const loadAboutData = async () => {
-    loading.value = true;
-    error.value = '';
-
-    try {
-        await router.get(
-            route('frontend.about'),
-            {},
-            {
-                preserveState: true,
-                preserveScroll: true,
-                only: ['aboutData', 'stats'],
-            },
-        );
-
-        // Get updated data from page props
-        const page = usePage();
-        aboutData.value = page.props.aboutData as AboutData;
-        stats.value = (page.props.stats as Stat[]) || [];
-    } catch (err) {
-        error.value = 'তথ্য লোড করতে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।';
-        console.error('Error loading about data:', err);
-    } finally {
-        loading.value = false;
-    }
-};
+const page = usePage();
+const aboutData = ref(page.props.aboutData as AboutData);
+const stats = ref((page.props.stats as Stat[]) || []);
 
 const getValueIcon = (iconName: string) => {
     const icons: Record<string, any> = {

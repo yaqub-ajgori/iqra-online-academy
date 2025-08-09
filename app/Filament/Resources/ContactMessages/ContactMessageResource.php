@@ -45,7 +45,6 @@ class ContactMessageResource extends Resource
     {
         return [
             'index' => ListContactMessages::route('/'),
-            'edit' => EditContactMessage::route('/{record}/edit'),
         ];
     }
 }

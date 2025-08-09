@@ -7,6 +7,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Actions\DeleteAction;
 use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\BadgeColumn;
@@ -104,25 +105,7 @@ class ContactMessagesTable
                     ]),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                Action::make('mark_as_read')
-                    ->label('Mark as Read')
-                    ->icon(Heroicon::OutlinedEye)
-                    ->color(Color::Blue)
-                    ->visible(fn ($record) => $record->status === 'unread')
-                    ->action(fn ($record) => $record->markAsRead())
-                    ->requiresConfirmation()
-                    ->modalDescription('This will mark the message as read.'),
-                    
-                Action::make('mark_as_replied')
-                    ->label('Mark as Replied')
-                    ->icon(Heroicon::OutlinedChatBubbleLeftRight)
-                    ->color(Color::Green)
-                    ->visible(fn ($record) => in_array($record->status, ['unread', 'read']))
-                    ->action(fn ($record) => $record->markAsReplied())
-                    ->requiresConfirmation()
-                    ->modalDescription('This will mark the message as replied.'),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Certificates\Schemas;
 
 use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Schema;
+use Filament\Infolists\Schema;
 
 class CertificateInfolist
 {

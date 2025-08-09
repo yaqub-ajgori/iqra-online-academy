@@ -259,8 +259,8 @@ interface ContactData {
 }
 
 // State
-const contactData = ref<ContactData | null>(null);
-const dataLoading = ref(true);
+const page = usePage();
+const contactData = ref(page.props.contactData as ContactData);
 
 // Form state
 const form = ref({
@@ -280,29 +280,7 @@ const openFaq = ref<number | null>(null);
 // Toast system
 const toast = useToast();
 
-// Methods
-const loadContactData = async () => {
-    dataLoading.value = true;
-    try {
-        await router.get(
-            route('frontend.contact'),
-            {},
-            {
-                preserveState: true,
-                preserveScroll: true,
-                only: ['contactData'],
-            },
-        );
-
-        // Get updated data from page props
-        const page = usePage();
-        contactData.value = page.props.contactData as ContactData;
-    } catch (err) {
-        console.error('Error loading contact data:', err);
-    } finally {
-        dataLoading.value = false;
-    }
-};
+// ...existing code...
 
 const validateForm = () => {
     errors.value = {};
@@ -465,7 +443,7 @@ const getStatusClass = (status: string) => {
 
 // Initialize on mount
 onMounted(() => {
-    loadContactData();
+    // ...removed: loadContactData(); no longer needed...
 });
 </script>
 

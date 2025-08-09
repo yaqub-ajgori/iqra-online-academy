@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Filament\Resources\Certificates;
 
 use App\Filament\Resources\Certificates\Pages\CreateCertificate;
@@ -10,7 +9,7 @@ use App\Filament\Resources\Certificates\Schemas\CertificateForm;
 use App\Filament\Resources\Certificates\Schemas\CertificateInfolist;
 use App\Filament\Resources\Certificates\Tables\CertificatesTable;
 use App\Models\Certificate;
-use BackedEnum;
+// ...existing code...
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -19,6 +18,8 @@ use Filament\Tables\Table;
 class CertificateResource extends Resource
 {
     protected static ?string $model = Certificate::class;
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
+    protected static string|\UnitEnum|null $navigationGroup = 'Learning';
 
     public static function form(Schema $schema): Schema
     {

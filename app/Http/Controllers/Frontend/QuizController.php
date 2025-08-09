@@ -1,13 +1,14 @@
 <?php
-
 namespace App\Http\Controllers\Frontend;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 
 class QuizController extends Controller
 {
@@ -18,7 +19,15 @@ class QuizController extends Controller
     {
         // Check if user can take this quiz
         if (!$quiz->canUserTakeQuiz(Auth::id())) {
-            return redirect()->back()->with('error', 'You cannot take this quiz at this time.');
+            return Inertia::render('Frontend/Quiz', [
+                'quiz' => null,
+                'userAttempts' => [],
+                'canTakeQuiz' => false,
+                'attemptsLeft' => 0,
+                'errors' => [
+                    'quiz' => 'You cannot take this quiz at this time.'
+                ],
+            ]);
         }
 
         // Load quiz with questions and course
@@ -82,17 +91,33 @@ class QuizController extends Controller
 
             // Check if user can still take this quiz
             if (!$quiz->canUserTakeQuiz(Auth::id())) {
-                return back()->with('error', 'You cannot submit this quiz.');
+                return Inertia::render('Frontend/Quiz', [
+                    'quiz' => null,
+                    'userAttempts' => [],
+                    'canTakeQuiz' => false,
+                    'attemptsLeft' => 0,
+                    'errors' => [
+                        'quiz' => 'You cannot submit this quiz.'
+                    ],
+                ]);
             }
         } catch (\Exception $e) {
             \Log::error('Quiz validation error: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Invalid quiz submission data.']);
+            return Inertia::render('Frontend/Quiz', [
+                'quiz' => null,
+                'userAttempts' => [],
+                'canTakeQuiz' => false,
+                'attemptsLeft' => 0,
+                'errors' => [
+                    'quiz' => 'Invalid quiz submission data.'
+                ],
+            ]);
         }
 
         try {
             // Calculate time spent
             $startedAt = new \DateTime($request->started_at);
-            $completedAt = now();
+            $completedAt = Carbon::now();
             $timeSpentSeconds = $completedAt->diffInSeconds($startedAt);
 
             // Create quiz attempt
@@ -160,10 +185,19 @@ class QuizController extends Controller
                     'is_passed' => $attempt->is_passed,
                     'time_spent' => $attempt->formatted_time_spent,
                 ],
+                'errors' => [],
             ]);
         } catch (\Exception $e) {
             \Log::error('Quiz submission error: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Failed to submit quiz. Please try again.']);
+            return Inertia::render('Frontend/Quiz', [
+                'quiz' => null,
+                'userAttempts' => [],
+                'canTakeQuiz' => false,
+                'attemptsLeft' => 0,
+                'errors' => [
+                    'quiz' => 'Failed to submit quiz. Please try again.'
+                ],
+            ]);
         }
     }
 }

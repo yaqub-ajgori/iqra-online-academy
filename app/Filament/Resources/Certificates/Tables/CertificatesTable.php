@@ -6,13 +6,15 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\Action;
+
 
 class CertificatesTable
 {
@@ -97,6 +99,7 @@ class CertificatesTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                DeleteAction::make(),
                 Action::make('revoke')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
@@ -111,7 +114,6 @@ class CertificatesTable
                     ])
                     ->action(function (array $data, $record): void {
                         $record->revoke($data['revocation_reason'], Auth::id());
-                        
                         Notification::make()
                             ->title('Certificate Revoked')
                             ->body('The certificate has been successfully revoked.')
@@ -119,7 +121,29 @@ class CertificatesTable
                             ->send();
                     })
                     ->visible(fn ($record) => $record->status === 'issued'),
-                    
+
+                Action::make('restore')
+                    ->label('Restore')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading('Restore Certificate')
+                    ->modalDescription('Are you sure you want to restore this certificate? This will mark it as issued again.')
+                    ->action(function ($record) {
+                        $record->update([
+                            'status' => 'issued',
+                            'revocation_reason' => null,
+                            'revoked_at' => null,
+                            'revoked_by' => null,
+                        ]);
+                        Notification::make()
+                            ->title('Certificate Restored')
+                            ->body('The certificate has been re-enabled and is now valid.')
+                            ->success()
+                            ->send();
+                    })
+                    ->visible(fn ($record) => $record->status === 'revoked'),
+
                 Action::make('view_certificate')
                     ->label('Preview Certificate')
                     ->icon('heroicon-o-document-text')
