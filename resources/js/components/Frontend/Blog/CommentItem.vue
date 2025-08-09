@@ -128,9 +128,6 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits<{
-    replyAdded: [reply: Comment];
-}>();
 
 const page = usePage();
 const isAuthenticated = computed(() => !!page.props.auth?.user);
@@ -196,11 +193,11 @@ const submitReply = async () => {
                 showReplyForm.value = false;
                 // Reply submitted successfully
             },
-            onError: (errors) => {
+            onError: () => {
                 // Reply submission errors
             },
         });
-    } catch (error) {
+    } catch {
         // Error submitting reply
     } finally {
         replySubmitting.value = false;
@@ -225,7 +222,7 @@ const toggleLike = async () => {
                 likeCount.value += isLiked.value ? 1 : -1;
             },
         });
-    } catch (error) {
+    } catch {
         // Error toggling like
         // Revert on error
         isLiked.value = !isLiked.value;

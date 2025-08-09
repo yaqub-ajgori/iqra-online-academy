@@ -144,11 +144,11 @@ const submitComment = async () => {
                 // Show success message
                 // Comment submitted successfully
             },
-            onError: (errors) => {
+            onError: () => {
                 // Comment submission errors
             },
         });
-    } catch (error) {
+    } catch {
         // Error submitting comment
     } finally {
         submitting.value = false;

@@ -59,7 +59,5 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('saeedul.mostafa@gmail.com'),
         ]);
         UserRole::factory()->create(['user_id' => $admin->id, 'role_type' => 'admin']);
-
-        // Seeder is now admin-only. All student/teacher-dependent logic has been removed.
     }
 }
