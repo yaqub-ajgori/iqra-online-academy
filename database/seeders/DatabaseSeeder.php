@@ -54,35 +54,15 @@ class DatabaseSeeder extends Seeder
 
         // 1) Core users and roles (always create 1 admin, 1 teacher, 1 student with known credentials)
         $admin = User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@iqra.test',
-            'password' => Hash::make('password'),
+            'name' => 'Md Saeedul Mostafa',
+            'email' => 'saeedul.mostafa@gmail.com',
+            'password' => Hash::make('saeedul.mostafa@gmail.com'),
         ]);
         UserRole::factory()->create(['user_id' => $admin->id, 'role_type' => 'admin']);
 
-        $teacherUser = User::factory()->create([
-            'name' => 'Sample Teacher',
-            'email' => 'teacher@iqra.test',
-            'password' => Hash::make('password'),
-        ]);
-        $teacher = Teacher::factory()->create([
-            'user_id' => $teacherUser->id,
-        ]);
-        UserRole::factory()->create(['user_id' => $teacherUser->id, 'role_type' => 'teacher']);
-
-        $studentUser = User::factory()->create([
-            'name' => 'Sample Student',
-            'email' => 'student@iqra.test',
-            'password' => Hash::make('password'),
-        ]);
-        $student = Student::factory()->create([
-            'user_id' => $studentUser->id,
-        ]);
-        UserRole::factory()->create(['user_id' => $studentUser->id, 'role_type' => 'student']);
-
-        // For the rest of the seeder, use collections for teachers and students
-        $teachers = collect([$teacher]);
-        $students = collect([$student]);
+        // For the rest of the seeder, use empty collections for teachers and students
+        $teachers = collect([]);
+        $students = collect([]);
 
         // 2) Blog
         $blogCategories = BlogCategory::factory()->count(6)->create();
