@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 use Inertia\Inertia;
+use App\Models\Certificate;
 
 class CertificateController extends Controller
 {
@@ -107,44 +109,58 @@ class CertificateController extends Controller
      */
     public function verifySubmit(Request $request)
     {
-        $request->validate([
-            'certificate_code' => 'required|string|max:255',
+        $validated = $request->validate([
+            'certificate_code' => [
+                'required',
+                'string',
+                'max:255',
+                function ($attribute, $value, $fail) {
+                    $trimmed = strtoupper(trim($value));
+                    $isExactPattern = preg_match('/^IOA-\d{4}-\d{4}$/', $trimmed) === 1
+                        || preg_match('/^CERT[A-Z0-9]{8}$/', $trimmed) === 1;
+                    if (!$isExactPattern) {
+                        $fail('Please enter a valid certificate number (IOA-YYYY-####) or verification code (CERTXXXXXXXX).');
+                    }
+                },
+            ],
         ]);
 
-        $code = strtoupper(trim($request->certificate_code));
-        
-        // First try to find certificate by direct lookup in certificates table
+        $code = strtoupper(trim($validated['certificate_code']));
+
         $certificate = \App\Models\Certificate::where('status', 'issued')
             ->with(['student.user', 'course'])
-            ->where(function ($query) use ($code) {
-                $query->where('certificate_number', $code)
-                      ->orWhere('verification_code', $code);
+            ->where(function ($q) use ($code) {
+                $q->where('certificate_number', $code)
+                  ->orWhere('verification_code', $code);
             })
             ->first();
 
-        // If not found, try searching by partial matches or student name
         if (!$certificate) {
-            $certificate = \App\Models\Certificate::where('status', 'issued')
-                ->with(['student.user', 'course'])
-                ->where(function ($query) use ($code) {
-                    $query->where('student_name', 'LIKE', '%' . $code . '%')
-                          ->orWhere('certificate_number', 'LIKE', '%' . $code . '%');
-                })
-                ->first();
+            return Inertia::render('Frontend/CertificateVerification', [
+                'errors' => [
+                    'certificate_code' => 'Certificate not found. Please check the certificate number or verification code and try again.'
+                ],
+                'form' => [
+                    'certificate_code' => $request->certificate_code,
+                ],
+                'certificate' => null,
+            ]);
         }
 
-        if (!$certificate) {
-            return back()->with('error', 'Certificate not found. Please check the certificate number or verification code and try again.');
-        }
-
-        // Check if certificate is valid
         if (!$certificate->is_valid) {
             $status = $certificate->display_status;
-            $message = $status === 'Revoked' 
+            $message = $status === 'Revoked'
                 ? 'This certificate has been revoked and is no longer valid.'
                 : 'This certificate has expired and is no longer valid.';
-                
-            return back()->with('error', $message);
+            return Inertia::render('Frontend/CertificateVerification', [
+                'errors' => [
+                    'certificate_code' => $message
+                ],
+                'form' => [
+                    'certificate_code' => $request->certificate_code,
+                ],
+                'certificate' => null,
+            ]);
         }
 
         $certificateData = [
@@ -153,16 +169,19 @@ class CertificateController extends Controller
             'student_name' => $certificate->student_name,
             'course_title' => $certificate->course_title,
             'course_description' => $certificate->course_description,
-            'completion_date' => $certificate->completed_at->format('F j, Y'),
-            'issue_date' => $certificate->issued_at->format('F j, Y'),
+            'completion_date' => $certificate->completed_at ? $certificate->completed_at->format('F j, Y') : null,
+            'issue_date' => $certificate->issued_at ? $certificate->issued_at->format('F j, Y') : null,
             'instructor' => $certificate->instructor_name,
             'is_valid' => $certificate->is_valid,
             'status' => $certificate->display_status,
         ];
 
-        return back()->with([
-            'success' => 'Certificate verified successfully!',
-            'certificate' => $certificateData
+        return Inertia::render('Frontend/CertificateVerification', [
+            'certificate' => $certificateData,
+            'form' => [
+                'certificate_code' => $request->certificate_code,
+            ],
+            'errors' => [],
         ]);
     }
 }

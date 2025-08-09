@@ -57,6 +57,7 @@ class HandleInertiaRequests extends Middleware
             // Move sidebar state to client-side management instead of server-side
             'error' => fn () => $request->session()->get('error'),
             'success' => fn () => $request->session()->get('success'),
+            'certificate' => fn () => $request->session()->get('certificate'),
         ];
     }
 }

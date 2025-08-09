@@ -31,17 +31,18 @@ class CourseLessonFactory extends Factory
             'সমাপনী আলোচনা'
         ];
 
-        $lessonTypes = ['video', 'text', 'quiz', 'pdf'];
+        $lessonTypes = ['text', 'video', 'pdf'];
 
+        $type = fake()->randomElement($lessonTypes);
         return [
             'module_id' => CourseModule::factory(),
             'course_id' => null, // Will be set by the seeder
             'title' => fake()->randomElement($lessonTitles),
             'description' => fake()->paragraph(2),
-            'content' => fake()->paragraph(4),
-            'lesson_type' => fake()->randomElement($lessonTypes),
-            'video_url' => fake()->url(),
-            'video_duration' => fake()->numberBetween(300, 3600), // 5-60 minutes in seconds
+            'content' => $type === 'text' ? fake()->paragraph(6) : null,
+            'type' => $type,
+            'video_url' => $type === 'video' ? fake()->url() : null,
+            'file_path' => $type === 'pdf' ? 'lesson-files/' . fake()->uuid() . '.pdf' : null,
             'sort_order' => fake()->numberBetween(1, 15),
             'is_preview' => fake()->boolean(20),
             'is_active' => true,

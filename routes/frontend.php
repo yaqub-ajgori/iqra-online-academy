@@ -98,7 +98,9 @@ Route::prefix('certificates')->name('certificates.')->group(function () {
     
     // Public certificate verification
     Route::get('/verify', [CertificateController::class, 'verify'])->name('verify');
-    Route::post('/verify', [CertificateController::class, 'verifySubmit'])->name('verify.submit');
+    Route::post('/verify', [CertificateController::class, 'verifySubmit'])
+        ->middleware('throttle:10,1')
+        ->name('verify.submit');
 });
 
 // API Routes for AJAX requests

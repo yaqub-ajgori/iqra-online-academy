@@ -19,7 +19,7 @@
                         </p>
                     </div>
                             
-                    <form @submit.prevent="submitVerification" class="space-y-6">
+                    <form @submit.prevent="submitVerificationExact" class="space-y-6">
                         <div>
                             <input
                                 id="certificate_code"
@@ -35,23 +35,29 @@
                             </p>
                         </div>
 
-                        <button
-                            type="submit"
-                            :disabled="submitting || !form.certificate_code.trim()"
-                            class="w-full bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] text-white font-semibold py-3 px-6 rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <span v-if="submitting" class="inline-flex items-center">
-                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Verifying...
-                            </span>
-                            <span v-else class="inline-flex items-center">
-                                <ShieldCheckIcon class="mr-2 h-5 w-5" />
-                                Verify Certificate
-                            </span>
-                        </button>
+                        <div>
+                            <button
+                                type="submit"
+                                :disabled="submitting || !form.certificate_code.trim()"
+                                class="w-full bg-gradient-to-r from-[#2d5a27] to-[#5f5fcd] text-white font-semibold py-3 px-6 rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <span v-if="submitting" class="inline-flex items-center">
+                                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Verifying...
+                                </span>
+                                <span v-else class="inline-flex items-center">
+                                    <ShieldCheckIcon class="mr-2 h-5 w-5" />
+                                    Verify
+                                </span>
+                            </button>
+                        </div>
+
+                        <p class="text-xs text-gray-500">
+                            Accepted formats: <span class="font-mono">IOA-YYYY-####</span> or <span class="font-mono">CERTXXXXXXXX</span>.
+                        </p>
                     </form>
 
                     <!-- Error Message -->
@@ -139,7 +145,7 @@
 
 <script setup>
 import { Head, router, usePage } from '@inertiajs/vue3'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { route } from 'ziggy-js'
 import FrontendLayout from '@/layouts/FrontendLayout.vue'
 import {
@@ -150,27 +156,35 @@ import {
 } from 'lucide-vue-next'
 
 // State
+const page = usePage()
+const submitting = ref(false)
+
 const form = ref({
     certificate_code: ''
 })
 
-const submitting = ref(false)
+// Sync form state from Inertia prop after navigation
+watch(
+    () => page.props.form,
+    (newForm) => {
+        if (newForm) {
+            form.value.certificate_code = newForm.certificate_code || ''
+        }
+    },
+    { immediate: true }
+)
 
-// Page data
-const page = usePage()
 const errors = computed(() => page.props.errors || {})
-const successMessage = computed(() => page.props.success || null)
-const errorMessage = computed(() => page.props.error || null)
 const certificate = computed(() => page.props.certificate || null)
+const errorMessage = computed(() => errors.value.certificate_code || null)
+const successMessage = computed(() => certificate.value && !errorMessage.value ? 'Certificate verified successfully!' : null)
 
-// Methods
-const submitVerification = () => {
+
+const submitVerificationExact = () => {
     if (submitting.value || !form.value.certificate_code.trim()) return
-    
     submitting.value = true
-    
     router.post(route('certificates.verify.submit'), {
-        certificate_code: form.value.certificate_code.trim()
+        certificate_code: form.value.certificate_code.trim(),
     }, {
         preserveState: true,
         preserveScroll: true,
@@ -180,7 +194,6 @@ const submitVerification = () => {
     })
 }
 
-// Focus on input field when component mounts
 onMounted(() => {
     document.getElementById('certificate_code')?.focus()
 })

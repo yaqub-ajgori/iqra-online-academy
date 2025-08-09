@@ -386,22 +386,28 @@
                                     <FacebookIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                                 </a>
                                 <a
-                                    href="#"
+                                    href="https://www.youtube.com/@iqraonlineacademyioa313"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     class="hover:shadow-islamic-lg flex h-8 w-8 transform items-center justify-center rounded-lg bg-gradient-to-br from-[#d4a574] to-[#b8945f] text-white transition-all duration-200 hover:scale-110 sm:h-10 sm:w-10"
                                 >
                                     <YoutubeIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                                 </a>
                                 <a
-                                    href="#"
-                                    class="hover:shadow-islamic-lg flex h-8 w-8 transform items-center justify-center rounded-lg bg-gradient-to-br from-[#2d5a27] to-[#1f3e1b] text-white transition-all duration-200 hover:scale-110 sm:h-10 sm:w-10"
+                                    href="https://wa.me/YOUR_WHATSAPP_NUMBER"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="hover:shadow-islamic-lg flex h-8 w-8 transform items-center justify-center rounded-lg bg-gradient-to-br from-[#25D366] to-[#128C7E] text-white transition-all duration-200 hover:scale-110 sm:h-10 sm:w-10"
                                 >
-                                    <TwitterIcon class="h-4 w-4 sm:h-5 sm:w-5" />
+                                    <MessageCircleIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                                 </a>
                                 <a
-                                    href="#"
-                                    class="hover:shadow-islamic-lg flex h-8 w-8 transform items-center justify-center rounded-lg bg-gradient-to-br from-[#5f5fcd] to-[#4a4aa6] text-white transition-all duration-200 hover:scale-110 sm:h-10 sm:w-10"
+                                    href="https://t.me/YOUR_TELEGRAM_USERNAME"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="hover:shadow-islamic-lg flex h-8 w-8 transform items-center justify-center rounded-lg bg-gradient-to-br from-[#0088cc] to-[#006bb3] text-white transition-all duration-200 hover:scale-110 sm:h-10 sm:w-10"
                                 >
-                                    <InstagramIcon class="h-4 w-4 sm:h-5 sm:w-5" />
+                                    <SendIcon class="h-4 w-4 sm:h-5 sm:w-5" />
                                 </a>
                             </div>
                         </div>
@@ -577,7 +583,6 @@ import {
     FacebookIcon,
     HomeIcon,
     InfoIcon,
-    InstagramIcon,
     LinkIcon,
     LogInIcon,
     LogOutIcon,
@@ -586,7 +591,7 @@ import {
     MenuIcon,
     MessageCircleIcon,
     PhoneIcon,
-    TwitterIcon,
+    SendIcon,
     UserIcon,
     UserPlusIcon,
     XIcon,
