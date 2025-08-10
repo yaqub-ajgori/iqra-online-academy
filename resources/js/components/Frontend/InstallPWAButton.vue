@@ -1,14 +1,15 @@
 <template>
     <div>
-        <!-- Enhanced Install Prompt -->
-        <div v-if="showInstall && !isIOS" class="fixed right-6 bottom-6 z-50 block md:hidden">
-            <div class="animate-slide-up max-w-sm rounded-2xl border border-gray-100 bg-white p-4 shadow-2xl">
-                <div class="flex items-start space-x-3">
-                    <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27]">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-4-4m4 4l4-4m-4 4V4" />
-                        </svg>
-                    </div>
+        <!-- Enhanced Install Prompt for Android -->
+        <div v-if="showInstall && !isIOS" class="fixed bottom-0 left-0 right-0 z-50 block">
+            <div class="animate-slide-up bg-white p-4 shadow-2xl">
+                <div class="mx-auto max-w-sm">
+                    <div class="flex items-start space-x-3">
+                        <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27]">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-4-4m4 4l4-4m-4 4V4" />
+                            </svg>
+                        </div>
                     <div class="min-w-0 flex-1">
                         <h4 class="mb-1 text-sm font-semibold text-gray-900">অ্যাপ ইন্সটল করুন</h4>
                         <p class="mb-3 text-xs text-gray-600">দ্রুত অ্যাক্সেস এবং অফলাইন সুবিধার জন্য</p>
@@ -27,12 +28,13 @@
         </div>
 
         <!-- Enhanced iOS Install Guide -->
-        <div v-if="showInstall && isIOS" class="fixed right-6 bottom-6 z-50 block md:hidden">
-            <div class="animate-slide-up max-w-sm rounded-2xl border border-gray-100 bg-white p-4 shadow-2xl">
-                <div class="flex items-start space-x-3">
-                    <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27]">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path
+        <div v-if="showInstall && isIOS" class="fixed bottom-0 left-0 right-0 z-50 block">
+            <div class="animate-slide-up bg-white p-4 shadow-2xl">
+                <div class="mx-auto max-w-sm">
+                    <div class="flex items-start space-x-3">
+                        <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#5f5fcd] to-[#2d5a27]">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                                 stroke-width="2"
@@ -68,20 +70,28 @@ let deferredPrompt: any = null;
 const sessionKey = 'pwa-install-dismissed';
 
 function isInStandaloneMode() {
-    return window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+    return window.matchMedia('(display-mode: standalone)').matches || 
+           window.matchMedia('(display-mode: fullscreen)').matches || 
+           (window.navigator as any).standalone === true;
 }
 
 function checkIOS() {
     const ua = window.navigator.userAgent;
-    return /iPhone|iPad|iPod/.test(ua) && !window.matchMedia('(display-mode: standalone)').matches;
+    const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+    return /iPhone|iPad|iPod/.test(ua) && isSafari && !window.matchMedia('(display-mode: standalone)').matches;
 }
 
 function handleBeforeInstallPrompt(e: Event) {
     e.preventDefault();
     deferredPrompt = e;
-    if (!sessionStorage.getItem(sessionKey) && !isInStandaloneMode()) {
-        showInstall.value = true;
-    }
+    
+    // Wait a short moment before showing the prompt
+    setTimeout(() => {
+        if (!sessionStorage.getItem(sessionKey)) {
+            console.log('PWA install prompt available');
+            showInstall.value = true;
+        }
+    }, 1000);
 }
 
 function handleAppInstalled() {
@@ -109,20 +119,22 @@ function dismiss() {
 onMounted(() => {
     isIOS.value = checkIOS();
 
-    // Delay showing install prompt for better UX (after user has browsed a bit)
-    setTimeout(() => {
-        // iOS: show guide if not installed and not dismissed
-        if (isIOS.value && !isInStandaloneMode() && !sessionStorage.getItem(sessionKey)) {
-            showInstall.value = true;
-        }
-    }, 3000); // Show after 3 seconds
+    // Show install prompt immediately for iOS devices
+    if (isIOS.value && !isInStandaloneMode() && !sessionStorage.getItem(sessionKey)) {
+        showInstall.value = true;
+    }
 
     // Android/Chrome: handle install prompt
+    console.log('PWA: Initializing install prompt handler');
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
-    // Hide if already installed
-    if (isInStandaloneMode()) {
+    // Check if already installed
+    const isInstalled = isInStandaloneMode();
+    console.log('PWA: Is installed?', isInstalled);
+    console.log('PWA: Is iOS?', isIOS.value);
+    
+    if (isInstalled) {
         showInstall.value = false;
     }
 

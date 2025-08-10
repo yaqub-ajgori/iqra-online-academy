@@ -28,8 +28,9 @@ export default defineConfig({
         }),
         VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['icons/icon-192x192.svg', 'icons/icon-512x512.svg', 'robots.txt'],
+            includeAssets: ['icons/icon-192x192.png', 'icons/icon-512x512.png', 'robots.txt'],
             manifest: {
+                id: '/',
                 name: 'ইকরা অনলাইন একাডেমি',
                 short_name: 'ইকরা',
                 description: 'ইসলামিক শিক্ষার জন্য আধুনিক অনলাইন একাডেমি',
@@ -42,18 +43,55 @@ export default defineConfig({
                 dir: 'ltr',
                 orientation: 'portrait-primary',
                 categories: ['education', 'lifestyle', 'utilities'],
+                prefer_related_applications: false,
                 icons: [
                     {
-                        src: '/icons/icon-192x192.svg',
-                        sizes: '192x192',
-                        type: 'image/svg+xml',
-                        purpose: 'any maskable',
+                        src: '/icons/icon-72x72.png',
+                        sizes: '72x72',
+                        type: 'image/png',
+                        purpose: 'any'
                     },
                     {
-                        src: '/icons/icon-512x512.svg',
+                        src: '/icons/icon-96x96.png',
+                        sizes: '96x96',
+                        type: 'image/png',
+                        purpose: 'any'
+                    },
+                    {
+                        src: '/icons/icon-128x128.png',
+                        sizes: '128x128',
+                        type: 'image/png',
+                        purpose: 'any'
+                    },
+                    {
+                        src: '/icons/icon-144x144.png',
+                        sizes: '144x144',
+                        type: 'image/png',
+                        purpose: 'any'
+                    },
+                    {
+                        src: '/icons/icon-152x152.png',
+                        sizes: '152x152',
+                        type: 'image/png',
+                        purpose: 'any'
+                    },
+                    {
+                        src: '/icons/icon-192x192.png',
+                        sizes: '192x192',
+                        type: 'image/png',
+                        purpose: 'any maskable'
+                    },
+                    {
+                        src: '/icons/icon-384x384.png',
+                        sizes: '384x384',
+                        type: 'image/png',
+                        purpose: 'any'
+                    },
+                    {
+                        src: '/icons/icon-512x512.png',
                         sizes: '512x512',
-                        type: 'image/svg+xml',
-                        purpose: 'any maskable',
+                        type: 'image/png',
+                        purpose: 'any maskable'
                     },
                 ],
                 screenshots: [
@@ -67,8 +105,10 @@ export default defineConfig({
                 ]
             },
             workbox: {
-                globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg}'],
-                navigateFallback: null,
+                globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg,woff2}'],
+                navigateFallback: 'index.html',
+                skipWaiting: true,
+                clientsClaim: true,
                 runtimeCaching: [
                     {
                         urlPattern: /^https:\/\/fonts\.(googleapis|bunny\.net)\//,
@@ -80,6 +120,29 @@ export default defineConfig({
                                 maxAgeSeconds: 365 * 24 * 60 * 60 // 1 year
                             }
                         }
+                    },
+                    {
+                        urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'images',
+                            expiration: {
+                                maxEntries: 60,
+                                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+                            },
+                        },
+                    },
+                    {
+                        urlPattern: /^https:\/\/api\.iqraoa\.com\//,
+                        handler: 'NetworkFirst',
+                        options: {
+                            cacheName: 'api-cache',
+                            networkTimeoutSeconds: 10,
+                            expiration: {
+                                maxEntries: 50,
+                                maxAgeSeconds: 5 * 60 // 5 minutes
+                            },
+                        },
                     },
                     {
                         urlPattern: /^https:\/\/images\.unsplash\.com\//,

@@ -275,6 +275,15 @@ const page = usePage();
 const aboutData = ref(page.props.aboutData as AboutData);
 const stats = ref((page.props.stats as Stat[]) || []);
 
+// Function to load about data
+const loadAboutData = async () => {
+    try {
+        await router.reload({ only: ['aboutData', 'stats'] });
+    } catch (error) {
+        console.error('Error loading about data:', error);
+    }
+};
+
 const getValueIcon = (iconName: string) => {
     const icons: Record<string, any> = {
         'book-open': BookOpenIcon,
@@ -297,6 +306,11 @@ const getInitials = (name: string) => {
     }
     return parts[0][0] || 'ই';
 };
+
+// Load data on mount
+onMounted(() => {
+    loadAboutData();
+});
 
 const handleImageError = (event: Event) => {
     const target = event.target as HTMLImageElement;
