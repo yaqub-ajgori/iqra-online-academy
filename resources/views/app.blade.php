@@ -22,7 +22,7 @@
     <link rel="icon" href="/icons/icon-192x192.svg" sizes="192x192" type="image/svg+xml">
     <link rel="icon" href="/icons/icon-512x512.svg" sizes="512x512" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icons/icon-192x192.svg">
-    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="manifest" href="/site.webmanifest">
 
     <!-- Theme Color for Mobile Browsers -->
     <meta name="theme-color" content="#5f5fcd">
