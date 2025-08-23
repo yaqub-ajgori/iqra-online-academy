@@ -253,12 +253,21 @@
                             class="h-full w-full rounded-none border-none shadow-none"
                             style="height: 70vh"
                         >
-                            <iframe
-                                :src="currentLesson.primary_file_url"
-                                class="h-full w-full rounded-xl"
-                                frameborder="0"
-                                title="Lesson PDF"
-                            ></iframe>
+                            <VuePdfEmbed
+                                :source="currentLesson.primary_file_url"
+                                style="height: 100%; width: 100%;"
+                            />
+                            <!-- PDF File Download as secondary option -->
+                            <div v-if="currentLesson?.primary_file_url" class="mt-4 flex justify-end">
+                                <a
+                                    :href="currentLesson.primary_file_url"
+                                    download
+                                    class="inline-flex items-center space-x-2 text-[#5f5fcd] hover:text-[#4a4ab8] border border-gray-200 rounded px-3 py-2 bg-gray-50"
+                                >
+                                    <DownloadIcon class="h-4 w-4" />
+                                    <span>পিডিএফ ডাউনলোড করুন</span>
+                                </a>
+                            </div>
                         </div>
                         <!-- Mixed Content -->
                         <div v-else-if="currentLesson?.type === 'mixed' || !currentLesson?.type" class="h-full w-full overflow-y-auto bg-white">
@@ -305,24 +314,7 @@
                                 </div>
 
                                 <!-- PDF File Download -->
-                                <div v-if="currentLesson?.type === 'pdf' && currentLesson?.file_path" class="mb-6">
-                                    <h3 class="mb-3 font-semibold text-gray-900">পিডিএফ ফাইল</h3>
-                                    <div class="rounded border border-gray-200 bg-gray-50 p-3">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <p class="font-medium text-gray-900">{{ currentLesson.title }}.pdf</p>
-                                                <p class="text-sm text-gray-500">পিডিএফ ডকুমেন্ট</p>
-                                            </div>
-                                            <a
-                                                :href="currentLesson.file_url || `/storage/${currentLesson.file_path}`"
-                                                download
-                                                class="text-[#5f5fcd] hover:text-[#4a4ab8]"
-                                            >
-                                                <DownloadIcon class="h-4 w-4" />
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
+                                <!-- Removed duplicate PDF download UI for PDF lessons -->
 
                                 <!-- External Resources -->
                                 <div v-if="currentLesson?.resources && currentLesson?.resources.length > 0" class="mb-6">
@@ -440,6 +432,7 @@ import {
 } from 'lucide-vue-next';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { route } from 'ziggy-js';
+import VuePdfEmbed from 'vue-pdf-embed';
 
 // Type definitions
 interface Lesson {
@@ -628,7 +621,7 @@ const selectLearningItem = async (item: any) => {
     if (item.type === 'lesson') {
         currentLesson.value = {
             ...item,
-            type: item.lesson_type || 'mixed'
+            type: item.lesson_type, // Use the specific lesson_type from the backend
         };
     }
 

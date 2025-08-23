@@ -101,7 +101,7 @@
                                             <ul v-else>
                                                 <li v-for="lesson in module.lessons" :key="lesson.id" class="curriculum-lesson">
                                                     <span class="curriculum-dot"></span>
-                                                    <div>
+                                                    <div class="flex items-center gap-2">
                                                         <span>{{ lesson.title }}</span>
                                                         <span v-if="lesson.duration" class="ml-2 text-xs text-gray-400">
                                                             {{ lesson.duration }}

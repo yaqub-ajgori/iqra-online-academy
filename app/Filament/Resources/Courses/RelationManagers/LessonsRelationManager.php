@@ -52,14 +52,11 @@ class LessonsRelationManager extends RelationManager
                         'success' => 'text',
                         'warning' => 'pdf',
                     ]),
+
+                TextColumn::make('duration_display')
+                    ->label('Duration')
+                    ->sortable(),
                     
-                IconColumn::make('is_preview')
-                    ->label('Preview')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-eye')
-                    ->falseIcon('heroicon-o-eye-slash')
-                    ->trueColor('success')
-                    ->falseColor('gray'),
             ])
             ->filters([
                 //

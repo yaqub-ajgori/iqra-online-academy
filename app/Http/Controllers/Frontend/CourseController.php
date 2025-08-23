@@ -160,7 +160,8 @@ class CourseController extends Controller
                         return [
                             'id' => $lesson->id,
                             'title' => $lesson->title,
-                            'duration' => $lesson->formatted_duration ?? '0:00',
+                            'duration' => $lesson->duration_display ?? null,
+                            'is_preview' => $lesson->is_preview,
                         ];
                     }),
                 ];

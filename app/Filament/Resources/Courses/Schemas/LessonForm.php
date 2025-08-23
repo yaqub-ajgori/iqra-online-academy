@@ -62,6 +62,13 @@ class LessonForm
                                     ->default(0)
                                     ->columnSpan(1),
 
+                                TextInput::make('duration')
+                                    ->label('Duration (minutes)')
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->helperText('Estimated time to complete this lesson')
+                                    ->columnSpan(1),
+
                                 RichEditor::make('content')
                                     ->label('Lesson Content')
                                     ->columnSpanFull()
@@ -116,9 +123,6 @@ class LessonForm
                     ->schema([
                         Section::make('Lesson Settings')
                             ->schema([
-                                Toggle::make('is_preview')
-                                    ->label('Preview Lesson')
-                                    ->helperText('Can be viewed without enrollment'),
 
                                 Toggle::make('is_active')
                                     ->label('Active')

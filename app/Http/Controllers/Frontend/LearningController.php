@@ -83,7 +83,7 @@ class LearningController extends Controller
                     'order' => $lesson->sort_order,
                     'module_order' => $module->sort_order,
                     'title' => $lesson->title ?: 'Untitled Lesson',
-                    'duration' => $lesson->formatted_duration ? $lesson->formatted_duration : ($lesson->video_duration ? gmdate('H:i:s', $lesson->video_duration) : '0 min'),
+                    'duration' => $lesson->duration_display,
                     'lesson_type' => $lesson->lesson_type ?: 'mixed',
                     'video_url' => $lesson->video_url,
                     'content' => $lesson->content,

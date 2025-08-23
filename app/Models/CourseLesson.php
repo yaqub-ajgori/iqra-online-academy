@@ -11,6 +11,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class CourseLesson extends Model
 {
     use HasFactory;
+
+    /**
+     * Alias for file_url to support frontend PDF display.
+     */
+    public function getPrimaryFileUrlAttribute(): ?string
+    {
+        return $this->file_url;
+    }
+    use HasFactory;
     /**
      * The attributes that are mass assignable.
      *
@@ -28,6 +37,7 @@ class CourseLesson extends Model
         'is_preview',
         'sort_order',
         'is_active',
+        'duration', // duration in minutes
     ];
 
     /**
@@ -137,14 +147,29 @@ class CourseLesson extends Model
     }
 
     /**
-     * Get lesson duration display text.
+     * Get lesson type display text (existing usage).
      */
-    public function getDurationAttribute(): string
+    public function getTypeDisplayAttribute(): string
     {
         return match($this->type) {
             'video' => 'ভিডিও পাঠ',
             'pdf' => 'পিডিএফ ফাইল',
             default => 'টেক্সট পাঠ',
         };
+    }
+
+    /**
+     * Get formatted duration display (e.g., "5 min").
+     */
+    public function getDurationDisplayAttribute(): ?string
+    {
+        if (is_null($this->duration)) {
+            return null;
+        }
+        $minutes = (int) $this->duration;
+        if ($minutes < 1) {
+            return 'Less than 1 min';
+        }
+        return $minutes . ' min';
     }
 }
