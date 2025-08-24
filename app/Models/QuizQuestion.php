@@ -59,12 +59,18 @@ class QuizQuestion extends Model
             return null;
         }
 
+        $options = is_string($this->options) ? json_decode($this->options, true) : $this->options;
+
+        if (!is_array($options)) {
+            return null;
+        }
+
         return array_map(function ($option, $index) {
             return [
                 'index' => $index,
                 'letter' => chr(65 + $index), // A, B, C, D...
                 'text' => $option,
             ];
-        }, $this->options, array_keys($this->options));
+        }, $options, array_keys($options));
     }
 }

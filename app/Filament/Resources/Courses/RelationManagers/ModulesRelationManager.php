@@ -75,30 +75,10 @@ class ModulesRelationManager extends RelationManager
             ->headerActions([
                 CreateAction::make()
                     ->label('Add Module')
-                    ->icon('heroicon-o-plus')
-                    ->mutateFormDataUsing(function (array $data): array {
-                        // Automatically set the course_id from the parent course
-                        $data['course_id'] = $this->getOwnerRecord()->id;
-                        
-                        // Ensure required fields have defaults
-                        $data['title'] = $data['title'] ?? '';
-                        $data['sort_order'] = $data['sort_order'] ?? 1;
-                        
-                        return $data;
-                    }),
+                    ->icon('heroicon-o-plus'),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->mutateFormDataUsing(function (array $data): array {
-                        // Ensure course_id is maintained on edit
-                        $data['course_id'] = $this->getOwnerRecord()->id;
-                        
-                        // Ensure required fields have defaults
-                        $data['title'] = $data['title'] ?? '';
-                        $data['sort_order'] = $data['sort_order'] ?? 1;
-                        
-                        return $data;
-                    }),
+                EditAction::make(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
