@@ -249,23 +249,21 @@
                         </div>
                         <!-- PDF Content -->
                         <div
-                            v-else-if="currentLesson?.type === 'pdf' && currentLesson.primary_file_url"
-                            class="h-full w-full rounded-none border-none shadow-none"
+                            v-else-if="currentLesson?.type === 'pdf' && currentLesson.file_url"
+                            class="flex h-full w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50"
                             style="height: 70vh"
                         >
-                            <VuePdfEmbed
-                                :source="currentLesson.primary_file_url"
-                                style="height: 100%; width: 100%;"
-                            />
-                            <!-- PDF File Download as secondary option -->
-                            <div v-if="currentLesson?.primary_file_url" class="mt-4 flex justify-end">
+                            <div class="text-center">
+                                <FileTextIcon class="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">PDF ডকুমেন্ট</h3>
+                                <p class="text-sm text-gray-500 mb-6">এই লেসনটি একটি PDF ফাইল হিসেবে উপলব্ধ।</p>
                                 <a
-                                    :href="currentLesson.primary_file_url"
+                                    :href="currentLesson.file_url"
                                     download
-                                    class="inline-flex items-center space-x-2 text-[#5f5fcd] hover:text-[#4a4ab8] border border-gray-200 rounded px-3 py-2 bg-gray-50"
+                                    class="inline-flex items-center space-x-2 rounded-lg bg-[#5f5fcd] px-6 py-3 text-sm font-medium text-white hover:bg-[#4a4ab8] transition-colors"
                                 >
                                     <DownloadIcon class="h-4 w-4" />
-                                    <span>পিডিএফ ডাউনলোড করুন</span>
+                                    <span>PDF ডাউনলোড করুন</span>
                                 </a>
                             </div>
                         </div>
@@ -432,7 +430,6 @@ import {
 } from 'lucide-vue-next';
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { route } from 'ziggy-js';
-import VuePdfEmbed from 'vue-pdf-embed';
 
 // Type definitions
 interface Lesson {

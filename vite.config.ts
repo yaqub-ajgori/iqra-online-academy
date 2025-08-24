@@ -12,6 +12,11 @@ export default defineConfig({
             host: 'localhost',
         },
     },
+    build: {
+        rollupOptions: {
+            external: [],
+        },
+    },
     plugins: [
         laravel({
             input: ['resources/js/app.ts'],
