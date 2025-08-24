@@ -66,38 +66,12 @@ class LessonsRelationManager extends RelationManager
                     ->label('Add Lesson')
                     ->icon('heroicon-o-plus')
                     ->slideOver()
-                    ->modalWidth('7xl')
-                    ->mutateFormDataUsing(function (array $data): array {
-                        try {
-                            // Automatically set the course_id from the parent course
-                            $course = $this->getOwnerRecord();
-                            if ($course) {
-                                $data['course_id'] = $course->id;
-                            }
-                            
-                            return $data;
-                        } catch (\Exception $e) {
-                            throw new \Exception('Error creating lesson: ' . $e->getMessage());
-                        }
-                    }),
+                    ->modalWidth('7xl'),
             ])
             ->recordActions([
                 EditAction::make()
                     ->slideOver()
-                    ->modalWidth('7xl')
-                    ->mutateFormDataUsing(function (array $data): array {
-                        try {
-                            // Ensure course_id is maintained on edit
-                            $course = $this->getOwnerRecord();
-                            if ($course) {
-                                $data['course_id'] = $course->id;
-                            }
-                            
-                            return $data;
-                        } catch (\Exception $e) {
-                            throw new \Exception('Error updating lesson: ' . $e->getMessage());
-                        }
-                    }),
+                    ->modalWidth('7xl'),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
