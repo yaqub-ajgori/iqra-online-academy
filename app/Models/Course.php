@@ -125,7 +125,7 @@ class Course extends Model
     }
 
     /**
-     * Get all the lessons for the course.
+     * Get all the lessons for the course through modules (HasManyThrough).
      */
     public function lessons(): \Illuminate\Database\Eloquent\Relations\HasManyThrough
     {
@@ -138,6 +138,15 @@ class Course extends Model
             'id'         // Local key on course_modules table
         )->orderBy('course_modules.sort_order')
          ->orderBy('course_lessons.sort_order');
+    }
+
+    /**
+     * Get direct lessons for this course (for admin management).
+     * This provides a direct HasMany relationship needed for Filament.
+     */
+    public function directLessons(): HasMany
+    {
+        return $this->hasMany(CourseLesson::class, 'course_id')->orderBy('sort_order');
     }
 
     /**
@@ -237,7 +246,60 @@ class Course extends Model
     }
 
     /**
-     * Get duration attribute, formatted from minutes.
+     * Get calculated total duration from all lessons.
+     */
+    public function getCalculatedDurationAttribute(): int
+    {
+        $sum = $this->lessons()->sum('course_lessons.duration');
+        return $sum > 0 ? $sum : 0;
+    }
+
+    /**
+     * Get effective duration (calculated from lessons or manual fallback).
+     */
+    public function getEffectiveDurationInMinutesAttribute(): int
+    {
+        $calculatedDuration = $this->calculated_duration;
+        
+        // If we have lesson durations, use them
+        if ($calculatedDuration > 0) {
+            return $calculatedDuration;
+        }
+        
+        // Otherwise fall back to manual duration
+        return $this->duration_in_minutes ?? 0;
+    }
+
+    /**
+     * Get smart duration (prefers calculated, falls back to manual).
+     */
+    public function getSmartDurationAttribute(): string
+    {
+        $calculatedDuration = $this->calculated_duration;
+        
+        // Use calculated duration if available, otherwise use manual
+        $minutes = $calculatedDuration > 0 ? $calculatedDuration : ($this->duration_in_minutes ?? 0);
+
+        if (!$minutes || $minutes <= 0) {
+            return 'স্ব-নির্ধারিত';
+        }
+
+        $hours = floor($minutes / 60);
+        $remainingMinutes = $minutes % 60;
+
+        $parts = [];
+        if ($hours > 0) {
+            $parts[] = $hours . ' ঘন্টা';
+        }
+        if ($remainingMinutes > 0) {
+            $parts[] = $remainingMinutes . ' মিনিট';
+        }
+
+        return implode(' ', $parts);
+    }
+
+    /**
+     * Get duration attribute, formatted from minutes (manual duration only).
      */
     public function getDurationAttribute(): string
     {

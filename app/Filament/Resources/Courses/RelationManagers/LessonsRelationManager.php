@@ -16,13 +16,59 @@ use Filament\Tables\Table;
 
 class LessonsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'lessons';
+    protected static string $relationship = 'directLessons';
 
     protected static ?string $recordTitleAttribute = 'title';
 
     public function form(Schema $schema): Schema
     {
         return \App\Filament\Resources\Courses\Schemas\LessonForm::configure($schema);
+    }
+    
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        // Ensure course_id is set when creating lessons
+        $courseId = $this->getOwnerRecord()->getKey();
+        if (!$courseId) {
+            throw new \Exception('Course ID is required to create a lesson.');
+        }
+        $data['course_id'] = $courseId;
+        
+        // Validate that the selected module belongs to this course
+        if (isset($data['module_id'])) {
+            $moduleExists = \App\Models\CourseModule::where('id', $data['module_id'])
+                ->where('course_id', $courseId)
+                ->exists();
+            
+            if (!$moduleExists) {
+                throw new \Exception('Selected module does not belong to this course.');
+            }
+        }
+        
+        return $data;
+    }
+    
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        // Ensure course_id is set when updating lessons
+        $courseId = $this->getOwnerRecord()->getKey();
+        if (!$courseId) {
+            throw new \Exception('Course ID is required to update a lesson.');
+        }
+        $data['course_id'] = $courseId;
+        
+        // Validate that the selected module belongs to this course
+        if (isset($data['module_id'])) {
+            $moduleExists = \App\Models\CourseModule::where('id', $data['module_id'])
+                ->where('course_id', $courseId)
+                ->exists();
+            
+            if (!$moduleExists) {
+                throw new \Exception('Selected module does not belong to this course.');
+            }
+        }
+        
+        return $data;
     }
 
     public function table(Table $table): Table

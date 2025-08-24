@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Courses\Schemas;
 
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -22,6 +23,9 @@ class LessonForm
                     ->schema([
                         Section::make('Lesson Content')
                             ->schema([
+                                Hidden::make('course_id')
+                                    ->default(fn ($livewire) => $livewire->ownerRecord?->id ?? request()->route('record')),
+                                    
                                 Select::make('module_id')
                                     ->label('Module')
                                     ->relationship('module', 'title', 
@@ -65,8 +69,10 @@ class LessonForm
                                 TextInput::make('duration')
                                     ->label('Duration (minutes)')
                                     ->numeric()
-                                    ->minValue(0)
-                                    ->helperText('Estimated time to complete this lesson')
+                                    ->required()
+                                    ->minValue(1)
+                                    ->maxValue(1440) // Max 24 hours
+                                    ->helperText('Estimated time to complete this lesson (required for accurate course duration)')
                                     ->columnSpan(1),
 
                                 RichEditor::make('content')

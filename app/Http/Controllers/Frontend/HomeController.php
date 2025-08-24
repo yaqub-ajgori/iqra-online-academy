@@ -96,7 +96,7 @@ class HomeController extends Controller
                     'discount_price' => $course->discount_price,
                     'discount_expires_at' => $course->discount_expires_at,
                     'is_free' => $course->is_free,
-                    'duration' => $course->duration,
+                    'duration' => $course->smart_duration,
                     'students_count' => $course->enrollments_count, // Using withCount result
                     'rating' => 0, // Default rating since we removed average_rating
                     'is_featured' => $course->is_featured,

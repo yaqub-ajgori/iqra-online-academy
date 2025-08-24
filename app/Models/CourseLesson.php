@@ -27,7 +27,7 @@ class CourseLesson extends Model
      */
     protected $fillable = [
         'module_id',
-        'course_id',
+        'course_id', // Required for data integrity
         'title',
         'content',
         'description',
