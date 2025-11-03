@@ -543,12 +543,12 @@
                                 <p class="text-xs text-gray-400 sm:text-sm">
                                     Developed by
                                     <a
-                                        href="https://www.pixelweblab.com/"
+                                        href="https://yaqub.dev"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         class="font-medium text-[#5f5fcd] transition-colors duration-200 hover:text-[#2d5a27]"
                                     >
-                                        PixelWeblab
+                                        Md Yaqub Ajgori (yaqub.dev)
                                     </a>
                                 </p>
                             </div>
