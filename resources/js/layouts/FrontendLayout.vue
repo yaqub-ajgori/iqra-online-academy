@@ -548,7 +548,7 @@
                                         rel="noopener noreferrer"
                                         class="font-medium text-[#5f5fcd] transition-colors duration-200 hover:text-[#2d5a27]"
                                     >
-                                        Md Yaqub Ajgori (yaqub.dev)
+                                        Md Yaqub Ajgori
                                     </a>
                                 </p>
                             </div>
