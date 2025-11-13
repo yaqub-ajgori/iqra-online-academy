@@ -1,41 +1,23 @@
 {
   "permissions": {
     "allow": [
-      "Bash(php artisan make:migration:*)",
-      "Bash(php artisan:*)",
-      "Bash(mkdir:*)",
-      "Bash(cp:*)",
-      "Bash(find:*)",
-      "Bash(npm run build:*)",
-      "Bash(rm:*)",
-      "Bash(ls:*)",
-      "Bash(curl:*)",
-      "Bash(grep:*)",
-      "Bash(python3:*)",
-      "Bash(node:*)",
-      "Bash(mv:*)",
-      "Bash(cat:*)",
-      "WebFetch(domain:alquran.cloud)",
-      "WebFetch(domain:api.alquran.cloud)",
-      "Bash(sed:*)",
-      "Bash(npm run dev:*)",
-      "Bash(pkill:*)",
-      "Bash(awk:*)",
-      "Bash(npm run format:*)",
-      "Bash(npm run lint)",
-      "WebFetch(domain:127.0.0.1)",
-      "WebFetch(domain:quran411.com)",
-      "Bash(npm run lint:*)",
-      "WebFetch(domain:www.mp3quran.net)",
-      "WebFetch(domain:verse.mp3quran.net)",
-      "Bash(composer dev:*)",
-      "WebFetch(domain:everyayah.com)",
-      "Bash(vendor/bin/pest:*)",
-      "Bash(php -l:*)",
-      "Bash(composer test:*)",
-      "Bash(php:*)",
-      "Bash(composer run:*)"
+      "Bash(\"/c/Users/USER/.config/herd/bin/php84/php.exe\" artisan tinker --execute=\"echo ''Sending test email...''; echo PHP_EOL; Mail::raw(''Test email from Laravel Tinker. If you receive this, SMTP is working!'', function($m) { $m->to(''dev.yaqub@gmail.com'')->subject(''Email Test - Iqra Online Academy''); }); echo ''Email sent successfully!''; echo PHP_EOL;\")",
+      "Bash(\"/c/Users/USER/.config/herd/bin/php84/php.exe\" artisan email:test dev.yaqub@gmail.com)",
+      "mcp__laravel-boost__get-config",
+      "mcp__laravel-boost__list-available-env-vars",
+      "mcp__laravel-boost__database-query",
+      "Bash(\"/c/Users/USER/.config/herd/bin/php84/php.exe\" artisan queue:work --once --stop-when-empty)",
+      "mcp__laravel-boost__last-error",
+      "mcp__laravel-boost__tinker",
+      "Bash(\"/c/Users/USER/.config/herd/bin/php84/php.exe\" artisan queue:work --stop-when-empty)",
+      "Bash(git pull:*)",
+      "Bash(git add:*)"
     ],
-    "deny": []
-  }
+    "deny": [],
+    "ask": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "laravel-boost"
+  ]
 }

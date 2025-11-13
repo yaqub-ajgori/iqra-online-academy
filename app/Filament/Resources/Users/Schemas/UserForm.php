@@ -59,8 +59,7 @@ class UserForm
                         if ($record) {
                             $component->state($record->roles->pluck('role_type')->toArray());
                         }
-                    })
-                    ->dehydrated(false),
+                    }),
                     
                 Toggle::make('is_active')
                     ->label('Active User')
