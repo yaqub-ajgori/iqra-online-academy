@@ -15,10 +15,6 @@ class UserRole extends Model
         'role_type',
     ];
 
-    protected $casts = [
-        'assigned_at' => 'datetime',
-    ];
-
     /**
      * Get the user that owns this role.
      */

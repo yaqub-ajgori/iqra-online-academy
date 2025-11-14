@@ -44,7 +44,6 @@ it('sends email verification notification when user registers', function () {
     assertDatabaseHas('user_roles', [
         'user_id' => $user->id,
         'role_type' => 'student',
-        'is_active' => true,
     ]);
 
     // Assert the Registered event was dispatched

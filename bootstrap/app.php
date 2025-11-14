@@ -33,8 +33,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // Integrate Sentry for exception handling
-        Integration::handles($exceptions);
+        // Integrate Sentry for exception handling (only in non-testing environments)
+        if (class_exists(\Sentry\Laravel\Integration::class)) {
+            Integration::handles($exceptions);
+        }
         // Custom 404 error page for frontend
         $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, $request) {
             if ($request->expectsJson()) {

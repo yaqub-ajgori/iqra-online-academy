@@ -62,8 +62,6 @@ class RegisteredUserController extends Controller
         UserRole::create([
             'user_id' => $user->id,
             'role_type' => 'student',
-            'is_active' => true,
-            'assigned_at' => now(),
         ]);
 
         event(new Registered($user));
