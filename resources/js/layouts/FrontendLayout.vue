@@ -141,8 +141,8 @@
 
                         <!-- Student Auth Section -->
                         <div class="hidden items-center space-x-4 md:flex">
-                            <template v-if="$page.props.auth && $page.props.auth.user && isStudent">
-                                <!-- Student Dropdown -->
+                            <template v-if="$page.props.auth && $page.props.auth.user">
+                                <!-- User Dropdown (for all authenticated users) -->
                                 <div class="relative">
                                     <button
                                         @click="userDropdownOpen = !userDropdownOpen"
@@ -164,26 +164,37 @@
                                         />
                                     </button>
 
-                                    <!-- Student Dropdown Menu -->
+                                    <!-- User Dropdown Menu -->
                                     <div
                                         v-show="userDropdownOpen"
                                         class="ring-opacity-5 absolute right-0 z-50 mt-2 w-52 origin-top-right rounded-lg border border-gray-200 bg-white py-1 shadow-lg ring-1 ring-black transition-all duration-200"
                                         :class="userDropdownOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'"
                                     >
-                                        <Link
-                                            :href="route('frontend.student.dashboard')"
-                                            class="flex items-center px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
-                                        >
-                                            <UserIcon class="mr-3 h-4 w-4" />
-                                            ড্যাশবোর্ড
-                                        </Link>
-                                        <Link
-                                            :href="route('frontend.student.dashboard')"
-                                            class="flex items-center px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
-                                        >
-                                            <BookOpenIcon class="mr-3 h-4 w-4" />
-                                            আমার কোর্স
-                                        </Link>
+                                        <template v-if="isStudent">
+                                            <Link
+                                                :href="route('frontend.student.dashboard')"
+                                                class="flex items-center px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
+                                            >
+                                                <UserIcon class="mr-3 h-4 w-4" />
+                                                ড্যাশবোর্ড
+                                            </Link>
+                                            <Link
+                                                :href="route('frontend.student.dashboard')"
+                                                class="flex items-center px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
+                                            >
+                                                <BookOpenIcon class="mr-3 h-4 w-4" />
+                                                আমার কোর্স
+                                            </Link>
+                                        </template>
+                                        <template v-else>
+                                            <Link
+                                                :href="route('dashboard')"
+                                                class="flex items-center px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
+                                            >
+                                                <UserIcon class="mr-3 h-4 w-4" />
+                                                ড্যাশবোর্ড
+                                            </Link>
+                                        </template>
                                         <div class="my-1 border-t border-gray-200"></div>
                                         <button
                                             @click="logout"
@@ -283,21 +294,32 @@
                             </Link>
 
                             <div class="mt-4 border-t border-gray-200 pt-4">
-                                <template v-if="$page.props.auth && $page.props.auth.user && isStudent">
-                                    <Link
-                                        :href="route('frontend.student.dashboard')"
-                                        class="flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
-                                    >
-                                        <UserIcon class="mr-3 h-5 w-5" />
-                                        ড্যাশবোর্ড
-                                    </Link>
-                                    <Link
-                                        :href="route('frontend.student.dashboard')"
-                                        class="flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
-                                    >
-                                        <BookOpenIcon class="mr-3 h-5 w-5" />
-                                        আমার কোর্স
-                                    </Link>
+                                <template v-if="$page.props.auth && $page.props.auth.user">
+                                    <template v-if="isStudent">
+                                        <Link
+                                            :href="route('frontend.student.dashboard')"
+                                            class="flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
+                                        >
+                                            <UserIcon class="mr-3 h-5 w-5" />
+                                            ড্যাশবোর্ড
+                                        </Link>
+                                        <Link
+                                            :href="route('frontend.student.dashboard')"
+                                            class="flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
+                                        >
+                                            <BookOpenIcon class="mr-3 h-5 w-5" />
+                                            আমার কোর্স
+                                        </Link>
+                                    </template>
+                                    <template v-else>
+                                        <Link
+                                            :href="route('dashboard')"
+                                            class="flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#5f5fcd]"
+                                        >
+                                            <UserIcon class="mr-3 h-5 w-5" />
+                                            ড্যাশবোর্ড
+                                        </Link>
+                                    </template>
                                     <button
                                         @click="logout"
                                         class="flex w-full items-center rounded-lg px-4 py-3 text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
