@@ -563,7 +563,7 @@
                                 <p class="text-xs text-gray-400 sm:text-sm">© ২০২৫ ইকরা অনলাইন একাডেমি। সর্বস্বত্ব সংরক্ষিত।</p>
                                 <div class="hidden h-1 w-1 rounded-full bg-gray-600 sm:block"></div>
                                 <p class="text-xs text-gray-400 sm:text-sm">
-                                    Developed by
+                                    Web Design & Development By:
                                     <a
                                         href="https://yaqub.dev"
                                         target="_blank"
